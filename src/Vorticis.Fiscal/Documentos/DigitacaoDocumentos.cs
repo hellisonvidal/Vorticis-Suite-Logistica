@@ -21,8 +21,21 @@ public sealed record DocumentoDigitado(
     public bool Importado => Origem == "XML";
 }
 
-/// <summary>Escrituração de um item: CFOP de escrituração (em branco = o do documento), produto vinculado e centro de custo.</summary>
-public sealed record EscrituracaoItem(int Numero, string? Cfop, long? ProdutoId, long? CentroCustoId);
+/// <summary>
+/// Escrituração de um item: CFOP de escrituração (em branco = o do documento), produto vinculado e centro de custo; e, se informados,
+/// os tributos do item (CST, base, alíquota e valor de ICMS, ICMS-ST, IPI, PIS e COFINS), que substituem os do XML.
+/// </summary>
+public sealed record EscrituracaoItem(int Numero, string? Cfop, long? ProdutoId, long? CentroCustoId, TributosItem? Tributos = null);
+
+/// <summary>Tributos de um item, como ficam na escrituração (vindos do XML ou alterados pelo usuário).</summary>
+public sealed record TributosItem(string? CstIcms, decimal BcIcms, decimal AliqIcms, decimal Icms, decimal BcIcmsSt, decimal IcmsSt,
+                                  string? CstIpi, decimal BcIpi, decimal AliqIpi, decimal Ipi,
+                                  string? CstPis, decimal BcPis, decimal AliqPis, decimal Pis,
+                                  string? CstCofins, decimal BcCofins, decimal AliqCofins, decimal Cofins)
+{
+    public static TributosItem De(ItemFiscal i) => new(i.CstIcms, i.BcIcms, i.AliqIcms, i.Icms, i.BcIcmsSt, i.IcmsSt, i.CstIpi, i.BcIpi, i.AliqIpi, i.Ipi,
+                                                       i.CstPis, i.BcPis, i.AliqPis, i.Pis, i.CstCofins, i.BcCofins, i.AliqCofins, i.Cofins);
+}
 
 /// <summary>
 /// Campos de escrituração, editáveis inclusive nas notas importadas: observações, centro de custo, contas de contabilização

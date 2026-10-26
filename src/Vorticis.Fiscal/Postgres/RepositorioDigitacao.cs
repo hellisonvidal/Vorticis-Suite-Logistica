@@ -294,6 +294,17 @@ public sealed class RepositorioDigitacao(NpgsqlDataSource ds) : IRepositorioDigi
                     if (r is null) throw new ViolacaoRegraException($"Item {i.Numero} não encontrado na nota.");
                     codEmitente = r as string;
                 }
+                if (i.Tributos is { } t)
+                    await using (var tr = new NpgsqlCommand("""
+                        UPDATE fiscal.documento_item SET cst_icms = @cst, vl_bc_icms = @bc, aliq_icms = @aliq, vl_icms = @icms, vl_bc_icms_st = @bcst, vl_icms_st = @st,
+                               cst_ipi = @cipi, vl_bc_ipi = @bcipi, aliq_ipi = @aipi, vl_ipi = @ipi, cst_pis = @cpis, vl_bc_pis = @bcpis, aliq_pis = @apis, vl_pis = @pis,
+                               cst_cofins = @ccof, vl_bc_cofins = @bccof, aliq_cofins = @acof, vl_cofins = @cof
+                         WHERE documento_id = @d AND n_item = @n
+                        """, con, tx).Com("d", esc.DocumentoId).Com("n", i.Numero).ComTexto("cst", t.CstIcms).Com("bc", t.BcIcms).Com("aliq", t.AliqIcms).Com("icms", t.Icms)
+                                     .Com("bcst", t.BcIcmsSt).Com("st", t.IcmsSt).ComTexto("cipi", t.CstIpi).Com("bcipi", t.BcIpi).Com("aipi", t.AliqIpi).Com("ipi", t.Ipi)
+                                     .ComTexto("cpis", t.CstPis).Com("bcpis", t.BcPis).Com("apis", t.AliqPis).Com("pis", t.Pis)
+                                     .ComTexto("ccof", t.CstCofins).Com("bccof", t.BcCofins).Com("acof", t.AliqCofins).Com("cof", t.Cofins))
+                        await tr.ExecuteNonQueryAsync(ct);
                 // O produto escolhido passa a valer para as próximas notas do mesmo fornecedor com este código.
                 if (i.ProdutoId is { } pid && !string.IsNullOrWhiteSpace(codEmitente) && emit.Length > 0)
                     await using (var v = new NpgsqlCommand("""
@@ -302,6 +313,16 @@ public sealed class RepositorioDigitacao(NpgsqlDataSource ds) : IRepositorioDigi
                         """, con, tx).Com("e", empresaId).Com("p", pid).Com("em", emit.Length > 14 ? emit[..14] : emit).Com("c", codEmitente))
                         await v.ExecuteNonQueryAsync(ct);
             }
+            // tributos alterados nos itens: os totais de tributos da nota acompanham a soma dos itens (o valor total da nota não muda)
+            if (esc.Itens.Any(i => i.Tributos is not null))
+                await using (var tot = new NpgsqlCommand("""
+                    UPDATE fiscal.documento d SET vl_bc_icms = s.bc, vl_icms = s.icms, vl_bc_icms_st = s.bcst, vl_icms_st = s.st, vl_ipi = s.ipi, vl_pis = s.pis, vl_cofins = s.cof
+                      FROM (SELECT COALESCE(sum(vl_bc_icms), 0) bc, COALESCE(sum(vl_icms), 0) icms, COALESCE(sum(vl_bc_icms_st), 0) bcst, COALESCE(sum(vl_icms_st), 0) st,
+                                   COALESCE(sum(vl_ipi), 0) ipi, COALESCE(sum(vl_pis), 0) pis, COALESCE(sum(vl_cofins), 0) cof
+                              FROM fiscal.documento_item WHERE documento_id = @d) s
+                     WHERE d.id = @d AND d.empresa_id = @e
+                    """, con, tx).Com("d", esc.DocumentoId).Com("e", empresaId))
+                    await tot.ExecuteNonQueryAsync(ct);
             await tx.CommitAsync(ct);
             return 0;
         });

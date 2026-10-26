@@ -62,9 +62,10 @@ public class TelasFiscaisEdicaoTests(BancoDeTeste db, SessaoHeadless headless) :
             Assert.False(vm.DigitacaoAberta);
             vm.NovoLancamentoCommand.Execute(null);
             Assert.True(vm.DigitacaoAberta);
+            Assert.True(vm.PodeImportarNoLancamento);   // nota nova: importar XML ou chave dentro do lançamento
             Avalonia.Threading.Dispatcher.UIThread.RunJobs();
             var abas = view.GetVisualDescendants().OfType<TabControl>().Single().Items.OfType<TabItem>().Select(t => (string)t.Header!).ToList();
-            Assert.Equal(["Nota", "Itens", "Duplicatas", "Totais e tributos", "Escrituração"], abas);
+            Assert.Equal(["Nota", "Tributos", "Duplicatas", "Totais", "Escrituração"], abas);
             var bloqueados = view.GetVisualDescendants().OfType<TextBox>().Where(t => t.IsEffectivelyVisible && !t.IsEffectivelyEnabled)
                                  .Select(t => t.Watermark ?? t.Name ?? t.Text ?? "?").ToList();
             bloqueados.InsertRange(0, vm.Erros);
