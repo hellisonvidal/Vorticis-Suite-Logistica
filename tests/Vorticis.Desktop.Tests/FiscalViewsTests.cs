@@ -43,6 +43,8 @@ public class FiscalViewsTests(SessaoHeadless headless)
                 (new ResumoCfopViewModel(ctx), new ResumoCfopView()),
                 (new NotaEntradaViewModel(ctx), new DigitacaoDocumentoView()),
                 (new NotaSaidaViewModel(ctx), new DigitacaoDocumentoView()),
+                (new NotaEntradaViewModel(ctx), new DigitacaoNotaView()),
+                (new NotaSaidaViewModel(ctx), new DigitacaoNotaView()),
                 (new ProdutosViewModel(ctx), new ProdutosView()),
                 (new RelatorioProdutosViewModel(ctx), new RelatorioProdutosView()),
                 (new RelatorioItensNotasViewModel(ctx), new RelatorioItensNotasView()),

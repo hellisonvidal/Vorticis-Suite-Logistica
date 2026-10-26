@@ -212,6 +212,8 @@ public abstract partial class DigitacaoDocumentoViewModel(IContexto contexto) : 
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PodeEditar))] private bool _contabilizado;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PodeEditar))] private bool _usaCentroCusto;
     [ObservableProperty] private string _situacaoDocumento = "Nova nota";
+    /// <summary>A nota está aberta na janela pop-up de lançamento (a tela principal é a consulta das notas).</summary>
+    [ObservableProperty] private bool _digitacaoAberta;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PodeEditar))] [NotifyPropertyChangedFor(nameof(PodeEditarEscrituracao))] private bool _importada;
     [ObservableProperty] private string _observacoes = "";
     [ObservableProperty] private string _contaDebito = "";
@@ -333,6 +335,8 @@ public abstract partial class DigitacaoDocumentoViewModel(IContexto contexto) : 
     {
         if (value is not null) _ = CarregarDocumentoAsync(value.Id);
         EditarCommand.NotifyCanExecuteChanged();
+        AbrirCommand.NotifyCanExecuteChanged();
+        ExcluirCommand.NotifyCanExecuteChanged();
     }
 
     partial void OnParticipanteChanged(string value)
@@ -585,6 +589,7 @@ public abstract partial class DigitacaoDocumentoViewModel(IContexto contexto) : 
         if (online is { Sucesso: true, Valor.Contabilizados: > 0 }) await ListarAsync(app, empresa, usuario);
         Selecionada = Lista.FirstOrDefault(d => d.Id == r.Valor);
         Mensagem = "Nota gravada." + ImportacaoXmlViewModel.TextoContabilizacaoOnline(online);
+        DigitacaoAberta = false;   // fecha o pop-up; a nota gravada fica selecionada na consulta
         if (notaNova && CfopImobilizado.Itens(Operacao, doc.Itens).Count > 0
             && await Contexto.ConfirmarAsync("Ativo imobilizado",
                    "A nota tem itens com CFOP de ativo imobilizado. Cadastrar agora os bens no imobilizado do Contábil (já preenchidos com a nota, o fornecedor, a data e o valor)?",
@@ -735,6 +740,7 @@ public abstract partial class DigitacaoDocumentoViewModel(IContexto contexto) : 
         await CarregarDocumentoAsync(id);
         Selecionada = Lista.FirstOrDefault(d => d.Id == id);
         Mensagem = "Escrituração gravada.";
+        DigitacaoAberta = false;
     }, Permissao.FiscalDocumentosImportar);
 
     // ------------------------------------------------------------------ importação de XML na tela
@@ -778,10 +784,30 @@ public abstract partial class DigitacaoDocumentoViewModel(IContexto contexto) : 
         if (!r.Sucesso) { MostrarResultado(r, ""); return; }
         Lista.Remove(s);
         Novo();
+        DigitacaoAberta = false;
         Mensagem = "Nota excluída.";
     }, Permissao.FiscalDocumentosImportar);
 
     private bool TemSelecionada() => Selecionada is not null;
+
+    /// <summary>Consulta › Novo lançamento: abre a janela pop-up com a nota em branco.</summary>
+    [RelayCommand]
+    private void NovoLancamento()
+    {
+        Novo();
+        DigitacaoAberta = true;
+    }
+
+    /// <summary>Consulta › Abrir (duplo clique ou Enter): carrega a nota selecionada e abre a janela pop-up.</summary>
+    [RelayCommand(CanExecute = nameof(TemSelecionada))]
+    private async Task AbrirAsync()
+    {
+        await EditarAsync();
+        if (Erros.Count == 0) DigitacaoAberta = true;
+    }
+
+    [RelayCommand]
+    private void FecharDigitacao() => DigitacaoAberta = false;
 
     /// <summary>Busca a NF-e na SEFAZ pela chave de acesso (como no Portal da NF-e) e importa o XML completo.</summary>
     [RelayCommand]

@@ -300,7 +300,9 @@ public sealed class ServicoDocumentosFiscais(IRepositorioDocumentos repositorio,
                 {
                     var g = await lote.GravarAsync(doc, ident.Valor, ct);
                     if (g.Duplicado) return new(arquivo.Nome, SituacaoImportacao.Duplicado, "Documento já importado (mesma chave de acesso).", doc.Chave, doc.Numero, ident.Valor.Operacao, doc.Totais.Total, doc.DataLivro);
-                    var aviso = Math.Abs(doc.DiferencaItens) > 0.05m ? $" Atenção: a soma dos itens difere do total da nota em {Formato.Moeda(doc.DiferencaItens)}." : "";
+                    // conferência do XML (chave e itens): não impede a importação, mas avisa o que não confere
+                    var avisos = ConferenciaXml.Conferir(doc);
+                    var aviso = avisos.Count == 0 ? "" : " Confira: " + string.Join(" ", avisos.Take(6)) + (avisos.Count > 6 ? $" (e mais {avisos.Count - 6} aviso(s))" : "");
                     var part = g.ParticipanteCriado ? $" Participante cadastrado: {g.ParticipanteNome}." : "";
                     return new(arquivo.Nome, SituacaoImportacao.Importado,
                         $"{doc.Modelo.Rotulo()} {doc.Numero} ({ident.Valor.Operacao.Rotulo().ToLowerInvariant()}) importada.{part}{aviso}", doc.Chave, doc.Numero, ident.Valor.Operacao, doc.Totais.Total, doc.DataLivro,
