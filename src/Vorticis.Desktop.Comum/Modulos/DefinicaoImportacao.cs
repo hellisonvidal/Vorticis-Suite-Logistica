@@ -34,8 +34,9 @@ public sealed class ContextoImportacao(VorticisApp app, long empresa, long usuar
 /// Cadastro que aceita importação de planilha (Excel .xlsx ou CSV): os campos (com os nomes de coluna que o sistema reconhece sozinho)
 /// e como gravar uma linha. A gravação usa o serviço do cadastro, com as mesmas regras e permissões da tela.
 /// </summary>
+/// <param name="TelaCadastro">Tela do cadastro no menu: a importação aparece no mesmo submenu de Cadastros que ela.</param>
 public sealed record DefinicaoImportacao(string Chave, string Titulo, IReadOnlyList<CampoImportacao> Campos,
-                                         Func<ContextoImportacao, LinhaImportacao, Task<Resultado>> Gravar)
+                                         Func<ContextoImportacao, LinhaImportacao, Task<Resultado>> Gravar, string? TelaCadastro = null)
 {
     /// <summary>Chave da tela de importação deste cadastro (menu Cadastros › Importar de planilha).</summary>
     public string Tela => "importar." + Chave;

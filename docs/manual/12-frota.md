@@ -4,7 +4,7 @@ Módulo **Vorticis Frota** (ícone grafite): coordenação da frota e manutenç�
 
 ## Onde o Frota está
 
-O Frota é a base do **[Vorticis Suite Logística](13-logistica.md)**, o programa único da transportadora: ali, os menus **Operação** e **Manutenção** são os deste capítulo, e os relatórios da frota ficam no menu **Relatórios** (submenus *Frota e operação* e *Manutenção*), ao lado do financeiro e, no menu **Gerencial**, do contábil e da folha. O Vorticis Frota também pode ser aberto sozinho.
+O Frota é a base do **[Vorticis Suite Logística](13-logistica.md)**, o programa único da transportadora: ali, o menu **Operação** deste capítulo vira **Operações** (com a **Manutenção** como submenu, logo abaixo de *Compras*), e os relatórios da frota ficam no menu **Relatórios** (submenus *Frota e operação* e *Manutenção*), ao lado do financeiro e do contábil. O Vorticis Frota também pode ser aberto sozinho.
 
 ## Ordem dos cadastros
 
@@ -114,7 +114,7 @@ Embaixo ficam as decisões dos últimos 30 dias (quem decidiu, quando e o valor)
 
 ## Notas de compra
 
-**Onde fica:** no programa Frota, *Manutenção › Notas de compra*. No Vorticis Suite Logística esta tela não fica no menu: as notas das oficinas e das peças são lançadas como notas fiscais de entrada, em *Operações › Compras › Notas fiscais de entrada*.
+**Onde fica:** no programa Frota, *Manutenção › Notas de compra*. No Vorticis Suite Logística esta tela não fica no menu (lá a manutenção fica em *Operações › Manutenção*): as notas das oficinas e das peças são lançadas como notas fiscais de entrada, em *Operações › Compras › Notas fiscais de entrada*.
 
 1. **Nova nota**: escolha a **Ordem de serviço** atendida. A oficina da ordem vem como fornecedor, e embaixo aparece o valor da ordem para conferir com a nota.
 2. Informe o **Fornecedor**, o **CNPJ/CPF**, o **Número** e a **série**, a **Emissão** e, se tiver, a **Chave de acesso** de 44 dígitos (o sistema confere o dígito e se a chave é do CNPJ informado).

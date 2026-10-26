@@ -19,5 +19,6 @@ public static class ImportacoesContabeis
         new("descricao", "Descrição", true, "Pagamento de pedágio", "descricao", "historico", "texto"),
     ], async (c, l) => await c.App.Historicos.IncluirAsync(c.Empresa, l.Texto("codigo"), l.Texto("descricao") ?? "", c.Usuario));
 
-    public static IReadOnlyList<DefinicaoImportacao> Todas { get; } = [CentrosCusto, Historicos];
+    public static IReadOnlyList<DefinicaoImportacao> Todas { get; } =
+        [CentrosCusto with { TelaCadastro = ViewModels.Telas.CentrosCusto }, Historicos with { TelaCadastro = ViewModels.Telas.Historicos }];
 }

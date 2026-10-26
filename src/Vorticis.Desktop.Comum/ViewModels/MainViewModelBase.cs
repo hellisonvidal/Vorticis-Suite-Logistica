@@ -292,6 +292,19 @@ public abstract partial class MainViewModelBase : ObservableObject, IContexto, I
         yield return ItemMenu.Tela("Sair (trocar de usuário)", TelasComuns.Sair);
     }
 
+    /// <summary>
+    /// Em cada grupo de Cadastros (a lista principal e cada submenu), o item "Importar de planilha (Excel)" com os cadastros daquele grupo
+    /// que aceitam importação; grupo sem cadastro importável fica como está.
+    /// </summary>
+    private List<ItemMenu> ComImportacao(IEnumerable<ItemMenu> itens)
+    {
+        var lista = itens.Select(i => i.Filhos is { } f ? i with { Filhos = ComImportacao(f) } : i).ToList();
+        var chaves = lista.Where(i => i.Chave is not null).Select(i => i.Chave!).ToHashSet();
+        var defs = Importacoes.Where(d => d.TelaCadastro is { } t && chaves.Contains(t)).ToList();
+        if (defs.Count > 0) lista.AddRange([ItemMenu.Separador, ItemMenu.Submenu("Importar de _planilha (Excel)", [.. defs.Select(d => ItemMenu.Tela(d.Titulo, d.Tela))])]);
+        return lista;
+    }
+
     /// <summary>Menus do casco em volta dos do módulo.</summary>
     private IReadOnlyList<ItemMenu> MontarMenus()
     {
@@ -300,8 +313,7 @@ public abstract partial class MainViewModelBase : ObservableObject, IContexto, I
         if (Modulo.UsaCadastrosComuns && Modulo.UsaClientesFornecedores)
             cadastros.AddRange([ItemMenu.Tela("Clientes", TelasComuns.Clientes), ItemMenu.Tela("Fornecedores", TelasComuns.Fornecedores)]);
         if (Modulo.ItensCadastros.Count > 0) cadastros.AddRange(Modulo.ItensCadastros.Prepend(ItemMenu.Separador));
-        if (Importacoes.Count > 0)
-            cadastros.AddRange([ItemMenu.Separador, ItemMenu.Submenu("Importar de _planilha (Excel)", [.. Importacoes.Select(d => ItemMenu.Tela(d.Titulo, d.Tela))])]);
+        cadastros = ComImportacao(cadastros);
         cadastros.AddRange([ItemMenu.Separador, ItemMenu.Tela("Parâmetros", TelasComuns.Parametros)]);
         // O calendário de obrigações fica em "Obrigações", se o módulo tem esse menu; senão, em "Consultas";
         // sem nenhum dos dois, o casco cria o menu "Obrigações".

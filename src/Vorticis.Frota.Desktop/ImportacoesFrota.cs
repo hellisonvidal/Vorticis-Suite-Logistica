@@ -138,5 +138,10 @@ public static class ImportacoesFrota
         return await F(c).GravarTabelaFreteAsync(c.Empresa, t, c.Usuario);
     });
 
-    public static IReadOnlyList<DefinicaoImportacao> Todas { get; } = [Veiculos, Motoristas, Frotas, Rotas, TabelasFrete];
+    public static IReadOnlyList<DefinicaoImportacao> Todas { get; } =
+    [
+        Veiculos with { TelaCadastro = ViewModels.FrotaTelas.Veiculos }, Motoristas with { TelaCadastro = ViewModels.FrotaTelas.Motoristas },
+        Frotas with { TelaCadastro = ViewModels.FrotaTelas.Frotas }, Rotas with { TelaCadastro = ViewModels.FrotaTelas.Rotas },
+        TabelasFrete with { TelaCadastro = ViewModels.FrotaTelas.TabelasFrete },
+    ];
 }

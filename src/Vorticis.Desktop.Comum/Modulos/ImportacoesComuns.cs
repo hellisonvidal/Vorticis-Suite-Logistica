@@ -37,5 +37,6 @@ public static class ImportacoesComuns
     });
 
     public static IReadOnlyList<DefinicaoImportacao> Todas { get; } =
-        [Participantes("clientes", "Clientes", true), Participantes("fornecedores", "Fornecedores", false)];
+        [Participantes("clientes", "Clientes", true) with { TelaCadastro = ViewModels.TelasComuns.Clientes },
+         Participantes("fornecedores", "Fornecedores", false) with { TelaCadastro = ViewModels.TelasComuns.Fornecedores }];
 }

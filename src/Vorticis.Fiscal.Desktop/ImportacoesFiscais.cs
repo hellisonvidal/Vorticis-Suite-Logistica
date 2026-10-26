@@ -53,5 +53,6 @@ public static class ImportacoesFiscais
         return await svc.GravarAsync(c.Empresa, new NaturezaEntrada(0, codigo, l.Texto("descricao") ?? "", l.Texto("saida") ?? "", l.Texto("entrada") ?? ""), c.Usuario);
     });
 
-    public static IReadOnlyList<DefinicaoImportacao> Todas { get; } = [Produtos, Naturezas];
+    public static IReadOnlyList<DefinicaoImportacao> Todas { get; } =
+        [Produtos with { TelaCadastro = ViewModels.Telas.Produtos }, Naturezas with { TelaCadastro = ViewModels.Telas.Naturezas }];
 }

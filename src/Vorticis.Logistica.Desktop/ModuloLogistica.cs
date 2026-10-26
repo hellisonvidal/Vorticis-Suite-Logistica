@@ -84,13 +84,15 @@ public sealed class ModuloLogistica() : ModuloCombinado(Frota, Contabil, Fiscal,
             var relContabil = DaParte(Contabil, Topo(Contabil, "Relatórios")!.Filhos!);
             var operacao = DaParte(Frota, Frota.Menus.Where(m => Sem(m) == "Operação")).Single();
             var transporte = DaParte(Frota, Frota.Menus.Where(m => Sem(m) == "Emissão")).Single();
-            // Operações: a operação da frota e do transporte, mais compras, estoque e monitores (vindos do Gerencial)
+            // Operações: a operação da frota e do transporte, mais compras, a manutenção da frota (logo abaixo de Compras),
+            // estoque e monitores (vindos do Gerencial)
             ItemMenu Sub(ItemMenu m) => m with { Titulo = m.Titulo.Replace("_", "") };
+            var manutencao = DaParte(Frota, Frota.Menus.Where(m => Sem(m) == "Manutenção")).SingleOrDefault();
             return
             [
                 ItemMenu.Submenu("_Operações",
-                    [.. operacao.Filhos!, ItemMenu.Separador, .. new[] { G("Compras"), G("Estoque"), G("Monitores") }.Where(m => m is not null).Select(m => Sub(m!))]),
-                .. DaParte(Frota, Frota.Menus.Where(m => Sem(m) == "Manutenção")),
+                    [.. operacao.Filhos!, ItemMenu.Separador,
+                     .. new[] { G("Compras"), manutencao, G("Estoque"), G("Monitores") }.Where(m => m is not null).Select(m => Sub(m!))]),
                 // Emissão: as funções do Faturamento (pedidos de venda e notas de saída) e os documentos do TMS (cotações, CT-e, MDF-e e faturas de frete)
                 ItemMenu.Submenu("_Emissão",
                     [.. G("Faturamento")!.Filhos!, ItemMenu.Separador,
@@ -98,8 +100,7 @@ public sealed class ModuloLogistica() : ModuloCombinado(Frota, Contabil, Fiscal,
                      ItemMenu.EmBreve("Transmissão de CT-e e MDF-e à SEFAZ"),
                      ItemMenu.EmBreve("NFS-e – Nota fiscal de serviço (Padrão Nacional)")]),
                 ItemMenu.Submenu("_Financeiro", [.. financeiro.Filhos!]),
-                ItemMenu.Submenu("_Gerencial",
-                    Submenu("_Contábil", Contabil, m => Sem(m) != "Relatórios")),
+                Submenu("_Contábil", Contabil, m => Sem(m) != "Relatórios"),
                 ItemMenu.Submenu("_Relatórios",
                     ItemMenu.Submenu("_Frota e operação", [.. relOperacao]),
                     ItemMenu.Submenu("_Manutenção", [.. relManutencao]),
