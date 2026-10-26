@@ -20,6 +20,8 @@ public static class Telas
     public const string Encerramento = "encerramento";
     public const string Balanco = "balanco";
     public const string Dre = "dre";
+    public const string Filiais = "filiais";
+    public const string RelatorioGrupo = "relgrupo";
     public const string LivrosPdf = "livrospdf";
     public const string ImportacaoReferencial = "importacaoreferencial";
     public const string MapeamentoReferencial = "mapeamentoreferencial";

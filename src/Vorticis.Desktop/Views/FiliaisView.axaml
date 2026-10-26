@@ -1,0 +1,18 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             x:Class="Vorticis.Desktop.Views.FiliaisView" x:DataType="vm:FiliaisViewModel">
+  <StackPanel Margin="8" Spacing="8" MaxWidth="820" HorizontalAlignment="Left">
+    <TextBlock Classes="titulo" Text="Filiais (matriz e filiais)" />
+    <TextBlock Text="{Binding Situacao}" FontWeight="SemiBold" />
+    <StackPanel Orientation="Horizontal" Spacing="8" IsEnabled="{Binding PodeAlterar}">
+      <TextBlock Text="Esta empresa é filial de" VerticalAlignment="Center" />
+      <ComboBox ItemsSource="{Binding Matrizes}" SelectedItem="{Binding Matriz}" Width="460" PlaceholderText="(não é filial)" />
+      <Button Content="Gravar" Classes="accent" Command="{Binding GravarCommand}" />
+    </StackPanel>
+    <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+               Text="Só aparecem empresas com a mesma raiz de CNPJ (8 primeiros dígitos) que não são filiais de outra. Deixe em branco e grave para desligar. Cada filial continua com a sua escrituração; os relatórios de matriz e filiais ficam em Relatórios › Contábeis." />
+    <TextBlock FontWeight="SemiBold" Text="Empresas do grupo" Margin="0,6,0,0" />
+    <ListBox ItemsSource="{Binding Grupo}" MinHeight="120" />
+    <c:MensagensView />
+  </StackPanel>
+</UserControl>

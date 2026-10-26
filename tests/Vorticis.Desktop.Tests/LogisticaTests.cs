@@ -130,6 +130,7 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
                 new Frota.Desktop.ViewModels.OrdensViewModel(vm), new Frota.Desktop.ViewModels.VeiculosViewModel(vm),
                 new Fiscal.Desktop.ViewModels.ContasPagarViewModel(vm), new ViewModels.BalanceteViewModel(vm),
                 vm.ImportacaoCadastros,
+                new ViewModels.FiliaisViewModel(vm), new ViewModels.RelatorioGrupoViewModel(vm),
             ];
             foreach (var t in telas)
             {

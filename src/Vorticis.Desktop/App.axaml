@@ -21,6 +21,8 @@
     <DataTemplate DataType="vm:EncerramentoViewModel"><v:EncerramentoView /></DataTemplate>
     <DataTemplate DataType="vm:BalancoViewModel"><v:BalancoView /></DataTemplate>
     <DataTemplate DataType="vm:DreViewModel"><v:DreView /></DataTemplate>
+    <DataTemplate DataType="vm:FiliaisViewModel"><v:FiliaisView /></DataTemplate>
+    <DataTemplate DataType="vm:RelatorioGrupoViewModel"><v:RelatorioGrupoView /></DataTemplate>
     <DataTemplate DataType="vm:LivrosPdfViewModel"><v:LivrosPdfView /></DataTemplate>
     <DataTemplate DataType="vm:ImportacaoReferencialViewModel"><v:ImportacaoReferencialView /></DataTemplate>
     <DataTemplate DataType="vm:ImportacaoPlanoViewModel"><v:ImportacaoPlanoView /></DataTemplate>

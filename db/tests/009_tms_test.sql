@@ -64,4 +64,3 @@ BEGIN
     RAISE NOTICE 'OK: perfil Manutenção';
 END $$;
 
-\echo 'TODOS OS TESTES PASSARAM'

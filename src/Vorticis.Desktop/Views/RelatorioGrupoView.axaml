@@ -1,0 +1,36 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             x:Class="Vorticis.Desktop.Views.RelatorioGrupoView" x:DataType="vm:RelatorioGrupoViewModel">
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="Relatórios de matriz e filiais" />
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <ComboBox ItemsSource="{x:Static vm:RelatorioGrupoViewModel.Relatorios}" SelectedItem="{Binding Relatorio}" Width="260" />
+        <ComboBox ItemsSource="{x:Static vm:RelatorioGrupoViewModel.Formas}" SelectedItem="{Binding Forma}" Width="280" />
+        <TextBlock Text="Período" VerticalAlignment="Center" />
+        <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="135" />
+        <TextBlock Text="a" VerticalAlignment="Center" />
+        <CalendarDatePicker SelectedDate="{Binding Fim}" Width="135" />
+        <TextBlock Text="Nível" VerticalAlignment="Center" />
+        <ComboBox ItemsSource="{x:Static vm:RelatorioGrupoViewModel.Niveis}" SelectedItem="{Binding Nivel}" Width="70" />
+        <Button Content="Gerar" Command="{Binding GerarCommand}" Classes="accent" />
+        <Rectangle Width="1" Fill="#D0D5DD" Margin="6,4" />
+        <c:BarraExportacaoView />
+      </StackPanel>
+      <TextBlock Text="Empresas" FontWeight="SemiBold" />
+      <ItemsControl ItemsSource="{Binding Empresas}">
+        <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:EmpresaMarcada">
+            <CheckBox IsChecked="{Binding Marcada}" Content="{Binding Rotulo}" Margin="0,0,16,0" />
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>
+    <StackPanel DockPanel.Dock="Bottom" Margin="0,6,0,0">
+      <TextBlock Text="{Binding Resumo}" FontSize="11" Foreground="Gray" TextWrapping="Wrap" />
+      <c:MensagensView />
+    </StackPanel>
+    <DataGrid x:Name="Grade" ItemsSource="{Binding Linhas}" IsReadOnly="True" AutoGenerateColumns="False" FontFamily="Consolas, Menlo, monospace" />
+  </DockPanel>
+</UserControl>

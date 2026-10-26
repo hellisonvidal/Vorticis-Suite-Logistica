@@ -198,3 +198,5 @@ grafico.fretescliente=13-logistica.md#graficos
 grafico.pagarreceber=13-logistica.md#graficos
 grafico.saldoaberto=13-logistica.md#graficos
 grafico.resultadomes=13-logistica.md#graficos
+filiais=03-contabil.md#matriz-e-filiais
+relgrupo=03-contabil.md#relatorios-de-matriz-e-filiais
