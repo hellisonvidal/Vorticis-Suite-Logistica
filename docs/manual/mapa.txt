@@ -74,7 +74,7 @@ ecf=04-auditoria.md#ecf-escrituracao-contabil-fiscal
 
 ; ---- Fiscal
 produtos=05-fiscal.md#produtos
-naturezas=05-fiscal.md#naturezas-de-entrada
+regrasfiscais=05-fiscal.md#regras-fiscais
 notaentrada=05-fiscal.md#documentos-de-entrada-e-de-saida-digitacao
 notasaida=05-fiscal.md#documentos-de-entrada-e-de-saida-digitacao
 importacaoxml=05-fiscal.md#importacao-de-xml-nf-e-nfc-e-nfs-e
@@ -185,7 +185,7 @@ importar.frotas=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel
 importar.rotas=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel
 importar.tabelasfrete=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel
 importar.produtos=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel
-importar.naturezas=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel
+importar.regrasfiscais=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel
 importar.centroscusto=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel
 importar.historicos=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel
 ; ---- gráficos

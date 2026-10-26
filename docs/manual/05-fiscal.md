@@ -11,23 +11,28 @@ Menus do módulo Vorticis Fiscal. As escriturações usam os cadastros de client
 2. Informe os padrões fiscais: CFOP e CST de entrada e de saída, e as alíquotas de ICMS, IPI, PIS e COFINS.
 3. **Salvar**. O filtro busca por descrição, código, GTIN ou NCM; *Somente ativos* esconde os inativos.
 
-## Naturezas de entrada
+## Regras fiscais
 
-**Para que serve:** dizer ao sistema qual CFOP de entrada usar para cada CFOP de saída que vem no XML do fornecedor. O fornecedor emite a nota com o CFOP **dele** (por exemplo, 5102 – venda); na escrituração da sua entrada o CFOP é outro (1102 – compra para comercialização). A natureza faz essa troca sozinha.
+**Para que serve:** fazer o **de/para do CFOP** das notas importadas, de entrada e de saída, para que o CFOP certo da escrituração já venha preenchido na importação do XML.
+- **Entrada:** o fornecedor emite a nota com o CFOP **dele** (por exemplo, 5102 – venda); na escrituração da sua entrada o CFOP é outro (1102 – compra para comercialização). A regra faz essa troca sozinha.
+- **Saída:** se a sua empresa escritura uma nota de saída com CFOP diferente do que saiu no XML, a regra de saída faz a troca (por exemplo, 5102 → 5405).
+- Se quiser, a regra também define os **CSTs** do ICMS, do PIS e da COFINS; em branco, ficam os do XML.
 
-**Onde fica:** *Cadastros › Naturezas de entrada* (no Vorticis Suite Logística: *Cadastros › Gerencial › Naturezas de entrada*).
+**Onde fica:** *Cadastros › Regras fiscais* (no Vorticis Suite Logística: *Cadastros › Gerencial › Regras fiscais*). As antigas *Naturezas de entrada* viraram regras de entrada, com os mesmos códigos.
 
 **Como usar:**
-1. Clique em **Incluir naturezas sugeridas** para começar com as trocas mais comuns (5101 → 1101, 5102 → 1102, 6102 → 2102, 5405 → 1403, 5353 → 1353, 5949 → 1949...). Confira se valem para a operação da sua empresa (pergunte ao contador em caso de dúvida).
-2. Para incluir ou mudar uma: **Nova natureza**, escreva a **Descrição**, o **CFOP de saída (XML)** e o **CFOP de entrada** e clique em **Gravar**.
-   - O CFOP de saída pode ser completo (**5102**) ou só o começo (**51** vale para todos os 51xx). Quando duas naturezas servem, vale a mais específica (5102 vence 51).
-   - Desmarque **Ativa** para parar de usar uma natureza sem excluí-la.
-3. Em **Testar um CFOP de saída**, digite um CFOP para ver como ele entra.
+1. Clique em **Incluir regras sugeridas** para começar com as trocas de entrada mais comuns (5101 → 1101, 5102 → 1102, 6102 → 2102, 5405 → 1403, 5353 → 1353, 5949 → 1949...). Confira se valem para a operação da sua empresa (pergunte ao contador em caso de dúvida).
+2. Para incluir ou mudar uma: **Nova regra**, escreva a **Descrição**, escolha a **Operação** (*Entrada* ou *Saída*), informe o **CFOP do XML** e o **CFOP da escrituração** e, se quiser, os CSTs; clique em **Gravar**.
+   - O CFOP do XML pode ser completo (**5102**) ou só o começo (**51** vale para todos os 51xx). Quando duas regras servem, vale a mais específica (5102 vence 51).
+   - Na entrada, o CFOP da escrituração começa por 1, 2 ou 3; na saída, por 5, 6 ou 7.
+   - Desmarque **Ativa** para parar de usar uma regra sem excluí-la.
+3. Em **Testar um CFOP do XML**, escolha a operação e digite um CFOP para ver como ele será escriturado.
+
+As regras também podem vir de uma planilha: *Cadastros › Gerencial › Importar de planilha (Excel) › Regras fiscais* (coluna *Operação* com E ou S; vazia = entrada).
 
 **Quando a troca acontece:**
-- Na **importação de XML** de nota de entrada (arquivo, pasta ou pela chave): cada item recebe o CFOP de entrada da natureza; o CFOP do XML fica guardado e aparece na coluna *CFOP (XML)*. Item sem natureza fica com o CFOP que veio, para você ajustar.
-- Nas notas já importadas: abra a nota, vá à aba **Escrituração** e clique em **Aplicar naturezas**; depois, **Gravar escrituração**.
-- As notas de saída não mudam.
+- Na **importação de XML** (arquivo, pasta ou pela chave): cada item recebe o CFOP (e os CSTs preenchidos) da regra da operação da nota; o CFOP do XML fica guardado e aparece na coluna *CFOP (XML)*. Item sem regra fica com o CFOP que veio, para você ajustar.
+- Nas notas já importadas: abra a nota, vá à aba **Escrituração** e clique em **Aplicar regras fiscais**; depois, **Gravar escrituração**.
 
 ## Documentos de entrada e de saída (digitação)
 

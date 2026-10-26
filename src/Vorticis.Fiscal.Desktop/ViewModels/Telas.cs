@@ -30,7 +30,7 @@ public static class Telas
     public const string NotaSaida = "notasaida";
     public const string BensDaNota = "bensdanota";
     public const string Produtos = "produtos";
-    public const string Naturezas = "naturezas";
+    public const string RegrasFiscais = "regrasfiscais";
     public const string RelProdutos = "relprodutos";
     public const string RelItensNotas = "relitensnotas";
     public const string Duplicatas = "duplicatas";

@@ -19,7 +19,7 @@
     <DataTemplate DataType="vm:NotaEntradaViewModel"><v:DigitacaoDocumentoView /></DataTemplate>
     <DataTemplate DataType="vm:NotaSaidaViewModel"><v:DigitacaoDocumentoView /></DataTemplate>
     <DataTemplate DataType="vm:ProdutosViewModel"><v:ProdutosView /></DataTemplate>
-    <DataTemplate DataType="vm:NaturezasViewModel"><v:NaturezasView /></DataTemplate>
+    <DataTemplate DataType="vm:RegrasFiscaisViewModel"><v:RegrasFiscaisView /></DataTemplate>
     <DataTemplate DataType="vm:RelatorioProdutosViewModel"><v:RelatorioProdutosView /></DataTemplate>
     <DataTemplate DataType="vm:RelatorioItensNotasViewModel"><v:RelatorioItensNotasView /></DataTemplate>
     <DataTemplate DataType="vm:ResumoCfopViewModel"><v:ResumoCfopView /></DataTemplate>

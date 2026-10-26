@@ -230,9 +230,9 @@
             <StackPanel Grid.Column="3" Classes="campo"><TextBlock Classes="rot" Text="Observações" /><TextBox Text="{Binding Observacoes}" AcceptsReturn="True" MaxHeight="52" TextWrapping="Wrap" /></StackPanel>
           </Grid>
           <StackPanel Orientation="Horizontal" Spacing="6">
-            <Button Classes="mini" Content="Aplicar naturezas" Command="{Binding AplicarNaturezasCommand}"
-                    ToolTip.Tip="Troca o CFOP de saída de cada item (o que veio no XML) pelo CFOP de entrada do cadastro Naturezas de entrada" />
-            <TextBlock Text="CFOP de saída do fornecedor → CFOP de entrada, pelo cadastro de naturezas" FontSize="11" Foreground="#5A6478" VerticalAlignment="Center" />
+            <Button Classes="mini" Content="Aplicar regras fiscais" Command="{Binding AplicarRegrasFiscaisCommand}"
+                    ToolTip.Tip="Troca o CFOP de cada item (o que veio no XML) pelo da escrituração, conforme o cadastro Regras fiscais" />
+            <TextBlock Text="CFOP do XML → CFOP da escrituração (e CSTs), pelo cadastro de regras fiscais" FontSize="11" Foreground="#5A6478" VerticalAlignment="Center" />
           </StackPanel>
           <DataGrid g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Itens}" SelectedItem="{Binding ItemSelecionado}" IsReadOnly="True" AutoGenerateColumns="False" Height="150">
             <DataGrid.Columns>

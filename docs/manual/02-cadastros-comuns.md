@@ -87,7 +87,7 @@ Se o seu perfil não permite alterar, a tela só mostra os valores. Se você ape
 
 **Para que serve:** trazer de uma vez os cadastros que você já tem numa planilha (de outro sistema ou feita à mão), sem digitar um por um.
 
-**Onde fica:** no próprio grupo do cadastro, no menu *Cadastros*: cada grupo tem o item **Importar de planilha (Excel)** só com os cadastros dele. No Vorticis Suite Logística: *Cadastros › Importar de planilha (Excel)* para clientes, fornecedores, veículos, motoristas, frotas, rotas e tabelas de frete; *Cadastros › Gerencial › Importar de planilha (Excel)* para produtos e naturezas de entrada; *Cadastros › Contábil › Importar de planilha (Excel)* para centros de custo e históricos padrão. O plano de contas tem importação própria (*Integrações › Importar › Plano de contas*).
+**Onde fica:** no próprio grupo do cadastro, no menu *Cadastros*: cada grupo tem o item **Importar de planilha (Excel)** só com os cadastros dele. No Vorticis Suite Logística: *Cadastros › Importar de planilha (Excel)* para clientes, fornecedores, veículos, motoristas, frotas, rotas e tabelas de frete; *Cadastros › Gerencial › Importar de planilha (Excel)* para produtos e regras fiscais; *Cadastros › Contábil › Importar de planilha (Excel)* para centros de custo e históricos padrão. O plano de contas tem importação própria (*Integrações › Importar › Plano de contas*).
 
 **Como usar:**
 1. Escolha o cadastro no menu. Se ainda não tem planilha, clique em **Gerar planilha modelo**: o sistema cria um .xlsx com as colunas do cadastro e uma linha de exemplo.

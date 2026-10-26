@@ -61,7 +61,7 @@ public class ImportacaoCadastrosTests(BancoDeTeste db) : IClassFixture<BancoDeTe
     }
 
     [Fact]
-    public async Task Clientes_produtos_e_naturezas_pela_planilha()
+    public async Task Clientes_produtos_e_regras_fiscais_pela_planilha()
     {
         BancoDeTeste.ExigirBanco();
         var ct = TestContext.Current.CancellationToken;
@@ -78,8 +78,12 @@ public class ImportacaoCadastrosTests(BancoDeTeste db) : IClassFixture<BancoDeTe
         Assert.Empty(await Importar(ctx, fiscais["produtos"], "Descrição;Unidade;NCM;Tipo do item\nÓleo diesel S10;l;27101921;7"));
         var prod = (await Vorticis.Fiscal.VorticisAppFiscalExtensions.Fiscal(db.App).Produtos.ListarAsync(empresa, false, null, adm, ct)).Valor.Single();
         Assert.Equal((1, "L", "07"), (prod.Codigo, prod.Unidade, prod.TipoItem));
-        Assert.Empty(await Importar(ctx, fiscais["naturezas"], "Descrição;CFOP de saída;CFOP de entrada\nCompra;5102;1102"));
-        Assert.Contains("CFOP de entrada", (await Importar(ctx, fiscais["naturezas"], "Descrição;CFOP de saída;CFOP de entrada\nErrada;6102;6102")).Single());
+        Assert.Empty(await Importar(ctx, fiscais["regrasfiscais"], "Descrição;CFOP de saída;CFOP de entrada\nCompra;5102;1102"));
+        Assert.Contains("(entrada)", (await Importar(ctx, fiscais["regrasfiscais"], "Descrição;CFOP de saída;CFOP de entrada\nErrada;6102;6102")).Single());
+        // regra de saída, com o CST do ICMS
+        Assert.Empty(await Importar(ctx, fiscais["regrasfiscais"], "Descrição;Operação;CFOP do XML;CFOP da escrituração;CST do ICMS\nVenda ST;Saída;5102;5405;060"));
+        var venda = (await Vorticis.Fiscal.VorticisAppFiscalExtensions.Fiscal(db.App).RegrasFiscais.ListarAsync(empresa, adm, ct)).Single(r => r.Descricao == "Venda ST");
+        Assert.Equal((Vorticis.Fiscal.Documentos.TipoOperacao.Saida, "5405", "060"), (venda.Operacao, venda.CfopDestino, venda.CstIcms));
 
         // o de-para fica gravado por empresa e cadastro (e é substituído ao gravar de novo)
         var layouts = new Vorticis.Infra.Importacao.ServicoLayoutsPlanilha(db.App.DataSource);

@@ -726,19 +726,25 @@ public abstract partial class DigitacaoDocumentoViewModel(IContexto contexto) : 
         Mensagem = $"Item {novo.Numero} atualizado na tela. Clique em \"Gravar escrituração\" para salvar.";
     });
 
-    /// <summary>Escrituração › Aplicar naturezas: troca o CFOP de saída de cada item (o do XML) pelo de entrada do cadastro de naturezas.</summary>
+    /// <summary>
+    /// Escrituração › Aplicar regras fiscais: troca o CFOP de cada item (o do XML) pelo da escrituração, conforme as regras fiscais da operação
+    /// (entrada ou saída), e os CSTs que a regra tiver.
+    /// </summary>
     [RelayCommand]
-    private Task AplicarNaturezasAsync() => ExecutarAsync(async (app, empresa, usuario) =>
+    private Task AplicarRegrasFiscaisAsync() => ExecutarAsync(async (app, empresa, usuario) =>
     {
-        if (Operacao != TipoOperacao.Entrada) { Erros.Add("As naturezas valem para as notas de entrada."); return; }
-        var regras = await app.Fiscal().Naturezas.RegrasAsync(empresa);
-        if (regras.Count == 0) { Erros.Add("Não há naturezas cadastradas (Cadastros › Naturezas de entrada)."); return; }
-        var novos = RegrasNaturezas.Aplicar(Itens.Select(i => i.Item), regras);
+        var regras = (await app.Fiscal().RegrasFiscais.RegrasAsync(empresa)).Where(r => r.Operacao == Operacao).ToList();
+        if (regras.Count == 0)
+        {
+            Erros.Add($"Não há regras fiscais de {(Operacao == TipoOperacao.Entrada ? "entrada" : "saída")} cadastradas (Cadastros › Regras fiscais).");
+            return;
+        }
+        var novos = RegrasFiscais.Aplicar(Itens.Select(i => i.Item), Operacao, regras);
         var trocados = 0;
         for (var k = 0; k < Itens.Count; k++)
-            if (novos[k].Cfop != Itens[k].Item.Cfop) { Itens[k] = Linha(novos[k]); trocados++; }
-        Mensagem = trocados == 0 ? "Nenhum item mudou: os CFOPs já estão como as naturezas mandam (ou não há natureza para eles)."
-                 : $"{trocados} item(ns) com o CFOP de entrada das naturezas. Clique em \"{(Importada ? "Gravar escrituração" : "Gravar nota")}\" para salvar.";
+            if (novos[k] != Itens[k].Item) { Itens[k] = Linha(novos[k]); trocados++; }
+        Mensagem = trocados == 0 ? "Nenhum item mudou: os CFOPs já estão como as regras fiscais mandam (ou não há regra para eles)."
+                 : $"{trocados} item(ns) ajustado(s) pelas regras fiscais. Clique em \"{(Importada ? "Gravar escrituração" : "Gravar nota")}\" para salvar.";
     }, Permissao.FiscalDocumentosImportar);
 
     /// <summary>Grava somente a escrituração da nota importada: CFOP, produto e centro de custo dos itens, centro de custo da nota, contas e observações.</summary>

@@ -5,7 +5,7 @@ using Vorticis.Fiscal.Produtos;
 
 namespace Vorticis.Fiscal.Desktop;
 
-/// <summary>Importação de planilha dos cadastros fiscais/gerenciais: produtos e naturezas de entrada.</summary>
+/// <summary>Importação de planilha dos cadastros fiscais/gerenciais: produtos e regras fiscais.</summary>
 public static class ImportacoesFiscais
 {
     private static readonly DefinicaoImportacao Produtos = new("produtos", "Produtos",
@@ -39,20 +39,27 @@ public static class ImportacoesFiscais
         return await svc.GravarAsync(c.Empresa, p, c.Usuario);
     });
 
-    private static readonly DefinicaoImportacao Naturezas = new("naturezas", "Naturezas de entrada",
+    private static readonly DefinicaoImportacao RegrasFiscais = new("regrasfiscais", "Regras fiscais",
     [
         new("codigo", "Código", false, "1", "cod"),
-        new("descricao", "Descrição", true, "Compra para comercialização", "descricao", "natureza", "nome"),
-        new("saida", "CFOP de saída (XML)", true, "5102", "cfop_saida", "cfop_xml", "cfop_fornecedor"),
-        new("entrada", "CFOP de entrada", true, "1102", "cfop_entrada"),
+        new("descricao", "Descrição", true, "Compra para comercialização", "descricao", "natureza", "nome", "regra"),
+        new("operacao", "Operação (E = entrada, S = saída)", false, "E", "operacao", "tipo", "entrada_saida"),
+        new("origem", "CFOP do XML", true, "5102", "cfop_xml", "cfop_saida", "CFOP de saída", "cfop_origem", "cfop_fornecedor", "de"),
+        new("destino", "CFOP da escrituração", true, "1102", "cfop_escrituracao", "cfop_entrada", "CFOP de entrada", "cfop_destino", "para"),
+        new("csticms", "CST do ICMS", false, "00", "cst_icms"),
+        new("cstpis", "CST do PIS", false, "50", "cst_pis"),
+        new("cstcofins", "CST da COFINS", false, "50", "cst_cofins"),
     ], async (c, l) =>
     {
-        var svc = c.App.Fiscal().Naturezas;
+        var svc = c.App.Fiscal().RegrasFiscais;
         var codigo = l.Inteiro("codigo") is { } cod and > 0 ? cod
-            : await c.ProximoCodigoAsync("naturezas", async () => (await svc.ListarAsync(c.Empresa, c.Usuario)).Select(n => n.Codigo).DefaultIfEmpty(0).Max());
-        return await svc.GravarAsync(c.Empresa, new NaturezaEntrada(0, codigo, l.Texto("descricao") ?? "", l.Texto("saida") ?? "", l.Texto("entrada") ?? ""), c.Usuario);
+            : await c.ProximoCodigoAsync("regrasfiscais", async () => (await svc.ListarAsync(c.Empresa, c.Usuario)).Select(n => n.Codigo).DefaultIfEmpty(0).Max());
+        // operação: S/Saída/Saida; vazio ou E/Entrada = entrada
+        var op = l.Texto("operacao")?.ToUpperInvariant() is { } o && o.StartsWith('S') ? TipoOperacao.Saida : TipoOperacao.Entrada;
+        return await svc.GravarAsync(c.Empresa, new RegraFiscal(0, codigo, l.Texto("descricao") ?? "", op, l.Texto("origem") ?? "", l.Texto("destino") ?? "",
+                                                                l.Texto("csticms"), l.Texto("cstpis"), l.Texto("cstcofins")), c.Usuario);
     });
 
     public static IReadOnlyList<DefinicaoImportacao> Todas { get; } =
-        [Produtos with { TelaCadastro = ViewModels.Telas.Produtos }, Naturezas with { TelaCadastro = ViewModels.Telas.Naturezas }];
+        [Produtos with { TelaCadastro = ViewModels.Telas.Produtos }, RegrasFiscais with { TelaCadastro = ViewModels.Telas.RegrasFiscais }];
 }

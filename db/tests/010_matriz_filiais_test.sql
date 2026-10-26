@@ -15,4 +15,3 @@ BEGIN
     RAISE NOTICE 'OK: matriz e filiais';
 END $$;
 
-\echo 'TODOS OS TESTES PASSARAM'

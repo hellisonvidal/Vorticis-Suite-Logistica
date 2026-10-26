@@ -123,7 +123,7 @@ public sealed record ResultadoImportacao(IReadOnlyList<ResultadoArquivo> Arquivo
 /// a permissão do usuário na empresa antes de qualquer outra regra.
 /// </summary>
 public sealed class ServicoDocumentosFiscais(IRepositorioDocumentos repositorio, Autorizador autorizador,
-                                             Func<long, CancellationToken, Task<List<NaturezaEntrada>>>? naturezas = null)
+                                             Func<long, CancellationToken, Task<List<RegraFiscal>>>? regrasFiscais = null)
 {
     // ------------------------------------------------------------------ importação
 
@@ -141,8 +141,8 @@ public sealed class ServicoDocumentosFiscais(IRepositorioDocumentos repositorio,
         if (await autorizador.NegarAsync<ResultadoImportacao>(usuarioId, empresaId, Permissao.FiscalDocumentosImportar, CancellationToken.None) is { } negado) return negado;
         var empresa = await repositorio.ObterEmpresaAsync(empresaId, CancellationToken.None);   // cancelar antes de começar não é erro: resulta em importação interrompida
         if (empresa is null) return Resultado<ResultadoImportacao>.Falha("Empresa não encontrada.");
-        // naturezas das notas de entrada (CFOP de saída → entrada), lidas uma vez por importação
-        IReadOnlyList<NaturezaEntrada> regras = naturezas is null ? [] : await naturezas(empresaId, CancellationToken.None);
+        // regras fiscais (de/para de CFOP de entrada e de saída), lidas uma vez por importação
+        IReadOnlyList<RegraFiscal> regras = regrasFiscais is null ? [] : await regrasFiscais(empresaId, CancellationToken.None);
 
         var resultados = new List<ResultadoArquivo>();
         var lote = new LoteAberto(repositorio, empresaId, usuarioId);
@@ -274,7 +274,7 @@ public sealed class ServicoDocumentosFiscais(IRepositorioDocumentos repositorio,
         }
     }
 
-    private async Task<ResultadoArquivo> ImportarUmAsync(EmpresaFiscal empresa, ArquivoXml arquivo, LoteAberto lote, IReadOnlyList<NaturezaEntrada> naturezas, CancellationToken ct)
+    private async Task<ResultadoArquivo> ImportarUmAsync(EmpresaFiscal empresa, ArquivoXml arquivo, LoteAberto lote, IReadOnlyList<RegraFiscal> regras, CancellationToken ct)
     {
         if (arquivo.Conteudo.Length == 0) return new(arquivo.Nome, SituacaoImportacao.Erro, "Arquivo vazio ou ilegível.");
         var leitura = LeitorXmlFiscal.Ler(arquivo.Conteudo);
@@ -299,9 +299,9 @@ public sealed class ServicoDocumentosFiscais(IRepositorioDocumentos repositorio,
                 var doc = lido.Documento;
                 var ident = IdentificadorOperacao.Identificar(doc, empresa.Cnpjs);
                 if (!ident.Sucesso) return new(arquivo.Nome, SituacaoImportacao.OutraEmpresa, string.Join(" ", ident.Erros), doc.Chave, doc.Numero);
-                // nota de entrada: as naturezas trocam o CFOP de saída do emitente pelo de entrada (o do XML fica como original)
-                if (ident.Valor.Operacao == TipoOperacao.Entrada && naturezas.Count > 0)
-                    doc = doc with { Itens = RegrasNaturezas.Aplicar(doc.Itens, naturezas) };
+                // regras fiscais da operação: trocam o CFOP do XML (e os CSTs, se a regra os tem) pelo da escrituração; o do XML fica como original
+                if (regras.Count > 0)
+                    doc = doc with { Itens = RegrasFiscais.Aplicar(doc.Itens, ident.Valor.Operacao, regras) };
                 try
                 {
                     var g = await lote.GravarAsync(doc, ident.Valor, ct);

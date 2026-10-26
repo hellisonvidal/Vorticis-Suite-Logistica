@@ -69,7 +69,7 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
         string[] ImportaveisDe(IReadOnlyList<ItemMenu> grupo) => [.. grupo.Single(i => i.Titulo == Importar).Filhos!.Select(i => i.Titulo)];
         var cadastros = vm.Menus[0].Filhos!;
         Assert.Equal(["Clientes", "Fornecedores", "Veículos", "Motoristas", "Frotas", "Rotas", "Tabelas de frete"], ImportaveisDe(cadastros));
-        Assert.Equal(["Produtos", "Naturezas de entrada"], ImportaveisDe(cadastros.Single(i => i.Titulo == "_Gerencial").Filhos!));
+        Assert.Equal(["Produtos", "Regras fiscais"], ImportaveisDe(cadastros.Single(i => i.Titulo == "_Gerencial").Filhos!));
         Assert.Equal(["Centros de custo", "Históricos padrão"], ImportaveisDe(cadastros.Single(i => i.Titulo == "_Contábil").Filhos!));
         Assert.All(Folhas(cadastros).Where(i => i.Chave?.StartsWith("importar.") == true), i => Assert.True(vm.ConheceTela(i.Chave!), i.Chave));
         Assert.Equal(11, Folhas(cadastros).Count(i => i.Chave?.StartsWith("importar.") == true));
