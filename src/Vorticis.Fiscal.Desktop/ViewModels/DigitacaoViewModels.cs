@@ -726,6 +726,21 @@ public abstract partial class DigitacaoDocumentoViewModel(IContexto contexto) : 
         Mensagem = $"Item {novo.Numero} atualizado na tela. Clique em \"Gravar escrituração\" para salvar.";
     });
 
+    /// <summary>Escrituração › Aplicar naturezas: troca o CFOP de saída de cada item (o do XML) pelo de entrada do cadastro de naturezas.</summary>
+    [RelayCommand]
+    private Task AplicarNaturezasAsync() => ExecutarAsync(async (app, empresa, usuario) =>
+    {
+        if (Operacao != TipoOperacao.Entrada) { Erros.Add("As naturezas valem para as notas de entrada."); return; }
+        var regras = await app.Fiscal().Naturezas.RegrasAsync(empresa);
+        if (regras.Count == 0) { Erros.Add("Não há naturezas cadastradas (Cadastros › Naturezas de entrada)."); return; }
+        var novos = RegrasNaturezas.Aplicar(Itens.Select(i => i.Item), regras);
+        var trocados = 0;
+        for (var k = 0; k < Itens.Count; k++)
+            if (novos[k].Cfop != Itens[k].Item.Cfop) { Itens[k] = Linha(novos[k]); trocados++; }
+        Mensagem = trocados == 0 ? "Nenhum item mudou: os CFOPs já estão como as naturezas mandam (ou não há natureza para eles)."
+                 : $"{trocados} item(ns) com o CFOP de entrada das naturezas. Clique em \"{(Importada ? "Gravar escrituração" : "Gravar nota")}\" para salvar.";
+    }, Permissao.FiscalDocumentosImportar);
+
     /// <summary>Grava somente a escrituração da nota importada: CFOP, produto e centro de custo dos itens, centro de custo da nota, contas e observações.</summary>
     [RelayCommand]
     private Task SalvarEscrituracaoAsync() => ExecutarAsync(async (app, empresa, usuario) =>

@@ -74,6 +74,7 @@ ecf=04-auditoria.md#ecf-escrituracao-contabil-fiscal
 
 ; ---- Fiscal
 produtos=05-fiscal.md#produtos
+naturezas=05-fiscal.md#naturezas-de-entrada
 notaentrada=05-fiscal.md#documentos-de-entrada-e-de-saida-digitacao
 notasaida=05-fiscal.md#documentos-de-entrada-e-de-saida-digitacao
 importacaoxml=05-fiscal.md#importacao-de-xml-nf-e-nfc-e-nfs-e

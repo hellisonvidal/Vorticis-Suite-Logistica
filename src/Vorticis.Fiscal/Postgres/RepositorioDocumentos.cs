@@ -132,13 +132,13 @@ public sealed class RepositorioDocumentos(NpgsqlDataSource ds) : IRepositorioDoc
                     INSERT INTO fiscal.documento_item (documento_id, n_item, cod_produto, descricao, ncm, cest, cfop, unidade, quantidade, valor_unitario,
                         valor_produto, valor_desconto, valor_frete, valor_seguro, valor_outras, valor_contabil, cst_icms, origem_mercadoria,
                         vl_bc_icms, aliq_icms, vl_icms, vl_bc_icms_st, vl_icms_st, cst_ipi, vl_bc_ipi, aliq_ipi, vl_ipi,
-                        cst_pis, vl_bc_pis, aliq_pis, vl_pis, cst_cofins, vl_bc_cofins, aliq_cofins, vl_cofins, vl_bc_iss, aliq_iss, vl_iss, produto_id, gtin)
+                        cst_pis, vl_bc_pis, aliq_pis, vl_pis, cst_cofins, vl_bc_cofins, aliq_cofins, vl_cofins, vl_bc_iss, aliq_iss, vl_iss, produto_id, gtin, cfop_escrituracao)
                     VALUES (@d, @n, @cod, @desc, @ncm, @cest, @cfop, @un, @qtd, @vu, @vp, @vd, @vf, @vs, @vo, @vc, @cst, @orig,
                         @bc, @aliq, @icms, @bcst, @st, @cipi, @bcipi, @aipi, @ipi, @cpis, @bcpis, @apis, @pis, @ccof, @bccof, @acof, @cof,
-                        @bciss, @aiss, @iss, @prod, @gtin)
+                        @bciss, @aiss, @iss, @prod, @gtin, @cfesc)
                     """, con, tx)
                     .Com("d", documentoId).Com("n", i.Numero).ComTexto("cod", Cortar(i.CodProduto, 60)).ComTexto("desc", Cortar(i.Descricao, 500))
-                    .ComTexto("ncm", Cortar(i.Ncm, 8)).ComTexto("cest", Cortar(i.Cest, 7)).Com("cfop", Cortar(i.Cfop, 10) ?? "").ComTexto("un", Cortar(i.Unidade, 10))
+                    .ComTexto("ncm", Cortar(i.Ncm, 8)).ComTexto("cest", Cortar(i.Cest, 7)).Com("cfop", Cortar(i.CfopOriginal ?? i.Cfop, 10) ?? "").ComTexto("un", Cortar(i.Unidade, 10))
                     .Com("qtd", i.Quantidade).Com("vu", i.ValorUnitario).Com("vp", i.ValorProduto).Com("vd", i.Desconto).Com("vf", i.Frete)
                     .Com("vs", i.Seguro).Com("vo", i.Outras).Com("vc", i.ValorContabil)
                     .ComTexto("cst", Cortar(i.CstIcms, 4)).ComTexto("orig", Cortar(i.Origem, 1))
@@ -147,7 +147,8 @@ public sealed class RepositorioDocumentos(NpgsqlDataSource ds) : IRepositorioDoc
                     .ComTexto("cpis", Cortar(i.CstPis, 2)).Com("bcpis", i.BcPis).Com("apis", i.AliqPis).Com("pis", i.Pis)
                     .ComTexto("ccof", Cortar(i.CstCofins, 2)).Com("bccof", i.BcCofins).Com("acof", i.AliqCofins).Com("cof", i.Cofins)
                     .Com("bciss", i.BcIss).Com("aiss", i.AliqIss).Com("iss", i.Iss)
-                    .Com("prod", NpgsqlDbType.Bigint, produtoId).ComTexto("gtin", i.Gtin);
+                    .Com("prod", NpgsqlDbType.Bigint, produtoId).ComTexto("gtin", i.Gtin)
+                    .ComTexto("cfesc", i.CfopOriginal is null ? null : Cortar(i.Cfop, 10));   // CFOP de entrada dado pela natureza
                 await item.ExecuteNonQueryAsync(ct);
             }
 

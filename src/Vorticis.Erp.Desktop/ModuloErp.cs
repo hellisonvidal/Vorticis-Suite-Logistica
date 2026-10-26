@@ -25,6 +25,7 @@ public sealed class ModuloErp : IModuloDesktop
     public IReadOnlyList<ItemMenu> ItensCadastros { get; } =
     [
         ItemMenu.Tela("Produtos", F.Telas.Produtos),
+        ItemMenu.Tela("Naturezas de entrada", F.Telas.Naturezas),
         ItemMenu.Tela("Formas de pagamento", TelasComuns.FormasPagamento),
         ItemMenu.Tela("Contas bancárias", TelasComuns.ContasBancarias),
     ];
@@ -107,6 +108,9 @@ public sealed class ModuloErp : IModuloDesktop
             .Tela(F.Telas.ContasReceber, "Financeiro › Contas a receber", m => m.Pode(Permissao.FiscalDocumentosConsultar), v => v.CarregarAsync());
         c.Instancia("ConciliacaoDuplicatas", m => new F.ConciliacaoDuplicatasViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes())
             .Tela(F.Telas.ConciliacaoDuplicatas, "Financeiro › Conciliação bancária", m => m.Pode(Permissao.FiscalDuplicatasBaixar));
+        c.Instancia("Naturezas", m => new F.NaturezasViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
+                    aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
+            .Tela(F.Telas.Naturezas, "Cadastros › Naturezas de entrada", m => m.Pode(Permissao.FiscalDocumentosConsultar), v => v.CarregarAsync());
         c.Instancia("Produtos", m => new F.ProdutosViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
                     aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
             .Tela(F.Telas.Produtos, "Cadastros › Produtos", m => m.Pode(Permissao.FiscalDocumentosConsultar), v => v.CarregarAsync());

@@ -229,8 +229,23 @@
             <StackPanel Grid.Column="2" Classes="campo"><TextBlock Classes="rot" Text="Conta de crédito (código; vazio = regra)" /><TextBox Text="{Binding ContaCredito}" /></StackPanel>
             <StackPanel Grid.Column="3" Classes="campo"><TextBlock Classes="rot" Text="Observações" /><TextBox Text="{Binding Observacoes}" AcceptsReturn="True" MaxHeight="52" TextWrapping="Wrap" /></StackPanel>
           </Grid>
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <Button Classes="mini" Content="Aplicar naturezas" Command="{Binding AplicarNaturezasCommand}"
+                    ToolTip.Tip="Troca o CFOP de saída de cada item (o que veio no XML) pelo CFOP de entrada do cadastro Naturezas de entrada" />
+            <TextBlock Text="CFOP de saída do fornecedor → CFOP de entrada, pelo cadastro de naturezas" FontSize="11" Foreground="#5A6478" VerticalAlignment="Center" />
+          </StackPanel>
+          <DataGrid g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Itens}" SelectedItem="{Binding ItemSelecionado}" IsReadOnly="True" AutoGenerateColumns="False" Height="150">
+            <DataGrid.Columns>
+              <DataGridTextColumn Header="Item" Binding="{ReflectionBinding N}" Width="55" />
+              <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" MinWidth="140" />
+              <DataGridTextColumn Header="CFOP (XML)" Binding="{ReflectionBinding Cfop}" Width="90" />
+              <DataGridTextColumn Header="CFOP escrit." Binding="{ReflectionBinding CfopEscrituracao}" Width="100" />
+              <DataGridTextColumn Header="Produto vinculado" Binding="{ReflectionBinding Vinculo}" Width="170" />
+              <DataGridTextColumn Header="Total" Binding="{ReflectionBinding Total}" Width="110" />
+            </DataGrid.Columns>
+          </DataGrid>
           <StackPanel IsVisible="{Binding Importada}" Spacing="3">
-            <TextBlock Classes="grupo" Text="Item selecionado na grade acima" />
+            <TextBlock Classes="grupo" Text="Item selecionado na grade" />
             <Grid ColumnDefinitions="*,2*,*,Auto">
               <StackPanel Classes="campo"><TextBlock Classes="rot" Text="CFOP de escrituração (ex.: entrada 1.102)" /><TextBox Text="{Binding Item.Cfop}" /></StackPanel>
               <StackPanel Grid.Column="1" Classes="campo"><TextBlock Classes="rot" Text="Produto vinculado (código, descrição ou GTIN do cadastro)" /><TextBox Text="{Binding EscProduto}" /></StackPanel>
