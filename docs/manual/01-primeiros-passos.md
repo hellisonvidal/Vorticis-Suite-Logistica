@@ -7,13 +7,13 @@
 1. Execute o arquivo `Setup-VorticisSuiteLogistica-<versão>.exe`. Não precisa de senha de administrador do Windows.
 2. Ao final, o instalador prepara o banco de dados sozinho. Abra o programa pelo atalho **Vorticis Suite Logística**.
 
-Todos os módulos (Frota, Gerencial, Contábil, Fiscal e Folha) ficam no mesmo programa, com o mesmo banco, o mesmo login, as mesmas empresas e as mesmas configurações.
+Todos os módulos (Frota, Gerencial, Contábil e Fiscal) ficam no mesmo programa, com o mesmo banco, o mesmo login, as mesmas empresas e as mesmas configurações.
 
 **Dicas:** para atualizar, basta rodar o instalador novo: os dados são preservados. Desinstalar remove o programa, mas **não** apaga os dados (pasta `%LOCALAPPDATA%\Vorticis`). Há também uma versão portátil (descompacte e execute).
 
 ## Vários módulos numa janela
 
-**Para que serve:** trabalhar com todos os módulos (Frota, Gerencial, Contábil, Fiscal e Folha) numa única janela, como se fosse um só programa.
+**Para que serve:** trabalhar com todos os módulos (Frota, Gerencial, Contábil e Fiscal) numa única janela, como se fosse um só programa.
 **Onde fica:** atalho **Vorticis Suite Logística** no menu Iniciar e na área de trabalho. É o programa aberto ao final da instalação.
 
 Veja também o capítulo [Vorticis Suite Logística](13-logistica.md).

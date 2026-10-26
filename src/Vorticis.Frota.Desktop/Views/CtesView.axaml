@@ -1,0 +1,129 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Frota.Desktop.ViewModels"
+             x:Class="Vorticis.Frota.Desktop.Views.CtesView" x:DataType="vm:CtesViewModel">
+  <Grid ColumnDefinitions="*,12,480" RowDefinitions="Auto,Auto,*" Margin="8">
+    <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="8" Margin="0,0,0,6">
+      <TextBlock Classes="titulo" Text="Conhecimentos de transporte (CT-e)" VerticalAlignment="Center" />
+      <TextBlock Text="Período" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="130" />
+      <TextBlock Text="a" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Fim}" Width="130" />
+      <TextBlock Text="Situação" VerticalAlignment="Center" />
+      <ComboBox ItemsSource="{x:Static vm:CtesViewModel.FiltroSituacoes}" SelectedItem="{Binding FiltroSituacao}" Width="150" />
+    </StackPanel>
+    <TextBlock Grid.Row="1" Grid.ColumnSpan="3" Text="{Binding Totais}" FontSize="12" Margin="0,0,0,6" />
+    <DataGrid Grid.Row="2" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Nº" Binding="{ReflectionBinding Numero}" Width="65" />
+        <DataGridTextColumn Header="Emissão" Binding="{ReflectionBinding Emissao}" Width="85" />
+        <DataGridTextColumn Header="Tomador" Binding="{ReflectionBinding Tomador}" Width="130" />
+        <DataGridTextColumn Header="Destinatário" Binding="{ReflectionBinding Destinatario}" Width="130" />
+        <DataGridTextColumn Header="Trecho" Binding="{ReflectionBinding Trecho}" Width="*" />
+        <DataGridTextColumn Header="Peso (kg)" Binding="{ReflectionBinding Peso}" Width="75" />
+        <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="90" />
+        <DataGridTextColumn Header="Previsão" Binding="{ReflectionBinding Previsao}" Width="85" />
+        <DataGridTextColumn Header="Prazo" Binding="{ReflectionBinding Prazo}" Width="90" />
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="90" />
+        <DataGridTextColumn Header="Fatura" Binding="{ReflectionBinding Fatura}" Width="60" />
+      </DataGrid.Columns>
+    </DataGrid>
+    <ScrollViewer Grid.Row="2" Grid.Column="2">
+    <StackPanel Spacing="6" IsEnabled="{Binding PodeEditar}">
+      <Grid ColumnDefinitions="140,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
+        <TextBlock Grid.ColumnSpan="2" Text="Documento" FontWeight="Bold" FontSize="12" Margin="0,6,0,0" />
+        <TextBlock Grid.Row="1" Classes="rotulo" Text="Série" />
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Serie}" Width="80" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="2" Classes="rotulo" Text="Emissão" />
+        <CalendarDatePicker Grid.Row="2" Grid.Column="1" SelectedDate="{Binding Emissao}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="3" Classes="rotulo" Text="CFOP" />
+        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Cfop}" Width="100" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="4" Classes="rotulo" Text="Situação" />
+        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SituacaoTexto}" FontWeight="Bold" />
+        <TextBlock Grid.Row="5" Grid.ColumnSpan="2" Text="Origem dos dados (opcional)" FontWeight="Bold" FontSize="12" Margin="0,6,0,0" />
+        <TextBlock Grid.Row="6" Classes="rotulo" Text="Cotação aprovada" />
+        <ComboBox Grid.Row="6" Grid.Column="1" ItemsSource="{Binding CotacoesOpcoes}" SelectedItem="{Binding Cotacao}" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="7" Classes="rotulo" Text="Ordem de coleta" />
+        <ComboBox Grid.Row="7" Grid.Column="1" ItemsSource="{Binding ColetasOpcoes}" SelectedItem="{Binding Coleta}" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="8" Classes="rotulo" Text="Viagem" />
+        <ComboBox Grid.Row="8" Grid.Column="1" ItemsSource="{Binding ViagensOpcoes}" SelectedItem="{Binding Viagem}" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="9" Grid.ColumnSpan="2" Text="Partes" FontWeight="Bold" FontSize="12" Margin="0,6,0,0" />
+        <TextBlock Grid.Row="10" Classes="rotulo" Text="Remetente" />
+        <ComboBox Grid.Row="10" Grid.Column="1" ItemsSource="{Binding ParticipantesOpcoes}" SelectedItem="{Binding Remetente}" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="11" Classes="rotulo" Text="Destinatário" />
+        <ComboBox Grid.Row="11" Grid.Column="1" ItemsSource="{Binding ParticipantesOpcoes}" SelectedItem="{Binding Destinatario}" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="12" Classes="rotulo" Text="Tomador (paga o frete)" />
+        <ComboBox Grid.Row="12" Grid.Column="1" ItemsSource="{Binding ParticipantesOpcoes}" SelectedItem="{Binding Tomador}" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="13" Grid.ColumnSpan="2" Text="Trecho" FontWeight="Bold" FontSize="12" Margin="0,6,0,0" />
+        <TextBlock Grid.Row="14" Classes="rotulo" Text="Origem" />
+        <StackPanel Grid.Row="14" Grid.Column="1" Orientation="Horizontal" Spacing="6"><ComboBox ItemsSource="{x:Static vm:SeletorMunicipio.Ufs}" SelectedItem="{Binding Origem.Uf}" Width="70" /><ComboBox ItemsSource="{Binding Origem.Municipios}" SelectedItem="{Binding Origem.Municipio}" Width="270" /></StackPanel>
+        <TextBlock Grid.Row="15" Classes="rotulo" Text="Destino" />
+        <StackPanel Grid.Row="15" Grid.Column="1" Orientation="Horizontal" Spacing="6"><ComboBox ItemsSource="{x:Static vm:SeletorMunicipio.Ufs}" SelectedItem="{Binding Destino.Uf}" Width="70" /><ComboBox ItemsSource="{Binding Destino.Municipios}" SelectedItem="{Binding Destino.Municipio}" Width="270" /></StackPanel>
+        <TextBlock Grid.Row="16" Grid.ColumnSpan="2" Text="Carga" FontWeight="Bold" FontSize="12" Margin="0,6,0,0" />
+        <TextBlock Grid.Row="17" Classes="rotulo" Text="Produto predominante" />
+        <TextBox Grid.Row="17" Grid.Column="1" Text="{Binding Produto}" />
+        <TextBlock Grid.Row="18" Classes="rotulo" Text="Volumes" />
+        <TextBox Grid.Row="18" Grid.Column="1" Text="{Binding Volumes}" Width="100" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="19" Classes="rotulo" Text="Peso (kg)" />
+        <TextBox Grid.Row="19" Grid.Column="1" Text="{Binding Peso}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="20" Classes="rotulo" Text="m³" />
+        <TextBox Grid.Row="20" Grid.Column="1" Text="{Binding VolumeM3}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="21" Classes="rotulo" Text="Valor da mercadoria" />
+        <TextBox Grid.Row="21" Grid.Column="1" Text="{Binding ValorMercadoria}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="22" Classes="rotulo" Text="Chaves das NF-e" />
+        <TextBox Grid.Row="22" Grid.Column="1" Text="{Binding ChavesNfe}" Watermark="uma chave por linha" AcceptsReturn="True" Height="60" TextWrapping="Wrap" />
+        <TextBlock Grid.Row="23" Classes="rotulo" Text="Veículo" />
+        <ComboBox Grid.Row="23" Grid.Column="1" ItemsSource="{Binding VeiculosOpcoes}" SelectedItem="{Binding Veiculo}" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="24" Classes="rotulo" Text="Motorista" />
+        <ComboBox Grid.Row="24" Grid.Column="1" ItemsSource="{Binding MotoristasOpcoes}" SelectedItem="{Binding Motorista}" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="25" Grid.ColumnSpan="2" Text="Frete" FontWeight="Bold" FontSize="12" Margin="0,6,0,0" />
+        <TextBlock Grid.Row="26" Classes="rotulo" Text="Tabela" />
+        <ComboBox Grid.Row="26" Grid.Column="1" ItemsSource="{Binding TabelasOpcoes}" SelectedItem="{Binding Tabela}" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="27" Classes="rotulo" Text="" />
+        <CheckBox Grid.Row="27" Grid.Column="1" IsChecked="{Binding CobraColeta}" Content="Cobrar coleta" />
+        <TextBlock Grid.Row="28" Classes="rotulo" Text="" />
+        <CheckBox Grid.Row="28" Grid.Column="1" IsChecked="{Binding CobraEntrega}" Content="Cobrar entrega" />
+        <TextBlock Grid.Row="29" Classes="rotulo" Text="" />
+        <Button Grid.Row="29" Grid.Column="1" Content="Calcular pela tabela" Command="{Binding CalcularPelaTabelaCommand}" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="30" Classes="rotulo" Text="Frete-peso" />
+        <TextBox Grid.Row="30" Grid.Column="1" Text="{Binding FretePeso}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="31" Classes="rotulo" Text="Ad valorem" />
+        <TextBox Grid.Row="31" Grid.Column="1" Text="{Binding AdValorem}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="32" Classes="rotulo" Text="GRIS" />
+        <TextBox Grid.Row="32" Grid.Column="1" Text="{Binding Gris}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="33" Classes="rotulo" Text="Pedágio" />
+        <TextBox Grid.Row="33" Grid.Column="1" Text="{Binding Pedagio}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="34" Classes="rotulo" Text="Taxas" />
+        <TextBox Grid.Row="34" Grid.Column="1" Text="{Binding Taxas}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="35" Classes="rotulo" Text="Alíquota ICMS (%)" />
+        <TextBox Grid.Row="35" Grid.Column="1" Text="{Binding AliquotaIcms}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="36" Classes="rotulo" Text="Resumo" />
+        <TextBlock Grid.Row="36" Grid.Column="1" Text="{Binding ResumoFrete}" TextWrapping="Wrap" FontWeight="Bold" />
+        <TextBlock Grid.Row="37" Classes="rotulo" Text="Previsão de entrega" />
+        <CalendarDatePicker Grid.Row="37" Grid.Column="1" SelectedDate="{Binding Previsao}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="38" Classes="rotulo" Text="Observação" />
+        <TextBox Grid.Row="38" Grid.Column="1" Text="{Binding Observacao}" />
+      </Grid>
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <Button Content="Novo CT-e" Command="{Binding NovoCommand}" />
+        <Button Content="Gravar" Classes="accent" Command="{Binding GravarCommand}" />
+        <Button Content="Excluir" Command="{Binding ExcluirCommand}" />
+        <Button Content="Imprimir minuta (PDF)" Command="{Binding ImprimirCommand}" />
+        <Button Content="Cancelar CT-e" Command="{Binding CancelarCommand}" />
+      </StackPanel>
+      <TextBlock Text="Emissão (depois de autorizado no emissor da SEFAZ)" FontWeight="Bold" FontSize="12" Margin="0,6,0,0" />
+      <Grid ColumnDefinitions="140,*" RowDefinitions="Auto,Auto" RowSpacing="6">
+        <TextBlock Classes="rotulo" Text="Chave de acesso" />
+        <TextBox Grid.Column="1" Text="{Binding Chave}" Watermark="44 dígitos" />
+        <TextBlock Grid.Row="1" Classes="rotulo" Text="Protocolo" />
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Protocolo}" />
+      </Grid>
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <Button Content="Registrar emissão" Command="{Binding EmitirCommand}" />
+      </StackPanel>
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="Digite o CT-e, grave e imprima a minuta. Depois de autorizado no emissor da SEFAZ, registre aqui a chave de acesso e o protocolo." />
+      <c:MensagensView />
+    </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

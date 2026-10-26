@@ -30,7 +30,6 @@ public static class ManualUsuario
         ["03-contabil.md"] = "Contábil",
         ["04-auditoria.md"] = "Contábil",
         ["05-fiscal.md"] = "Fiscal",
-        ["06-folha.md"] = "Folha",
     };
 
     private static readonly Lazy<IReadOnlyList<ArquivoManual>> _arquivos = new(Carregar);

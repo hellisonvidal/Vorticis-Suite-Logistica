@@ -34,4 +34,3 @@ BEGIN
     RAISE NOTICE 'OK: frotas, rotas, diárias e coletas';
 END $$;
 
-\echo 'TODOS OS TESTES PASSARAM'

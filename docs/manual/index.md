@@ -13,11 +13,11 @@ Cada função segue o mesmo roteiro: **para que serve**, **onde fica no menu**, 
 | [Contábil](03-contabil.md) | Plano de contas, lançamentos, fechamentos, imobilizado, consultas e relatórios |
 | [Auditoria (ECD e ECF)](04-auditoria.md) | Geração dos arquivos do SPED Contábil e da ECF |
 | [Fiscal](05-fiscal.md) | Notas fiscais, apurações de impostos, guias e SPED Fiscal |
-| [Folha de pagamento](06-folha.md) | Funcionários, folha, férias, 13º, rescisão e eSocial |
 | [Obrigações](07-obrigacoes.md) | Calendário de obrigações |
 | [Gerencial](10-gerencial.md) | Painel do empresário, pedidos de venda e compra, estoque e transporte |
 | [Frota](12-frota.md) | Veículos, motoristas, abastecimentos, viagens, vencimentos e manutenção (ordens de serviço, autorização e notas de compra) |
-| [Vorticis Logística](13-logistica.md) | O programa único da transportadora: frota, manutenção, financeiro, fiscal, contábil e folha num menu só |
+| [TMS – gestão do transporte](14-tms.md) | Tabelas de frete, cotações, CT-e, manifestos (MDF-e), entregas e faturas de frete |
+| [Vorticis Logística](13-logistica.md) | O programa único da transportadora: frota, TMS (cotações, CT-e, manifestos, entregas e faturas de frete), manutenção, financeiro e contábil num menu só |
 | [Configurações](08-configuracoes.md) | Backup, configurações gerais, conexão e solução de problemas |
 
 ## Dicas gerais de uso

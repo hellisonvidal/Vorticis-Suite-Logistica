@@ -53,19 +53,25 @@ public class FrotaTelasTests(SessaoHeadless headless, BancoDeTeste db) : IClassF
         Assert.Contains("Motoristas", cadastros);
         Assert.Contains("Frotas", cadastros);
         Assert.Contains("Rotas", cadastros);
+        Assert.Contains("Tabelas de frete", cadastros);
         Assert.DoesNotContain("Planos de manutenção", cadastros);
         Assert.Contains("Documentos e vencimentos", cadastros);
         var operacao = Assert.Single(vm.Menus, m => m.Titulo == "_Operação");
-        Assert.Equal(["Abastecimentos", "Viagens", "Diárias", "_Coletas"], operacao.Filhos!.Where(i => !i.EhSeparador).Select(i => i.Titulo));
+        Assert.Equal(["Abastecimentos", "Viagens", "Diárias", "_Coletas", "Entregas e ocorrências"], operacao.Filhos!.Where(i => !i.EhSeparador).Select(i => i.Titulo));
         Assert.Equal(["Ordens de coleta"], operacao.Filhos!.Single(i => i.Titulo == "_Coletas").Filhos!.Select(i => i.Titulo));
         var manutencao = Assert.Single(vm.Menus, m => m.Titulo == "_Manutenção");
         Assert.Equal(["Planos de manutenção", "Peças e serviços", "Ordens de serviço", "Autorização de serviços", "Notas de compra"], manutencao.Filhos!.Select(i => i.Titulo));
+        // TMS: cotações, CT-e, manifestos e faturas de frete no menu Emissão
+        var emissao = Assert.Single(vm.Menus, m => m.Titulo == "_Emissão");
+        Assert.Equal(["Cotações de frete", "Conhecimentos de transporte (CT-e)", "Manifestos de carga (MDF-e)", "Faturas de frete"],
+                     emissao.Filhos!.Where(i => !i.EhSeparador).Select(i => i.Titulo));
         var rel = Assert.Single(vm.Menus, m => m.Titulo == "_Relatórios");
         Assert.Equal(["Painel da frota", TabelasFrota.TituloCustos, TabelasFrota.TituloConsumo, TabelasFrota.TituloViagens, TabelasFrota.TituloVencimentos,
                       TabelasFrota.TituloCustosFrota, TabelasFrota.TituloDiariasColaborador, TabelasFrota.TituloDiariasFrota, TabelasFrota.TituloDiariasAcerto, TabelasFrota.TituloConsumoVeiculo,
                       TabelasFrota.TituloConsumoMotorista, TabelasFrota.TituloViagensMotorista, TabelasFrota.TituloViagensCliente, TabelasFrota.TituloViagensRota,
                       TabelasFrota.TituloColetasCliente, TabelasFrota.TituloColetasRota, TabelasFrota.TituloColetasMotorista, TabelasFrota.TituloResumo,
-                      "Acompanhamento das ordens de serviço", "Aprovações de serviços", "Notas fiscais de compra", TabelasFrota.TituloPreventivas, TabelasFrota.TituloHistoricoManutencao],
+                      "Acompanhamento das ordens de serviço", "Aprovações de serviços", "Notas fiscais de compra", TabelasFrota.TituloPreventivas, TabelasFrota.TituloHistoricoManutencao,
+                      .. TabelasTms.Titulos],
                      rel.Filhos!.Where(i => !i.EhSeparador).Select(i => i.Titulo));
         Assert.All(Folhas(vm.Menus).Where(i => i.Chave is not null && i.Chave != TelasComuns.Sair), i => Assert.True(vm.ConheceTela(i.Chave!), i.Chave));
         Assert.All(vm.Atalhos.Where(a => a.Chave is not null), a => Assert.True(vm.ConheceTela(a.Chave!), a.Chave));
@@ -96,6 +102,13 @@ public class FrotaTelasTests(SessaoHeadless headless, BancoDeTeste db) : IClassF
                 (new F.ViewModels.ItensManutencaoViewModel(m), new F.Views.ItensManutencaoView()),
                 (new F.ViewModels.AutorizacaoViewModel(m), new F.Views.AutorizacaoView()),
                 (new F.ViewModels.NotasCompraViewModel(m), new F.Views.NotasCompraView()),
+                (new F.ViewModels.TabelasFreteViewModel(m), new F.Views.TabelasFreteView()),
+                (new F.ViewModels.CotacoesViewModel(m), new F.Views.CotacoesView()),
+                (new F.ViewModels.CtesViewModel(m), new F.Views.CtesView()),
+                (new F.ViewModels.ManifestosViewModel(m), new F.Views.ManifestosView()),
+                (new F.ViewModels.EntregasViewModel(m), new F.Views.EntregasView()),
+                (new F.ViewModels.FaturasFreteViewModel(m), new F.Views.FaturasFreteView()),
+                (new F.ViewModels.RelatorioFrotaViewModel(m, TabelasTms.TituloPrazoEntrega), new F.Views.RelatorioFrotaView()),
                 (new F.ViewModels.RelatorioFrotaViewModel(m, TabelasFrota.TituloAcompanhamento), new F.Views.RelatorioFrotaView()),
                 (new F.ViewModels.RelatorioFrotaViewModel(m, TabelasFrota.TituloViagensCliente), new F.Views.RelatorioFrotaView()),
                 (relatorio, new F.Views.RelatorioFrotaView()),
@@ -118,6 +131,19 @@ public class FrotaTelasTests(SessaoHeadless headless, BancoDeTeste db) : IClassF
             return Task.FromResult(true);
         }, TestContext.Current.CancellationToken));
         Assert.True(ok);
+    }
+
+    [Fact]
+    public void Toda_tela_da_frota_tem_DataTemplate_no_App_axaml()
+    {
+        // sem o DataTemplate a tela abre em branco no programa (aconteceu com Frotas, Rotas, Diárias e Coletas)
+        var raiz = new DirectoryInfo(AppContext.BaseDirectory);
+        while (raiz is not null && !File.Exists(Path.Combine(raiz.FullName, "Vorticis.slnx"))) raiz = raiz.Parent;
+        var app = File.ReadAllText(Path.Combine(raiz!.FullName, "src", "Vorticis.Frota.Desktop", "App.axaml"));
+        var telas = typeof(F.ModuloFrota).Assembly.GetTypes()
+            .Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(ModuloViewModel)) && !t.IsSubclassOf(typeof(ParametrosViewModel)) && t.Name.EndsWith("ViewModel")).ToList();
+        Assert.True(telas.Count >= 20, $"{telas.Count} telas");
+        Assert.All(telas, t => Assert.Contains($"DataType=\"vm:{t.Name}\"", app));
     }
 
     [Fact]

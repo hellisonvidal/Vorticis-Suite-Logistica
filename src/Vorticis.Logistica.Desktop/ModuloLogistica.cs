@@ -3,32 +3,30 @@ using Vorticis.Desktop.Comum.ViewModels;
 using C = Vorticis.Desktop;
 using E = Vorticis.Erp.Desktop;
 using F = Vorticis.Fiscal.Desktop;
-using Fo = Vorticis.Folha.Desktop;
 using Fr = Vorticis.Frota.Desktop;
 
 namespace Vorticis.Logistica.Desktop;
 
 /// <summary>
-/// Vorticis Suite Logística: o programa da transportadora. Reúne num menu só as telas do Frota (operação e manutenção), do Gerencial
-/// (financeiro, faturamento, compras e estoque) e, no menu Gerencial, as do Contábil e da Folha. Não mostra o Fiscal (o usuário usa o
+/// Vorticis Suite Logística: o programa da transportadora. Reúne num menu só as telas do Frota (operação, manutenção e TMS), do Gerencial
+/// (financeiro, compras e estoque), as de faturamento no menu Emissão e, no menu Gerencial, as do Contábil. Não mostra o Fiscal (o usuário usa o
 /// Financeiro), o calendário de obrigações nem o painel do empresário; todos os relatórios ficam no menu Relatórios. As telas são as dos módulos (mesmas regras,
 /// permissões e banco); a empresa ativa é a transportadora, cadastrada já com todos esses módulos.
 /// </summary>
-public sealed class ModuloLogistica() : ModuloCombinado(Frota, Contabil, Fiscal, Folha, Gerencial), Vorticis.Desktop.Comum.Modulos.IModuloDesktop
+public sealed class ModuloLogistica() : ModuloCombinado(Frota, Contabil, Fiscal, Gerencial), Vorticis.Desktop.Comum.Modulos.IModuloDesktop
 {
     private static readonly Fr.ModuloFrota Frota = new();
     private static readonly C.ModuloContabil Contabil = new();
     private static readonly F.ModuloFiscal Fiscal = new();
-    private static readonly Fo.ModuloFolha Folha = new();
     private static readonly E.ModuloErp Gerencial = new();
 
     /// <summary>Telas (DataTemplates) dos módulos reunidos, do App.axaml de cada um.</summary>
-    public static IEnumerable<Avalonia.Application> Apps() => [new Fr.App(), new C.App(), new F.App(), new Fo.App(), new E.App()];
+    public static IEnumerable<Avalonia.Application> Apps() => [new Fr.App(), new C.App(), new F.App(), new E.App()];
 
     public override string Nome => "Vorticis Suite Logística";
     public override Vorticis.Application.Cadastros.ModulosEmpresa ModuloEmpresa => Vorticis.Application.Cadastros.ModulosEmpresa.Frota;
     public override string NomeCurto => "Logística";
-    public override string Subtitulo => "Frota, manutenção, financeiro, contábil e folha da transportadora";
+    public override string Subtitulo => "Frota, TMS, manutenção, financeiro e contábil da transportadora";
     public override string NomeExecutavel => "VorticisLogistica";
     public override string CorDestaque => "#0F766E";   // verde-petróleo (ícone e selo do programa)
     public override string CorBarra => "#134E4A";
@@ -49,7 +47,6 @@ public sealed class ModuloLogistica() : ModuloCombinado(Frota, Contabil, Fiscal,
         ItemMenu.Separador,
         ItemMenu.Submenu("_Gerencial e financeiro", [.. DaParte(Gerencial, Gerencial.ItensCadastros)]),
         ItemMenu.Submenu("_Contábil", [.. DaParte(Contabil, Contabil.ItensCadastros)]),
-        ItemMenu.Submenu("F_olha de pagamento", [.. DaParte(Folha, Folha.ItensCadastros)]),
     ];
 
     /// <summary>
@@ -62,7 +59,6 @@ public sealed class ModuloLogistica() : ModuloCombinado(Frota, Contabil, Fiscal,
                 ("Frota", Chave(Frota, TelasComuns.Parametros)),
                 ("Gerencial e financeiro", Chave(Gerencial, TelasComuns.Parametros)),
                 ("Contábil", Chave(Contabil, TelasComuns.Parametros)),
-                ("Folha", Chave(Folha, TelasComuns.Parametros)),
             ]), atualizarPermissoes: v => v.AtualizarPermissoes(), aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
             .Tela(TelasComuns.Parametros, "Cadastros › Parâmetros", m => m.TemAcessoNaEmpresa, v => v.CarregarAsync());
 
@@ -76,35 +72,37 @@ public sealed class ModuloLogistica() : ModuloCombinado(Frota, Contabil, Fiscal,
             ItemMenu? G(string titulo) => gerencial.FirstOrDefault(m => Sem(m) == titulo);
             var financeiro = G("Financeiro")!;
             // Relatórios de cada área, reunidos no menu Relatórios (saem dos menus de origem)
-            var relFrota = DaParte(Frota, Topo(Frota, "Relatórios")!.Filhos!);
-            var corte = relFrota.ToList().FindIndex(i => i.EhSeparador);
-            var relOperacao = relFrota.Take(corte).ToList();
-            var relManutencao = relFrota.Skip(corte + 1).ToList();
+            // Relatórios do Frota em blocos separados por separador: operação, manutenção e TMS
+            var blocos = new List<List<ItemMenu>> { new() };
+            foreach (var i in DaParte(Frota, Topo(Frota, "Relatórios")!.Filhos!))
+                if (i.EhSeparador) blocos.Add([]); else blocos[^1].Add(i);
+            var (relOperacao, relManutencao, relTms) = (blocos[0], blocos[1], blocos[2]);
             // sem o Painel do empresário (e o separador que o seguia)
             var relGerencial = G("Relatórios")!.Filhos!.Where(i => i.Chave != E.ViewModels.ErpTelas.Painel).SkipWhile(i => i.EhSeparador).ToList();
             var relContabil = DaParte(Contabil, Topo(Contabil, "Relatórios")!.Filhos!);
-            var relFolha = DaParte(Folha, Topo(Folha, "Relatórios")!.Filhos!);
             var operacao = DaParte(Frota, Frota.Menus.Where(m => Sem(m) == "Operação")).Single();
+            var transporte = DaParte(Frota, Frota.Menus.Where(m => Sem(m) == "Emissão")).Single();
             return
             [
                 operacao,
                 .. DaParte(Frota, Frota.Menus.Where(m => Sem(m) == "Manutenção")),
+                // Emissão: as funções do Faturamento (pedidos de venda e notas de saída) e os documentos do TMS (cotações, CT-e, MDF-e e faturas de frete)
                 ItemMenu.Submenu("_Emissão",
-                    ItemMenu.EmBreve("CT-e – Conhecimento de transporte"),
-                    ItemMenu.EmBreve("MDF-e – Manifesto de documentos fiscais"),
-                    ItemMenu.EmBreve("NFS-e – Nota fiscal de serviço (Padrão Nacional)")),
+                    [.. G("Faturamento")!.Filhos!, ItemMenu.Separador,
+                     .. transporte.Filhos!, ItemMenu.Separador,
+                     ItemMenu.EmBreve("Transmissão de CT-e e MDF-e à SEFAZ"),
+                     ItemMenu.EmBreve("NFS-e – Nota fiscal de serviço (Padrão Nacional)")]),
                 ItemMenu.Submenu("_Financeiro",
                     [.. financeiro.Filhos!, ItemMenu.Separador,
-                     .. new[] { G("Faturamento"), G("Compras"), G("Estoque"), G("Monitores") }.Where(m => m is not null).Select(m => m! with { Titulo = m.Titulo.Replace("_", "") })]),
+                     .. new[] { G("Compras"), G("Estoque"), G("Monitores") }.Where(m => m is not null).Select(m => m! with { Titulo = m.Titulo.Replace("_", "") })]),
                 ItemMenu.Submenu("_Gerencial",
-                    Submenu("_Contábil", Contabil, m => Sem(m) != "Relatórios"),
-                    Submenu("_Folha", Folha, m => Sem(m) != "Relatórios")),
+                    Submenu("_Contábil", Contabil, m => Sem(m) != "Relatórios")),
                 ItemMenu.Submenu("_Relatórios",
                     ItemMenu.Submenu("_Frota e operação", [.. relOperacao]),
                     ItemMenu.Submenu("_Manutenção", [.. relManutencao]),
+                    ItemMenu.Submenu("_Transporte (TMS)", [.. relTms]),
                     ItemMenu.Submenu("_Financeiro e gerencial", [.. relGerencial]),
-                    ItemMenu.Submenu("_Contábil", [.. relContabil]),
-                    ItemMenu.Submenu("_Folha", [.. relFolha])),
+                    ItemMenu.Submenu("_Contábil", [.. relContabil])),
             ];
         }
     }
