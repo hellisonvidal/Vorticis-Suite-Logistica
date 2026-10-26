@@ -285,6 +285,7 @@ public partial class EstoqueViewModel(IContexto contexto) : ModuloViewModel(cont
     public ObservableCollection<PosicaoLinha> Posicao { get; } = [];
     public ObservableCollection<MovimentoLinha> Movimentos { get; } = [];
     [ObservableProperty] private PosicaoLinha? _selecionado;
+    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(ExcluirCommand))] private MovimentoLinha? _movimentoSelecionado;
     [ObservableProperty] private string _preco = "";
     [ObservableProperty] private string _minimo = "";
     [ObservableProperty] private DateTime? _dataAjuste = DateTime.Today;
@@ -344,6 +345,24 @@ public partial class EstoqueViewModel(IContexto contexto) : ModuloViewModel(cont
         (QuantidadeAjuste, MotivoAjuste) = ("", "");
         await CarregarAsync();
         Mensagem = "Ajuste registrado.";
+    }, Permissao.ErpEstoque);
+
+    private bool TemMovimento() => MovimentoSelecionado is not null;
+
+    /// <summary>Excluir movimento (botão ou tecla Delete): apaga o ajuste selecionado, com confirmação; o saldo e o custo médio se refazem.</summary>
+    [RelayCommand(CanExecute = nameof(TemMovimento))]
+    private Task ExcluirAsync() => ExecutarAsync(async (app, empresa, usuario) =>
+    {
+        if (MovimentoSelecionado?.M is not { } m) { Erros.Add("Selecione o movimento na lista."); return; }
+        if (!await Contexto.ConfirmarAsync("Excluir movimento",
+                $"Excluir o movimento de {m.Data:dd/MM/yyyy} ({Ext.Q(m.Quantidade)} de {m.Produto})? O saldo e o custo médio do produto são recalculados.", "Excluir", "Cancelar"))
+            return;
+        var r = await app.Erp().ExcluirMovimentoAsync(empresa, m.Id, usuario);
+        if (!r.Sucesso) { MostrarResultado(r, ""); return; }
+        MovimentoSelecionado = null;
+        await CarregarAsync();
+        await CarregarMovimentosAsync();
+        Mensagem = "Movimento excluído.";
     }, Permissao.ErpEstoque);
 }
 

@@ -25,12 +25,13 @@ Escolha o **Mês de referência**. O painel mostra: vendas e compras do mês (no
 
 ## Estoque
 
-**Onde fica:** *Estoque › Posição e movimentos*.
+**Onde fica:** *Estoque › Posição e movimentos* (no Vorticis Suite Logística: *Operações › Estoque › Posição e movimentos*).
 
 - A lista mostra, por produto, o **saldo**, o **mínimo**, o **custo médio** (média das entradas), o **valor** em estoque e o **preço de venda**. **REPOR** aparece quando o saldo está abaixo do mínimo.
 - Selecione o produto para ver os **movimentos** (entradas das compras, saídas das vendas e ajustes).
 - **Preço e estoque mínimo:** informe e clique em **Gravar**.
 - **Ajuste de estoque (inventário):** informe a data, a quantidade (positiva para entrada, negativa para saída), o custo unitário e o motivo, e clique em **Registrar ajuste**.
+- **Excluir movimento:** selecione o movimento na lista de baixo e clique em **Excluir movimento** (ou aperte a tecla **Delete**) e confirme. O saldo e o custo médio do produto são recalculados. Só os ajustes lançados à mão podem ser excluídos aqui; as entradas e saídas geradas por pedidos saem cancelando o pedido.
 
 ## Monitor de notas fiscais
 

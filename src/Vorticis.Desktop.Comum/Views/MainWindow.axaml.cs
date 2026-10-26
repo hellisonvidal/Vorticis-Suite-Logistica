@@ -24,7 +24,12 @@ public partial class MainWindow : Window
         // Fechar o sistema sempre pede confirmação.
         Closing += AoFechar;
         // Esc na janela principal fecha a função do topo (as janelas das funções tratam o próprio Esc).
-        KeyDown += (_, e) => { if (_vm?.Logado == true && _vm.FuncaoAtiva is { } topo) TratarEsc(e, () => _vm.FecharFuncaoComConfirmacaoAsync(topo)); };
+        KeyDown += (_, e) =>
+        {
+            if (_vm?.Logado != true || _vm.FuncaoAtiva is not { } topo) return;
+            TratarDelete(e, this, _vm, topo.ViewModel);
+            TratarEsc(e, () => _vm.FecharFuncaoComConfirmacaoAsync(topo));
+        };
         // As janelas das funções ocupam a área de trabalho (abaixo do título, menus e barra de janelas) e a acompanham.
         PositionChanged += (_, _) => ReposicionarJanelas();
         // Qualquer mudança de layout que mova a área de trabalho (faixa de funções, navegação da Suite) reposiciona as funções.
@@ -228,11 +233,34 @@ public partial class MainWindow : Window
         {
             if (!_fechandoPorCodigo.Remove(w)) dono.FecharFuncao(f);   // Alt+F4
         };
-        w.KeyDown += (_, e) => TratarEsc(e, () => dono.FecharFuncaoComConfirmacaoAsync(f));   // Esc fecha a função
+        w.KeyDown += (_, e) =>
+        {
+            TratarDelete(e, w, dono, f.ViewModel);                               // Delete exclui o registro selecionado (com confirmação)
+            TratarEsc(e, () => dono.FecharFuncaoComConfirmacaoAsync(f));        // Esc fecha a função
+        };
         w.KeyBindings.AddRange(KeyBindings);   // mesmos atalhos (Ctrl+L, Ctrl+B, F1)
         _janelas[f] = w;
         _donos[f] = dono;
         if (ReferenceEquals(dono, _vm) && Suite?.MostraPainel != true) w.Show(this);
+    }
+
+    /// <summary>
+    /// Delete (sem outra tecla, fora de campos de texto) exclui o registro selecionado: usa o botão Excluir da tela em foco (o ViewModel mais
+    /// próximo do controle focado que tem ExcluirCommand; senão, o da janela), sempre com confirmação. Sem botão Excluir, não faz nada.
+    /// </summary>
+    public static void TratarDelete(KeyEventArgs e, TopLevel janela, MainViewModelBase dono, object? viewModelPadrao)
+    {
+        if (e.Handled || e.Key != Key.Delete || e.KeyModifiers != KeyModifiers.None) return;
+        var foco = janela.FocusManager?.GetFocusedElement() as Visual;
+        // dentro de um campo, Delete apaga texto
+        if (foco is TextBox or ComboBox or NumericUpDown or CalendarDatePicker or DatePicker || foco?.FindAncestorOfType<TextBox>() is not null) return;
+        object? alvo = null;
+        for (var v = foco; v is not null && alvo is null; v = v.GetVisualParent())
+            if (v is StyledElement s && MainViewModelBase.ComandoExcluir(s.DataContext) is not null) alvo = s.DataContext;
+        alvo ??= viewModelPadrao;
+        if (MainViewModelBase.ComandoExcluir(alvo) is not { } c || !c.CanExecute(null)) return;
+        e.Handled = true;
+        _ = dono.ExcluirPelaTeclaAsync(alvo);
     }
 
     /// <summary>Esc (sem outra tecla e não tratado por um campo, lista ou caixa aberta) executa o fechamento.</summary>

@@ -857,10 +857,37 @@ public abstract partial class MainViewModelBase : ObservableObject, IContexto, I
 
     public Task<bool> ConfirmarAsync(string titulo, string mensagem, string textoSim = "Sim", string textoNao = "Não")
     {
+        // exclusão pela tecla Delete já confirmada: a confirmação simples da própria tela ("Excluir ...") não se repete
+        if (_excluindoPelaTecla && titulo.StartsWith("Excluir", StringComparison.Ordinal)) return Task.FromResult(true);
         Confirmacao?.Responder(false);
         var pedido = new PedidoConfirmacao(titulo, mensagem, textoSim, textoNao);
         Confirmacao = pedido;
         return pedido.Resposta;
+    }
+
+    private bool _excluindoPelaTecla;
+
+    /// <summary>O comando "Excluir" da tela (propriedade ExcluirCommand do ViewModel), se ela tiver.</summary>
+    public static System.Windows.Input.ICommand? ComandoExcluir(object? viewModel) =>
+        viewModel?.GetType().GetProperty("ExcluirCommand")?.GetValue(viewModel) as System.Windows.Input.ICommand;
+
+    /// <summary>
+    /// Tecla Delete: pede confirmação e executa o botão Excluir da tela (o registro selecionado). As confirmações simples da tela
+    /// ("Excluir ...") não se repetem; as que avisam de outra consequência (ex.: desfazer a contabilização) continuam aparecendo.
+    /// Falso se a tela não tem o que excluir.
+    /// </summary>
+    public async Task<bool> ExcluirPelaTeclaAsync(object? viewModel)
+    {
+        if (ComandoExcluir(viewModel) is not { } cmd || !cmd.CanExecute(null)) return false;
+        if (!await ConfirmarAsync("Excluir registro", "Excluir o registro selecionado? Esta exclusão não pode ser desfeita.", "Excluir", "Cancelar")) return true;
+        _excluindoPelaTecla = true;
+        try
+        {
+            if (cmd is CommunityToolkit.Mvvm.Input.IAsyncRelayCommand a) await a.ExecuteAsync(null);
+            else cmd.Execute(null);
+        }
+        finally { _excluindoPelaTecla = false; }
+        return true;
     }
 
     public async Task ReiniciarParaLoginAsync(string mensagem)

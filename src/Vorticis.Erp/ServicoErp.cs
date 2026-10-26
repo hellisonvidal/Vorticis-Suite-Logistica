@@ -231,6 +231,22 @@ public sealed class ServicoErp(VorticisApp app)
         catch (ViolacaoRegraException ex) { return Resultado.Falha(ex.Message); }
     }
 
+    /// <summary>
+    /// Exclui um movimento de estoque lançado à mão (ajuste). Os movimentos gerados por pedidos saem só pelo pedido (cancelando-o),
+    /// para o estoque continuar batendo com os pedidos.
+    /// </summary>
+    public async Task<Resultado> ExcluirMovimentoAsync(long empresa, long movimentoId, long usuario, CancellationToken ct = default)
+    {
+        if (await Negar(usuario, empresa, Domain.Seguranca.Permissao.ErpEstoque, ct) is { } n) return Resultado.Falha(n);
+        var pedido = await _db.ListarAsync("""
+            SELECT x.numero FROM erp.estoque_movimento m LEFT JOIN erp.pedido x ON x.id = m.pedido_id WHERE m.id = @m AND m.empresa_id = @e
+            """, r => r.IsDBNull(0) ? (int?)null : r.GetInt32(0), ct, ("m", movimentoId), ("e", empresa));
+        if (pedido.Count == 0) return Resultado.Falha("Movimento não encontrado.");
+        if (pedido[0] is { } numero) return Resultado.Falha($"Este movimento foi gerado pelo pedido {numero}: para desfazê-lo, cancele o pedido.");
+        await _db.ExecutarAsync("DELETE FROM erp.estoque_movimento WHERE id = @m AND empresa_id = @e AND pedido_id IS NULL", ct, ("m", movimentoId), ("e", empresa));
+        return Resultado.Ok();
+    }
+
     // ------------------------------------------------------------------ transporte
 
     public async Task<List<Veiculo>> VeiculosAsync(long empresa, long usuario, CancellationToken ct = default)

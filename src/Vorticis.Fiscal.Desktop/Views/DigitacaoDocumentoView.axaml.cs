@@ -57,7 +57,11 @@ public partial class DigitacaoDocumentoView : UserControl
             if (_vm is not null) _vm.DigitacaoAberta = false;   // fechou pelo X/Alt+F4
             Dispatcher.UIThread.Post(() => ListaNotas.Focus(NavigationMethod.Tab), DispatcherPriority.Loaded);
         };
-        popup.KeyDown += (_, e) => MainWindow.TratarEsc(e, () => { popup.Close(); return Task.CompletedTask; });
+        popup.KeyDown += (_, e) =>
+        {
+            if (principal?.DataContext is MainViewModelBase m) MainWindow.TratarDelete(e, popup, m, _vm);   // Delete: excluir a nota (com confirmação)
+            MainWindow.TratarEsc(e, () => { popup.Close(); return Task.CompletedTask; });
+        };
         _popup = popup;
         if (principal is not null) principal.ModalAberta = popup;
         _ = popup.ShowDialog(dono);

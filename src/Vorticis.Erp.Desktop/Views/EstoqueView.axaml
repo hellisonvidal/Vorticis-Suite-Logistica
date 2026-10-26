@@ -36,8 +36,12 @@
       <Button Content="Registrar ajuste" Classes="accent" Command="{Binding AjustarCommand}" />
       <c:MensagensView />
     </StackPanel>
-    <TextBlock Grid.Row="2" Grid.ColumnSpan="3" Text="Movimentos do produto selecionado" FontWeight="SemiBold" Margin="0,8,0,4" />
-    <DataGrid Grid.Row="3" Grid.ColumnSpan="3" ItemsSource="{Binding Movimentos}" IsReadOnly="True" AutoGenerateColumns="False">
+    <StackPanel Grid.Row="2" Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="10" Margin="0,8,0,4">
+      <TextBlock Text="Movimentos do produto selecionado" FontWeight="SemiBold" VerticalAlignment="Center" />
+      <Button Content="Excluir movimento" Command="{Binding ExcluirCommand}" IsEnabled="{Binding PodeEditar}"
+              ToolTip.Tip="Exclui o ajuste selecionado na lista (também com a tecla Delete); movimentos de pedidos saem cancelando o pedido" />
+    </StackPanel>
+    <DataGrid Grid.Row="3" Grid.ColumnSpan="3" ItemsSource="{Binding Movimentos}" SelectedItem="{Binding MovimentoSelecionado}" IsReadOnly="True" AutoGenerateColumns="False">
       <DataGrid.Columns>
         <DataGridTextColumn Header="Data" Binding="{ReflectionBinding Data}" Width="100" />
         <DataGridTextColumn Header="Tipo" Binding="{ReflectionBinding Tipo}" Width="90" />

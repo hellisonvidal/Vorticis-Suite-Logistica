@@ -82,6 +82,10 @@ Depois do login abre a **tela inicial**, com as próximas obrigações da empres
 
 Logo abaixo dos menus fica, fixa, a **barra de funções abertas**: cada função aberta (que abre na sua própria janela) aparece ali com o nome; clique no nome para trazê-la para a frente e no **✕** para fechá-la. As janelas das funções nunca cobrem essa barra. Na Folha, a competência de trabalho fica na mesma linha, à direita.
 
+### Tecla Delete (excluir)
+
+Em qualquer tela que tenha o botão **Excluir**, selecione o registro na lista (um veículo, uma nota, um movimento de estoque, uma regra fiscal...) e aperte **Delete**. O sistema sempre pergunta *Excluir o registro selecionado?*: clique em **Excluir** para confirmar ou em **Cancelar**. Se a exclusão tiver outra consequência (por exemplo, uma nota contabilizada, que precisa ter a contabilização desfeita), esse aviso aparece em seguida. Dentro de um campo de texto, Delete apaga o texto, como sempre.
+
 ### Tecla Esc
 
 A tecla **Esc** fecha a tela (janela de função) que está na frente, em qualquer módulo. Dentro de um pop-up (por exemplo, a digitação do lançamento contábil), Esc fecha só o pop-up. Se houver algo digitado que ainda não foi salvo, o sistema pergunta antes: *Fechar sem salvar* descarta o que foi digitado e *Continuar editando* volta para a tela. Quando uma lista de opções está aberta, o primeiro Esc fecha a lista.
