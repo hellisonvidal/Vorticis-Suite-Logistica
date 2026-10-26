@@ -22,6 +22,8 @@
     <DataTemplate DataType="vm:FrotasViewModel"><v:FrotasView /></DataTemplate>
     <DataTemplate DataType="vm:RotasViewModel"><v:RotasView /></DataTemplate>
     <DataTemplate DataType="vm:DiariasViewModel"><v:DiariasView /></DataTemplate>
+    <DataTemplate DataType="vm:PedagioViewModel"><v:PedagioView /></DataTemplate>
+    <DataTemplate DataType="vm:LayoutsPedagioViewModel"><v:LayoutsPedagioView /></DataTemplate>
     <DataTemplate DataType="vm:ColetasViewModel"><v:ColetasView /></DataTemplate>
     <DataTemplate DataType="vm:TabelasFreteViewModel"><v:TabelasFreteView /></DataTemplate>
     <DataTemplate DataType="vm:CotacoesViewModel"><v:CotacoesView /></DataTemplate>

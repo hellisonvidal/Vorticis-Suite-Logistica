@@ -63,6 +63,18 @@ public sealed record ItemNotaLinha(ItemFiscal Item, string? ProdutoVinculado = n
     public string Quantidade => Item.Quantidade.ToString("0.####", System.Globalization.CultureInfo.GetCultureInfo("pt-BR"));
     public string Unitario => Numeros.Moeda(Item.ValorUnitario);
     public string Total => Numeros.Moeda(Item.ValorContabil);
+    /// <summary>CFOP que vale na escrituração (o de escrituração, se houver; senão o do XML).</summary>
+    public string CfopFinal => Item.Cfop;
+    public string CstIcms => Item.CstIcms ?? "";
+    public string AliqIcms => Aliq(Item.AliqIcms);
+    public string IcmsSt => Numeros.MoedaOuVazio(Item.IcmsSt);
+    public string CstIpi => Item.CstIpi ?? "";
+    public string AliqIpi => Aliq(Item.AliqIpi);
+    public string CstPis => Item.CstPis ?? "";
+    public string AliqPis => Aliq(Item.AliqPis);
+    public string CstCofins => Item.CstCofins ?? "";
+    public string AliqCofins => Aliq(Item.AliqCofins);
+    private static string Aliq(decimal a) => a == 0 ? "" : a.ToString("0.####", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")) + "%";
     public string Icms => Numeros.MoedaOuVazio(Item.Icms);
     public string Ipi => Numeros.MoedaOuVazio(Item.Ipi);
     public string Pis => Numeros.MoedaOuVazio(Item.Pis);
@@ -209,10 +221,12 @@ public abstract partial class DigitacaoDocumentoViewModel(IContexto contexto) : 
     [ObservableProperty] private CentroOpcao? _centroItem;
     [ObservableProperty] private ItemNotaLinha? _itemSelecionado;
     [ObservableProperty] private string _totais = "";
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(PodeEditar))] private bool _contabilizado;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(PodeEditar), nameof(PodeEditarEscrituracao), nameof(PodeEditarTributos))] private bool _contabilizado;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PodeEditar))] private bool _usaCentroCusto;
     [ObservableProperty] private string _situacaoDocumento = "Nova nota";
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(PodeEditar))] [NotifyPropertyChangedFor(nameof(PodeEditarEscrituracao))] private bool _importada;
+    /// <summary>A nota está aberta na janela pop-up de lançamento (a tela principal é a consulta das notas).</summary>
+    [ObservableProperty] private bool _digitacaoAberta;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(PodeEditar), nameof(PodeEditarEscrituracao), nameof(PodeEditarTributos))] private bool _importada;
     [ObservableProperty] private string _observacoes = "";
     [ObservableProperty] private string _contaDebito = "";
     [ObservableProperty] private string _contaCredito = "";
@@ -266,6 +280,8 @@ public abstract partial class DigitacaoDocumentoViewModel(IContexto contexto) : 
     [ObservableProperty] private string _novoIe = "";
 
     private long _documentoId;
+    /// <summary>Itens (número) cujos tributos foram alterados na tela de uma nota importada: vão para o banco em "Gravar escrituração".</summary>
+    private readonly HashSet<int> _tributosAlterados = [];
     private long _participanteId;
     private Participante? _novoParticipante;
     private bool _suprimirBusca;
@@ -290,6 +306,10 @@ public abstract partial class DigitacaoDocumentoViewModel(IContexto contexto) : 
     /// <summary>Escrituração (CFOP de entrada, centro de custo, produto vinculado, contas, observações): também nas importadas, se não contabilizadas.</summary>
     public bool PodeEditarEscrituracao => PodeManter && !Contabilizado;
     public bool PodeEditarDigitada => PodeEditar;
+    /// <summary>Tributos dos itens (aba Tributos): editáveis também nas notas importadas, se não contabilizadas.</summary>
+    public bool PodeEditarTributos => PodeEditarEscrituracao;
+    /// <summary>Importar XML ou chave dentro do pop-up: só numa nota nova, ainda não gravada.</summary>
+    public bool PodeImportarNoLancamento => PodeManter && _documentoId == 0 && !Importada;
 
     /// <summary>Por que os campos estão bloqueados (aviso no topo); vazio quando a nota pode ser digitada.</summary>
     public string MotivoSomenteLeitura => !PodeManter
@@ -304,7 +324,7 @@ public abstract partial class DigitacaoDocumentoViewModel(IContexto contexto) : 
     [ObservableProperty] private bool _podeManifestar;
     public bool MostraGravarNota => !Importada;
     public string AvisoImportada => "Nota importada de XML: os dados do XML original (valores, chave de acesso, participante e itens) não podem ser alterados. " +
-                                    "Você pode editar a escrituração: CFOP de entrada, centro de custo, produto vinculado, contas e observações.";
+                                    "Você pode editar a escrituração (CFOP de entrada, centro de custo, produto vinculado, contas e observações) e os tributos dos itens (aba Tributos).";
     public bool MostraCentro => UsaCentroCusto;
 
     partial void OnUsaCentroCustoChanged(bool value) => OnPropertyChanged(nameof(MostraCentro));
@@ -333,6 +353,8 @@ public abstract partial class DigitacaoDocumentoViewModel(IContexto contexto) : 
     {
         if (value is not null) _ = CarregarDocumentoAsync(value.Id);
         EditarCommand.NotifyCanExecuteChanged();
+        AbrirCommand.NotifyCanExecuteChanged();
+        ExcluirCommand.NotifyCanExecuteChanged();
     }
 
     partial void OnParticipanteChanged(string value)
@@ -420,6 +442,8 @@ public abstract partial class DigitacaoDocumentoViewModel(IContexto contexto) : 
         (_novoParticipante, TemNovoParticipante, ParticipanteInfo) = (null, false, "");
         (Observacoes, ContaDebito, ContaCredito, EscProduto) = (d.Observacoes ?? "", d.ContaDebito ?? "", d.ContaCredito ?? "", "");
         Importada = d.Importado;
+        _tributosAlterados.Clear();
+        OnPropertyChanged(nameof(PodeImportarNoLancamento));
         CentroDocumento = Centros.FirstOrDefault(c => c.Id == d.CentroCustoId) ?? Centros[0];
         Itens.Clear();
         foreach (var i in d.Itens) Itens.Add(Linha(i));
@@ -469,6 +493,8 @@ public abstract partial class DigitacaoDocumentoViewModel(IContexto contexto) : 
         _suprimirBusca = false;
         (_novoParticipante, TemNovoParticipante, ParticipanteInfo) = (null, false, "");
         (Observacoes, ContaDebito, ContaCredito, EscProduto, Importada) = ("", "", "", "", false);
+        _tributosAlterados.Clear();
+        OnPropertyChanged(nameof(PodeImportarNoLancamento));
         CentroDocumento = CentroItem = Centros[0];
         Itens.Clear();
         Item.Limpar();
@@ -585,6 +611,7 @@ public abstract partial class DigitacaoDocumentoViewModel(IContexto contexto) : 
         if (online is { Sucesso: true, Valor.Contabilizados: > 0 }) await ListarAsync(app, empresa, usuario);
         Selecionada = Lista.FirstOrDefault(d => d.Id == r.Valor);
         Mensagem = "Nota gravada." + ImportacaoXmlViewModel.TextoContabilizacaoOnline(online);
+        DigitacaoAberta = false;   // fecha o pop-up; a nota gravada fica selecionada na consulta
         if (notaNova && CfopImobilizado.Itens(Operacao, doc.Itens).Count > 0
             && await Contexto.ConfirmarAsync("Ativo imobilizado",
                    "A nota tem itens com CFOP de ativo imobilizado. Cadastrar agora os bens no imobilizado do Contábil (já preenchidos com a nota, o fornecedor, a data e o valor)?",
@@ -721,13 +748,71 @@ public abstract partial class DigitacaoDocumentoViewModel(IContexto contexto) : 
         Mensagem = $"Item {novo.Numero} atualizado na tela. Clique em \"Gravar escrituração\" para salvar.";
     });
 
+    /// <summary>
+    /// Aba Tributos › Aplicar ao item: CFOP, CST, bases, alíquotas e valores de ICMS, ICMS-ST, IPI, PIS e COFINS do item selecionado, como
+    /// informados na tela (vindos do XML ou do produto, alterados pelo usuário). Na nota importada, vão ao banco em "Gravar escrituração".
+    /// </summary>
+    [RelayCommand]
+    private void AplicarTributosItem()
+    {
+        Erros.Clear();
+        Mensagem = null;
+        if (!PodeEditarTributos) { Erros.Add("A nota não pode ser alterada (contabilizada ou sem permissão)."); return; }
+        if (ItemSelecionado is not { } sel) { Erros.Add("Selecione o item da nota."); return; }
+        var f = Item.Montar(null, null);
+        if (string.IsNullOrWhiteSpace(f.Cfop) || RegrasFiscais.Digitos(f.Cfop).Length != 4) { Erros.Add("Informe o CFOP do item (4 dígitos)."); return; }
+        var novo = sel.Item with
+        {
+            Cfop = RegrasFiscais.Digitos(f.Cfop), CfopOriginal = sel.Item.CfopOriginal ?? (Importada ? sel.Item.Cfop : null),
+            CstIcms = f.CstIcms, BcIcms = f.BcIcms, AliqIcms = f.AliqIcms, Icms = f.Icms, BcIcmsSt = f.BcIcmsSt, IcmsSt = f.IcmsSt,
+            CstIpi = f.CstIpi, BcIpi = f.BcIpi, AliqIpi = f.AliqIpi, Ipi = f.Ipi,
+            CstPis = f.CstPis, BcPis = f.BcPis, AliqPis = f.AliqPis, Pis = f.Pis,
+            CstCofins = f.CstCofins, BcCofins = f.BcCofins, AliqCofins = f.AliqCofins, Cofins = f.Cofins,
+        };
+        if (!Importada) novo = novo with { CfopOriginal = null };
+        else _tributosAlterados.Add(novo.Numero);
+        var pos = Itens.IndexOf(sel);
+        Itens[pos] = Linha(novo);
+        ItemSelecionado = Itens[pos];
+        AtualizarTotais();
+        Mensagem = $"Tributos do item {novo.Numero} atualizados na tela. Clique em \"{(Importada ? "Gravar escrituração" : "Gravar nota")}\" para salvar.";
+    }
+
+    /// <summary>
+    /// Escrituração › Aplicar regras fiscais: troca o CFOP de cada item (o do XML) pelo da escrituração, conforme as regras fiscais da operação
+    /// (entrada ou saída), e os CSTs que a regra tiver.
+    /// </summary>
+    [RelayCommand]
+    private Task AplicarRegrasFiscaisAsync() => ExecutarAsync(async (app, empresa, usuario) =>
+    {
+        var regras = (await app.Fiscal().RegrasFiscais.RegrasAsync(empresa)).Where(r => r.Operacao == Operacao).ToList();
+        if (regras.Count == 0)
+        {
+            Erros.Add($"Não há regras fiscais de {(Operacao == TipoOperacao.Entrada ? "entrada" : "saída")} cadastradas (Cadastros › Regras fiscais).");
+            return;
+        }
+        var novos = RegrasFiscais.Aplicar(Itens.Select(i => i.Item), Operacao, regras);
+        var trocados = 0;
+        for (var k = 0; k < Itens.Count; k++)
+            if (novos[k] != Itens[k].Item)
+            {
+                if (novos[k].CstIcms != Itens[k].Item.CstIcms || novos[k].CstPis != Itens[k].Item.CstPis || novos[k].CstCofins != Itens[k].Item.CstCofins)
+                    _tributosAlterados.Add(novos[k].Numero);
+                Itens[k] = Linha(novos[k]);
+                trocados++;
+            }
+        Mensagem = trocados == 0 ? "Nenhum item mudou: os CFOPs já estão como as regras fiscais mandam (ou não há regra para eles)."
+                 : $"{trocados} item(ns) ajustado(s) pelas regras fiscais. Clique em \"{(Importada ? "Gravar escrituração" : "Gravar nota")}\" para salvar.";
+    }, Permissao.FiscalDocumentosImportar);
+
     /// <summary>Grava somente a escrituração da nota importada: CFOP, produto e centro de custo dos itens, centro de custo da nota, contas e observações.</summary>
     [RelayCommand]
     private Task SalvarEscrituracaoAsync() => ExecutarAsync(async (app, empresa, usuario) =>
     {
         if (_documentoId == 0) { Erros.Add("Selecione uma nota na lista."); return; }
         var esc = new EscrituracaoDocumento(_documentoId, Texto(Observacoes), CentroDocumento?.Id, Texto(ContaDebito), Texto(ContaCredito),
-            Itens.Select(i => new EscrituracaoItem(i.N, i.Item.Cfop, i.Item.ProdutoId, i.Item.CentroCustoId)).ToList());
+            Itens.Select(i => new EscrituracaoItem(i.N, i.Item.Cfop, i.Item.ProdutoId, i.Item.CentroCustoId,
+                                                   _tributosAlterados.Contains(i.N) ? TributosItem.De(i.Item) : null)).ToList());
         var r = await app.Fiscal().Digitacao.GravarEscrituracaoAsync(empresa, esc, usuario);
         if (!r.Sucesso) { MostrarResultado(r, ""); return; }
         var id = _documentoId;
@@ -735,6 +820,7 @@ public abstract partial class DigitacaoDocumentoViewModel(IContexto contexto) : 
         await CarregarDocumentoAsync(id);
         Selecionada = Lista.FirstOrDefault(d => d.Id == id);
         Mensagem = "Escrituração gravada.";
+        DigitacaoAberta = false;
     }, Permissao.FiscalDocumentosImportar);
 
     // ------------------------------------------------------------------ importação de XML na tela
@@ -748,8 +834,16 @@ public abstract partial class DigitacaoDocumentoViewModel(IContexto contexto) : 
         AmpliarPeriodo(datas);
         await ExecutarAsync(ListarAsync, Permissao.FiscalDocumentosConsultar);
         if (minhas.Count > 0) Selecionada = Lista.FirstOrDefault(d => d.Chave == minhas[0].Chave);
-        Mensagem = $"{minhas.Count} nota(s) de {Operacao.Rotulo().ToLowerInvariant()} importada(s) e listada(s) abaixo." +
-                   (outras > 0 ? $" {outras} nota(s) da outra operação (entrada/saída) também foram importadas e aparecem na tela correspondente." : "");
+        var outrasTexto = outras > 0 ? $" {outras} nota(s) da outra operação (entrada/saída) também foram importadas e aparecem na tela correspondente." : "";
+        // importação feita dentro do pop-up de lançamento: a nota importada abre nele, para conferir itens, tributos e escrituração
+        if (DigitacaoAberta && Selecionada is { } importada && minhas.Count > 0)
+        {
+            await CarregarDocumentoAsync(importada.Id);
+            Mensagem = (minhas.Count == 1 ? "Nota importada do XML." : $"{minhas.Count} notas importadas; esta é a primeira.") +
+                       " Confira os itens e os tributos e, se mudar algo, clique em \"Gravar escrituração\"." + outrasTexto;
+            return;
+        }
+        Mensagem = $"{minhas.Count} nota(s) de {Operacao.Rotulo().ToLowerInvariant()} importada(s) e listada(s) abaixo." + outrasTexto;
     }
 
     private void AmpliarPeriodo(IReadOnlyCollection<DateTime> datas)
@@ -778,10 +872,30 @@ public abstract partial class DigitacaoDocumentoViewModel(IContexto contexto) : 
         if (!r.Sucesso) { MostrarResultado(r, ""); return; }
         Lista.Remove(s);
         Novo();
+        DigitacaoAberta = false;
         Mensagem = "Nota excluída.";
     }, Permissao.FiscalDocumentosImportar);
 
     private bool TemSelecionada() => Selecionada is not null;
+
+    /// <summary>Consulta › Novo lançamento: abre a janela pop-up com a nota em branco.</summary>
+    [RelayCommand]
+    private void NovoLancamento()
+    {
+        Novo();
+        DigitacaoAberta = true;
+    }
+
+    /// <summary>Consulta › Abrir (duplo clique ou Enter): carrega a nota selecionada e abre a janela pop-up.</summary>
+    [RelayCommand(CanExecute = nameof(TemSelecionada))]
+    private async Task AbrirAsync()
+    {
+        await EditarAsync();
+        if (Erros.Count == 0) DigitacaoAberta = true;
+    }
+
+    [RelayCommand]
+    private void FecharDigitacao() => DigitacaoAberta = false;
 
     /// <summary>Busca a NF-e na SEFAZ pela chave de acesso (como no Portal da NF-e) e importa o XML completo.</summary>
     [RelayCommand]

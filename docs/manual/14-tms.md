@@ -100,7 +100,7 @@ Só cotações abertas podem ser alteradas. Cotações abertas ou recusadas pode
 
 **Para que serve:** acompanhar cada CT-e até a entrega e guardar o comprovante (quem recebeu, quando).
 
-**Onde fica:** *Operação › Entregas e ocorrências*.
+**Onde fica:** *Operações › Entregas e ocorrências*.
 
 **Como usar:**
 1. A lista mostra os CT-e emitidos e em trânsito, com a **previsão** e o **prazo**. Os atrasados aparecem primeiro.

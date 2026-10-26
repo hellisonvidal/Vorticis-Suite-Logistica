@@ -16,8 +16,17 @@ Estes cadastros existem em todos os módulos e têm o mesmo código em todos ele
 6. Em **Escrituração**, escolha o **regime tributário** (tem histórico por ano; é definido na inclusão) e o primeiro exercício.
 7. **Salvar**.
 
+### Logo da empresa (sai em todos os relatórios)
+No Vorticis Suite Logística, este cadastro se chama **Transportadoras**. O logo enviado aqui sai no cabeçalho, à esquerda do nome da empresa, em **todos os relatórios em PDF** dela: relatórios da frota, do TMS e do contábil, CT-e, faturas, livros etc.
+1. Selecione a empresa na lista da direita (o logo é gravado na empresa selecionada).
+2. Na aba **Dados cadastrais**, em **Logo da empresa**, clique em **Enviar logo...** e escolha a imagem no computador: arquivo **PNG** ou **JPG** de até **1 MB** (de preferência com fundo branco ou transparente).
+3. A prévia aparece ao lado e o logo já vale para os próximos relatórios; não precisa clicar em Salvar.
+4. Para trocar, envie outro arquivo; para tirar, clique em **Remover logo** e confirme.
+
+Só o administrador troca ou remove o logo.
+
 ### Abas da empresa
-- **Dados cadastrais**: tudo acima.
+- **Dados cadastrais**: tudo acima, inclusive o logo.
 - **Sócios** e **Contadores**: iguais às telas [Sócios](#socios) e [Contadores](#contadores).
 - **Contabilidade**: modelo e máscara do plano de contas, centros de custo, início da escrituração, regras dos lançamentos e contas do encerramento (veja abaixo).
 
@@ -73,6 +82,26 @@ Se o seu perfil não permite alterar, a tela só mostra os valores. Se você ape
 | EFD ICMS/IPI | Perfil, atividade, códigos de receita e dia de vencimento do ICMS (o assistente já abre preenchido). |
 | EFD-Contribuições | Natureza da pessoa jurídica e atividade. |
 | Contabilização e tributos | Atalhos para *Regras de contabilização*, *Contas dos tributos* e *Fechamento do período fiscal*. |
+
+## Importar cadastros de planilha (Excel)
+
+**Para que serve:** trazer de uma vez os cadastros que você já tem numa planilha (de outro sistema ou feita à mão), sem digitar um por um.
+
+**Onde fica:** no próprio grupo do cadastro, no menu *Cadastros*: cada grupo tem o item **Importar de planilha (Excel)** só com os cadastros dele. No Vorticis Suite Logística: *Cadastros › Importar de planilha (Excel)* para clientes, fornecedores, veículos, motoristas, frotas, rotas e tabelas de frete; *Cadastros › Gerencial › Importar de planilha (Excel)* para produtos e regras fiscais; *Cadastros › Contábil › Importar de planilha (Excel)* para centros de custo e históricos padrão. O plano de contas tem importação própria (*Integrações › Importar › Plano de contas*).
+
+**Como usar:**
+1. Escolha o cadastro no menu. Se ainda não tem planilha, clique em **Gerar planilha modelo**: o sistema cria um .xlsx com as colunas do cadastro e uma linha de exemplo.
+2. Clique em **Escolher planilha...** e selecione o arquivo (Excel **.xlsx** ou **.csv**). A primeira linha precisa ser o cabeçalho, com o nome de cada coluna.
+3. **Adapte o layout à sua planilha:** à esquerda aparece cada campo do cadastro e a coluna da planilha ligada a ele. O sistema já liga as colunas de nome parecido (por exemplo, *CNPJ*, *CPF/CNPJ* ou *Documento* para o CPF/CNPJ). Troque o que for preciso; *(não importar)* deixa o campo em branco. Os campos com **\*** são obrigatórios.
+4. Confira a **prévia** (as primeiras linhas como vão entrar) e clique em **Importar**.
+5. Cada linha é gravada com as mesmas regras da tela do cadastro (CPF/CNPJ, placa, CFOP etc. são conferidos). As linhas com erro ficam de fora e aparecem com o número da linha e o motivo; corrija a planilha e importe só elas de novo.
+
+**Dicas:**
+- O **layout fica gravado** para a empresa: na próxima planilha do mesmo cadastro, as colunas já vêm escolhidas (use **Gravar layout** para guardá-lo sem importar).
+- **Código** em branco: o sistema numera a partir do maior código existente.
+- Tipos, combustíveis e afins aceitam o código ou o nome que aparece na tela (ex.: *Diesel S10* ou *DIESEL_S10*; *Cavalo*; *Própria*). Sim/não aceita *S*, *Sim*, *X* ou *1*.
+- Rotas: informe a UF e o município de origem e de destino (o nome ou o código IBGE); sem distância, o sistema estima como na tela de rotas.
+- Cadastros já existentes (mesmo CPF/CNPJ, placa ou código) não são duplicados: a linha aparece com o aviso.
 
 ## Clientes e fornecedores (participantes)
 

@@ -300,6 +300,10 @@ public class LancamentosNotasTests(BancoDeTeste db) : IClassFixture<BancoDeTeste
             vm.Item.Cfop = "1102";
             await vm.AplicarEscrituracaoItemCommand.ExecuteAsync(null);
             Assert.Equal(("5102", "1102"), (vm.Itens[0].Cfop, vm.Itens[0].CfopEscrituracao));
+            // aba Tributos: os impostos do item importado podem ser alterados (vão para o banco com a escrituração)
+            (vm.Item.CstIcms, vm.Item.BcIcms, vm.Item.AliqIcms, vm.Item.Icms) = ("00", "500", "12", "60");
+            vm.AplicarTributosItemCommand.Execute(null);
+            Assert.Equal(("00", "12%", "1102"), (vm.Itens[0].CstIcms, vm.Itens[0].AliqIcms, vm.Itens[0].CfopFinal));
             vm.Observacoes = "Conferida com o pedido 55";
             vm.ContaDebito = "1.1.04.001";
             vm.ContaCredito = "2.1.01.001";
@@ -312,6 +316,7 @@ public class LancamentosNotasTests(BancoDeTeste db) : IClassFixture<BancoDeTeste
             Assert.Equal(("Conferida com o pedido 55", "1.1.04.001", "2.1.01.001"), (gravada.Observacoes, gravada.ContaDebito, gravada.ContaCredito));
             Assert.Equal(("1102", "5102", 500m), (gravada.Itens[0].Cfop, gravada.Itens[0].CfopOriginal, gravada.Itens[0].ValorProduto));   // valores do XML intactos
             Assert.Equal(1_000_000m / 2_000m, gravada.Totais.Total);   // total do XML: 500 + 0 de IPI/ST
+            Assert.Equal(("00", 12m, 60m, 60m), (gravada.Itens[0].CstIcms, gravada.Itens[0].AliqIcms, gravada.Itens[0].Icms, gravada.Totais.Icms));   // ICMS alterado
 
             // validações do serviço
             var esc = new EscrituracaoDocumento(nota.Id, null, null, null, null, [new EscrituracaoItem(1, "6102", null, null)]);

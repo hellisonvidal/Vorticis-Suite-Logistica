@@ -4,6 +4,7 @@ using Vorticis.Infra.Relatorios;
 namespace Vorticis.Infra.Tests;
 
 /// <summary>Layout do PDF: o título do relatório fica abaixo da identificação, sem sobrepor o corpo da página.</summary>
+[Collection("LogoRelatorios")]
 public class GeradorPdfCabecalhoTests
 {
     [Fact]

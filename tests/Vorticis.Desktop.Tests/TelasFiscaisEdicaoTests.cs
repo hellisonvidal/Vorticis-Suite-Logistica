@@ -54,16 +54,24 @@ public class TelasFiscaisEdicaoTests(BancoDeTeste db, SessaoHeadless headless) :
         var r = await ForaDaSessao(headless.Sessao.Dispatch(async () =>
         {
             var vm = new NotaEntradaViewModel(new ContextoTeste(db.App, adm, empresa));
-            var view = new DigitacaoDocumentoView { DataContext = vm };
+            // a consulta abre o lançamento numa janela pop-up (DigitacaoNotaView, em abas)
+            var view = new DigitacaoNotaView { DataContext = vm };
             var janela = new Window { Content = view, Width = 1366, Height = 768 };
             janela.Show();
             await vm.CarregarAsync();
-            vm.NovoCommand.Execute(null);
+            Assert.False(vm.DigitacaoAberta);
+            vm.NovoLancamentoCommand.Execute(null);
+            Assert.True(vm.DigitacaoAberta);
+            Assert.True(vm.PodeImportarNoLancamento);   // nota nova: importar XML ou chave dentro do lançamento
             Avalonia.Threading.Dispatcher.UIThread.RunJobs();
+            var abas = view.GetVisualDescendants().OfType<TabControl>().Single().Items.OfType<TabItem>().Select(t => (string)t.Header!).ToList();
+            Assert.Equal(["Nota", "Tributos", "Duplicatas", "Totais", "Escrituração"], abas);
             var bloqueados = view.GetVisualDescendants().OfType<TextBox>().Where(t => t.IsEffectivelyVisible && !t.IsEffectivelyEnabled)
                                  .Select(t => t.Watermark ?? t.Name ?? t.Text ?? "?").ToList();
             bloqueados.InsertRange(0, vm.Erros);
             bloqueados.Insert(0, $"PodeEditar={vm.PodeEditar}");
+            vm.FecharDigitacaoCommand.Execute(null);
+            Assert.False(vm.DigitacaoAberta);
             janela.Close();
             return bloqueados;
         }, TestContext.Current.CancellationToken));

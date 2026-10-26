@@ -1,3 +1,4 @@
+using Vorticis.Application.Relatorios;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 using Avalonia.Media;
@@ -174,6 +175,11 @@ public abstract partial class MainViewModelBase : ObservableObject, IContexto, I
     public CertificadosViewModel Certificados => Instancia<CertificadosViewModel>();
     public BackupViewModel Backup => Instancia<BackupViewModel>();
     public ObrigacoesViewModel Obrigacoes => Instancia<ObrigacoesViewModel>();
+    public ImportacaoCadastrosViewModel ImportacaoCadastros => Instancia<ImportacaoCadastrosViewModel>();
+
+    /// <summary>Cadastros que aceitam importação de planilha: clientes e fornecedores (casco) e os do módulo.</summary>
+    public IReadOnlyList<DefinicaoImportacao> Importacoes =>
+        [.. (Modulo.UsaCadastrosComuns && Modulo.UsaClientesFornecedores ? ImportacoesComuns.Todas : []).Concat(Modulo.Importacoes).DistinctBy(d => d.Chave)];
 
     /// <summary>Telas comuns a todos os módulos (os menus delas ficam em <see cref="MontarMenus"/>).</summary>
     private void RegistrarTelasComuns(CatalogoTelas c)
@@ -210,6 +216,12 @@ public abstract partial class MainViewModelBase : ObservableObject, IContexto, I
         c.Instancia(nameof(Socios), m => new SociosViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
                     aoTrocarEmpresa: (v, ativa) => ativa || AbaDaEmpresaAtiva(CadastroEmpresaViewModel.AbaSocios) ? v.CarregarAsync() : Task.CompletedTask)
             .Tela(TelasComuns.Socios, "Cadastros › Sócios", ComAcesso, v => v.CarregarAsync());
+        foreach (var g in Modulo.Graficos)
+            c.Instancia("Grafico." + g.Chave, m => new GraficoViewModel(m, g), aoTrocarEmpresa: (v, ativa) => ativa ? v.GerarCommand.ExecuteAsync(null) : Task.CompletedTask)
+                .Tela(g.Tela, $"Relatórios › Gráficos › {g.Titulo}", ComAcesso, v => v.CarregarAsync());
+        var importacao = c.Instancia(nameof(ImportacaoCadastros), m => new ImportacaoCadastrosViewModel(m));
+        foreach (var def in Importacoes)
+            importacao = importacao.Tela(def.Tela, $"Cadastros › Importar de planilha › {def.Titulo}", ComAcesso, v => v.AbrirAsync(def));
         c.Instancia(nameof(Clientes), m => new ClientesViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes())
             .Tela(TelasComuns.Clientes, "Cadastros › Clientes", ComAcesso, v => v.CarregarAsync());
         c.Instancia(nameof(Fornecedores), m => new FornecedoresViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes())
@@ -281,14 +293,28 @@ public abstract partial class MainViewModelBase : ObservableObject, IContexto, I
         yield return ItemMenu.Tela("Sair (trocar de usuário)", TelasComuns.Sair);
     }
 
+    /// <summary>
+    /// Em cada grupo de Cadastros (a lista principal e cada submenu), o item "Importar de planilha (Excel)" com os cadastros daquele grupo
+    /// que aceitam importação; grupo sem cadastro importável fica como está.
+    /// </summary>
+    private List<ItemMenu> ComImportacao(IEnumerable<ItemMenu> itens)
+    {
+        var lista = itens.Select(i => i.Filhos is { } f ? i with { Filhos = ComImportacao(f) } : i).ToList();
+        var chaves = lista.Where(i => i.Chave is not null).Select(i => i.Chave!).ToHashSet();
+        var defs = Importacoes.Where(d => d.TelaCadastro is { } t && chaves.Contains(t)).ToList();
+        if (defs.Count > 0) lista.AddRange([ItemMenu.Separador, ItemMenu.Submenu("Importar de _planilha (Excel)", [.. defs.Select(d => ItemMenu.Tela(d.Titulo, d.Tela))])]);
+        return lista;
+    }
+
     /// <summary>Menus do casco em volta dos do módulo.</summary>
     private IReadOnlyList<ItemMenu> MontarMenus()
     {
         var cadastros = new List<ItemMenu> { ItemMenu.Tela(Modulo.RotuloEmpresas, TelasComuns.Empresas) };
-        if (Modulo.UsaCadastrosComuns) cadastros.Add(ItemMenu.Tela("Contadores", TelasComuns.Contabilidade));
+        if (Modulo.UsaCadastrosComuns && Modulo.ContadoresNoMenuCadastros) cadastros.Add(ItemMenu.Tela("Contadores", TelasComuns.Contabilidade));
         if (Modulo.UsaCadastrosComuns && Modulo.UsaClientesFornecedores)
             cadastros.AddRange([ItemMenu.Tela("Clientes", TelasComuns.Clientes), ItemMenu.Tela("Fornecedores", TelasComuns.Fornecedores)]);
         if (Modulo.ItensCadastros.Count > 0) cadastros.AddRange(Modulo.ItensCadastros.Prepend(ItemMenu.Separador));
+        cadastros = ComImportacao(cadastros);
         cadastros.AddRange([ItemMenu.Separador, ItemMenu.Tela("Parâmetros", TelasComuns.Parametros)]);
         // O calendário de obrigações fica em "Obrigações", se o módulo tem esse menu; senão, em "Consultas";
         // sem nenhum dos dois, o casco cria o menu "Obrigações".
@@ -831,10 +857,37 @@ public abstract partial class MainViewModelBase : ObservableObject, IContexto, I
 
     public Task<bool> ConfirmarAsync(string titulo, string mensagem, string textoSim = "Sim", string textoNao = "Não")
     {
+        // exclusão pela tecla Delete já confirmada: a confirmação simples da própria tela ("Excluir ...") não se repete
+        if (_excluindoPelaTecla && titulo.StartsWith("Excluir", StringComparison.Ordinal)) return Task.FromResult(true);
         Confirmacao?.Responder(false);
         var pedido = new PedidoConfirmacao(titulo, mensagem, textoSim, textoNao);
         Confirmacao = pedido;
         return pedido.Resposta;
+    }
+
+    private bool _excluindoPelaTecla;
+
+    /// <summary>O comando "Excluir" da tela (propriedade ExcluirCommand do ViewModel), se ela tiver.</summary>
+    public static System.Windows.Input.ICommand? ComandoExcluir(object? viewModel) =>
+        viewModel?.GetType().GetProperty("ExcluirCommand")?.GetValue(viewModel) as System.Windows.Input.ICommand;
+
+    /// <summary>
+    /// Tecla Delete: pede confirmação e executa o botão Excluir da tela (o registro selecionado). As confirmações simples da tela
+    /// ("Excluir ...") não se repetem; as que avisam de outra consequência (ex.: desfazer a contabilização) continuam aparecendo.
+    /// Falso se a tela não tem o que excluir.
+    /// </summary>
+    public async Task<bool> ExcluirPelaTeclaAsync(object? viewModel)
+    {
+        if (ComandoExcluir(viewModel) is not { } cmd || !cmd.CanExecute(null)) return false;
+        if (!await ConfirmarAsync("Excluir registro", "Excluir o registro selecionado? Esta exclusão não pode ser desfeita.", "Excluir", "Cancelar")) return true;
+        _excluindoPelaTecla = true;
+        try
+        {
+            if (cmd is CommunityToolkit.Mvvm.Input.IAsyncRelayCommand a) await a.ExecuteAsync(null);
+            else cmd.Execute(null);
+        }
+        finally { _excluindoPelaTecla = false; }
+        return true;
     }
 
     public async Task ReiniciarParaLoginAsync(string mensagem)
@@ -871,12 +924,23 @@ public abstract partial class MainViewModelBase : ObservableObject, IContexto, I
             await AtualizarPermissoesAsync();
             await AtualizarRecursosAsync();
             await AtualizarSituacaoPeriodoAsync();
+            await AtualizarLogoAsync();
             foreach (var def in _catalogo.Instancias.Where(d => d.AoTrocarEmpresa is not null))
                 await def.AoTrocarEmpresa!(_instancias[def.Nome], InstanciaAtiva(def.Nome));
         });
     }
 
-    private void AtualizarStatus()
+    /// <summary>Logo da empresa ativa nos relatórios em PDF (sem empresa ou sem logo, os relatórios saem sem).</summary>
+    private async Task AtualizarLogoAsync()
+    {
+        try
+        {
+            LogoRelatorios.Atual = App is not null && Sessao is not null && EmpresaSelecionada is { } e ? await App.LogoEmpresa.ObterAsync(e.Id, Sessao.Id) : null;
+        }
+        catch (Exception) { LogoRelatorios.Atual = null; }
+    }
+
+        private void AtualizarStatus()
     {
         if (Sessao is null) return;
         var empresa = EmpresaSelecionada is null

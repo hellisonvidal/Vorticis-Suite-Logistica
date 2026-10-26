@@ -1097,7 +1097,7 @@ public class TelasTests(BancoDeTeste db, SessaoHeadless headless) : IClassFixtur
             Assert.Same(vm.CentralUsuarios, vm.Conteudo);
             var perfis = vm.Perfis;
             await perfis.CarregarAsync();
-            Assert.Equal(["Administrador", "Assistente", "Consulta", "Contador"], perfis.Lista.Select(p => p.Nome).Order());
+            Assert.Equal(["Administrador", "Assistente", "Consulta", "Contador", "Manutenção"], perfis.Lista.Select(p => p.Nome).Order());
             perfis.Selecionado = perfis.Lista.Single(p => p.Nome == "Administrador");
             Assert.True(perfis.EditandoAdministrador);
             Assert.All(perfis.Grupos.SelectMany(g => g.Funcoes), f => Assert.True(f.Marcada));   // todas as funções liberadas

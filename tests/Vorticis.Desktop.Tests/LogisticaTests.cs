@@ -27,7 +27,7 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
     {
         var vm = new MainViewModel();
         Assert.Equal("Vorticis Suite Logística", vm.Modulo.Nome);
-        Assert.Equal(["_Cadastros", "_Operação", "_Manutenção", "_Emissão", "_Financeiro", "_Gerencial", "_Relatórios", "Con_figurações", "_Ajuda"],
+        Assert.Equal(["_Cadastros", "_Operações", "_Emissão", "_Financeiro", "_Contábil", "_Relatórios", "Con_figurações", "_Ajuda"],
                      vm.Menus.Select(m => m.Titulo));
         // toda função habilitada abre uma tela conhecida; o que ainda falta (emissão de CT-e, MDF-e e NFS-e) fica "em breve"
         var itens = Folhas(vm.Menus).Where(i => !i.EhSeparador).ToList();
@@ -40,7 +40,7 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
         foreach (var chave in new[] { Frota.Desktop.ViewModels.FrotaTelas.Cotacoes, Frota.Desktop.ViewModels.FrotaTelas.Ctes, Frota.Desktop.ViewModels.FrotaTelas.Manifestos,
                                       Frota.Desktop.ViewModels.FrotaTelas.Faturas })
             Assert.Contains(emissao.Filhos!, i => i.Chave == chave && i.Habilitado);
-        Assert.Contains(vm.Menus.Single(m => m.Titulo == "_Operação").Filhos!, i => i.Chave == Frota.Desktop.ViewModels.FrotaTelas.Entregas);
+        Assert.Contains(vm.Menus.Single(m => m.Titulo == "_Operações").Filhos!, i => i.Chave == Frota.Desktop.ViewModels.FrotaTelas.Entregas);
         Assert.Contains(Folhas(vm.Menus[0].Filhos!), i => i.Chave == Frota.Desktop.ViewModels.FrotaTelas.TabelasFrete);
         foreach (var chave in new[] { Erp.Desktop.ViewModels.ErpTelas.PedidosVenda, Fiscal.Desktop.ViewModels.Telas.NotaSaida })
         {
@@ -49,20 +49,39 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
         }
         Assert.DoesNotContain(Folhas(vm.Menus.Single(m => m.Titulo == "_Financeiro").Filhos!), i => i.Titulo.Replace("_", "") == "Faturamento");
         Assert.DoesNotContain(vm.Menus.Single(m => m.Titulo == "_Financeiro").Filhos!, i => i.Titulo.Replace("_", "") == "Faturamento");
-        // Gerencial: só o submenu Contábil (sem os relatórios, que vão para Relatórios); a Folha saiu do programa
-        var gerencial = vm.Menus.Single(m => m.Titulo == "_Gerencial");
-        Assert.Equal(["_Contábil"], gerencial.Filhos!.Select(m => m.Titulo));
-        Assert.DoesNotContain(Folhas(gerencial.Filhos!), i => i.Chave == ViewModels.Telas.Balancete);
+        // Contábil: os menus da contabilidade direto (sem os relatórios, que vão para Relatórios); a Folha saiu do programa
+        var contabil = vm.Menus.Single(m => m.Titulo == "_Contábil");
+        Assert.DoesNotContain(contabil.Filhos!, m => m.Titulo.Replace("_", "") is "Contábil" or "Relatórios");
+        Assert.Contains(Folhas(contabil.Filhos!), i => i.Chave == ViewModels.Telas.Lancamento);
+        Assert.DoesNotContain(Folhas(contabil.Filhos!), i => i.Chave == ViewModels.Telas.Balancete);
         Assert.DoesNotContain(vm.ChavesDeTelas, c => c.StartsWith("folha.") || c.StartsWith("VorticisFolha:"));
-        // Operação tem Diárias e o submenu Coletas com as ordens de coleta
-        var coletas = vm.Menus.Single(m => m.Titulo == "_Operação").Filhos!.Single(m => m.Titulo == "_Coletas");
+        // Operações: a operação da frota e as compras, o estoque e os monitores do Gerencial (que saíram do Financeiro)
+        var operacoes = vm.Menus.Single(m => m.Titulo == "_Operações");
+        Assert.Equal(["Compras", "Manutenção", "Estoque", "Monitores"], operacoes.Filhos!.Where(i => i.Filhos is not null && i.Titulo is not ("_Coletas" or "_Pedágio")).Select(i => i.Titulo));
+        Assert.Equal(["Contas a pagar", "Contas a receber", "Conciliação bancária"], vm.Menus.Single(m => m.Titulo == "_Financeiro").Filhos!.Where(i => !i.EhSeparador).Select(i => i.Titulo));
+        // Manutenção sem Notas de compra; Cadastros sem Contadores (ficam na aba do cadastro da transportadora)
+        Assert.DoesNotContain(Folhas(vm.Menus), i => i.Chave == Frota.Desktop.ViewModels.FrotaTelas.Notas);
+        Assert.DoesNotContain(vm.Menus[0].Filhos!, i => i.Chave == TelasComuns.Contabilidade);
+        Assert.Contains(vm.Menus[0].Filhos!, i => i.Titulo == "_Gerencial" && i.Filhos is not null);
+        Assert.True(vm.ConheceTela(TelasComuns.Contabilidade));
+        // Cadastros: cada grupo (a lista principal, Gerencial e Contábil) tem o seu "Importar de planilha (Excel)", só com os cadastros dele
+        const string Importar = "Importar de _planilha (Excel)";
+        string[] ImportaveisDe(IReadOnlyList<ItemMenu> grupo) => [.. grupo.Single(i => i.Titulo == Importar).Filhos!.Select(i => i.Titulo)];
+        var cadastros = vm.Menus[0].Filhos!;
+        Assert.Equal(["Clientes", "Fornecedores", "Veículos", "Motoristas", "Frotas", "Rotas", "Tabelas de frete"], ImportaveisDe(cadastros));
+        Assert.Equal(["Produtos", "Regras fiscais"], ImportaveisDe(cadastros.Single(i => i.Titulo == "_Gerencial").Filhos!));
+        Assert.Equal(["Centros de custo", "Históricos padrão"], ImportaveisDe(cadastros.Single(i => i.Titulo == "_Contábil").Filhos!));
+        Assert.All(Folhas(cadastros).Where(i => i.Chave?.StartsWith("importar.") == true), i => Assert.True(vm.ConheceTela(i.Chave!), i.Chave));
+        Assert.Equal(11, Folhas(cadastros).Count(i => i.Chave?.StartsWith("importar.") == true));
+        // Operações tem Diárias e o submenu Coletas com as ordens de coleta
+        var coletas = vm.Menus.Single(m => m.Titulo == "_Operações").Filhos!.Single(m => m.Titulo == "_Coletas");
         Assert.Equal(["Ordens de coleta"], coletas.Filhos!.Select(i => i.Titulo));
         Assert.True(coletas.Filhos![0].Habilitado);
         Assert.Equal(Frota.Desktop.ViewModels.FrotaTelas.Coletas, coletas.Filhos![0].Chave);
-        Assert.Contains(vm.Menus.Single(m => m.Titulo == "_Operação").Filhos!, i => i.Titulo == "Diárias");
+        Assert.Contains(vm.Menus.Single(m => m.Titulo == "_Operações").Filhos!, i => i.Titulo == "Diárias");
         // Relatórios por submenus; todos os relatórios saíram dos menus de origem
         var relatorios = vm.Menus.Single(m => m.Titulo == "_Relatórios");
-        Assert.Equal(["_Frota e operação", "_Manutenção", "_Transporte (TMS)", "_Financeiro e gerencial", "_Contábil"], relatorios.Filhos!.Select(m => m.Titulo));
+        Assert.Equal(["_Frota e operação", "_Manutenção", "_Transporte (TMS)", "_Gerencial", "_Contábil", "-", "Grá_ficos"], relatorios.Filhos!.Select(m => m.Titulo));
         Assert.Equal(TabelasTmsTitulos, relatorios.Filhos!.Single(m => m.Titulo == "_Transporte (TMS)").Filhos!.Select(i => i.Titulo));
         Assert.DoesNotContain(vm.Menus, m => m.Titulo == "_Emissão" && m.Filhos!.Any(i => i.Titulo.Contains("Relat")));
         foreach (var chave in new[] { Frota.Desktop.ViewModels.FrotaTelas.Painel, Frota.Desktop.ViewModels.FrotaTelas.RelNotas, ViewModels.Telas.Balancete, Fiscal.Desktop.ViewModels.Telas.RelDuplicatasPagar })
@@ -115,6 +134,8 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
             [
                 new Frota.Desktop.ViewModels.OrdensViewModel(vm), new Frota.Desktop.ViewModels.VeiculosViewModel(vm),
                 new Fiscal.Desktop.ViewModels.ContasPagarViewModel(vm), new ViewModels.BalanceteViewModel(vm),
+                vm.ImportacaoCadastros,
+                new ViewModels.FiliaisViewModel(vm), new ViewModels.RelatorioGrupoViewModel(vm),
             ];
             foreach (var t in telas)
             {

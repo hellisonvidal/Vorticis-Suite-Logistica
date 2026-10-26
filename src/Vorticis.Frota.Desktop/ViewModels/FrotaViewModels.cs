@@ -49,6 +49,8 @@ public static class FrotaTelas
     public const string RelColetasMotorista = "frota.rel.coletasmotorista";
     public const string RelDiariasAcerto = "frota.rel.diariasacerto";
     public const string RelResumo = "frota.rel.resumo";
+    public const string Pedagio = "frota.pedagio";
+    public const string LayoutsPedagio = "frota.pedagio.layouts";
     // TMS (gestão do transporte)
     public const string TabelasFrete = "tms.tabelas";
     public const string Cotacoes = "tms.cotacoes";

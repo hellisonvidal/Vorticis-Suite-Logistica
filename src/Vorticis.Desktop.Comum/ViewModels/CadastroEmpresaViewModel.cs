@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using Avalonia.Media.Imaging;
+using Vorticis.Application.Relatorios;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Vorticis.Application.Cadastros;
@@ -254,14 +256,17 @@ public partial class CadastroEmpresaViewModel(MainViewModelBase main) : Cadastro
         EmpresaDetalhe? d = null;
         ConfiguracaoContabil? cfg = null;
         var usa = false;
+        byte[]? logo = null;
         if (main.App is { } app && main.EmpresaSelecionada is { } sel && PodeManter)
         {
             d = await app.Empresas.ObterAsync(sel.Id);
+            if (main.Sessao is { } s) logo = await app.LogoEmpresa.ObterAsync(sel.Id, s.Id);
             usa = await app.Participantes.UsaParticipantesAsync(sel.Id);
             if (main.Sessao is { } sessao) cfg = await app.PlanoContas.ObterConfiguracaoAsync(sel.Id, sessao.Id);
         }
         if (!EhAtual(geracao) || EmEdicao) return;
         UsaParticipantes = usa;
+        MostrarLogo(logo);
         _carregada = d;
         if (d is null) LimparFormulario();
         else
@@ -549,6 +554,49 @@ public partial class CadastroEmpresaViewModel(MainViewModelBase main) : Cadastro
         {
             Erros.Add($"Não foi possível abrir o navegador: {ex.Message}");
         }
+    }
+
+    // ---- Logo da empresa (impresso no cabeçalho de todos os relatórios em PDF) ----
+
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(TemLogo))] private Bitmap? _logo;
+    public bool TemLogo => Logo is not null;
+
+    private void MostrarLogo(byte[]? bytes)
+    {
+        Bitmap? b = null;
+        if (LogoRelatorios.EhImagem(bytes))
+            try { using var m = new MemoryStream(bytes!); b = new Bitmap(m); }
+            catch (Exception) { b = null; }   // arquivo corrompido: fica sem prévia
+        Logo = b;
+    }
+
+    /// <summary>Envia o logo escolhido no computador (PNG ou JPG, até 1 MB) e já passa a usá-lo nos relatórios.</summary>
+    public async Task EnviarLogoAsync(string caminho)
+    {
+        Erros.Clear();
+        Mensagem = null;
+        byte[] bytes;
+        try { bytes = await File.ReadAllBytesAsync(caminho); }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { Erros.Add($"Não foi possível ler o arquivo: {ex.Message}"); return; }
+        await GravarLogoAsync(bytes, "Logo gravado: ele sai no cabeçalho de todos os relatórios em PDF desta empresa.");
+    }
+
+    [RelayCommand]
+    private async Task RemoverLogoAsync()
+    {
+        Erros.Clear();
+        if (!await main.ConfirmarAsync("Remover logo", "Remover o logo da empresa? Os relatórios voltam a sair sem logo.", "Remover", "Cancelar")) return;
+        await GravarLogoAsync(null, "Logo removido.");
+    }
+
+    private async Task GravarLogoAsync(byte[]? bytes, string sucesso)
+    {
+        if (main.App is not { } app || main.Sessao is not { } s || main.EmpresaSelecionada is not { } e) { Erros.Add("Selecione a empresa."); return; }
+        var r = await app.LogoEmpresa.GravarAsync(e.Id, bytes, s.Id);
+        if (!r.Sucesso) { foreach (var x in r.Erros) Erros.Add(x); return; }
+        MostrarLogo(bytes);
+        LogoRelatorios.Atual = bytes;
+        Mensagem = sucesso;
     }
 
     private void LimparFormulario()

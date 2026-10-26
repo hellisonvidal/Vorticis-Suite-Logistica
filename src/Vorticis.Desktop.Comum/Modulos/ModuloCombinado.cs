@@ -34,6 +34,12 @@ public abstract class ModuloCombinado(params IModuloDesktop[] partes) : IModuloD
     public Vorticis.Application.Cadastros.ModulosEmpresa ModulosAoCadastrar =>
         partes.Aggregate(Vorticis.Application.Cadastros.ModulosEmpresa.Nenhum, (acc, p) => acc | p.ModuloEmpresa);
 
+    /// <summary>Importações de planilha das partes (o mesmo cadastro em duas partes aparece uma vez).</summary>
+    public virtual IReadOnlyList<DefinicaoImportacao> Importacoes => [.. partes.SelectMany(p => p.Importacoes).DistinctBy(d => d.Chave)];
+
+    /// <summary>Gráficos das partes (o mesmo gráfico em duas partes aparece uma vez).</summary>
+    public virtual IReadOnlyList<DefinicaoGrafico> Graficos => [.. partes.SelectMany(p => p.Graficos).DistinctBy(d => d.Chave)];
+
     public IReadOnlyList<string> AreasDoManual => [NomeCurto, .. partes.Select(p => p.NomeCurto)];
 
     /// <summary>Recursos ligados em qualquer das partes (ex.: contabilidade gerencial do Contábil).</summary>

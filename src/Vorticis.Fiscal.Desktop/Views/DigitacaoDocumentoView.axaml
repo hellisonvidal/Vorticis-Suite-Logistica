@@ -17,264 +17,53 @@
     <Style Selector="Expander"><Setter Property="FontSize" Value="12" /></Style>
     <Style Selector="DataGrid"><Setter Property="FontSize" Value="12" /><Setter Property="RowHeight" Value="24" /></Style>
   </UserControl.Styles>
-  <!-- Lançamentos › Documentos fiscais › Entrada / Saída: digitação manual de nota fiscal (layout compacto, cabe em 1366x768) -->
-  <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-    <StackPanel Margin="8,4" Spacing="5">
-      <StackPanel Orientation="Horizontal" Spacing="12">
-        <TextBlock Classes="titulo" Text="{Binding Titulo}" VerticalAlignment="Center" />
-        <TextBlock Text="{Binding SituacaoDocumento}" FontWeight="SemiBold" Foreground="#7C2D12" VerticalAlignment="Center" />
-      </StackPanel>
-
-      <!-- Notas digitadas -->
-      <Expander Header="Notas digitadas" IsExpanded="True">
-        <StackPanel Spacing="4">
-          <StackPanel Orientation="Horizontal" Spacing="6">
-            <CalendarDatePicker SelectedDate="{Binding FiltroInicio}" Width="130" />
-            <TextBlock Text="a" VerticalAlignment="Center" />
-            <CalendarDatePicker SelectedDate="{Binding FiltroFim}" Width="130" />
-            <Button Classes="mini" Content="Consultar" Command="{Binding ConsultarCommand}" />
-            <Button Classes="mini" Content="Nova nota" Command="{Binding NovoCommand}" />
-            <Button Classes="mini" Content="Editar" Command="{Binding EditarCommand}" IsEnabled="{Binding PodeManter}" />
-            <Button Classes="mini" Content="Excluir" Command="{Binding ExcluirCommand}" IsEnabled="{Binding PodeManter}" />
-            <Button Classes="mini accent" Content="Importar XML ▾" IsEnabled="{Binding Importador.PodeIniciar}"
-                    ToolTip.Tip="Importa NF-e, NFC-e e NFS-e (arquivo, vários arquivos, pasta com subpastas ou .zip); as notas aparecem na lista abaixo">
-              <Button.Flyout>
-                <MenuFlyout>
-                  <MenuItem Header="Arquivo(s) XML ou .zip..." Click="ImportarArquivos" />
-                  <MenuItem Header="Pasta (inclui as subpastas)..." Click="ImportarPasta" />
-                </MenuFlyout>
-              </Button.Flyout>
-            </Button>
-          </StackPanel>
-          <!-- Importação individual pela chave de acesso (SEFAZ / Ambiente Nacional, com o certificado da empresa) -->
-          <StackPanel Orientation="Horizontal" Spacing="6" IsEnabled="{Binding PodeManter}">
-            <TextBox Text="{Binding ChaveImportacao}" Width="380" Watermark="Chave de acesso da NF-e (44 dígitos)" MaxLength="60" />
-            <Button Classes="mini accent" Content="Importar pela chave" Command="{Binding ImportarChaveCommand}"
-                    ToolTip.Tip="Baixa o XML da NF-e na SEFAZ (Ambiente Nacional, como no Portal da NF-e) com o certificado digital da empresa e importa a nota" />
-            <Button Classes="mini" Content="Manifestar ciência" Command="{Binding ManifestarCienciaCommand}" IsVisible="{Binding PodeManifestar}"
-                    ToolTip.Tip="Registra a Ciência da operação (manifestação do destinatário), que libera o XML completo" />
-          </StackPanel>
-          <g:PainelImportacaoView DataContext="{Binding Importador}" />
-          <c:MensagensView DataContext="{Binding Importador}" />
-          <DataGrid g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionada}" IsReadOnly="True" AutoGenerateColumns="False" Height="130">
-            <DataGrid.Columns>
-              <DataGridTextColumn Header="Data" Binding="{ReflectionBinding Data}" Width="95" />
-              <DataGridTextColumn Header="Modelo" Binding="{ReflectionBinding Modelo}" Width="75" />
-              <DataGridTextColumn Header="Série" Binding="{ReflectionBinding Serie}" Width="60" />
-              <DataGridTextColumn Header="Número" Binding="{ReflectionBinding Numero}" Width="90" />
-              <DataGridTextColumn Header="Cliente / fornecedor" Binding="{ReflectionBinding Participante}" Width="*" MinWidth="170" />
-              <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="105" />
-              <DataGridTextColumn Header="Origem" Binding="{ReflectionBinding Origem}" Width="80" />
-              <DataGridTextColumn Header="Contab." Binding="{ReflectionBinding Contabilizado}" Width="75" />
-            </DataGrid.Columns>
-          </DataGrid>
-        </StackPanel>
-      </Expander>
-
-      <Border IsVisible="{Binding MostraMotivoSomenteLeitura}" Background="#FDECEC" BorderBrush="#E0A0A0" BorderThickness="1" Padding="8,5" CornerRadius="4">
-        <TextBlock Text="{Binding MotivoSomenteLeitura}" TextWrapping="Wrap" FontSize="12" Foreground="#7F1D1D" />
-      </Border>
-
-      <Border IsVisible="{Binding Importada}" Background="#FFF7E0" BorderBrush="#E0C060" BorderThickness="1" Padding="8,5" CornerRadius="4">
-        <TextBlock Text="{Binding AvisoImportada}" TextWrapping="Wrap" FontSize="12" Foreground="#6B4E00" />
-      </Border>
-
-      <!-- Cabeçalho compacto: 6 colunas, rótulos acima -->
-      <Border BorderBrush="#D0D5DD" BorderThickness="1" Padding="6,4" CornerRadius="4">
-        <Grid ColumnDefinitions="*,*,*,*,*,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="3" IsEnabled="{Binding PodeEditar}">
-          <StackPanel Grid.Row="0" Grid.Column="0" Classes="campo">
-            <TextBlock Classes="rot" Text="Modelo" />
-            <ComboBox ItemsSource="{x:Static vm:DigitacaoDocumentoViewModel.Modelos}" SelectedIndex="{Binding Modelo}" HorizontalAlignment="Stretch" />
-          </StackPanel>
-          <StackPanel Grid.Row="0" Grid.Column="1" Classes="campo">
-            <TextBlock Classes="rot" Text="Série" />
-            <TextBox Text="{Binding Serie}" />
-          </StackPanel>
-          <StackPanel Grid.Row="0" Grid.Column="2" Classes="campo">
-            <TextBlock Classes="rot" Text="Número" />
-            <TextBox Text="{Binding Numero}" />
-          </StackPanel>
-          <StackPanel Grid.Row="0" Grid.Column="3" Classes="campo">
-            <TextBlock Classes="rot" Text="Emissão" />
-            <CalendarDatePicker SelectedDate="{Binding Emissao}" HorizontalAlignment="Stretch" />
-          </StackPanel>
-          <StackPanel Grid.Row="0" Grid.Column="4" Classes="campo">
-            <TextBlock Classes="rot" Text="{Binding RotuloData}" />
-            <CalendarDatePicker SelectedDate="{Binding DataLivro}" HorizontalAlignment="Stretch" />
-          </StackPanel>
-          <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Classes="campo">
-            <TextBlock Classes="rot" Text="{Binding RotuloParticipante}" />
-            <TextBox Text="{Binding Participante}" Watermark="CNPJ/CPF (busca automática), código ou nome" LostFocus="ParticipanteSaiu" />
-          </StackPanel>
-          <StackPanel Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Classes="campo">
-            <TextBlock Classes="rot" Text="Natureza da operação" />
-            <TextBox Text="{Binding Natureza}" />
-          </StackPanel>
-          <StackPanel Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="2" Classes="campo">
-            <TextBlock Classes="rot" Text="Chave de acesso (opcional)" />
-            <TextBox Text="{Binding Chave}" />
-          </StackPanel>
-          <Button Grid.Row="2" Grid.Column="0" Classes="mini" Content="Buscar participante" Command="{Binding BuscarParticipanteCommand}" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
-          <TextBlock Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="5" Text="{Binding ParticipanteInfo}" FontSize="12" Foreground="#1F3A5F" TextWrapping="Wrap" VerticalAlignment="Center" />
-        </Grid>
-      </Border>
-
-      <!-- Participante novo (CPF/CNPJ não cadastrado): dados da base pública do CNPJ, conferidos antes de cadastrar ao gravar a nota -->
-      <Border IsVisible="{Binding TemNovoParticipante}" BorderBrush="#D0D5DD" BorderThickness="1" Padding="6,4" CornerRadius="4">
-        <Grid ColumnDefinitions="3*,0.6*,1.6*,1.4*" IsEnabled="{Binding PodeEditar}">
-          <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Nome / razão social (será cadastrado)" /><TextBox Text="{Binding NovoNome}" /></StackPanel>
-          <StackPanel Grid.Column="1" Classes="campo"><TextBlock Classes="rot" Text="UF" /><TextBox Text="{Binding NovoUf}" MaxLength="2" /></StackPanel>
-          <StackPanel Grid.Column="2" Classes="campo"><TextBlock Classes="rot" Text="Município" /><TextBox Text="{Binding NovoMunicipio}" /></StackPanel>
-          <StackPanel Grid.Column="3" Classes="campo"><TextBlock Classes="rot" Text="Inscrição estadual" /><TextBox Text="{Binding NovoIe}" /></StackPanel>
-        </Grid>
-      </Border>
-
-      <!-- Totais e tributos do cabeçalho -->
-      <Expander Header="Totais e tributos" IsExpanded="False">
-        <StackPanel Spacing="4" IsEnabled="{Binding PodeEditar}">
-          <Grid ColumnDefinitions="200,*">
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Total informado (confere com os itens)" /><TextBox Text="{Binding TotalInformado}" /></StackPanel>
-          </Grid>
-        </StackPanel>
-      </Expander>
-
-      <!-- Parcelas (duplicatas a pagar ou a receber da nota) -->
-      <Expander Header="Duplicatas (forma de pagamento e parcelas)" IsExpanded="True">
-        <StackPanel Spacing="4">
-          <TextBlock Text="Escolha a forma de pagamento (Cadastros › Formas de pagamento) e as duplicatas são geradas pelos prazos dela, a partir da emissão. Sem forma e sem parcelas, a nota nova gera uma duplicata à vista (Cadastros › Parâmetros). Para parcelar à mão, informe a quantidade, o primeiro vencimento e o intervalo e use Gerar parcelas."
-                     FontSize="11" Foreground="#5A6478" TextWrapping="Wrap" />
-          <StackPanel Orientation="Horizontal" Spacing="6" IsEnabled="{Binding PodeEditar}">
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Forma de pagamento" />
-              <ComboBox ItemsSource="{Binding FormasPagamento}" SelectedItem="{Binding FormaPagamento}" DisplayMemberBinding="{ReflectionBinding Texto}" MinWidth="280" /></StackPanel>
-            <Button Classes="mini" Content="Gerar pela forma" Command="{Binding GerarPelaFormaCommand}" VerticalAlignment="Bottom" Height="26" />
-          </StackPanel>
-          <StackPanel Orientation="Horizontal" Spacing="6" IsEnabled="{Binding PodeEditar}">
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Nº de parcelas" /><TextBox Text="{Binding ParcelasQuantidade}" Width="80" /></StackPanel>
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Primeiro vencimento" /><CalendarDatePicker SelectedDate="{Binding ParcelasPrimeiroVencimento}" Width="135" /></StackPanel>
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Intervalo (dias)" /><TextBox Text="{Binding ParcelasIntervalo}" Width="80" /></StackPanel>
-            <Button Classes="mini" Content="Gerar parcelas" Command="{Binding GerarParcelasCommand}" VerticalAlignment="Bottom" Height="26" />
-            <Button Classes="mini" Content="Limpar parcelas" Command="{Binding LimparParcelasCommand}" VerticalAlignment="Bottom" Height="26" />
-          </StackPanel>
-          <DataGrid g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Parcelas}" IsReadOnly="True" AutoGenerateColumns="False" Height="110" HorizontalAlignment="Left" Width="480">
-            <DataGrid.Columns>
-              <DataGridTextColumn Header="Parcela" Binding="{ReflectionBinding Numero}" Width="100" />
-              <DataGridTextColumn Header="Vencimento" Binding="{ReflectionBinding VencimentoTexto}" Width="125" />
-              <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding ValorTexto}" Width="115" />
-              <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="110" />
-            </DataGrid.Columns>
-          </DataGrid>
-        </StackPanel>
-      </Expander>
-
-      <!-- Item: campos essenciais; o restante (tributos) fica no painel de detalhe -->
-      <Border BorderBrush="#D0D5DD" BorderThickness="1" Padding="6,4" CornerRadius="4">
-        <StackPanel Spacing="3" IsEnabled="{Binding PodeEditar}">
-          <Grid ColumnDefinitions="1.3*,2.6*,0.8*,0.9*,1.1*,Auto">
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Produto (código, descrição ou GTIN)" /><TextBox Text="{Binding Item.Produto}" /></StackPanel>
-            <StackPanel Grid.Column="1" Classes="campo"><TextBlock Classes="rot" Text="Descrição" /><TextBox Text="{Binding Item.Descricao}" /></StackPanel>
-            <StackPanel Grid.Column="2" Classes="campo"><TextBlock Classes="rot" Text="CFOP" /><TextBox Text="{Binding Item.Cfop}" /></StackPanel>
-            <StackPanel Grid.Column="3" Classes="campo"><TextBlock Classes="rot" Text="Quantidade" /><TextBox Text="{Binding Item.Quantidade}" /></StackPanel>
-            <StackPanel Grid.Column="4" Classes="campo"><TextBlock Classes="rot" Text="Valor unitário" /><TextBox Text="{Binding Item.Unitario}" /></StackPanel>
-            <Button Grid.Column="5" Classes="mini" Content="Buscar produto" Command="{Binding BuscarProdutoCommand}" VerticalAlignment="Bottom" Height="26" />
-          </Grid>
-          <Expander Header="Detalhes e tributos do item selecionado" IsExpanded="False">
-            <StackPanel Spacing="2">
-              <StackPanel Classes="campo" IsVisible="{Binding MostraCentro}" HorizontalAlignment="Left" Width="300">
-                <TextBlock Classes="rot" Text="Centro de custo (item)" />
-                <ComboBox ItemsSource="{Binding Centros}" SelectedItem="{Binding CentroItem}" HorizontalAlignment="Stretch" />
-              </StackPanel>
-          <TextBlock Classes="grupo" Text="ICMS / ICMS-ST" />
-          <UniformGrid Columns="10">
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="NCM" /><TextBox Text="{Binding Item.Ncm}" /></StackPanel>
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="CEST" /><TextBox Text="{Binding Item.Cest}" /></StackPanel>
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Un." /><TextBox Text="{Binding Item.Unidade}" /></StackPanel>
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Orig." /><TextBox Text="{Binding Item.Origem}" /></StackPanel>
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="CST/CSOSN" /><TextBox Text="{Binding Item.CstIcms}" /></StackPanel>
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Base ICMS" /><TextBox Text="{Binding Item.BcIcms}" /></StackPanel>
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Alíq. ICMS %" /><TextBox Text="{Binding Item.AliqIcms}" /></StackPanel>
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="ICMS" /><TextBox Text="{Binding Item.Icms}" /></StackPanel>
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Base ST" /><TextBox Text="{Binding Item.BcIcmsSt}" /></StackPanel>
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="ICMS-ST" /><TextBox Text="{Binding Item.IcmsSt}" /></StackPanel>
-          </UniformGrid>
-          <TextBlock Classes="grupo" Text="IPI" />
-          <UniformGrid Columns="8">
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="CST IPI" /><TextBox Text="{Binding Item.CstIpi}" /></StackPanel>
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Base IPI" /><TextBox Text="{Binding Item.BcIpi}" /></StackPanel>
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Alíq. IPI %" /><TextBox Text="{Binding Item.AliqIpi}" /></StackPanel>
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="IPI" /><TextBox Text="{Binding Item.Ipi}" /></StackPanel>
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Desconto" /><TextBox Text="{Binding Item.Desconto}" /></StackPanel>
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Frete" /><TextBox Text="{Binding Item.Frete}" /></StackPanel>
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Seguro" /><TextBox Text="{Binding Item.Seguro}" /></StackPanel>
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Outras desp." /><TextBox Text="{Binding Item.Outras}" /></StackPanel>
-          </UniformGrid>
-          <TextBlock Classes="grupo" Text="PIS / COFINS / ISS" />
-          <UniformGrid Columns="11">
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="CST PIS" /><TextBox Text="{Binding Item.CstPis}" /></StackPanel>
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Base PIS" /><TextBox Text="{Binding Item.BcPis}" /></StackPanel>
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Alíq. PIS %" /><TextBox Text="{Binding Item.AliqPis}" /></StackPanel>
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="PIS" /><TextBox Text="{Binding Item.Pis}" /></StackPanel>
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="CST COFINS" /><TextBox Text="{Binding Item.CstCofins}" /></StackPanel>
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Base COFINS" /><TextBox Text="{Binding Item.BcCofins}" /></StackPanel>
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Alíq. COFINS %" /><TextBox Text="{Binding Item.AliqCofins}" /></StackPanel>
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="COFINS" /><TextBox Text="{Binding Item.Cofins}" /></StackPanel>
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Base ISS" /><TextBox Text="{Binding Item.BcIss}" /></StackPanel>
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Alíq. ISS %" /><TextBox Text="{Binding Item.AliqIss}" /></StackPanel>
-            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="ISS" /><TextBox Text="{Binding Item.Iss}" /></StackPanel>
-          </UniformGrid>
-            </StackPanel>
-          </Expander>
-          <StackPanel Orientation="Horizontal" Spacing="6">
-            <Button Classes="mini" Content="Calcular tributos" Command="{Binding CalcularTributosCommand}" />
-            <Button Classes="mini accent" Content="Adicionar item" Command="{Binding AdicionarItemCommand}" />
-            <Button Classes="mini" Content="Atualizar item selecionado" Command="{Binding AtualizarItemCommand}" />
-            <Button Classes="mini" Content="Remover item selecionado" Command="{Binding RemoverItemCommand}" />
-          </StackPanel>
-        </StackPanel>
-      </Border>
-
-      <DataGrid g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Itens}" SelectedItem="{Binding ItemSelecionado}" IsReadOnly="True" AutoGenerateColumns="False" Height="150">
-        <DataGrid.Columns>
-          <DataGridTextColumn Header="Item" Binding="{ReflectionBinding N}" Width="55" />
-          <DataGridTextColumn Header="Produto" Binding="{ReflectionBinding Produto}" Width="85" />
-          <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" MinWidth="140" />
-          <DataGridTextColumn Header="CFOP" Binding="{ReflectionBinding Cfop}" Width="70" />
-          <DataGridTextColumn Header="CFOP escrit." Binding="{ReflectionBinding CfopEscrituracao}" Width="100" />
-          <DataGridTextColumn Header="Produto vinculado" Binding="{ReflectionBinding Vinculo}" Width="170" />
-          <DataGridTextColumn Header="Qtde" Binding="{ReflectionBinding Quantidade}" Width="80" />
-          <DataGridTextColumn Header="Unitário" Binding="{ReflectionBinding Unitario}" Width="100" />
-          <DataGridTextColumn Header="Total" Binding="{ReflectionBinding Total}" Width="110" />
-        </DataGrid.Columns>
-      </DataGrid>
-
-      <!-- Escrituração: editável também nas notas importadas (os dados do XML ficam somente leitura) -->
-      <Expander Header="Escrituração: CFOP de entrada, produto vinculado, centro de custo, contas e observações" IsExpanded="{Binding Importada, Mode=OneWay}">
-        <StackPanel Spacing="4" IsEnabled="{Binding PodeEditarEscrituracao}">
-          <Grid ColumnDefinitions="*,*,*,2*">
-            <StackPanel Classes="campo" IsVisible="{Binding MostraCentro}"><TextBlock Classes="rot" Text="Centro de custo (nota)" /><ComboBox ItemsSource="{Binding Centros}" SelectedItem="{Binding CentroDocumento}" HorizontalAlignment="Stretch" /></StackPanel>
-            <StackPanel Grid.Column="1" Classes="campo"><TextBlock Classes="rot" Text="Conta de débito (código; vazio = regra)" /><TextBox Text="{Binding ContaDebito}" /></StackPanel>
-            <StackPanel Grid.Column="2" Classes="campo"><TextBlock Classes="rot" Text="Conta de crédito (código; vazio = regra)" /><TextBox Text="{Binding ContaCredito}" /></StackPanel>
-            <StackPanel Grid.Column="3" Classes="campo"><TextBlock Classes="rot" Text="Observações" /><TextBox Text="{Binding Observacoes}" AcceptsReturn="True" MaxHeight="52" TextWrapping="Wrap" /></StackPanel>
-          </Grid>
-          <StackPanel IsVisible="{Binding Importada}" Spacing="3">
-            <TextBlock Classes="grupo" Text="Item selecionado na grade acima" />
-            <Grid ColumnDefinitions="*,2*,*,Auto">
-              <StackPanel Classes="campo"><TextBlock Classes="rot" Text="CFOP de escrituração (ex.: entrada 1.102)" /><TextBox Text="{Binding Item.Cfop}" /></StackPanel>
-              <StackPanel Grid.Column="1" Classes="campo"><TextBlock Classes="rot" Text="Produto vinculado (código, descrição ou GTIN do cadastro)" /><TextBox Text="{Binding EscProduto}" /></StackPanel>
-              <StackPanel Grid.Column="2" Classes="campo" IsVisible="{Binding MostraCentro}"><TextBlock Classes="rot" Text="Centro de custo (item)" /><ComboBox ItemsSource="{Binding Centros}" SelectedItem="{Binding CentroItem}" HorizontalAlignment="Stretch" /></StackPanel>
-              <Button Grid.Column="3" Classes="mini" Content="Aplicar ao item" Command="{Binding AplicarEscrituracaoItemCommand}" VerticalAlignment="Bottom" Height="26" />
-            </Grid>
-          </StackPanel>
-        </StackPanel>
-      </Expander>
-      <TextBlock Text="{Binding Totais}" FontSize="12" FontWeight="SemiBold" TextWrapping="Wrap" />
-      <StackPanel Orientation="Horizontal" Spacing="6">
-        <Button Classes="mini accent" Content="Gravar nota" Command="{Binding SalvarCommand}" IsEnabled="{Binding PodeEditar}" IsVisible="{Binding MostraGravarNota}" />
-        <Button Classes="mini" Content="Cadastrar bens do imobilizado" Command="{Binding CadastrarBensImobilizadoCommand}" IsVisible="{Binding TemItensImobilizado}"
-                ToolTip.Tip="Itens com CFOP de ativo imobilizado: cadastra os bens no imobilizado do Contábil" />
-        <Button Classes="mini accent" Content="Gravar escrituração" Command="{Binding SalvarEscrituracaoCommand}" IsEnabled="{Binding PodeEditarEscrituracao}" IsVisible="{Binding Importada}" />
-        <Button Classes="mini" Content="Nova nota" Command="{Binding NovoCommand}" />
-      </StackPanel>
-      <c:MensagensView />
+  <!-- Notas fiscais de entrada / saída: consulta das notas lançadas e importadas. "Novo lançamento" e "Abrir" (ou duplo clique / Enter)
+       abrem a nota numa janela pop-up (DigitacaoNotaView). -->
+  <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto" Margin="8,4">
+    <TextBlock Classes="titulo" Text="{Binding Titulo}" Margin="0,0,0,4" />
+    <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="6" Margin="0,0,0,4">
+      <TextBlock Text="Período" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding FiltroInicio}" Width="130" />
+      <TextBlock Text="a" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding FiltroFim}" Width="130" />
+      <Button Classes="mini" Content="Consultar" Command="{Binding ConsultarCommand}" />
+      <Button Classes="mini accent" Content="Novo lançamento" Command="{Binding NovoLancamentoCommand}" IsEnabled="{Binding PodeManter}" />
+      <Button Classes="mini" Content="Abrir" Command="{Binding AbrirCommand}" ToolTip.Tip="Abre a nota selecionada (também com duplo clique ou Enter)" />
+      <Button Classes="mini" Content="Excluir" Command="{Binding ExcluirCommand}" IsEnabled="{Binding PodeManter}"
+              ToolTip.Tip="Exclui a nota selecionada, lançada ou importada (contabilizada: desfaz a contabilização antes, com confirmação)" />
+      <Button Classes="mini" Content="Importar XML ▾" IsEnabled="{Binding Importador.PodeIniciar}"
+              ToolTip.Tip="Importa NF-e, NFC-e e NFS-e (arquivo, vários arquivos, pasta com subpastas ou .zip); as notas aparecem na lista abaixo">
+        <Button.Flyout>
+          <MenuFlyout>
+            <MenuItem Header="Arquivo(s) XML ou .zip..." Click="ImportarArquivos" />
+            <MenuItem Header="Pasta (inclui as subpastas)..." Click="ImportarPasta" />
+          </MenuFlyout>
+        </Button.Flyout>
+      </Button>
     </StackPanel>
-  </ScrollViewer>
+    <!-- Importação individual pela chave de acesso (SEFAZ / Ambiente Nacional, com o certificado da empresa) -->
+    <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="6" IsEnabled="{Binding PodeManter}" Margin="0,0,0,4">
+      <TextBox Text="{Binding ChaveImportacao}" Width="380" Watermark="Chave de acesso da NF-e (44 dígitos)" MaxLength="60" />
+      <Button Classes="mini" Content="Importar pela chave" Command="{Binding ImportarChaveCommand}"
+              ToolTip.Tip="Baixa o XML da NF-e na SEFAZ (Ambiente Nacional, como no Portal da NF-e) com o certificado digital da empresa e importa a nota" />
+      <Button Classes="mini" Content="Manifestar ciência" Command="{Binding ManifestarCienciaCommand}" IsVisible="{Binding PodeManifestar}"
+              ToolTip.Tip="Registra a Ciência da operação (manifestação do destinatário), que libera o XML completo" />
+    </StackPanel>
+    <g:PainelImportacaoView Grid.Row="3" DataContext="{Binding Importador}" />
+    <c:MensagensView Grid.Row="4" DataContext="{Binding Importador}" />
+    <DataGrid x:Name="ListaNotas" Grid.Row="5" g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionada}" IsReadOnly="True"
+              AutoGenerateColumns="False" DoubleTapped="AoDuploClique" KeyDown="AoTeclarLista">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Data" Binding="{ReflectionBinding Data}" Width="95" />
+        <DataGridTextColumn Header="Modelo" Binding="{ReflectionBinding Modelo}" Width="75" />
+        <DataGridTextColumn Header="Série" Binding="{ReflectionBinding Serie}" Width="60" />
+        <DataGridTextColumn Header="Número" Binding="{ReflectionBinding Numero}" Width="90" />
+        <DataGridTextColumn Header="Cliente / fornecedor" Binding="{ReflectionBinding Participante}" Width="*" MinWidth="170" />
+        <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="105" />
+        <DataGridTextColumn Header="Origem" Binding="{ReflectionBinding Origem}" Width="80" />
+        <DataGridTextColumn Header="Contab." Binding="{ReflectionBinding Contabilizado}" Width="75" />
+      </DataGrid.Columns>
+    </DataGrid>
+    <c:MensagensView Grid.Row="6" IsVisible="{Binding !DigitacaoAberta}" />
+  </Grid>
 </UserControl>

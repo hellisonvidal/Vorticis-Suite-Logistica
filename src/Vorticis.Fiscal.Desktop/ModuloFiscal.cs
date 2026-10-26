@@ -30,9 +30,14 @@ public sealed class ModuloFiscal : IModuloDesktop
         return online is { Sucesso: true, Valor: true } ? new HashSet<string>() : new HashSet<string> { RecursoContabilizacaoLote };
     }
 
+    public IReadOnlyList<DefinicaoGrafico> Graficos => GraficosFiscais.Todos;
+
+    public IReadOnlyList<DefinicaoImportacao> Importacoes => ImportacoesFiscais.Todas;
+
     public IReadOnlyList<ItemMenu> ItensCadastros { get; } =
     [
         ItemMenu.Tela("Produtos", Telas.Produtos),
+        ItemMenu.Tela("Regras fiscais", Telas.RegrasFiscais),
         ItemMenu.Tela("Regras de contabilização", Telas.RegrasContabilizacao),
         ItemMenu.Tela("Formas de pagamento", Vorticis.Desktop.Comum.ViewModels.TelasComuns.FormasPagamento),
         ItemMenu.Tela("Contas bancárias", Vorticis.Desktop.Comum.ViewModels.TelasComuns.ContasBancarias),
@@ -134,6 +139,9 @@ public sealed class ModuloFiscal : IModuloDesktop
         c.Instancia("Produtos", m => new ProdutosViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
                     aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
             .Tela(Telas.Produtos, "Cadastros › Produtos", m => m.Pode(Permissao.FiscalDocumentosConsultar), v => v.CarregarAsync());
+        c.Instancia("RegrasFiscais", m => new RegrasFiscaisViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
+                    aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
+            .Tela(Telas.RegrasFiscais, "Cadastros › Regras fiscais", m => m.Pode(Permissao.FiscalDocumentosConsultar), v => v.CarregarAsync());
         c.Instancia("ParametrosModulo", m => new ParametrosFiscalViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
                     aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
             .Tela(Vorticis.Desktop.Comum.ViewModels.TelasComuns.Parametros, "Cadastros › Parâmetros", m => m.TemAcessoNaEmpresa, v => v.CarregarAsync());

@@ -35,7 +35,8 @@ public sealed class ServicosFiscais
         var repoRetencoes = new RepositorioRetencoes(ds);
         var repoDuplicatas = new RepositorioDuplicatas(ds);
         Parametros = new ParametrosFiscaisPostgres(ds);
-        Documentos = new ServicoDocumentosFiscais(repoDocumentos, autorizador);
+        RegrasFiscais = new ServicoRegrasFiscais(ds, autorizador);
+        Documentos = new ServicoDocumentosFiscais(repoDocumentos, autorizador, (e, ct) => RegrasFiscais.RegrasAsync(e, true, ct));
         Digitacao = new ServicoDigitacaoFiscal(new RepositorioDigitacao(ds), repoDocumentos, autorizador);
         ParticipantesNota = new ServicoParticipanteNota(app);
         Produtos = new ServicoProdutos(new RepositorioProdutos(ds), autorizador);
@@ -56,6 +57,7 @@ public sealed class ServicosFiscais
 
     public IParametrosFiscais Parametros { get; }
     public ServicoDocumentosFiscais Documentos { get; }
+    public ServicoRegrasFiscais RegrasFiscais { get; }
     public ServicoDigitacaoFiscal Digitacao { get; }
     public ServicoParticipanteNota ParticipantesNota { get; }
     public ServicoProdutos Produtos { get; }

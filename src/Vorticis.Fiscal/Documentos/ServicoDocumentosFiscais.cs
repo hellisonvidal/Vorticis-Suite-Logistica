@@ -122,7 +122,8 @@ public sealed record ResultadoImportacao(IReadOnlyList<ResultadoArquivo> Arquivo
 /// Documentos fiscais eletrônicos: importação de XML (NF-e/NFC-e e NFS-e nacional), consulta e livros. Toda operação verifica
 /// a permissão do usuário na empresa antes de qualquer outra regra.
 /// </summary>
-public sealed class ServicoDocumentosFiscais(IRepositorioDocumentos repositorio, Autorizador autorizador)
+public sealed class ServicoDocumentosFiscais(IRepositorioDocumentos repositorio, Autorizador autorizador,
+                                             Func<long, CancellationToken, Task<List<RegraFiscal>>>? regrasFiscais = null)
 {
     // ------------------------------------------------------------------ importação
 
@@ -140,6 +141,8 @@ public sealed class ServicoDocumentosFiscais(IRepositorioDocumentos repositorio,
         if (await autorizador.NegarAsync<ResultadoImportacao>(usuarioId, empresaId, Permissao.FiscalDocumentosImportar, CancellationToken.None) is { } negado) return negado;
         var empresa = await repositorio.ObterEmpresaAsync(empresaId, CancellationToken.None);   // cancelar antes de começar não é erro: resulta em importação interrompida
         if (empresa is null) return Resultado<ResultadoImportacao>.Falha("Empresa não encontrada.");
+        // regras fiscais (de/para de CFOP de entrada e de saída), lidas uma vez por importação
+        IReadOnlyList<RegraFiscal> regras = regrasFiscais is null ? [] : await regrasFiscais(empresaId, CancellationToken.None);
 
         var resultados = new List<ResultadoArquivo>();
         var lote = new LoteAberto(repositorio, empresaId, usuarioId);
@@ -149,7 +152,7 @@ public sealed class ServicoDocumentosFiscais(IRepositorioDocumentos repositorio,
             foreach (var arquivo in Expandir(arquivos))
             {
                 if (ct.IsCancellationRequested) { interrompida = true; break; }
-                try { resultados.Add(await ImportarUmAsync(empresa, arquivo, lote, ct)); }
+                try { resultados.Add(await ImportarUmAsync(empresa, arquivo, lote, regras, ct)); }
                 catch (OperationCanceledException) { interrompida = true; break; }
                 if (lote.Gravadas >= TamanhoLote) await lote.FecharAsync();
                 progresso?.Report(new ProgressoImportacao(resultados.Count, Math.Max(total, resultados.Count), arquivo.Nome));
@@ -271,7 +274,7 @@ public sealed class ServicoDocumentosFiscais(IRepositorioDocumentos repositorio,
         }
     }
 
-    private async Task<ResultadoArquivo> ImportarUmAsync(EmpresaFiscal empresa, ArquivoXml arquivo, LoteAberto lote, CancellationToken ct)
+    private async Task<ResultadoArquivo> ImportarUmAsync(EmpresaFiscal empresa, ArquivoXml arquivo, LoteAberto lote, IReadOnlyList<RegraFiscal> regras, CancellationToken ct)
     {
         if (arquivo.Conteudo.Length == 0) return new(arquivo.Nome, SituacaoImportacao.Erro, "Arquivo vazio ou ilegível.");
         var leitura = LeitorXmlFiscal.Ler(arquivo.Conteudo);
@@ -296,11 +299,16 @@ public sealed class ServicoDocumentosFiscais(IRepositorioDocumentos repositorio,
                 var doc = lido.Documento;
                 var ident = IdentificadorOperacao.Identificar(doc, empresa.Cnpjs);
                 if (!ident.Sucesso) return new(arquivo.Nome, SituacaoImportacao.OutraEmpresa, string.Join(" ", ident.Erros), doc.Chave, doc.Numero);
+                // regras fiscais da operação: trocam o CFOP do XML (e os CSTs, se a regra os tem) pelo da escrituração; o do XML fica como original
+                if (regras.Count > 0)
+                    doc = doc with { Itens = RegrasFiscais.Aplicar(doc.Itens, ident.Valor.Operacao, regras) };
                 try
                 {
                     var g = await lote.GravarAsync(doc, ident.Valor, ct);
                     if (g.Duplicado) return new(arquivo.Nome, SituacaoImportacao.Duplicado, "Documento já importado (mesma chave de acesso).", doc.Chave, doc.Numero, ident.Valor.Operacao, doc.Totais.Total, doc.DataLivro);
-                    var aviso = Math.Abs(doc.DiferencaItens) > 0.05m ? $" Atenção: a soma dos itens difere do total da nota em {Formato.Moeda(doc.DiferencaItens)}." : "";
+                    // conferência do XML (chave e itens): não impede a importação, mas avisa o que não confere
+                    var avisos = ConferenciaXml.Conferir(doc);
+                    var aviso = avisos.Count == 0 ? "" : " Confira: " + string.Join(" ", avisos.Take(6)) + (avisos.Count > 6 ? $" (e mais {avisos.Count - 6} aviso(s))" : "");
                     var part = g.ParticipanteCriado ? $" Participante cadastrado: {g.ParticipanteNome}." : "";
                     return new(arquivo.Nome, SituacaoImportacao.Importado,
                         $"{doc.Modelo.Rotulo()} {doc.Numero} ({ident.Valor.Operacao.Rotulo().ToLowerInvariant()}) importada.{part}{aviso}", doc.Chave, doc.Numero, ident.Valor.Operacao, doc.Totais.Total, doc.DataLivro,

@@ -1,12 +1,12 @@
 # Vorticis Suite Logística
 
-O **Vorticis Suite Logística** (ícone verde-petróleo) é o programa da transportadora: **um programa só, com um menu só**, que reúne o controle da frota e da manutenção, o **TMS** (cotações, conhecimentos, manifestos, entregas e faturas de frete), o financeiro e a contabilidade (esta no menu **Gerencial**). As telas são as mesmas dos módulos do Vorticis (mesmas regras e o mesmo banco de dados), organizadas para o dia a dia da transportadora. Não é preciso trocar de módulo.
+O **Vorticis Suite Logística** (ícone verde-petróleo) é o programa da transportadora: **um programa só, com um menu só**, que reúne o controle da frota e da manutenção, o **TMS** (cotações, conhecimentos, manifestos, entregas e faturas de frete), o financeiro e a contabilidade (esta no menu **Contábil**). As telas são as mesmas dos módulos do Vorticis (mesmas regras e o mesmo banco de dados), organizadas para o dia a dia da transportadora. Não é preciso trocar de módulo.
 
 ## Instalação e primeiro acesso
 
 1. Rode o instalador **Setup-VorticisSuiteLogistica**. Ele instala o programa e configura o banco de dados sozinho.
 2. Abra o atalho **Vorticis Suite Logística** (menu Iniciar ou área de trabalho) e entre com o seu usuário.
-3. Cadastre a transportadora em *Cadastros › Transportadoras*. Ela já fica ativa em todas as áreas do programa (frota, financeiro e contábil).
+3. Cadastre a transportadora em *Cadastros › Transportadoras*. Ela já fica ativa em todas as áreas do programa (frota, financeiro e contábil). Envie também o **logo** da transportadora (aba *Dados cadastrais*, [Logo da empresa](02-cadastros-comuns.md#logo-da-empresa-sai-em-todos-os-relatorios)): ele sai em todos os relatórios em PDF.
 4. Escolha a transportadora no topo da tela e siga a ordem dos cadastros do capítulo [Frota](12-frota.md#ordem-dos-cadastros).
 
 O Vorticis Suite Logística é instalado numa pasta própria (*Vorticis Logistica*) e usa o mesmo banco de dados do Vorticis no computador. Quem já tinha o programa com o nome antigo (Vorticis Logística) só precisa rodar o instalador novo: ele atualiza a instalação, troca os atalhos para o nome **Vorticis Suite Logística** e mantém os dados.
@@ -15,17 +15,36 @@ O Vorticis Suite Logística é instalado numa pasta própria (*Vorticis Logistic
 
 | Menu | O que tem | Detalhes no manual |
 |---|---|---|
-| **Cadastros** | Transportadoras, contadores, clientes, fornecedores, veículos, motoristas, **frotas**, **rotas**, **tabelas de frete**, documentos e vencimentos; os cadastros do financeiro (produtos, formas de pagamento, contas bancárias) e do contábil (plano de contas, históricos...) em submenus; os **Parâmetros** | [Frota](12-frota.md), [Contábil](03-contabil.md) |
-| **Operação** | Abastecimentos e viagens; **Diárias**, submenu **Coletas** (*Ordens de coleta*) e **Entregas e ocorrências** | [Frota](12-frota.md#abastecimentos), [Diárias](12-frota.md#diarias), [Coletas](12-frota.md#ordens-de-coleta), [Entregas](14-tms.md#entregas-e-ocorrencias) |
-| **Manutenção** | Planos de manutenção, peças e serviços, ordens de serviço, autorização de serviços e notas de compra | [Frota](12-frota.md#ordens-de-servico) |
+| **Cadastros** | Transportadoras (com a aba **Contadores**: o contador e o escritório contábil ficam só ali), clientes, fornecedores, veículos, motoristas, **frotas**, **rotas**, **tabelas de frete**, documentos e vencimentos; os cadastros do Gerencial (produtos, **regras fiscais** (de/para de CFOP de entrada e saída), formas de pagamento, contas bancárias) e do contábil (plano de contas, históricos...) em submenus; em cada grupo (a lista principal e os submenus *Gerencial* e *Contábil*), o item **Importar de planilha (Excel)** com os cadastros daquele grupo; os **Parâmetros** | [Frota](12-frota.md), [Contábil](03-contabil.md) |
+| **Operações** | Abastecimentos e viagens; **Diárias**, submenu **Coletas** (*Ordens de coleta*) e **Entregas e ocorrências**; submenu **Pedágio** (importação das passagens e nota fiscal da operadora); submenus **Compras** (pedidos de compra, notas fiscais de entrada e importação de XML), **Manutenção** (planos de manutenção, peças e serviços, ordens de serviço e autorização de serviços; as notas das oficinas e das peças são lançadas em *Operações › Compras › Notas fiscais de entrada*), **Estoque** e **Monitores** | [Frota](12-frota.md#abastecimentos), [Manutenção](12-frota.md#ordens-de-servico), [Diárias](12-frota.md#diarias), [Coletas](12-frota.md#ordens-de-coleta), [Entregas](14-tms.md#entregas-e-ocorrencias), [Pedágio](12-frota.md#pedagio) |
 | **Emissão** | As funções de faturamento: **Pedidos de venda** e **Notas fiscais de saída** (a emissão de NF-e na SEFAZ, em breve); o TMS: **Cotações de frete**, **Conhecimentos de transporte (CT-e)**, **Manifestos de carga (MDF-e)** e **Faturas de frete**; a transmissão de CT-e e MDF-e à SEFAZ e a NFS-e (em breve) | [Gerencial](10-gerencial.md), [TMS](14-tms.md) |
-| **Financeiro** | Contas a pagar, contas a receber e conciliação bancária; compras, estoque e monitores | [Gerencial](10-gerencial.md) |
-| **Gerencial** | Submenu **Contábil** (lançamentos, fechamentos, imobilizado, consultas e integrações) | [Contábil](03-contabil.md) |
-| **Relatórios** | Todos os relatórios do programa, em submenus: **Frota e operação**, **Manutenção**, **Transporte (TMS)**, **Financeiro e gerencial** e **Contábil** | [Frota](12-frota.md#relatorios-da-frota) |
+| **Financeiro** | Contas a pagar, contas a receber e conciliação bancária | [Gerencial](10-gerencial.md) |
+| **Contábil** | Lançamentos, fechamentos, imobilizado, consultas e integrações da contabilidade (os relatórios ficam em *Relatórios › Contábil*) | [Contábil](03-contabil.md) |
+| **Relatórios** | Todos os relatórios do programa, em submenus: **Frota e operação**, **Manutenção**, **Transporte (TMS)**, **Gerencial**, **Contábil** e **Gráficos** | [Frota](12-frota.md#relatorios-da-frota) |
 
 Neste programa **não** há o menu Fiscal, o calendário de obrigações nem o *Painel do empresário*: use o menu **Financeiro** para as contas a pagar e a receber. A tela inicial também não mostra o quadro de próximas obrigações.
 
 Os atalhos de teclado do Frota valem aqui (**Ctrl+B** abastecimentos, **Ctrl+P** painel da frota, **Ctrl+O** ordens de serviço), além dos do Contábil e do Gerencial que não repetem tecla (ex.: **Ctrl+L** lançamento contábil, **Ctrl+I** importação de XML). A lista completa fica em *Ajuda › Sobre*.
+
+## Gráficos
+
+**Para que serve:** ver de relance como andam a frota, o transporte, o financeiro e o resultado, mês a mês.
+
+**Onde fica:** *Relatórios › Gráficos*, em submenus por área:
+
+| Área | Gráfico | O que mostra |
+|---|---|---|
+| **Frota** | Custos da frota por mês | Combustível, manutenção, despesas de viagem e pedágio, lado a lado em cada mês |
+| | Consumo médio por veículo (km/l) | A média de cada veículo pelo tanque cheio, do mais econômico ao menos |
+| | Pedágio por veículo | O gasto de pedágio de cada placa |
+| **Transporte** | Frete emitido por mês | Total dos CT-e emitidos e o ICMS de cada mês |
+| | Entregas no prazo e com atraso | Quantos CT-e foram entregues dentro e fora da previsão, por mês da entrega |
+| | Frete por cliente | Os clientes (tomadores) que mais geram frete; os demais somados em *Outros* |
+| **Financeiro** | Contas a pagar e a receber por mês | Valor das duplicatas pelo mês de vencimento |
+| | Saldo em aberto por mês de vencimento | O que ainda falta receber e pagar |
+| **Contábil** | Resultado contábil por mês | Lucro (barra para cima) ou prejuízo (barra para baixo) da DRE de cada mês |
+
+**Como usar:** escolha o **Período** (o padrão são os últimos 12 meses) e clique em **Gerar**. Passe o mouse sobre o gráfico para ver os valores de cada mês ou item; ao lado fica a **tabela** com os mesmos números (e o total). Cada cor é sempre a mesma série (a legenda fica em cima); os dados respeitam as permissões do seu perfil.
 
 ## Parâmetros
 
@@ -36,7 +55,7 @@ Os atalhos de teclado do Frota valem aqui (**Ctrl+B** abastecimentos, **Ctrl+P**
 | Aba | O que tem |
 |---|---|
 | **Frota** | Avisos de vencimento, alerta de consumo, limite de autorização das ordens de serviço, fator rodoviário das rotas e valores das diárias e contas da contabilização das diárias. |
-| **Gerencial e financeiro** | Os parâmetros do financeiro e do fiscal usados nas contas a pagar e a receber (contas de fornecedores e clientes, juros, multa, descontos e históricos das baixas). |
+| **Gerencial** | Os parâmetros do financeiro e do fiscal usados nas contas a pagar e a receber (contas de fornecedores e clientes, juros, multa, descontos e históricos das baixas). |
 | **Contábil** | Regras de lançamento, centros de custo, encerramento e o **Tipo de contabilização** (On-line ou Em lote, veja [Contabilização em lote](03-contabil.md#contabilizacao-em-lote)). |
 | **Menus** | Escolha dos itens de menu que você quer ver (veja abaixo). |
 

@@ -1,0 +1,53 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Frota.Desktop.ViewModels"
+             x:Class="Vorticis.Frota.Desktop.Views.LayoutsPedagioView" x:DataType="vm:LayoutsPedagioViewModel">
+  <Grid ColumnDefinitions="*,12,430" RowDefinitions="Auto,*" Margin="8">
+    <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="8" Margin="0,0,0,6">
+      <TextBlock Classes="titulo" Text="Layouts de arquivo de pedágio" VerticalAlignment="Center" />
+    </StackPanel>
+    <DataGrid Grid.Row="1" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Nome" Binding="{ReflectionBinding Nome}" Width="140" />
+        <DataGridTextColumn Header="Operadora" Binding="{ReflectionBinding Operadora}" Width="180" />
+        <DataGridTextColumn Header="Colunas" Binding="{ReflectionBinding Colunas}" Width="*" />
+        <DataGridTextColumn Header="CFOP" Binding="{ReflectionBinding Cfop}" Width="70" />
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="85" />
+      </DataGrid.Columns>
+    </DataGrid>
+    <ScrollViewer Grid.Row="1" Grid.Column="2">
+    <StackPanel Spacing="6" IsEnabled="{Binding PodeEditar}">
+      <Grid ColumnDefinitions="150,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
+        <TextBlock Classes="rotulo" Text="Nome" />
+        <TextBox Grid.Column="1" Text="{Binding Nome}" Watermark="Sem Parar" />
+        <TextBlock Grid.Row="1" Classes="rotulo" Text="Operadora" />
+        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Operadoras}" SelectedItem="{Binding Operadora}" HorizontalAlignment="Stretch" />
+        <Button Grid.Row="2" Grid.ColumnSpan="2" Content="Carregar arquivo de exemplo..." Click="CarregarExemplo" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="3" Grid.ColumnSpan="2" Text="{Binding Exemplo}" FontSize="11" TextWrapping="Wrap" />
+        <TextBlock Grid.Row="4" Classes="rotulo" Text="Coluna da data" />
+        <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding Colunas}" SelectedItem="{Binding ColunaData}" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="5" Classes="rotulo" Text="Coluna da hora (opcional)" />
+        <ComboBox Grid.Row="5" Grid.Column="1" ItemsSource="{Binding Colunas}" SelectedItem="{Binding ColunaHora}" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="6" Classes="rotulo" Text="Coluna da placa" />
+        <ComboBox Grid.Row="6" Grid.Column="1" ItemsSource="{Binding Colunas}" SelectedItem="{Binding ColunaPlaca}" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="7" Classes="rotulo" Text="Coluna da praça (opcional)" />
+        <ComboBox Grid.Row="7" Grid.Column="1" ItemsSource="{Binding Colunas}" SelectedItem="{Binding ColunaPraca}" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="8" Classes="rotulo" Text="Coluna do valor" />
+        <ComboBox Grid.Row="8" Grid.Column="1" ItemsSource="{Binding Colunas}" SelectedItem="{Binding ColunaValor}" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="9" Classes="rotulo" Text="CFOP de entrada da nota" />
+        <StackPanel Grid.Row="9" Grid.Column="1" Orientation="Horizontal" Spacing="12">
+          <TextBox Text="{Binding Cfop}" Width="80" />
+          <CheckBox Content="Ativo" IsChecked="{Binding Ativo}" />
+        </StackPanel>
+      </Grid>
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <Button Content="Novo layout" Command="{Binding NovoCommand}" />
+        <Button Content="Gravar" Classes="accent" Command="{Binding GravarCommand}" />
+        <Button Content="Excluir" Command="{Binding ExcluirCommand}" />
+      </StackPanel>
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="Carregue um arquivo da operadora para escolher as colunas pelo cabeçalho. A operadora é o fornecedor da nota fiscal de pedágio; o CFOP é o da entrada (ex.: 1949 ou 2949, conforme orientação do contador)." />
+      <c:MensagensView />
+    </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

@@ -109,6 +109,15 @@ public class ErpIntegracaoTests(BancoDeTeste db) : IClassFixture<BancoDeTeste>
         Assert.Equal(SituacaoPedido.Concluido, Assert.Single(await erp.ListarPedidosAsync(empresa, TipoPedido.Venda, hoje, hoje, adm, ct)).Situacao);
         Assert.False((await erp.CancelarPedidoAsync(empresa, pv with { Situacao = SituacaoPedido.Concluido }, adm, ct)).Sucesso);
 
+        // Estoque › Posição e movimentos › Excluir movimento: ajuste manual sai; movimento de pedido só cancelando o pedido
+        Assert.True((await erp.AjustarEstoqueAsync(empresa, prod.Valor, hoje, -5, 0, "Contagem", adm, ct)).Sucesso);
+        var movs = await erp.MovimentosAsync(empresa, prod.Valor, hoje, hoje, adm, ct);
+        Assert.Equal(55m, Assert.Single(await erp.ProdutosAsync(empresa, adm, ct)).Saldo);
+        Assert.Contains("cancele o pedido", (await erp.ExcluirMovimentoAsync(empresa, movs.First(m => m.PedidoNumero is not null).Id, adm, ct)).Erros[0]);
+        Assert.True((await erp.ExcluirMovimentoAsync(empresa, movs.Single(m => m.Tipo == "AJUSTE").Id, adm, ct)).Sucesso);
+        Assert.Equal(60m, Assert.Single(await erp.ProdutosAsync(empresa, adm, ct)).Saldo);
+        Assert.False((await erp.ExcluirMovimentoAsync(empresa, -1, adm, ct)).Sucesso);
+
         var painel = await erp.PainelAsync(empresa, hoje, adm, ct);
         Assert.True(painel.Sucesso, string.Join("; ", painel.Erros));
         Assert.Equal((190m, 200m, 190m), (painel.Valor.Vendas, painel.Valor.Compras, painel.Valor.ReceberAberto));

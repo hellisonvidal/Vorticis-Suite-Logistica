@@ -1,0 +1,53 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
+             x:Class="Vorticis.Desktop.Comum.Views.ImportacaoCadastrosView" x:DataType="vm:ImportacaoCadastrosViewModel">
+  <!-- Cadastros › Importar de planilha (Excel): de-para das colunas, prévia e importação linha a linha -->
+  <Grid ColumnDefinitions="430,12,*" RowDefinitions="Auto,Auto,*,Auto" Margin="8">
+    <TextBlock Grid.ColumnSpan="3" Classes="titulo" Text="{Binding Titulo}" Margin="0,0,0,6" />
+    <StackPanel Grid.Row="1" Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="6" Margin="0,0,0,6">
+      <Button Content="Escolher planilha..." Classes="accent" Click="EscolherArquivo" />
+      <Button Content="Gerar planilha modelo" Command="{Binding GerarModeloCommand}"
+              ToolTip.Tip="Planilha .xlsx com as colunas do cadastro e uma linha de exemplo, para preencher e importar" />
+      <TextBlock Text="{Binding Arquivo}" VerticalAlignment="Center" FontSize="12" Foreground="Gray" TextTrimming="CharacterEllipsis" />
+    </StackPanel>
+    <DockPanel Grid.Row="2">
+      <TextBlock DockPanel.Dock="Top" FontWeight="SemiBold" Text="Campo do cadastro → coluna da planilha" Margin="0,0,0,4" />
+      <TextBlock DockPanel.Dock="Bottom" FontSize="11" Foreground="Gray" TextWrapping="Wrap" Margin="0,4,0,0"
+                 Text="O sistema escolhe sozinho as colunas de nome parecido. Ajuste o que precisar: os campos com * são obrigatórios; (não importar) deixa o campo em branco." />
+      <ScrollViewer>
+        <ItemsControl ItemsSource="{Binding Mapeamentos}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:MapeamentoCampo">
+              <Grid ColumnDefinitions="170,*" Margin="0,2">
+                <TextBlock Text="{Binding Rotulo}" VerticalAlignment="Center" FontSize="12" />
+                <ComboBox Grid.Column="1" HorizontalAlignment="Stretch" SelectedItem="{Binding Coluna}"
+                          ItemsSource="{Binding $parent[ItemsControl].((vm:ImportacaoCadastrosViewModel)DataContext).Colunas}" />
+              </Grid>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+    </DockPanel>
+    <DockPanel Grid.Row="2" Grid.Column="2">
+      <TextBlock DockPanel.Dock="Top" Text="{Binding Resumo}" TextWrapping="Wrap" FontWeight="SemiBold" Margin="0,0,0,4" />
+      <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Spacing="6" Margin="0,6,0,0">
+        <Button Content="Atualizar prévia" Command="{Binding AtualizarPreviaCommand}" />
+        <Button Content="Gravar layout" Command="{Binding SalvarLayoutCommand}"
+                ToolTip.Tip="Guarda as colunas escolhidas para a próxima planilha deste cadastro" />
+        <Button Content="Importar" Classes="accent" Command="{Binding ImportarCommand}" IsEnabled="{Binding PodeImportar}" />
+      </StackPanel>
+      <Border BorderBrush="#D0D5DD" BorderThickness="1" CornerRadius="4" Padding="6">
+        <ScrollViewer>
+          <ItemsControl ItemsSource="{Binding Previa}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="x:String">
+                <TextBlock Text="{Binding}" TextWrapping="Wrap" FontSize="12" Margin="0,2" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </Border>
+    </DockPanel>
+    <c:MensagensView Grid.Row="3" Grid.ColumnSpan="3" />
+  </Grid>
+</UserControl>

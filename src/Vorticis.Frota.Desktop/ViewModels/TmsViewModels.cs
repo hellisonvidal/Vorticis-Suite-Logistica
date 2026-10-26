@@ -524,7 +524,7 @@ public partial class CtesViewModel(IContexto contexto) : TmsBase(contexto)
         if (!r.Sucesso) { MostrarResultado(r, ""); return; }
         await CarregarAsync();
         Selecionado = Lista.FirstOrDefault(l => l.C.Id == c.Id);
-        Mensagem = $"CT-e {c.Serie}-{c.Numero} emitido. Inclua-o num manifesto (Emissão › Manifestos de carga) e acompanhe a entrega em Operação › Entregas.";
+        Mensagem = $"CT-e {c.Serie}-{c.Numero} emitido. Inclua-o num manifesto (Emissão › Manifestos de carga) e acompanhe a entrega em Operações › Entregas e ocorrências.";
     }, Permissao.FrotaTms);
 
     [RelayCommand]
@@ -712,7 +712,7 @@ public sealed record OcorrenciaLinha(Ocorrencia O)
     public string Usuario => O.Usuario ?? "";
 }
 
-/// <summary>Operação › Entregas e ocorrências: CT-e em trânsito com o prazo (atrasados primeiro) e o registro das ocorrências até a entrega.</summary>
+/// <summary>Operações › Entregas e ocorrências: CT-e em trânsito com o prazo (atrasados primeiro) e o registro das ocorrências até a entrega.</summary>
 public partial class EntregasViewModel(IContexto contexto) : TmsBase(contexto)
 {
     public ObservableCollection<CteLinha> Lista { get; } = [];

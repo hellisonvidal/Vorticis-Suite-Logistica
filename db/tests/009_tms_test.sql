@@ -51,4 +51,16 @@ BEGIN
     RAISE NOTICE 'OK: TMS';
 END $$;
 
-\echo 'TODOS OS TESTES PASSARAM'
+-- 074: perfil padrão Manutenção com a manutenção da frota, sem autorizar serviços
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM core.perfil p JOIN core.perfil_permissao pp ON pp.perfil_id = p.id
+                    WHERE p.nome = 'Manutenção' AND p.padrao AND pp.permissao = 'FROTA_MANUTENCAO') THEN
+        RAISE EXCEPTION 'perfil Manutenção sem FROTA_MANUTENCAO';
+    END IF;
+    IF EXISTS (SELECT 1 FROM core.perfil p JOIN core.perfil_permissao pp ON pp.perfil_id = p.id WHERE p.nome = 'Manutenção' AND pp.permissao = 'FROTA_APROVAR') THEN
+        RAISE EXCEPTION 'perfil Manutenção não pode autorizar serviços';
+    END IF;
+    RAISE NOTICE 'OK: perfil Manutenção';
+END $$;
+

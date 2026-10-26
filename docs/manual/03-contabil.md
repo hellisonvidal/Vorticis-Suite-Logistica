@@ -174,6 +174,36 @@ Use **Gerar planilha modelo (.xlsx)**, preencha (`LANCAMENTO;DATA;CONTA;DC;VALOR
 **Onde fica:** *Integrações › Exportar › Lançamentos contábeis*.
 Escolha o período, marque (ou não) *Incluir estornados e estornos*, clique em **Gerar** e exporte em Excel, PDF ou CSV.
 
+## Matriz e filiais
+
+**Para que serve:** ligar as filiais à matriz quando cada estabelecimento tem a sua própria escrituração (cada um é cadastrado como empresa, com o seu CNPJ). Assim os relatórios contábeis podem ser tirados de cada um ou do grupo todo.
+
+**Onde fica:** *Cadastros › Filiais* (no Vorticis Suite Logística: *Cadastros › Contábil › Filiais*).
+
+**Como usar:**
+1. Cadastre a filial como empresa (*Cadastros › Empresas* ou *Transportadoras*), com o CNPJ dela.
+2. Escolha a filial no topo da janela, abra *Cadastros › Filiais*, escolha em **Esta empresa é filial de** a matriz e clique em **Gravar**.
+3. Só aparecem as empresas com a mesma **raiz de CNPJ** (os 8 primeiros dígitos). Uma filial não pode ter filiais, e a matriz não pode ser filial de outra.
+4. Para desligar, deixe o campo em branco e grave. Ligar e desligar é tarefa do administrador.
+
+A lista **Empresas do grupo** mostra a matriz e todas as filiais. Para os relatórios do grupo saírem certos, use o mesmo plano de contas em todas as empresas.
+
+## Relatórios de matriz e filiais
+
+**Para que serve:** tirar o balancete, a DRE ou o balanço de uma empresa do grupo (**individual**) ou de várias de uma vez (**agrupado**).
+
+**Onde fica:** *Relatórios › Contábeis › Relatórios de matriz e filiais*.
+
+**Como usar:**
+1. Escolha o **relatório** (Balancete de verificação, DRE ou Balanço Patrimonial), o **período** (no balanço vale a data final) e o **nível** de detalhe (DRE e balanço).
+2. Marque as **empresas**: a matriz e as filiais aparecem todas marcadas. Uma só marcada gera o relatório individual dela.
+3. Escolha a **forma**:
+   - **Agrupado (somado):** os valores das empresas somados conta a conta, como se fossem uma só;
+   - **Lado a lado:** uma coluna para cada empresa e a coluna **Total** (no balancete, o saldo final de cada uma).
+4. Clique em **Gerar** e, se quiser, exporte em PDF, Excel ou CSV.
+
+**Atenção:** as contas são juntadas pelo **código**. Se uma conta existe só em parte das empresas, ela entra com zero nas outras e o rodapé avisa quais são. Você precisa ter acesso a todas as empresas marcadas; se não tiver, o relatório mostra qual empresa faltou.
+
 ## Contabilização em lote
 
 **Para que serve:** escolher *quando* os documentos dos outros módulos (notas fiscais, baixas de duplicatas e folha de pagamento) viram lançamentos contábeis. Com o tipo de contabilização **On-line** (o padrão, como sempre foi), cada nota, baixa ou folha gera o lançamento na hora. Com **Em lote**, os módulos só deixam uma *pendência de contabilização*, e você gera os lançamentos de uma vez, depois de conferir.

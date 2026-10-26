@@ -25,12 +25,17 @@ public sealed class ModuloContabil : IModuloDesktop
         return c.UsaGerencial ? new HashSet<string> { RecursoGerencial } : new HashSet<string>();
     }
 
+    public IReadOnlyList<DefinicaoGrafico> Graficos => GraficosContabeis.Todos;
+
+    public IReadOnlyList<DefinicaoImportacao> Importacoes => ImportacoesContabeis.Todas;
+
     public IReadOnlyList<ItemMenu> ItensCadastros { get; } =
     [
         ItemMenu.Tela("Plano de contas", Telas.PlanoContas),
         ItemMenu.Tela("Centros de custo", Telas.CentrosCusto),
         ItemMenu.Tela("Históricos", Telas.Historicos),
         ItemMenu.Tela("Bancos", Comum.ViewModels.TelasComuns.ContasBancarias),
+        ItemMenu.Tela("Filiais", Telas.Filiais),
         ItemMenu.Tela("Bloqueio de lançamentos", Telas.BloqueioLancamentos),
     ];
 
@@ -85,7 +90,9 @@ public sealed class ModuloContabil : IModuloDesktop
                 ItemMenu.Tela("Balanço Patrimonial", Telas.Balanco),
                 ItemMenu.Tela("Demonstração do Resultado (DRE)", Telas.Dre),
                 ItemMenu.Tela("DMPL (mutações do patrimônio líquido)", Telas.Dmpl),
-                ItemMenu.Tela("DLPA (lucros ou prejuízos acumulados)", Telas.Dlpa)),
+                ItemMenu.Tela("DLPA (lucros ou prejuízos acumulados)", Telas.Dlpa),
+                ItemMenu.Separador,
+                ItemMenu.Tela("Relatórios de matriz e filiais", Telas.RelatorioGrupo)),
             ItemMenu.Submenu("_Gerenciais",
                 ItemMenu.Tela("Contabilização por centro de custo", Telas.CentroCustoRelatorio),
                 ItemMenu.Tela("Orçado x Realizado", Telas.OrcadoRealizado),
@@ -214,6 +221,13 @@ public sealed class ModuloContabil : IModuloDesktop
             .Tela(Telas.Balanco, "Relatórios › Contábeis › Balanço Patrimonial", m => m.Pode(Permissao.RelatorioDemonstracoes));
         c.Instancia(nameof(MainViewModel.Dre), m => new DreViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoesExportacao())
             .Tela(Telas.Dre, "Relatórios › Contábeis › Demonstração do Resultado (DRE)", m => m.Pode(Permissao.RelatorioDemonstracoes));
+        c.Instancia("RelatorioGrupo", m => new RelatorioGrupoViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoesExportacao(),
+                    aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
+            .Tela(Telas.RelatorioGrupo, "Relatórios › Contábeis › Relatórios de matriz e filiais", m => m.Pode(Permissao.RelatorioBalancete) || m.Pode(Permissao.RelatorioDemonstracoes),
+                  v => v.CarregarAsync());
+        c.Instancia("Filiais", m => new FiliaisViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
+                    aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
+            .Tela(Telas.Filiais, "Cadastros › Filiais", m => m.TemAcessoNaEmpresa, v => v.CarregarAsync());
         c.Instancia(nameof(MainViewModel.Dmpl), m => new DmplViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoesExportacao())
             .Tela(Telas.Dmpl, "Relatórios › Contábeis › DMPL", m => m.Pode(Permissao.RelatorioDemonstracoes));
         c.Instancia(nameof(MainViewModel.Dlpa), m => new DlpaViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoesExportacao())

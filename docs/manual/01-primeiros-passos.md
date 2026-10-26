@@ -65,7 +65,7 @@ Em instalação nova não existe nenhum usuário. Por isso:
 Para esquecimentos use **Redefinir senha** (gera senha temporária). Excluir um usuário mantém o histórico de lançamentos, sem o vínculo com ele; ninguém exclui o próprio usuário.
 
 ### Perfis de acesso
-Um perfil é um conjunto de funções liberadas (lançar, estornar, fechar períodos, relatórios, exportar, folha, fiscal etc.). Na aba *Perfis de acesso*: **Incluir** (ou **Duplicar perfil**), marque as funções e salve. Perfis padrão, que não se excluem: **Administrador** (tudo, inclusive empresas, usuários, conexão e backup), **Contador** (todas as funções, inclusive *Manter o orçamento*), **Assistente** (lança e estorna, não fecha períodos) e **Consulta** (relatórios).
+Um perfil é um conjunto de funções liberadas (lançar, estornar, fechar períodos, relatórios, exportar, fiscal, frota etc.). Na aba *Perfis de acesso*: **Incluir** (ou **Duplicar perfil**), marque as funções e salve. Perfis padrão, que não se excluem: **Administrador** (tudo, inclusive empresas, usuários, conexão e backup), **Contador** (todas as funções, inclusive *Manter o orçamento*), **Assistente** (lança e estorna, não fecha períodos), **Consulta** (relatórios) e **Manutenção** (para a oficina da transportadora: planos, peças e serviços, ordens de serviço, notas fiscais de entrada das peças e serviços, estoque e relatórios da frota; não autoriza serviços, o que fica com quem tem *Autorizar ou reprovar ordens de serviço*).
 
 ### Segurança
 - Após 5 tentativas de senha errada, o usuário fica bloqueado por 15 minutos.
@@ -81,6 +81,10 @@ Usados para assinar arquivos (ECD, ECF, SPED) e transmitir o eSocial. A tela fic
 Depois do login abre a **tela inicial**, com as próximas obrigações da empresa. *Ajuda › Tela inicial* volta a ela; *Ajuda › Licença e registro* mostra o titular da licença; *Ajuda › Sobre* mostra versão, atalhos de teclado e a conexão em uso. O seletor de empresa fica no topo da janela: escolha a empresa antes de trabalhar. Fechar o programa pede confirmação.
 
 Logo abaixo dos menus fica, fixa, a **barra de funções abertas**: cada função aberta (que abre na sua própria janela) aparece ali com o nome; clique no nome para trazê-la para a frente e no **✕** para fechá-la. As janelas das funções nunca cobrem essa barra. Na Folha, a competência de trabalho fica na mesma linha, à direita.
+
+### Tecla Delete (excluir)
+
+Em qualquer tela que tenha o botão **Excluir**, selecione o registro na lista (um veículo, uma nota, um movimento de estoque, uma regra fiscal...) e aperte **Delete**. O sistema sempre pergunta *Excluir o registro selecionado?*: clique em **Excluir** para confirmar ou em **Cancelar**. Se a exclusão tiver outra consequência (por exemplo, uma nota contabilizada, que precisa ter a contabilização desfeita), esse aviso aparece em seguida. Dentro de um campo de texto, Delete apaga o texto, como sempre.
 
 ### Tecla Esc
 

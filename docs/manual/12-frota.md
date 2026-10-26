@@ -4,7 +4,7 @@ Módulo **Vorticis Frota** (ícone grafite): coordenação da frota e manutenç�
 
 ## Onde o Frota está
 
-O Frota é a base do **[Vorticis Suite Logística](13-logistica.md)**, o programa único da transportadora: ali, os menus **Operação** e **Manutenção** são os deste capítulo, e os relatórios da frota ficam no menu **Relatórios** (submenus *Frota e operação* e *Manutenção*), ao lado do financeiro e, no menu **Gerencial**, do contábil e da folha. O Vorticis Frota também pode ser aberto sozinho.
+O Frota é a base do **[Vorticis Suite Logística](13-logistica.md)**, o programa único da transportadora: ali, o menu **Operação** deste capítulo vira **Operações** (com a **Manutenção** como submenu, logo abaixo de *Compras*), e os relatórios da frota ficam no menu **Relatórios** (submenus *Frota e operação* e *Manutenção*), ao lado do financeiro e do contábil. O Vorticis Frota também pode ser aberto sozinho.
 
 ## Ordem dos cadastros
 
@@ -114,7 +114,7 @@ Embaixo ficam as decisões dos últimos 30 dias (quem decidiu, quando e o valor)
 
 ## Notas de compra
 
-**Onde fica:** *Manutenção › Notas de compra*.
+**Onde fica:** no programa Frota, *Manutenção › Notas de compra*. No Vorticis Suite Logística esta tela não fica no menu (lá a manutenção fica em *Operações › Manutenção*): as notas das oficinas e das peças são lançadas como notas fiscais de entrada, em *Operações › Compras › Notas fiscais de entrada*.
 
 1. **Nova nota**: escolha a **Ordem de serviço** atendida. A oficina da ordem vem como fornecedor, e embaixo aparece o valor da ordem para conferir com a nota.
 2. Informe o **Fornecedor**, o **CNPJ/CPF**, o **Número** e a **série**, a **Emissão** e, se tiver, a **Chave de acesso** de 44 dígitos (o sistema confere o dígito e se a chave é do CNPJ informado).
@@ -198,6 +198,36 @@ O valor lançado é o do pagamento (o adiantamento ou, sem adiantamento, o total
 5. Na lista, filtre por **período** e por **situação**.
 
 As coletas também alimentam o TMS: no conhecimento de transporte, escolha a ordem de coleta para trazer remetente, destinatário, carga, veículo e motorista (veja [Conhecimentos de transporte](14-tms.md#conhecimentos-de-transporte-ct-e)).
+
+## Pedágio
+
+**Para que serve:** trazer as passagens de pedágio do arquivo da operadora (Sem Parar, ConectCar, Veloe e outras), ver o gasto por veículo e lançar a **nota fiscal de entrada** da operadora sem digitar item por item.
+
+**Onde fica:** *Operações › Pedágio* (*Passagens e notas* e *Layouts de arquivo*).
+
+### Layouts de arquivo
+
+Cada operadora manda um arquivo diferente (planilha Excel ou CSV). O layout diz ao sistema em que coluna está cada informação. Faça uma vez por operadora:
+
+1. Abra *Operações › Pedágio › Layouts de arquivo* e clique em **Novo layout**.
+2. Dê um **Nome** (ex.: *Sem Parar*) e escolha a **Operadora**: o fornecedor que emite a nota de pedágio (cadastre antes em *Cadastros › Fornecedores*, se não existir).
+3. Clique em **Carregar arquivo de exemplo...** e escolha um arquivo dessa operadora. O sistema lê o cabeçalho e sugere as colunas.
+4. Confira as colunas da **data**, da **hora** (se vier separada; se a data já traz a hora, deixe *(nenhuma)*), da **placa**, da **praça** (opcional) e do **valor**.
+5. Informe o **CFOP de entrada da nota** (o sistema sugere 1949; confirme com o contador se a operadora é de outro estado, por exemplo 2949) e clique em **Gravar**.
+
+### Passagens e notas
+
+1. Abra *Operações › Pedágio › Passagens e notas*, escolha a **Operadora** e clique em **Importar arquivo...**.
+2. O sistema importa cada passagem com data e hora, placa, praça e valor:
+   - a placa é ligada ao veículo de *Cadastros › Veículos*; placa não cadastrada aparece como *(placa não cadastrada)*;
+   - o mesmo arquivo (ou passagens repetidas) não entra duas vezes;
+   - linhas com data, placa ou valor inválidos são mostradas com o número da linha e ficam de fora; linhas de total são ignoradas.
+3. Filtre pelo **Período** e por **Só sem nota** para conferir com a fatura da operadora. O topo mostra o total, os veículos e as passagens sem nota.
+4. Para lançar a nota da operadora: deixe a operadora e o período da fatura escolhidos, informe o **Número da nota**, a **Série**, a **Emissão** e, se tiver, a **Chave de acesso**, e clique em **Gerar nota fiscal de entrada**.
+   - A nota (NF-e de entrada) tem um item por veículo, com a quantidade de passagens e o período na descrição, e o CFOP do layout.
+   - Ela é gravada como as notas digitadas: aparece em *Operações › Compras › Notas fiscais de entrada*, gera a duplicata a pagar e é contabilizada on-line, se houver regra.
+   - As passagens ficam ligadas à nota (coluna *Nota*). Se a nota for excluída, elas voltam a ficar sem nota.
+5. Passagens importadas por engano (sem nota) podem ser marcadas e excluídas em **Excluir marcadas**.
 
 ## Painel da frota
 
