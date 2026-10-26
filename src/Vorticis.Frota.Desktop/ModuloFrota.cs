@@ -43,7 +43,10 @@ public sealed class ModuloFrota : IModuloDesktop
             ItemMenu.Tela("Diárias", FrotaTelas.Diarias),
             ItemMenu.Separador,
             ItemMenu.Submenu("_Coletas", ItemMenu.Tela("Ordens de coleta", FrotaTelas.Coletas)),
-            ItemMenu.Tela("Entregas e ocorrências", FrotaTelas.Entregas)),
+            ItemMenu.Tela("Entregas e ocorrências", FrotaTelas.Entregas),
+            ItemMenu.Submenu("_Pedágio",
+                ItemMenu.Tela("Passagens e notas", FrotaTelas.Pedagio),
+                ItemMenu.Tela("Layouts de arquivo", FrotaTelas.LayoutsPedagio))),
         ItemMenu.Submenu("_Emissão",
             ItemMenu.Tela("Cotações de frete", FrotaTelas.Cotacoes),
             ItemMenu.Tela("Conhecimentos de transporte (CT-e)", FrotaTelas.Ctes),
@@ -168,6 +171,12 @@ public sealed class ModuloFrota : IModuloDesktop
         Relatorio(c, "RelColetasMotorista", FrotaTelas.RelColetasMotorista, Vorticis.Frota.TabelasFrota.TituloColetasMotorista);
         Relatorio(c, "RelDiariasAcerto", FrotaTelas.RelDiariasAcerto, Vorticis.Frota.TabelasFrota.TituloDiariasAcerto);
         Relatorio(c, "RelResumoFrota", FrotaTelas.RelResumo, Vorticis.Frota.TabelasFrota.TituloResumo);
+        c.Instancia("Pedagio", m => new PedagioViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
+                    aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
+            .Tela(FrotaTelas.Pedagio, "Operações › Pedágio › Passagens e notas", m => Pode(m, Permissao.FrotaOperacao, Permissao.FrotaRelatorios), v => v.CarregarAsync());
+        c.Instancia("LayoutsPedagio", m => new LayoutsPedagioViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
+                    aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
+            .Tela(FrotaTelas.LayoutsPedagio, "Operações › Pedágio › Layouts de arquivo", m => Pode(m, Permissao.FrotaOperacao, Permissao.FrotaRelatorios), v => v.CarregarAsync());
         Tms(c, "TabelasFrete", FrotaTelas.TabelasFrete, "Cadastros › Tabelas de frete", m => new TabelasFreteViewModel(m), v => v.CarregarAsync());
         Tms(c, "Cotacoes", FrotaTelas.Cotacoes, "Emissão › Cotações de frete", m => new CotacoesViewModel(m), v => v.CarregarAsync());
         Tms(c, "Ctes", FrotaTelas.Ctes, "Emissão › Conhecimentos de transporte (CT-e)", m => new CtesViewModel(m), v => v.CarregarAsync());

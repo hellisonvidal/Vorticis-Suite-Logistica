@@ -56,7 +56,7 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
         Assert.DoesNotContain(vm.ChavesDeTelas, c => c.StartsWith("folha.") || c.StartsWith("VorticisFolha:"));
         // Operações: a operação da frota e as compras, o estoque e os monitores do Gerencial (que saíram do Financeiro)
         var operacoes = vm.Menus.Single(m => m.Titulo == "_Operações");
-        Assert.Equal(["Compras", "Estoque", "Monitores"], operacoes.Filhos!.Where(i => i.Filhos is not null && i.Titulo != "_Coletas").Select(i => i.Titulo));
+        Assert.Equal(["Compras", "Estoque", "Monitores"], operacoes.Filhos!.Where(i => i.Filhos is not null && i.Titulo is not ("_Coletas" or "_Pedágio")).Select(i => i.Titulo));
         Assert.Equal(["Contas a pagar", "Contas a receber", "Conciliação bancária"], vm.Menus.Single(m => m.Titulo == "_Financeiro").Filhos!.Where(i => !i.EhSeparador).Select(i => i.Titulo));
         // Manutenção sem Notas de compra; Cadastros sem Contadores (ficam na aba do cadastro da transportadora)
         Assert.DoesNotContain(Folhas(vm.Menus), i => i.Chave == Frota.Desktop.ViewModels.FrotaTelas.Notas);

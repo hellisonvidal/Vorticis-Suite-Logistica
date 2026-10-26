@@ -57,7 +57,7 @@ public class FrotaTelasTests(SessaoHeadless headless, BancoDeTeste db) : IClassF
         Assert.DoesNotContain("Planos de manutenção", cadastros);
         Assert.Contains("Documentos e vencimentos", cadastros);
         var operacao = Assert.Single(vm.Menus, m => m.Titulo == "_Operação");
-        Assert.Equal(["Abastecimentos", "Viagens", "Diárias", "_Coletas", "Entregas e ocorrências"], operacao.Filhos!.Where(i => !i.EhSeparador).Select(i => i.Titulo));
+        Assert.Equal(["Abastecimentos", "Viagens", "Diárias", "_Coletas", "Entregas e ocorrências", "_Pedágio"], operacao.Filhos!.Where(i => !i.EhSeparador).Select(i => i.Titulo));
         Assert.Equal(["Ordens de coleta"], operacao.Filhos!.Single(i => i.Titulo == "_Coletas").Filhos!.Select(i => i.Titulo));
         var manutencao = Assert.Single(vm.Menus, m => m.Titulo == "_Manutenção");
         Assert.Equal(["Planos de manutenção", "Peças e serviços", "Ordens de serviço", "Autorização de serviços"], manutencao.Filhos!.Select(i => i.Titulo));
@@ -103,6 +103,8 @@ public class FrotaTelasTests(SessaoHeadless headless, BancoDeTeste db) : IClassF
                 (new F.ViewModels.AutorizacaoViewModel(m), new F.Views.AutorizacaoView()),
                 (new F.ViewModels.NotasCompraViewModel(m), new F.Views.NotasCompraView()),
                 (new F.ViewModels.TabelasFreteViewModel(m), new F.Views.TabelasFreteView()),
+                (new F.ViewModels.PedagioViewModel(m), new F.Views.PedagioView()),
+                (new F.ViewModels.LayoutsPedagioViewModel(m), new F.Views.LayoutsPedagioView()),
                 (new F.ViewModels.CotacoesViewModel(m), new F.Views.CotacoesView()),
                 (new F.ViewModels.CtesViewModel(m), new F.Views.CtesView()),
                 (new F.ViewModels.ManifestosViewModel(m), new F.Views.ManifestosView()),

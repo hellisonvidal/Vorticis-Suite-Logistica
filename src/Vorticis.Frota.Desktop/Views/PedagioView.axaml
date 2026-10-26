@@ -1,0 +1,58 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Frota.Desktop.ViewModels"
+             x:Class="Vorticis.Frota.Desktop.Views.PedagioView" x:DataType="vm:PedagioViewModel">
+  <Grid ColumnDefinitions="*,12,360" RowDefinitions="Auto,Auto,*,Auto" Margin="8">
+    <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="8" Margin="0,0,0,6">
+      <TextBlock Classes="titulo" Text="Pedágio: passagens e notas" VerticalAlignment="Center" />
+      <TextBlock Text="Operadora" VerticalAlignment="Center" />
+      <ComboBox ItemsSource="{Binding Layouts}" SelectedItem="{Binding Layout}" Width="260" />
+      <TextBlock Text="Período" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="130" />
+      <TextBlock Text="a" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Fim}" Width="130" />
+      <CheckBox Content="Só sem nota" IsChecked="{Binding SoSemNota}" VerticalAlignment="Center" />
+      <Button Content="Importar arquivo..." Click="Importar" />
+    </StackPanel>
+    <TextBlock Grid.Row="1" Grid.ColumnSpan="3" Text="{Binding Totais}" FontSize="12" Margin="0,0,0,6" />
+    <DataGrid Grid.Row="2" ItemsSource="{Binding Lista}" IsReadOnly="False" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTemplateColumn Header="" Width="40">
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate x:DataType="vm:PassagemLinha">
+              <CheckBox IsChecked="{Binding Marcada}" x:DataType="vm:PassagemLinha" HorizontalAlignment="Center" />
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+        <DataGridTextColumn Header="Data e hora" Binding="{ReflectionBinding DataHora}" Width="130" IsReadOnly="True" />
+        <DataGridTextColumn Header="Placa" Binding="{ReflectionBinding Placa}" Width="90" IsReadOnly="True" />
+        <DataGridTextColumn Header="Veículo" Binding="{ReflectionBinding Veiculo}" Width="*" IsReadOnly="True" />
+        <DataGridTextColumn Header="Praça" Binding="{ReflectionBinding Praca}" Width="170" IsReadOnly="True" />
+        <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="95" IsReadOnly="True" />
+        <DataGridTextColumn Header="Nota" Binding="{ReflectionBinding Nota}" Width="85" IsReadOnly="True" />
+      </DataGrid.Columns>
+    </DataGrid>
+    <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="6" Margin="0,6,0,0">
+      <Button Content="Marcar/desmarcar todas" Command="{Binding MarcarTodasCommand}" />
+      <Button Content="Excluir marcadas" Command="{Binding ExcluirMarcadasCommand}" />
+    </StackPanel>
+    <ScrollViewer Grid.Row="2" Grid.RowSpan="2" Grid.Column="2">
+    <StackPanel Spacing="6" IsEnabled="{Binding PodeEditar}">
+      <TextBlock Classes="titulo" Text="Gerar a nota fiscal de entrada da operadora" TextWrapping="Wrap" />
+      <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="6">
+        <TextBlock Classes="rotulo" Text="Número da nota" />
+        <TextBox Grid.Column="1" Text="{Binding NumeroNota}" />
+        <TextBlock Grid.Row="1" Classes="rotulo" Text="Série" />
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SerieNota}" Width="80" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="2" Classes="rotulo" Text="Emissão" />
+        <CalendarDatePicker Grid.Row="2" Grid.Column="1" SelectedDate="{Binding EmissaoNota}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="3" Classes="rotulo" Text="Chave de acesso (opcional)" TextWrapping="Wrap" />
+        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding ChaveNota}" Watermark="44 dígitos" />
+      </Grid>
+      <Button Content="Gerar nota fiscal de entrada" Classes="accent" Command="{Binding GerarNotaCommand}" />
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="Gera uma NF-e de entrada da operadora com as passagens sem nota da operadora e do período escolhidos acima: um item por veículo (placa), com o CFOP do layout. A nota aparece em Operações › Compras › Notas fiscais de entrada, com a duplicata a pagar." />
+      <c:MensagensView />
+    </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

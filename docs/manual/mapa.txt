@@ -174,3 +174,5 @@ tms.rel.fretestrecho=14-tms.md#relatorios-do-tms
 tms.rel.ctes=14-tms.md#relatorios-do-tms
 tms.rel.prazo=14-tms.md#relatorios-do-tms
 tms.rel.faturas=14-tms.md#relatorios-do-tms
+frota.pedagio=12-frota.md#passagens-e-notas
+frota.pedagio.layouts=12-frota.md#layouts-de-arquivo

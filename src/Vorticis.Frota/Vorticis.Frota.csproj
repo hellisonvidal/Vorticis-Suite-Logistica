@@ -8,5 +8,6 @@
     <ProjectReference Include="..\Vorticis.Domain\Vorticis.Domain.csproj" />
     <ProjectReference Include="..\Vorticis.Application\Vorticis.Application.csproj" />
     <ProjectReference Include="..\Vorticis.Infra\Vorticis.Infra.csproj" />
+    <ProjectReference Include="..\Vorticis.Fiscal\Vorticis.Fiscal.csproj" />
   </ItemGroup>
 </Project>
