@@ -1,12 +1,12 @@
 # Vorticis Suite Logística
 
-O **Vorticis Suite Logística** (ícone verde-petróleo) é o programa da transportadora: **um programa só, com um menu só**, que reúne o controle da frota e da manutenção, o **TMS** (cotações, conhecimentos, manifestos, entregas e faturas de frete), o financeiro e a contabilidade (esta no menu **Gerencial**). As telas são as mesmas dos módulos do Vorticis (mesmas regras e o mesmo banco de dados), organizadas para o dia a dia da transportadora. Não é preciso trocar de módulo.
+O **Vorticis Suite Logística** (ícone verde-petróleo) é o programa da transportadora: **um programa só, com um menu só**, que reúne o controle da frota e da manutenção, o **TMS** (cotações, conhecimentos, manifestos, entregas e faturas de frete), o financeiro e a contabilidade (esta no menu **Contábil**). As telas são as mesmas dos módulos do Vorticis (mesmas regras e o mesmo banco de dados), organizadas para o dia a dia da transportadora. Não é preciso trocar de módulo.
 
 ## Instalação e primeiro acesso
 
 1. Rode o instalador **Setup-VorticisSuiteLogistica**. Ele instala o programa e configura o banco de dados sozinho.
 2. Abra o atalho **Vorticis Suite Logística** (menu Iniciar ou área de trabalho) e entre com o seu usuário.
-3. Cadastre a transportadora em *Cadastros › Transportadoras*. Ela já fica ativa em todas as áreas do programa (frota, financeiro e contábil).
+3. Cadastre a transportadora em *Cadastros › Transportadoras*. Ela já fica ativa em todas as áreas do programa (frota, financeiro e contábil). Envie também o **logo** da transportadora (aba *Dados cadastrais*, [Logo da empresa](02-cadastros-comuns.md#logo-da-empresa-sai-em-todos-os-relatorios)): ele sai em todos os relatórios em PDF.
 4. Escolha a transportadora no topo da tela e siga a ordem dos cadastros do capítulo [Frota](12-frota.md#ordem-dos-cadastros).
 
 O Vorticis Suite Logística é instalado numa pasta própria (*Vorticis Logistica*) e usa o mesmo banco de dados do Vorticis no computador. Quem já tinha o programa com o nome antigo (Vorticis Logística) só precisa rodar o instalador novo: ele atualiza a instalação, troca os atalhos para o nome **Vorticis Suite Logística** e mantém os dados.

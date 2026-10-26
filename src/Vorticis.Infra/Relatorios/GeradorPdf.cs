@@ -111,14 +111,25 @@ public sealed class GeradorPdf : IGeradorPdf
         // Cabeçalho: identificação (empresa/CNPJ/período) no alto, com a folha à direita; o TÍTULO do relatório fica ABAIXO dela.
         var cab = s.Headers.Primary;
         var t = cab.AddTable();
-        t.AddColumn(Unit.FromCentimeter(largura - 4));
+        var logo = LogoDe(d);
+        if (logo is not null) t.AddColumn(Unit.FromCentimeter(LarguraLogoCm));
+        t.AddColumn(Unit.FromCentimeter(largura - 4 - (logo is null ? 0 : LarguraLogoCm)));
         t.AddColumn(Unit.FromCentimeter(4));
         var r = t.AddRow();
+        var c0 = 0;
+        if (logo is not null)
+        {
+            // logo da empresa à esquerda da identificação, com altura limitada (a largura acompanha a proporção da imagem)
+            var img = r.Cells[c0++].AddImage("base64:" + Convert.ToBase64String(logo));
+            img.LockAspectRatio = true;
+            img.Height = Unit.FromCentimeter(AlturaLogoCm);
+            r.Cells[0].VerticalAlignment = VerticalAlignment.Center;
+        }
         var ident = d.Cabecalho.Count > 0 ? d.Cabecalho[0] : "";
-        var p0 = r.Cells[0].AddParagraph(ident);
+        var p0 = r.Cells[c0].AddParagraph(ident);
         p0.Format.Font.Size = 8;
         p0.Format.Font.Bold = true;
-        var pag = r.Cells[1].AddParagraph($"{d.RotuloPagina} ");
+        var pag = r.Cells[c0 + 1].AddParagraph($"{d.RotuloPagina} ");
         pag.AddPageField();
         pag.Format.Alignment = ParagraphAlignment.Right;
         pag.Format.Font.Size = 8;
@@ -140,12 +151,24 @@ public sealed class GeradorPdf : IGeradorPdf
         return s;
     }
 
+    private const double LarguraLogoCm = 3.2, AlturaLogoCm = 1.2;
+
+    /// <summary>O logo do documento ou o da empresa ativa, se for uma imagem válida (PNG ou JPEG).</summary>
+    private static byte[]? LogoDe(DocumentoRelatorio d)
+    {
+        var l = d.Logo ?? LogoRelatorios.Atual;
+        return LogoRelatorios.EhImagem(l) ? l : null;
+    }
+
     /// <summary>Estimativa (conservadora) da altura do cabeçalho em cm, considerando quebra de linhas longas.</summary>
     private static double AlturaCabecalhoCm(DocumentoRelatorio d, double larguraCm)
     {
         static int Linhas(string? t, double cm, double caracteresPorCm) => Math.Max(1, (int)Math.Ceiling((t ?? "").Length / (cm * caracteresPorCm)));
-        var ident = d.Cabecalho.Count == 0 ? 1 : Linhas(d.Cabecalho[0], larguraCm - 4, 5.6) + d.Cabecalho.Skip(1).Sum(l => Linhas(l, larguraCm, 6.2));
-        return ident * 0.38 + Linhas(d.Titulo, larguraCm, 4.6) * 0.5 + 0.35;
+        var com = LogoDe(d) is not null;
+        // a 1ª linha fica ao lado do logo (ocupa ao menos a altura dele); as demais, abaixo, na largura toda
+        var primeira = Math.Max((d.Cabecalho.Count == 0 ? 1 : Linhas(d.Cabecalho[0], larguraCm - 4 - (com ? LarguraLogoCm : 0), 5.6)) * 0.38, com ? AlturaLogoCm + 0.1 : 0);
+        var ident = primeira + d.Cabecalho.Skip(1).Sum(l => Linhas(l, larguraCm, 6.2)) * 0.38;
+        return ident + Linhas(d.Titulo, larguraCm, 4.6) * 0.5 + 0.35;
     }
 
     private static void AdicionarTermo(Document doc, DocumentoRelatorio d, Termo termo, string texto)

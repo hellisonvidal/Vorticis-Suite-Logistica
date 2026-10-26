@@ -1,3 +1,4 @@
+using Vorticis.Application.Relatorios;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 using Avalonia.Media;
@@ -896,12 +897,23 @@ public abstract partial class MainViewModelBase : ObservableObject, IContexto, I
             await AtualizarPermissoesAsync();
             await AtualizarRecursosAsync();
             await AtualizarSituacaoPeriodoAsync();
+            await AtualizarLogoAsync();
             foreach (var def in _catalogo.Instancias.Where(d => d.AoTrocarEmpresa is not null))
                 await def.AoTrocarEmpresa!(_instancias[def.Nome], InstanciaAtiva(def.Nome));
         });
     }
 
-    private void AtualizarStatus()
+    /// <summary>Logo da empresa ativa nos relatórios em PDF (sem empresa ou sem logo, os relatórios saem sem).</summary>
+    private async Task AtualizarLogoAsync()
+    {
+        try
+        {
+            LogoRelatorios.Atual = App is not null && Sessao is not null && EmpresaSelecionada is { } e ? await App.LogoEmpresa.ObterAsync(e.Id, Sessao.Id) : null;
+        }
+        catch (Exception) { LogoRelatorios.Atual = null; }
+    }
+
+        private void AtualizarStatus()
     {
         if (Sessao is null) return;
         var empresa = EmpresaSelecionada is null

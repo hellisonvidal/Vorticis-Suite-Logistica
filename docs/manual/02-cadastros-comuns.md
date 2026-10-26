@@ -16,8 +16,17 @@ Estes cadastros existem em todos os módulos e têm o mesmo código em todos ele
 6. Em **Escrituração**, escolha o **regime tributário** (tem histórico por ano; é definido na inclusão) e o primeiro exercício.
 7. **Salvar**.
 
+### Logo da empresa (sai em todos os relatórios)
+No Vorticis Suite Logística, este cadastro se chama **Transportadoras**. O logo enviado aqui sai no cabeçalho, à esquerda do nome da empresa, em **todos os relatórios em PDF** dela: relatórios da frota, do TMS e do contábil, CT-e, faturas, livros etc.
+1. Selecione a empresa na lista da direita (o logo é gravado na empresa selecionada).
+2. Na aba **Dados cadastrais**, em **Logo da empresa**, clique em **Enviar logo...** e escolha a imagem no computador: arquivo **PNG** ou **JPG** de até **1 MB** (de preferência com fundo branco ou transparente).
+3. A prévia aparece ao lado e o logo já vale para os próximos relatórios; não precisa clicar em Salvar.
+4. Para trocar, envie outro arquivo; para tirar, clique em **Remover logo** e confirme.
+
+Só o administrador troca ou remove o logo.
+
 ### Abas da empresa
-- **Dados cadastrais**: tudo acima.
+- **Dados cadastrais**: tudo acima, inclusive o logo.
 - **Sócios** e **Contadores**: iguais às telas [Sócios](#socios) e [Contadores](#contadores).
 - **Contabilidade**: modelo e máscara do plano de contas, centros de custo, início da escrituração, regras dos lançamentos e contas do encerramento (veja abaixo).
 

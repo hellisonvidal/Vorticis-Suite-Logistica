@@ -117,6 +117,21 @@
           <CheckBox Margin="0,0,16,4" Content="Frota" IsChecked="{Binding ModuloFrota}" IsEnabled="{Binding FrotaEditavel}" />
         </WrapPanel>
 
+        <TextBlock Classes="secao" Text="Logo da empresa" />
+        <StackPanel Orientation="Horizontal" Spacing="12" IsEnabled="{Binding TemEmpresaSelecionada}">
+          <Border Width="180" Height="70" BorderBrush="#d0d0d0" BorderThickness="1" CornerRadius="4" Background="White">
+            <Panel>
+              <Image Source="{Binding Logo}" Stretch="Uniform" Margin="4" />
+              <TextBlock Text="Sem logo" Foreground="Gray" FontSize="11" HorizontalAlignment="Center" VerticalAlignment="Center" IsVisible="{Binding !TemLogo}" />
+            </Panel>
+          </Border>
+          <StackPanel Spacing="6" VerticalAlignment="Center">
+            <Button Content="Enviar logo..." Click="EnviarLogo_Click" ToolTip.Tip="Escolha no computador uma imagem PNG ou JPG de até 1 MB." />
+            <Button Content="Remover logo" Command="{Binding RemoverLogoCommand}" IsVisible="{Binding TemLogo}" />
+          </StackPanel>
+          <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap" MaxWidth="320" VerticalAlignment="Center"
+                     Text="O logo sai no cabeçalho de todos os relatórios em PDF desta empresa (relatórios, CT-e, faturas, livros)." />
+        </StackPanel>
         <TextBlock Classes="secao" Text="Escrituração" />
         <Grid ColumnDefinitions="170,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="6">
           <TextBlock Classes="rotulo" Text="Regime tributário" />
