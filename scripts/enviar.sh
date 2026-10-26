@@ -33,6 +33,9 @@ fi
 git fetch -q origin "$ramo" 2>/dev/null || true
 for espera in 0 2 4 8 16; do
   sleep "$espera"
-  if git push -q -u origin "$ramo" >>"$LOG" 2>&1; then echo "Enviado: $ramo ($(git rev-parse --short HEAD))"; exit 0; fi
+  if git push -q -u origin "$ramo" >>"$LOG" 2>&1; then
+    # clone raso só acompanha o main: cria a referência do ramo remoto para o upstream ficar registrado
+    git fetch -q origin "$ramo:refs/remotes/origin/$ramo" 2>/dev/null && git branch -q -u "origin/$ramo" 2>/dev/null || true
+    echo "Enviado: $ramo ($(git rev-parse --short HEAD))"; exit 0; fi
 done
 tail -5 "$LOG"; echo "PUSH FALHOU"; exit 1
