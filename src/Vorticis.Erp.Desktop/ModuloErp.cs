@@ -22,6 +22,8 @@ public sealed class ModuloErp : IModuloDesktop
     public string CorBarra => "#164E63";      // petróleo
     public bool UsaCalendarioObrigacoes => false;
 
+    public IReadOnlyList<DefinicaoImportacao> Importacoes => Vorticis.Fiscal.Desktop.ImportacoesFiscais.Todas;
+
     public IReadOnlyList<ItemMenu> ItensCadastros { get; } =
     [
         ItemMenu.Tela("Produtos", F.Telas.Produtos),

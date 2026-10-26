@@ -174,6 +174,11 @@ public abstract partial class MainViewModelBase : ObservableObject, IContexto, I
     public CertificadosViewModel Certificados => Instancia<CertificadosViewModel>();
     public BackupViewModel Backup => Instancia<BackupViewModel>();
     public ObrigacoesViewModel Obrigacoes => Instancia<ObrigacoesViewModel>();
+    public ImportacaoCadastrosViewModel ImportacaoCadastros => Instancia<ImportacaoCadastrosViewModel>();
+
+    /// <summary>Cadastros que aceitam importação de planilha: clientes e fornecedores (casco) e os do módulo.</summary>
+    public IReadOnlyList<DefinicaoImportacao> Importacoes =>
+        [.. (Modulo.UsaCadastrosComuns && Modulo.UsaClientesFornecedores ? ImportacoesComuns.Todas : []).Concat(Modulo.Importacoes).DistinctBy(d => d.Chave)];
 
     /// <summary>Telas comuns a todos os módulos (os menus delas ficam em <see cref="MontarMenus"/>).</summary>
     private void RegistrarTelasComuns(CatalogoTelas c)
@@ -210,6 +215,9 @@ public abstract partial class MainViewModelBase : ObservableObject, IContexto, I
         c.Instancia(nameof(Socios), m => new SociosViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
                     aoTrocarEmpresa: (v, ativa) => ativa || AbaDaEmpresaAtiva(CadastroEmpresaViewModel.AbaSocios) ? v.CarregarAsync() : Task.CompletedTask)
             .Tela(TelasComuns.Socios, "Cadastros › Sócios", ComAcesso, v => v.CarregarAsync());
+        var importacao = c.Instancia(nameof(ImportacaoCadastros), m => new ImportacaoCadastrosViewModel(m));
+        foreach (var def in Importacoes)
+            importacao = importacao.Tela(def.Tela, $"Cadastros › Importar de planilha › {def.Titulo}", ComAcesso, v => v.AbrirAsync(def));
         c.Instancia(nameof(Clientes), m => new ClientesViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes())
             .Tela(TelasComuns.Clientes, "Cadastros › Clientes", ComAcesso, v => v.CarregarAsync());
         c.Instancia(nameof(Fornecedores), m => new FornecedoresViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes())
@@ -289,6 +297,8 @@ public abstract partial class MainViewModelBase : ObservableObject, IContexto, I
         if (Modulo.UsaCadastrosComuns && Modulo.UsaClientesFornecedores)
             cadastros.AddRange([ItemMenu.Tela("Clientes", TelasComuns.Clientes), ItemMenu.Tela("Fornecedores", TelasComuns.Fornecedores)]);
         if (Modulo.ItensCadastros.Count > 0) cadastros.AddRange(Modulo.ItensCadastros.Prepend(ItemMenu.Separador));
+        if (Importacoes.Count > 0)
+            cadastros.AddRange([ItemMenu.Separador, ItemMenu.Submenu("Importar de _planilha (Excel)", [.. Importacoes.Select(d => ItemMenu.Tela(d.Titulo, d.Tela))])]);
         cadastros.AddRange([ItemMenu.Separador, ItemMenu.Tela("Parâmetros", TelasComuns.Parametros)]);
         // O calendário de obrigações fica em "Obrigações", se o módulo tem esse menu; senão, em "Consultas";
         // sem nenhum dos dois, o casco cria o menu "Obrigações".

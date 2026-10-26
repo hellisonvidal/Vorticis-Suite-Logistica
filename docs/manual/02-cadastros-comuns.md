@@ -74,6 +74,26 @@ Se o seu perfil não permite alterar, a tela só mostra os valores. Se você ape
 | EFD-Contribuições | Natureza da pessoa jurídica e atividade. |
 | Contabilização e tributos | Atalhos para *Regras de contabilização*, *Contas dos tributos* e *Fechamento do período fiscal*. |
 
+## Importar cadastros de planilha (Excel)
+
+**Para que serve:** trazer de uma vez os cadastros que você já tem numa planilha (de outro sistema ou feita à mão), sem digitar um por um.
+
+**Onde fica:** *Cadastros › Importar de planilha (Excel)*, com um item para cada cadastro: clientes, fornecedores, veículos, motoristas, frotas, rotas, tabelas de frete, produtos, naturezas de entrada, centros de custo e históricos padrão (os que existirem no programa). O plano de contas tem importação própria (*Integrações › Importar › Plano de contas*).
+
+**Como usar:**
+1. Escolha o cadastro no menu. Se ainda não tem planilha, clique em **Gerar planilha modelo**: o sistema cria um .xlsx com as colunas do cadastro e uma linha de exemplo.
+2. Clique em **Escolher planilha...** e selecione o arquivo (Excel **.xlsx** ou **.csv**). A primeira linha precisa ser o cabeçalho, com o nome de cada coluna.
+3. **Adapte o layout à sua planilha:** à esquerda aparece cada campo do cadastro e a coluna da planilha ligada a ele. O sistema já liga as colunas de nome parecido (por exemplo, *CNPJ*, *CPF/CNPJ* ou *Documento* para o CPF/CNPJ). Troque o que for preciso; *(não importar)* deixa o campo em branco. Os campos com **\*** são obrigatórios.
+4. Confira a **prévia** (as primeiras linhas como vão entrar) e clique em **Importar**.
+5. Cada linha é gravada com as mesmas regras da tela do cadastro (CPF/CNPJ, placa, CFOP etc. são conferidos). As linhas com erro ficam de fora e aparecem com o número da linha e o motivo; corrija a planilha e importe só elas de novo.
+
+**Dicas:**
+- O **layout fica gravado** para a empresa: na próxima planilha do mesmo cadastro, as colunas já vêm escolhidas (use **Gravar layout** para guardá-lo sem importar).
+- **Código** em branco: o sistema numera a partir do maior código existente.
+- Tipos, combustíveis e afins aceitam o código ou o nome que aparece na tela (ex.: *Diesel S10* ou *DIESEL_S10*; *Cavalo*; *Própria*). Sim/não aceita *S*, *Sim*, *X* ou *1*.
+- Rotas: informe a UF e o município de origem e de destino (o nome ou o código IBGE); sem distância, o sistema estima como na tela de rotas.
+- Cadastros já existentes (mesmo CPF/CNPJ, placa ou código) não são duplicados: a linha aparece com o aviso.
+
 ## Clientes e fornecedores (participantes)
 
 **Para que serve:** cadastrar quem compra e quem vende. A mesma pessoa pode ser cliente e fornecedor (são menus separados).

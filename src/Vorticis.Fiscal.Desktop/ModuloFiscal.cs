@@ -30,6 +30,8 @@ public sealed class ModuloFiscal : IModuloDesktop
         return online is { Sucesso: true, Valor: true } ? new HashSet<string>() : new HashSet<string> { RecursoContabilizacaoLote };
     }
 
+    public IReadOnlyList<DefinicaoImportacao> Importacoes => ImportacoesFiscais.Todas;
+
     public IReadOnlyList<ItemMenu> ItensCadastros { get; } =
     [
         ItemMenu.Tela("Produtos", Telas.Produtos),

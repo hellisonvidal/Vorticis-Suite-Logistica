@@ -57,6 +57,16 @@ public static class LeitorPlanilha
         return TabelaImportada.DeLinhas(linhas);
     }
 
+    /// <summary>Planilha modelo (.xlsx) com o cabeçalho e uma linha de exemplo, para o usuário preencher e importar.</summary>
+    public static byte[] Modelo(IReadOnlyList<string> colunas, IReadOnlyList<string> exemplo)
+    {
+        var linha = new Dictionary<string, object?>();
+        for (var i = 0; i < colunas.Count; i++) linha[colunas[i]] = i < exemplo.Count ? exemplo[i] : "";
+        using var ms = new MemoryStream();
+        ms.SaveAs(new[] { linha }, excelType: ExcelType.XLSX);
+        return ms.ToArray();
+    }
+
     /// <summary>Datas em dd/MM/yyyy; números no formato invariante (1500.5), que os leitores de valor aceitam.</summary>
     private static string Texto(object? v) => v switch
     {

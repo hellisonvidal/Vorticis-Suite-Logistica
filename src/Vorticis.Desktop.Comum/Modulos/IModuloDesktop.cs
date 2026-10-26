@@ -73,6 +73,9 @@ public interface IModuloDesktop
     /// <summary>Mostra Contadores no menu Cadastros. Sem ele, os contadores ficam só na aba Contadores do cadastro da empresa.</summary>
     bool ContadoresNoMenuCadastros => true;
 
+    /// <summary>Cadastros do módulo que aceitam importação de planilha (Cadastros › Importar de planilha).</summary>
+    IReadOnlyList<DefinicaoImportacao> Importacoes => [];
+
     /// <summary>
     /// Recursos ligados nos parâmetros da empresa ativa (ex.: "gerencial" no Contábil): os itens de menu marcados com
     /// <see cref="ItemMenu.SoCom"/> só aparecem quando o recurso está na lista.

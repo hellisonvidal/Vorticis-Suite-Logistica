@@ -176,3 +176,15 @@ tms.rel.prazo=14-tms.md#relatorios-do-tms
 tms.rel.faturas=14-tms.md#relatorios-do-tms
 frota.pedagio=12-frota.md#passagens-e-notas
 frota.pedagio.layouts=12-frota.md#layouts-de-arquivo
+; ---- importação de planilha nos cadastros
+importar.clientes=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel
+importar.fornecedores=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel
+importar.veiculos=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel
+importar.motoristas=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel
+importar.frotas=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel
+importar.rotas=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel
+importar.tabelasfrete=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel
+importar.produtos=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel
+importar.naturezas=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel
+importar.centroscusto=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel
+importar.historicos=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel

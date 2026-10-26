@@ -63,6 +63,11 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
         Assert.DoesNotContain(vm.Menus[0].Filhos!, i => i.Chave == TelasComuns.Contabilidade);
         Assert.Contains(vm.Menus[0].Filhos!, i => i.Titulo == "_Gerencial" && i.Filhos is not null);
         Assert.True(vm.ConheceTela(TelasComuns.Contabilidade));
+        // Cadastros › Importar de planilha (Excel): um item por cadastro importável de todas as áreas
+        var importar = vm.Menus[0].Filhos!.Single(i => i.Titulo == "Importar de _planilha (Excel)");
+        Assert.Equal(["Clientes", "Fornecedores", "Veículos", "Motoristas", "Frotas", "Rotas", "Tabelas de frete", "Centros de custo", "Históricos padrão",
+                      "Produtos", "Naturezas de entrada"], importar.Filhos!.Select(i => i.Titulo));
+        Assert.All(importar.Filhos!, i => Assert.True(vm.ConheceTela(i.Chave!), i.Chave));
         // Operações tem Diárias e o submenu Coletas com as ordens de coleta
         var coletas = vm.Menus.Single(m => m.Titulo == "_Operações").Filhos!.Single(m => m.Titulo == "_Coletas");
         Assert.Equal(["Ordens de coleta"], coletas.Filhos!.Select(i => i.Titulo));
@@ -124,6 +129,7 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
             [
                 new Frota.Desktop.ViewModels.OrdensViewModel(vm), new Frota.Desktop.ViewModels.VeiculosViewModel(vm),
                 new Fiscal.Desktop.ViewModels.ContasPagarViewModel(vm), new ViewModels.BalanceteViewModel(vm),
+                vm.ImportacaoCadastros,
             ];
             foreach (var t in telas)
             {
