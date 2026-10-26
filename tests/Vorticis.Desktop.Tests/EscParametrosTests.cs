@@ -202,39 +202,6 @@ public class EscParametrosTests(BancoDeTeste db, SessaoHeadless headless) : ICla
     }
 
     [Fact]
-    public async Task Parametros_da_folha_gravam_e_recarregam()
-    {
-        BancoDeTeste.ExigirBanco();
-        var (ctx, _) = await NovoContextoAsync("07526557000100");
-        var vm = new Vorticis.Folha.Desktop.ViewModels.ParametrosModuloFolhaViewModel(ctx);
-        await vm.CarregarAsync();
-        Assert.Equal("5", Campo(vm, "diaPagamento").Texto);
-        Assert.Equal("2", Campo(vm, "ambiente").ValorEscolha);          // produção restrita por padrão
-        Campo(vm, "rat").DefinirEscolha("3");
-        Campo(vm, "fap").Texto = "1,2000";
-        Campo(vm, "diaPagamento").Texto = "10";
-        Campo(vm, "ambiente").DefinirEscolha("1");
-        Campo(vm, "transmissor").DefinirEscolha("CONTADOR");
-        await vm.SalvarCommand.ExecuteAsync(null);
-        Assert.Empty(vm.Erros);
-
-        var outro = new Vorticis.Folha.Desktop.ViewModels.ParametrosModuloFolhaViewModel(ctx);
-        await outro.CarregarAsync();
-        Assert.Equal("3", Campo(outro, "rat").ValorEscolha);
-        Assert.Equal("1,2000", Campo(outro, "fap").Texto);
-        Assert.Equal("10", Campo(outro, "diaPagamento").Texto);
-        Assert.Equal("1", Campo(outro, "ambiente").ValorEscolha);
-        Assert.Equal("CONTADOR", Campo(outro, "transmissor").ValorEscolha);
-
-        Campo(outro, "diaPagamento").Texto = "40";
-        await outro.SalvarCommand.ExecuteAsync(null);
-        Assert.NotEmpty(outro.Erros);
-        // atalho abre a tela própria
-        outro.Grupos.SelectMany(g => g.Atalhos).First(a => a.Texto.Contains("Contabilização")).Abrir.Execute(null);
-        Assert.Contains("folha.contabilizacao", ctx.Abertas);
-    }
-
-    [Fact]
     public async Task Tela_de_parametros_renderiza_nos_tres_modulos()
     {
         var total = await ForaDaSessao(headless.Sessao.Dispatch(async () =>
@@ -243,7 +210,6 @@ public class EscParametrosTests(BancoDeTeste db, SessaoHeadless headless) : ICla
             ParametrosViewModel[] vms =
             [
                 new ParametrosContabilViewModel(ctx), new Vorticis.Fiscal.Desktop.ViewModels.ParametrosFiscalViewModel(ctx),
-                new Vorticis.Folha.Desktop.ViewModels.ParametrosModuloFolhaViewModel(ctx),
             ];
             foreach (var vm in vms)
             {
@@ -257,6 +223,6 @@ public class EscParametrosTests(BancoDeTeste db, SessaoHeadless headless) : ICla
             await Task.Yield();
             return vms.Length;
         }, TestContext.Current.CancellationToken));
-        Assert.Equal(3, total);
+        Assert.Equal(2, total);
     }
 }

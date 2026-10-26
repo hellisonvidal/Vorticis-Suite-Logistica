@@ -9,7 +9,7 @@ using Vorticis.Logistica.Desktop;
 
 namespace Vorticis.Desktop.Tests;
 
-/// <summary>Vorticis Suite Logística: um programa só, com as telas de Frota, Gerencial, Contábil, Fiscal e Folha num menu único.</summary>
+/// <summary>Vorticis Suite Logística: um programa só, com as telas de Frota, Gerencial, Contábil e Fiscal num menu único (sem a Folha).</summary>
 public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoDeTeste db) : IClassFixture<Vorticis.Infra.Tests.BancoDeTeste>
 {
     private static IEnumerable<ItemMenu> Folhas(IEnumerable<ItemMenu> itens) => itens.SelectMany(i => i.Filhos is null ? [i] : Folhas(i.Filhos));
@@ -32,10 +32,11 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
         var itens = Folhas(vm.Menus).Where(i => !i.EhSeparador).ToList();
         Assert.All(itens.Where(i => i.Habilitado && i.Chave is not null && i.Chave != TelasComuns.Sair), i => Assert.True(vm.ConheceTela(i.Chave!), $"{i.Titulo}: {i.Chave}"));
         Assert.Equal(3, Folhas(vm.Menus.Single(m => m.Titulo == "_Emissão").Filhos!).Count(i => !i.Habilitado));
-        // Gerencial: submenus Contábil e Folha (sem os relatórios, que vão para Relatórios)
+        // Gerencial: só o submenu Contábil (sem os relatórios, que vão para Relatórios); a Folha saiu do programa
         var gerencial = vm.Menus.Single(m => m.Titulo == "_Gerencial");
-        Assert.Equal(["_Contábil", "_Folha"], gerencial.Filhos!.Select(m => m.Titulo));
-        Assert.DoesNotContain(Folhas(gerencial.Filhos!), i => i.Chave == ViewModels.Telas.Balancete || i.Chave == Folha.Desktop.ViewModels.FolhaTelas.Holerites);
+        Assert.Equal(["_Contábil"], gerencial.Filhos!.Select(m => m.Titulo));
+        Assert.DoesNotContain(Folhas(gerencial.Filhos!), i => i.Chave == ViewModels.Telas.Balancete);
+        Assert.DoesNotContain(vm.ChavesDeTelas, c => c.StartsWith("folha.") || c.StartsWith("VorticisFolha:"));
         // Operação tem Diárias e o submenu Coletas com as ordens de coleta
         var coletas = vm.Menus.Single(m => m.Titulo == "_Operação").Filhos!.Single(m => m.Titulo == "_Coletas");
         Assert.Equal(["Ordens de coleta"], coletas.Filhos!.Select(i => i.Titulo));
@@ -44,9 +45,8 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
         Assert.Contains(vm.Menus.Single(m => m.Titulo == "_Operação").Filhos!, i => i.Titulo == "Diárias");
         // Relatórios por submenus; todos os relatórios saíram dos menus de origem
         var relatorios = vm.Menus.Single(m => m.Titulo == "_Relatórios");
-        Assert.Equal(["_Frota e operação", "_Manutenção", "_Financeiro e gerencial", "_Contábil", "_Folha"], relatorios.Filhos!.Select(m => m.Titulo));
-        foreach (var chave in new[] { Frota.Desktop.ViewModels.FrotaTelas.Painel, Frota.Desktop.ViewModels.FrotaTelas.RelNotas, ViewModels.Telas.Balancete,
-                                      Folha.Desktop.ViewModels.FolhaTelas.Holerites, Fiscal.Desktop.ViewModels.Telas.RelDuplicatasPagar })
+        Assert.Equal(["_Frota e operação", "_Manutenção", "_Financeiro e gerencial", "_Contábil"], relatorios.Filhos!.Select(m => m.Titulo));
+        foreach (var chave in new[] { Frota.Desktop.ViewModels.FrotaTelas.Painel, Frota.Desktop.ViewModels.FrotaTelas.RelNotas, ViewModels.Telas.Balancete, Fiscal.Desktop.ViewModels.Telas.RelDuplicatasPagar })
             Assert.Single(Folhas(vm.Menus), i => i.Chave == chave);
         Assert.Contains(Folhas(relatorios.Filhos!), i => i.Chave == ViewModels.Telas.Balancete);
         // ausentes: Fiscal, Calendário de obrigações, Painel do empresário e relatórios fiscais
@@ -58,13 +58,12 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
         Assert.False(vm.Modulo.UsaCalendarioObrigacoes);
         // funções de cada área no mesmo programa
         foreach (var chave in new[] { Frota.Desktop.ViewModels.FrotaTelas.Ordens, Frota.Desktop.ViewModels.FrotaTelas.Autorizacao, Fiscal.Desktop.ViewModels.Telas.ContasPagar,
-                                      Fiscal.Desktop.ViewModels.Telas.ContasReceber, Fiscal.Desktop.ViewModels.Telas.RelDuplicatasReceber, ViewModels.Telas.Lancamento, ViewModels.Telas.Balancete, Fiscal.Desktop.ViewModels.Telas.ImportacaoXml,
-                                      Folha.Desktop.ViewModels.FolhaTelas.FolhaMensal })
+                                      Fiscal.Desktop.ViewModels.Telas.ContasReceber, Fiscal.Desktop.ViewModels.Telas.RelDuplicatasReceber, ViewModels.Telas.Lancamento, ViewModels.Telas.Balancete, Fiscal.Desktop.ViewModels.Telas.ImportacaoXml })
             Assert.Contains(itens, i => i.Chave == chave);
         // Parâmetros é uma janela só, com abas (a de cada módulo mantém a sua tela com chave própria); não há mais o submenu por módulo
         Assert.DoesNotContain(vm.Menus[0].Filhos!, i => i.Titulo.Contains("Parâmetros dos"));
         Assert.Contains(vm.Menus[0].Filhos!, i => i.Titulo == "Parâmetros" && i.Chave == TelasComuns.Parametros);
-        Assert.Equal(6, vm.ChavesDeTelas.Count(c => c == TelasComuns.Parametros || c.EndsWith(":" + TelasComuns.Parametros)));
+        Assert.Equal(5, vm.ChavesDeTelas.Count(c => c == TelasComuns.Parametros || c.EndsWith(":" + TelasComuns.Parametros)));
         // atalhos sem tecla repetida, todos para telas conhecidas
         Assert.Equal(vm.Atalhos.Count, vm.Atalhos.Select(a => a.Gesto).Distinct().Count());
         Assert.All(vm.Atalhos.Where(a => a.Chave is not null), a => Assert.True(vm.ConheceTela(a.Chave!), a.Chave));
@@ -75,12 +74,12 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
     {
         var m = new ModuloLogistica();
         Assert.Equal(ModulosEmpresa.Frota, m.ModuloEmpresa);
-        Assert.Equal(ModulosEmpresa.Frota | ModulosEmpresa.Contabil | ModulosEmpresa.Fiscal | ModulosEmpresa.Folha | ModulosEmpresa.Erp,
+        Assert.Equal(ModulosEmpresa.Frota | ModulosEmpresa.Contabil | ModulosEmpresa.Fiscal | ModulosEmpresa.Erp,
                      ((IModuloDesktop)m).ModulosAoCadastrar);
         Assert.Equal("Transportadora", ((IModuloDesktop)m).RotuloEmpresaAtiva);
         var areas = ((IModuloDesktop)m).AreasDoManual;
         Assert.Contains("Contábil", areas);
-        Assert.Contains("Folha", areas);
+        Assert.DoesNotContain("Folha", areas);
         Assert.Contains(ManualUsuario.Visiveis(areas, false), a => a.Nome == "03-contabil.md");
         Assert.NotNull(ManualUsuario.TopicoDaTela("VorticisContabil:" + TelasComuns.Parametros));   // F1 nos parâmetros de cada módulo
     }

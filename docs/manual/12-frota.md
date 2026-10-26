@@ -8,7 +8,7 @@ O Frota é a base do **[Vorticis Suite Logística](13-logistica.md)**, o program
 
 ## Ordem dos cadastros
 
-1. **A transportadora:** *Cadastros › Transportadoras*, com o módulo **Frota** marcado (e Gerencial, Contábil, Fiscal e Folha, se for usar). Escolha-a no topo da tela.
+1. **A transportadora:** *Cadastros › Transportadoras*, com o módulo **Frota** marcado (e Gerencial, Contábil e Fiscal, se for usar). Escolha-a no topo da tela.
 2. **Parâmetros:** *Cadastros › Parâmetros*, com a antecedência dos avisos e a tolerância do consumo (já vêm com 30 dias e 15%), o fator rodoviário das rotas e os valores das diárias.
 3. **Frotas** (se você separa os veículos em grupos), **Veículos**, **Motoristas** (e ajudantes) e **Rotas**.
 4. **Documentos e vencimentos** de cada veículo e motorista.

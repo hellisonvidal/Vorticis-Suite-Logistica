@@ -74,14 +74,6 @@ Se o seu perfil não permite alterar, a tela só mostra os valores. Se você ape
 | EFD-Contribuições | Natureza da pessoa jurídica e atividade. |
 | Contabilização e tributos | Atalhos para *Regras de contabilização*, *Contas dos tributos* e *Fechamento do período fiscal*. |
 
-### Folha
-| Grupo | O que tem |
-|---|---|
-| Encargos patronais | RAT, FAP e alíquota de terceiros (FPAS, Simples e responsável continuam em *Cadastros › Funcionários › Parâmetros e tabelas legais*). |
-| Pagamento | Dia de pagamento dos salários. |
-| eSocial | Ambiente e transmissor padrão; a tela *Transmissão* já abre com eles escolhidos. |
-| Contabilização | Atalho para a tela *Contabilização*. |
-
 ## Clientes e fornecedores (participantes)
 
 **Para que serve:** cadastrar quem compra e quem vende. A mesma pessoa pode ser cliente e fornecedor (são menus separados).

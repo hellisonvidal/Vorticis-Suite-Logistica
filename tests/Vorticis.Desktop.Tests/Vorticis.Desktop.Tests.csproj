@@ -6,7 +6,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Vorticis.Desktop\Vorticis.Desktop.csproj" />
     <ProjectReference Include="..\..\src\Vorticis.Fiscal.Desktop\Vorticis.Fiscal.Desktop.csproj" />
-    <ProjectReference Include="..\..\src\Vorticis.Folha.Desktop\Vorticis.Folha.Desktop.csproj" />
     <ProjectReference Include="..\..\src\Vorticis.Erp.Desktop\Vorticis.Erp.Desktop.csproj" />
     <ProjectReference Include="..\..\src\Vorticis.Frota.Desktop\Vorticis.Frota.Desktop.csproj" />
     <ProjectReference Include="..\..\src\Vorticis.Logistica.Desktop\Vorticis.Logistica.Desktop.csproj" />

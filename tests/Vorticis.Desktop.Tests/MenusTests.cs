@@ -38,13 +38,13 @@ public class MenusTests
     [Fact]
     public void Cada_modulo_tem_cor_e_icone_proprios_para_nao_confundir_os_sistemas()
     {
-        MainViewModelBase[] modulos = [new MainViewModel(), new Vorticis.Fiscal.Desktop.MainViewModel(), new Vorticis.Folha.Desktop.MainViewModel(), new Vorticis.Erp.Desktop.MainViewModel(), new Vorticis.Frota.Desktop.MainViewModel(), new Vorticis.Logistica.Desktop.MainViewModel()];
-        Assert.Equal(["#1B7F5A", "#D97706", "#7E22CE", "#0891B2", "#475569", "#0F766E"], modulos.Select(m => m.Modulo.CorDestaque));
+        MainViewModelBase[] modulos = [new MainViewModel(), new Vorticis.Fiscal.Desktop.MainViewModel(), new Vorticis.Erp.Desktop.MainViewModel(), new Vorticis.Frota.Desktop.MainViewModel(), new Vorticis.Logistica.Desktop.MainViewModel()];
+        Assert.Equal(["#1B7F5A", "#D97706", "#0891B2", "#475569", "#0F766E"], modulos.Select(m => m.Modulo.CorDestaque));
         Assert.Equal(modulos.Length, modulos.Select(m => m.Modulo.CorBarra).Distinct().Count());
         Assert.Equal("#14532D", modulos[0].Modulo.CorBarra);                      // verde-escuro: não confunde com o azul do Escritório
         // a cor chega ao casco como pincel (faixa sob os menus, login e tela inicial)
         Assert.Equal(Avalonia.Media.Color.Parse("#D97706"), ((Avalonia.Media.ISolidColorBrush)modulos[1].PincelDestaque).Color);
-        Assert.Equal(Avalonia.Media.Color.Parse("#3B0764"), ((Avalonia.Media.ISolidColorBrush)modulos[2].PincelBarra).Color);
+        Assert.Equal(Avalonia.Media.Color.Parse("#0F766E"), ((Avalonia.Media.ISolidColorBrush)modulos[^1].PincelDestaque).Color);
         Assert.Same(modulos[1].PincelDestaque, modulos[1].Login.PincelDestaque);
         Assert.Same(modulos[2].PincelDestaque, modulos[2].Inicio.PincelDestaque);
         // um ícone por executável (fonte em instalador/icone, embutido no casco e usado pelo exe e pelo instalador)
@@ -74,13 +74,13 @@ public class MenusTests
     }
 
     [Fact]
-    public void Calendario_fica_em_Consultas_no_contabil_e_em_Obrigacoes_no_fiscal_e_na_folha()
+    public void Calendario_fica_em_Consultas_no_contabil_e_em_Obrigacoes_no_fiscal()
     {
         var contabil = new MainViewModel();
         Assert.DoesNotContain(contabil.Menus, m => m.Titulo.Replace("_", "") == "Obrigações");
         var consultas = Assert.Single(contabil.Menus, m => m.Titulo.Replace("_", "") == "Consultas");
         Assert.Contains(Folhas(consultas.Filhos!), i => i.Chave == TelasComuns.Obrigacoes);
-        MainViewModelBase[] outros = [new Vorticis.Fiscal.Desktop.MainViewModel(), new Vorticis.Folha.Desktop.MainViewModel()];
+        MainViewModelBase[] outros = [new Vorticis.Fiscal.Desktop.MainViewModel()];
         foreach (var vm in outros)
         {
             Assert.DoesNotContain(vm.Menus, m => m.Titulo.Contains("genda"));
@@ -142,61 +142,13 @@ public class MenusTests
     [Fact]
     public void Todos_os_modulos_tem_Parametros_no_menu_Cadastros()
     {
-        MainViewModelBase[] modulos = [new MainViewModel(), new Vorticis.Fiscal.Desktop.MainViewModel(), new Vorticis.Folha.Desktop.MainViewModel(), new Vorticis.Erp.Desktop.MainViewModel(), new Vorticis.Frota.Desktop.MainViewModel(), new Vorticis.Logistica.Desktop.MainViewModel()];
+        MainViewModelBase[] modulos = [new MainViewModel(), new Vorticis.Fiscal.Desktop.MainViewModel(), new Vorticis.Erp.Desktop.MainViewModel(), new Vorticis.Frota.Desktop.MainViewModel(), new Vorticis.Logistica.Desktop.MainViewModel()];
         foreach (var vm in modulos)
         {
             var cadastros = vm.Menus[0];
             Assert.Contains(cadastros.Filhos!, i => i.Titulo == "Parâmetros" && i.Chave == TelasComuns.Parametros);
             Assert.True(vm.ConheceTela(TelasComuns.Parametros));
         }
-    }
-
-    [Fact]
-    public void Menu_da_folha_tem_telas_registradas_e_so_o_que_falta_fica_em_breve()
-    {
-        var vm = new Vorticis.Folha.Desktop.MainViewModel();
-        Assert.Equal("_Cadastros", vm.Menus[0].Titulo);
-        Assert.Equal("_Ajuda", vm.Menus[^1].Titulo);
-        var proprios = Folhas(vm.Menus.Skip(1).SkipLast(2)).Where(i => !i.EhSeparador).ToList();
-        var habilitados = proprios.Where(i => i.Habilitado).ToList();
-        Assert.All(habilitados, i => Assert.True(vm.ConheceTela(i.Chave!), i.Titulo));
-        Assert.Contains(habilitados, i => i.Chave == "folha.esocial");
-        Assert.Contains(habilitados, i => i.Chave == "folha.prolabore");
-        // Funcionários é submenu de Cadastros; a folha não tem Clientes nem Fornecedores
-        var cadastros = Folhas(vm.Menus.Take(1)).Where(i => !i.EhSeparador).ToList();
-        Assert.Contains(cadastros, i => i.Chave == "folha.funcionarios");
-        Assert.DoesNotContain(cadastros, i => i.Chave is TelasComuns.Clientes or TelasComuns.Fornecedores);
-        Assert.True(vm.UsaPeriodo);
-        Assert.Equal(["FGTS (GFD) (em breve)", "DCTFWeb e INSS (em breve)", "RAIS e DIRF (em breve)"], proprios.Where(i => !i.Habilitado).Select(i => i.Titulo));
-        Assert.All(vm.Atalhos.Where(a => a.Chave is not null), a => Assert.True(vm.ConheceTela(a.Chave!), a.Chave));
-        // Folha e Pró-labore são submenus de Cálculos
-        var calculos = Assert.Single(vm.Menus, m => m.Titulo.Replace("_", "") == "Cálculos");
-        Assert.Equal(["Folha", "Pró-labore"], calculos.Filhos!.Select(m => m.Titulo.Replace("_", "")));
-        Assert.DoesNotContain(vm.Menus, m => m.Titulo.Replace("_", "") is "Folha" or "Pró-labore");
-    }
-
-    [Fact]
-    public async Task Competencia_da_folha_e_escolhida_por_mes_e_ano_e_a_lista_filtra_as_fechadas()
-    {
-        var vm = new Vorticis.Folha.Desktop.MainViewModel();
-        var folha = vm.FolhaMensal;
-        folha.Competencia = new DateTime(2025, 7, 1);
-        Assert.Equal(2025, folha.AnoCompetencia);
-        Assert.Equal(12, Vorticis.Desktop.Comum.Views.SeletorCompetencia.Meses.Count);
-        Assert.All(Vorticis.Desktop.Comum.Views.SeletorCompetencia.Anos, a => Assert.Equal(4, a.ToString().Length));   // ano sempre com 4 dígitos
-
-        // sem banco nenhuma competência está fechada: a lista tem os meses recentes, e "Só fechadas" a esvazia
-        await vm.RecarregarPeriodosAsync();
-        Assert.Contains(vm.ListaPeriodos, p => p.Periodo == vm.PeriodoTrabalho);
-        Assert.Equal(vm.PeriodoTrabalho, vm.PeriodoEscolhido!.Periodo);
-        var outro = vm.ListaPeriodos.First(p => p.Periodo != vm.PeriodoTrabalho);
-        vm.PeriodoEscolhido = outro;
-        Assert.Equal(outro.Periodo, vm.PeriodoTrabalho);
-        vm.SomenteFechados = true;
-        await vm.RecarregarPeriodosAsync();
-        Assert.Empty(vm.ListaPeriodos);
-        Assert.Equal(outro.Periodo, vm.PeriodoTrabalho);         // o filtro não troca a competência em uso
-        Assert.Equal("03/2026 (fechada)", new OpcaoPeriodo(new DateOnly(2026, 3, 1), true).Texto);
     }
 
     [Fact]

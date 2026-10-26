@@ -112,26 +112,6 @@ relpagamentos=05-fiscal.md#relatorios-de-duplicatas
 resumovendas=05-fiscal.md#relatorios-fiscais
 resumocompras=05-fiscal.md#relatorios-fiscais
 
-; ---- Folha
-folha.funcionarios=06-folha.md#cadastro-de-funcionarios
-folha.cargos=06-folha.md#cargos
-folha.departamentos=06-folha.md#departamentos-lotacoes
-folha.rubricas=06-folha.md#rubricas-eventos
-folha.parametros=06-folha.md#parametros-e-tabelas-legais
-folha.eventos=06-folha.md#eventos-variaveis
-folha.mensal=06-folha.md#calculo-da-folha-mensal
-folha.holerites=06-folha.md#relatorios-da-folha
-folha.ferias=06-folha.md#ferias
-folha.decimo=06-folha.md#13o-salario
-folha.rescisoes=06-folha.md#rescisoes
-folha.provisoes=06-folha.md#provisoes-de-ferias-e-13o
-folha.contabilizacao=06-folha.md#contabilizacao-da-folha
-folha.esocial.assistente=06-folha.md#esocial-assistente-de-configuracao
-folha.esocial=06-folha.md#esocial-geracao-dos-eventos
-folha.esocial.transmissao=06-folha.md#esocial-transmissao
-folha.resumo=06-folha.md#relatorios-da-folha
-folha.encargos=06-folha.md#relatorios-da-folha
-folha.prolabore=06-folha.md#pro-labore-dos-socios
 
 ; ---- Gerencial
 erp.painel=10-gerencial.md#painel-do-empresario

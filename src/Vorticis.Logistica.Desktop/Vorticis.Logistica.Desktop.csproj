@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- Vorticis Suite Logística: programa único da transportadora — frota, manutenção, financeiro, contábil e folha num só menu -->
+  <!-- Vorticis Suite Logística: programa único da transportadora — frota, manutenção, financeiro, contábil e TMS num só menu -->
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <AssemblyName>VorticisLogistica</AssemblyName>
@@ -14,7 +14,6 @@
     <ProjectReference Include="..\Vorticis.Erp.Desktop\Vorticis.Erp.Desktop.csproj" />
     <ProjectReference Include="..\Vorticis.Desktop\Vorticis.Desktop.csproj" />
     <ProjectReference Include="..\Vorticis.Fiscal.Desktop\Vorticis.Fiscal.Desktop.csproj" />
-    <ProjectReference Include="..\Vorticis.Folha.Desktop\Vorticis.Folha.Desktop.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Using Include="Vorticis.Desktop.Comum" />
