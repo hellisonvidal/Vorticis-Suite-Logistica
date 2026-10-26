@@ -76,6 +76,9 @@ public interface IModuloDesktop
     /// <summary>Cadastros do módulo que aceitam importação de planilha (Cadastros › Importar de planilha).</summary>
     IReadOnlyList<DefinicaoImportacao> Importacoes => [];
 
+    /// <summary>Gráficos das funções do módulo (Relatórios › Gráficos).</summary>
+    IReadOnlyList<DefinicaoGrafico> Graficos => [];
+
     /// <summary>
     /// Recursos ligados nos parâmetros da empresa ativa (ex.: "gerencial" no Contábil): os itens de menu marcados com
     /// <see cref="ItemMenu.SoCom"/> só aparecem quando o recurso está na lista.

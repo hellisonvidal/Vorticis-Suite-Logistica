@@ -91,6 +91,8 @@ public sealed class ModuloFrota : IModuloDesktop
             ItemMenu.Tela(TabelasTms.TituloFaturas, FrotaTelas.RelFaturas)),
     ];
 
+    public IReadOnlyList<DefinicaoGrafico> Graficos => GraficosFrota.Todos;
+
     public IReadOnlyList<DefinicaoImportacao> Importacoes => ImportacoesFrota.Todas;
 
     public IReadOnlyList<AtalhoTela> Atalhos { get; } =

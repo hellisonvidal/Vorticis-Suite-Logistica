@@ -25,6 +25,8 @@ public sealed class ModuloContabil : IModuloDesktop
         return c.UsaGerencial ? new HashSet<string> { RecursoGerencial } : new HashSet<string>();
     }
 
+    public IReadOnlyList<DefinicaoGrafico> Graficos => GraficosContabeis.Todos;
+
     public IReadOnlyList<DefinicaoImportacao> Importacoes => ImportacoesContabeis.Todas;
 
     public IReadOnlyList<ItemMenu> ItensCadastros { get; } =

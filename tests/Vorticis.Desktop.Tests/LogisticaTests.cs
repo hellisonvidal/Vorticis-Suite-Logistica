@@ -76,7 +76,7 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
         Assert.Contains(vm.Menus.Single(m => m.Titulo == "_Operações").Filhos!, i => i.Titulo == "Diárias");
         // Relatórios por submenus; todos os relatórios saíram dos menus de origem
         var relatorios = vm.Menus.Single(m => m.Titulo == "_Relatórios");
-        Assert.Equal(["_Frota e operação", "_Manutenção", "_Transporte (TMS)", "_Gerencial", "_Contábil"], relatorios.Filhos!.Select(m => m.Titulo));
+        Assert.Equal(["_Frota e operação", "_Manutenção", "_Transporte (TMS)", "_Gerencial", "_Contábil", "-", "Grá_ficos"], relatorios.Filhos!.Select(m => m.Titulo));
         Assert.Equal(TabelasTmsTitulos, relatorios.Filhos!.Single(m => m.Titulo == "_Transporte (TMS)").Filhos!.Select(i => i.Titulo));
         Assert.DoesNotContain(vm.Menus, m => m.Titulo == "_Emissão" && m.Filhos!.Any(i => i.Titulo.Contains("Relat")));
         foreach (var chave in new[] { Frota.Desktop.ViewModels.FrotaTelas.Painel, Frota.Desktop.ViewModels.FrotaTelas.RelNotas, ViewModels.Telas.Balancete, Fiscal.Desktop.ViewModels.Telas.RelDuplicatasPagar })

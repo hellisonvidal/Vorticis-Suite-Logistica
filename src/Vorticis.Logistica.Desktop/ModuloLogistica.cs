@@ -105,7 +105,10 @@ public sealed class ModuloLogistica() : ModuloCombinado(Frota, Contabil, Fiscal,
                     ItemMenu.Submenu("_Manutenção", [.. relManutencao]),
                     ItemMenu.Submenu("_Transporte (TMS)", [.. relTms]),
                     ItemMenu.Submenu("_Gerencial", [.. relGerencial]),
-                    ItemMenu.Submenu("_Contábil", [.. relContabil])),
+                    ItemMenu.Submenu("_Contábil", [.. relContabil]),
+                    ItemMenu.Separador,
+                    // gráficos das funções do sistema, por área (Frota, Transporte, Financeiro, Contábil)
+                    ItemMenu.Submenu("Grá_ficos", [.. Graficos.GroupBy(g => g.Area).Select(a => ItemMenu.Submenu(a.Key, [.. a.Select(g => ItemMenu.Tela(g.Titulo, g.Tela))]))])),
             ];
         }
     }

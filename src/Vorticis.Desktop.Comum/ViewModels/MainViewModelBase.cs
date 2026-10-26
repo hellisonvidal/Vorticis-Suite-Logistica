@@ -215,6 +215,9 @@ public abstract partial class MainViewModelBase : ObservableObject, IContexto, I
         c.Instancia(nameof(Socios), m => new SociosViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
                     aoTrocarEmpresa: (v, ativa) => ativa || AbaDaEmpresaAtiva(CadastroEmpresaViewModel.AbaSocios) ? v.CarregarAsync() : Task.CompletedTask)
             .Tela(TelasComuns.Socios, "Cadastros › Sócios", ComAcesso, v => v.CarregarAsync());
+        foreach (var g in Modulo.Graficos)
+            c.Instancia("Grafico." + g.Chave, m => new GraficoViewModel(m, g), aoTrocarEmpresa: (v, ativa) => ativa ? v.GerarCommand.ExecuteAsync(null) : Task.CompletedTask)
+                .Tela(g.Tela, $"Relatórios › Gráficos › {g.Titulo}", ComAcesso, v => v.CarregarAsync());
         var importacao = c.Instancia(nameof(ImportacaoCadastros), m => new ImportacaoCadastrosViewModel(m));
         foreach (var def in Importacoes)
             importacao = importacao.Tela(def.Tela, $"Cadastros › Importar de planilha › {def.Titulo}", ComAcesso, v => v.AbrirAsync(def));
