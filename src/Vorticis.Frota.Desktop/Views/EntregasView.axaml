@@ -1,0 +1,52 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Frota.Desktop.ViewModels"
+             x:Class="Vorticis.Frota.Desktop.Views.EntregasView" x:DataType="vm:EntregasViewModel">
+  <Grid ColumnDefinitions="*,12,480" RowDefinitions="Auto,Auto,*" Margin="8">
+    <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="8" Margin="0,0,0,6">
+      <TextBlock Classes="titulo" Text="Entregas e ocorrências" VerticalAlignment="Center" />
+    </StackPanel>
+    <TextBlock Grid.Row="1" Grid.ColumnSpan="3" Text="{Binding Totais}" FontSize="12" Margin="0,0,0,6" />
+    <DataGrid Grid.Row="2" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Nº" Binding="{ReflectionBinding Numero}" Width="65" />
+        <DataGridTextColumn Header="Emissão" Binding="{ReflectionBinding Emissao}" Width="85" />
+        <DataGridTextColumn Header="Destinatário" Binding="{ReflectionBinding Destinatario}" Width="*" />
+        <DataGridTextColumn Header="Trecho" Binding="{ReflectionBinding Trecho}" Width="170" />
+        <DataGridTextColumn Header="Previsão" Binding="{ReflectionBinding Previsao}" Width="85" />
+        <DataGridTextColumn Header="Prazo" Binding="{ReflectionBinding Prazo}" Width="100" />
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="90" />
+      </DataGrid.Columns>
+    </DataGrid>
+    <ScrollViewer Grid.Row="2" Grid.Column="2">
+    <StackPanel Spacing="6" IsEnabled="{Binding PodeEditar}">
+      <TextBlock Text="{Binding Detalhe}" TextWrapping="Wrap" />
+      <DataGrid ItemsSource="{Binding Ocorrencias}" IsReadOnly="True" AutoGenerateColumns="False" Height="200">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Data e hora" Binding="{ReflectionBinding DataHora}" Width="120" />
+          <DataGridTextColumn Header="Ocorrência" Binding="{ReflectionBinding Tipo}" Width="120" />
+          <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" />
+          <DataGridTextColumn Header="Recebedor" Binding="{ReflectionBinding Recebedor}" Width="110" />
+          <DataGridTextColumn Header="Usuário" Binding="{ReflectionBinding Usuario}" Width="90" />
+        </DataGrid.Columns>
+      </DataGrid>
+      <TextBlock Text="Nova ocorrência" FontWeight="Bold" FontSize="12" />
+      <Grid ColumnDefinitions="140,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="6">
+        <TextBlock Classes="rotulo" Text="Tipo" />
+        <ComboBox Grid.Column="1" ItemsSource="{x:Static vm:EntregasViewModel.Tipos}" SelectedItem="{Binding Tipo}" Width="200" />
+        <TextBlock Grid.Row="1" Classes="rotulo" Text="Data e hora" />
+        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="6"><CalendarDatePicker SelectedDate="{Binding Dia}" Width="140" /><TextBox Text="{Binding Hora}" Width="80" Watermark="08:00" /></StackPanel>
+        <TextBlock Grid.Row="2" Classes="rotulo" Text="Descrição" />
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Descricao}" />
+        <TextBlock Grid.Row="3" Classes="rotulo" Text="Recebedor" />
+        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Recebedor}" Watermark="nome e documento" />
+      </Grid>
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <Button Content="Registrar ocorrência" Classes="accent" Command="{Binding RegistrarCommand}" />
+      </StackPanel>
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="Saída, chegada e saiu para entrega põem o CT-e em trânsito. Entregue fecha o CT-e e exige o recebedor." />
+      <c:MensagensView />
+    </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

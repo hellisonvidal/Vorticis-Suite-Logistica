@@ -1,6 +1,6 @@
 # Vorticis Suite Logística
 
-O **Vorticis Suite Logística** (ícone verde-petróleo) é o programa da transportadora: **um programa só, com um menu só**, que reúne o controle da frota e da manutenção, o financeiro e a contabilidade (esta no menu **Gerencial**). As telas são as mesmas dos módulos do Vorticis (mesmas regras e o mesmo banco de dados), organizadas para o dia a dia da transportadora. Não é preciso trocar de módulo.
+O **Vorticis Suite Logística** (ícone verde-petróleo) é o programa da transportadora: **um programa só, com um menu só**, que reúne o controle da frota e da manutenção, o **TMS** (cotações, conhecimentos, manifestos, entregas e faturas de frete), o financeiro e a contabilidade (esta no menu **Gerencial**). As telas são as mesmas dos módulos do Vorticis (mesmas regras e o mesmo banco de dados), organizadas para o dia a dia da transportadora. Não é preciso trocar de módulo.
 
 ## Instalação e primeiro acesso
 
@@ -15,13 +15,13 @@ O Vorticis Suite Logística é instalado numa pasta própria (*Vorticis Logistic
 
 | Menu | O que tem | Detalhes no manual |
 |---|---|---|
-| **Cadastros** | Transportadoras, contadores, clientes, fornecedores, veículos, motoristas, **frotas**, **rotas**, documentos e vencimentos; os cadastros do financeiro (produtos, formas de pagamento, contas bancárias) e do contábil (plano de contas, históricos...) em submenus; os **Parâmetros** | [Frota](12-frota.md), [Contábil](03-contabil.md) |
-| **Operação** | Abastecimentos e viagens; **Diárias** e submenu **Coletas** (*Ordens de coleta*) | [Frota](12-frota.md#abastecimentos), [Diárias](12-frota.md#diarias), [Coletas](12-frota.md#ordens-de-coleta) |
+| **Cadastros** | Transportadoras, contadores, clientes, fornecedores, veículos, motoristas, **frotas**, **rotas**, **tabelas de frete**, documentos e vencimentos; os cadastros do financeiro (produtos, formas de pagamento, contas bancárias) e do contábil (plano de contas, históricos...) em submenus; os **Parâmetros** | [Frota](12-frota.md), [Contábil](03-contabil.md) |
+| **Operação** | Abastecimentos e viagens; **Diárias**, submenu **Coletas** (*Ordens de coleta*) e **Entregas e ocorrências** | [Frota](12-frota.md#abastecimentos), [Diárias](12-frota.md#diarias), [Coletas](12-frota.md#ordens-de-coleta), [Entregas](14-tms.md#entregas-e-ocorrencias) |
 | **Manutenção** | Planos de manutenção, peças e serviços, ordens de serviço, autorização de serviços e notas de compra | [Frota](12-frota.md#ordens-de-servico) |
-| **Emissão** | As funções de faturamento: **Pedidos de venda** e **Notas fiscais de saída** (a emissão de NF-e na SEFAZ, em breve); CT-e, MDF-e e NFS-e (em breve) | [Gerencial](10-gerencial.md) |
+| **Emissão** | As funções de faturamento: **Pedidos de venda** e **Notas fiscais de saída** (a emissão de NF-e na SEFAZ, em breve); o TMS: **Cotações de frete**, **Conhecimentos de transporte (CT-e)**, **Manifestos de carga (MDF-e)** e **Faturas de frete**; a transmissão de CT-e e MDF-e à SEFAZ e a NFS-e (em breve) | [Gerencial](10-gerencial.md), [TMS](14-tms.md) |
 | **Financeiro** | Contas a pagar, contas a receber e conciliação bancária; compras, estoque e monitores | [Gerencial](10-gerencial.md) |
 | **Gerencial** | Submenu **Contábil** (lançamentos, fechamentos, imobilizado, consultas e integrações) | [Contábil](03-contabil.md) |
-| **Relatórios** | Todos os relatórios do programa, em submenus: **Frota e operação**, **Manutenção**, **Financeiro e gerencial** e **Contábil** | [Frota](12-frota.md#relatorios-da-frota) |
+| **Relatórios** | Todos os relatórios do programa, em submenus: **Frota e operação**, **Manutenção**, **Transporte (TMS)**, **Financeiro e gerencial** e **Contábil** | [Frota](12-frota.md#relatorios-da-frota) |
 
 Neste programa **não** há o menu Fiscal, o calendário de obrigações nem o *Painel do empresário*: use o menu **Financeiro** para as contas a pagar e a receber. A tela inicial também não mostra o quadro de próximas obrigações.
 
@@ -63,5 +63,5 @@ As permissões são as dos perfis de acesso (*Configurações › Usuários*, ab
 
 ## O que vem a seguir
 
-- **Integração automática:** o frete das viagens virando conta a receber e lançamento contábil; as notas de compra da manutenção virando conta a pagar e despesa do veículo.
-- **Emissão de documentos eletrônicos:** CT-e e MDF-e (autorização na SEFAZ, DACTE e DAMDFE, cancelamento, carta de correção e encerramento) e NFS-e pelo Padrão Nacional.
+- **Transmissão à SEFAZ:** CT-e e MDF-e autorizados direto pelo programa (DACTE e DAMDFE, cancelamento, carta de correção e encerramento) e NFS-e pelo Padrão Nacional. Hoje o [TMS](14-tms.md) registra a chave de acesso do documento autorizado no seu emissor.
+- **Integração contábil do TMS:** as faturas de frete e o ICMS dos conhecimentos virando lançamentos contábeis; as notas de compra da manutenção virando conta a pagar e despesa do veículo.

@@ -19,6 +19,16 @@
     <DataTemplate DataType="vm:NotasCompraViewModel"><v:NotasCompraView /></DataTemplate>
     <DataTemplate DataType="vm:ViagensViewModel"><v:ViagensView /></DataTemplate>
     <DataTemplate DataType="vm:RelatorioFrotaViewModel"><v:RelatorioFrotaView /></DataTemplate>
+    <DataTemplate DataType="vm:FrotasViewModel"><v:FrotasView /></DataTemplate>
+    <DataTemplate DataType="vm:RotasViewModel"><v:RotasView /></DataTemplate>
+    <DataTemplate DataType="vm:DiariasViewModel"><v:DiariasView /></DataTemplate>
+    <DataTemplate DataType="vm:ColetasViewModel"><v:ColetasView /></DataTemplate>
+    <DataTemplate DataType="vm:TabelasFreteViewModel"><v:TabelasFreteView /></DataTemplate>
+    <DataTemplate DataType="vm:CotacoesViewModel"><v:CotacoesView /></DataTemplate>
+    <DataTemplate DataType="vm:CtesViewModel"><v:CtesView /></DataTemplate>
+    <DataTemplate DataType="vm:ManifestosViewModel"><v:ManifestosView /></DataTemplate>
+    <DataTemplate DataType="vm:EntregasViewModel"><v:EntregasView /></DataTemplate>
+    <DataTemplate DataType="vm:FaturasFreteViewModel"><v:FaturasFreteView /></DataTemplate>
   </Application.DataTemplates>
   <Application.Styles>
     <StyleInclude Source="avares://Vorticis.Desktop.Comum/Estilos.axaml" />

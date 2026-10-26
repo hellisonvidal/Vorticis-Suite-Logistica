@@ -78,6 +78,7 @@ public enum Permissao
     FrotaRelatorios,
     FrotaManutencao,
     FrotaAprovar,
+    FrotaTms,
 
     /// <summary>Exclusiva do administrador; não aparece no catálogo de perfis.</summary>
     AdministrarSistema,
@@ -161,6 +162,7 @@ public static class Permissoes
         new(Permissao.FrotaRelatorios, "FROTA_RELATORIOS", "Frota", "Painel da frota e relatórios de custos, consumo, viagens, vencimentos e manutenção"),
         new(Permissao.FrotaManutencao, "FROTA_MANUTENCAO", "Frota", "Manutenção: planos, peças e serviços, ordens de serviço e notas de compra"),
         new(Permissao.FrotaAprovar, "FROTA_APROVAR", "Frota", "Autorizar ou reprovar ordens de serviço de manutenção"),
+        new(Permissao.FrotaTms, "FROTA_TMS", "Frota", "TMS: tabelas de frete, cotações, conhecimentos (CT-e), manifestos (MDF-e), entregas e faturas de frete"),
     ];
 
     private static readonly Dictionary<string, Permissao> PorCodigo = Catalogo.ToDictionary(d => d.Codigo, d => d.Permissao);

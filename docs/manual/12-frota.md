@@ -197,6 +197,8 @@ O valor lançado é o do pagamento (o adiantamento ou, sem adiantamento, o total
 4. **Imprimir ordem (PDF)** gera a ordem de coleta para entregar ao motorista, com campos de assinatura.
 5. Na lista, filtre por **período** e por **situação**.
 
+As coletas também alimentam o TMS: no conhecimento de transporte, escolha a ordem de coleta para trazer remetente, destinatário, carga, veículo e motorista (veja [Conhecimentos de transporte](14-tms.md#conhecimentos-de-transporte-ct-e)).
+
 ## Painel da frota
 
 **Onde fica:** *Relatórios › Painel da frota* (atalho **Ctrl+P**).

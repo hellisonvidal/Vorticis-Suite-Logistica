@@ -20,7 +20,7 @@ public sealed partial class ServicoFrota(VorticisApp app)
     private async Task<bool> PodeVerAsync(long u, long e, CancellationToken ct)
     {
         var p = await _aut.ObterAsync(u, e, ct);
-        return p.Administrador || new[] { P.FrotaCadastros, P.FrotaOperacao, P.FrotaRelatorios, P.FrotaManutencao, P.FrotaAprovar }.Any(p.Pode);
+        return p.Administrador || new[] { P.FrotaCadastros, P.FrotaOperacao, P.FrotaRelatorios, P.FrotaManutencao, P.FrotaAprovar, P.FrotaTms }.Any(p.Pode);
     }
 
     private static async Task<Resultado<T>> Tentar<T>(Func<Task<T>> acao)
@@ -390,6 +390,7 @@ public sealed partial class ServicoFrota(VorticisApp app)
                                                                                                 CancellationToken ct = default, FiltroRelatorioFrota? filtro = null)
     {
         if (await Negar(usuario, empresa, P.FrotaRelatorios, ct) is { } n) return Resultado<Vorticis.Application.Relatorios.TabelaRelatorio>.Falha(n);
+        if (TabelasTms.Titulos.Contains(titulo)) return Resultado<Vorticis.Application.Relatorios.TabelaRelatorio>.Ok(await RelatorioTmsAsync(empresa, titulo, inicio, fim, ct));
         if (TabelasFrota.UsaFiltros(titulo) || titulo == TabelasFrota.TituloResumo) return await RelatorioNovoAsync(empresa, titulo, inicio, fim, filtro ?? new(), ct);
         var veiculos = await ListarVeiculosAsync(empresa, ct);
         var abastecimentos = await ListarAbastecimentosAsync(empresa, inicio, fim, null, ct);

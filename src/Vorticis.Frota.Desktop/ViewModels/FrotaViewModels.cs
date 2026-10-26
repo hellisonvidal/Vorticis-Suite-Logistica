@@ -49,6 +49,18 @@ public static class FrotaTelas
     public const string RelColetasMotorista = "frota.rel.coletasmotorista";
     public const string RelDiariasAcerto = "frota.rel.diariasacerto";
     public const string RelResumo = "frota.rel.resumo";
+    // TMS (gestão do transporte)
+    public const string TabelasFrete = "tms.tabelas";
+    public const string Cotacoes = "tms.cotacoes";
+    public const string Ctes = "tms.ctes";
+    public const string Manifestos = "tms.manifestos";
+    public const string Entregas = "tms.entregas";
+    public const string Faturas = "tms.faturas";
+    public const string RelFretesCliente = "tms.rel.fretescliente";
+    public const string RelFretesTrecho = "tms.rel.fretestrecho";
+    public const string RelConhecimentos = "tms.rel.ctes";
+    public const string RelPrazoEntrega = "tms.rel.prazo";
+    public const string RelFaturas = "tms.rel.faturas";
 }
 
 internal static class Ext

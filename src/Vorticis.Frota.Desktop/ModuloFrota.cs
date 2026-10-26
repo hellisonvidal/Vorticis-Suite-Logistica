@@ -7,7 +7,8 @@ namespace Vorticis.Frota.Desktop;
 /// <summary>
 /// Módulo Frota: a empresa ativa é a transportadora. Veículos, motoristas, abastecimentos, viagens, vencimentos e manutenção (ordens de serviço
 /// com autorização e notas de compra).
-/// Permissões FROTA_* conferidas nos serviços. CT-e/MDF-e e rastreamento ficam para a fase 2.
+/// TMS: tabelas de frete, cotações, conhecimentos (CT-e), manifestos (MDF-e), entregas e faturas de frete (a transmissão à SEFAZ fica para depois).
+/// Permissões FROTA_* conferidas nos serviços.
 /// </summary>
 public sealed class ModuloFrota : IModuloDesktop
 {
@@ -30,6 +31,7 @@ public sealed class ModuloFrota : IModuloDesktop
         ItemMenu.Tela("Motoristas", FrotaTelas.Motoristas),
         ItemMenu.Tela("Frotas", FrotaTelas.Frotas),
         ItemMenu.Tela("Rotas", FrotaTelas.Rotas),
+        ItemMenu.Tela("Tabelas de frete", FrotaTelas.TabelasFrete),
         ItemMenu.Tela("Documentos e vencimentos", FrotaTelas.Documentos),
     ];
 
@@ -40,7 +42,14 @@ public sealed class ModuloFrota : IModuloDesktop
             ItemMenu.Tela("Viagens", FrotaTelas.Viagens),
             ItemMenu.Tela("Diárias", FrotaTelas.Diarias),
             ItemMenu.Separador,
-            ItemMenu.Submenu("_Coletas", ItemMenu.Tela("Ordens de coleta", FrotaTelas.Coletas))),
+            ItemMenu.Submenu("_Coletas", ItemMenu.Tela("Ordens de coleta", FrotaTelas.Coletas)),
+            ItemMenu.Tela("Entregas e ocorrências", FrotaTelas.Entregas)),
+        ItemMenu.Submenu("_Emissão",
+            ItemMenu.Tela("Cotações de frete", FrotaTelas.Cotacoes),
+            ItemMenu.Tela("Conhecimentos de transporte (CT-e)", FrotaTelas.Ctes),
+            ItemMenu.Tela("Manifestos de carga (MDF-e)", FrotaTelas.Manifestos),
+            ItemMenu.Separador,
+            ItemMenu.Tela("Faturas de frete", FrotaTelas.Faturas)),
         ItemMenu.Submenu("_Manutenção",
             ItemMenu.Tela("Planos de manutenção", FrotaTelas.Planos),
             ItemMenu.Tela("Peças e serviços", FrotaTelas.Itens),
@@ -71,7 +80,13 @@ public sealed class ModuloFrota : IModuloDesktop
             ItemMenu.Tela("Aprovações de serviços", FrotaTelas.RelAprovacoes),
             ItemMenu.Tela("Notas fiscais de compra", FrotaTelas.RelNotas),
             ItemMenu.Tela("Manutenções preventivas", FrotaTelas.RelPreventivas),
-            ItemMenu.Tela("Histórico de manutenção por veículo", FrotaTelas.RelHistoricoManutencao)),
+            ItemMenu.Tela("Histórico de manutenção por veículo", FrotaTelas.RelHistoricoManutencao),
+            ItemMenu.Separador,
+            ItemMenu.Tela(TabelasTms.TituloFretesCliente, FrotaTelas.RelFretesCliente),
+            ItemMenu.Tela(TabelasTms.TituloFretesTrecho, FrotaTelas.RelFretesTrecho),
+            ItemMenu.Tela(TabelasTms.TituloConhecimentos, FrotaTelas.RelConhecimentos),
+            ItemMenu.Tela(TabelasTms.TituloPrazoEntrega, FrotaTelas.RelPrazoEntrega),
+            ItemMenu.Tela(TabelasTms.TituloFaturas, FrotaTelas.RelFaturas)),
     ];
 
     public IReadOnlyList<AtalhoTela> Atalhos { get; } =
@@ -82,7 +97,8 @@ public sealed class ModuloFrota : IModuloDesktop
     ];
 
     private static bool Pode(MainViewModelBase m, params Permissao[] p) => m.TemAcessoNaEmpresa && p.Any(m.Pode);
-    private static readonly Permissao[] Todas = [Permissao.FrotaCadastros, Permissao.FrotaOperacao, Permissao.FrotaRelatorios, Permissao.FrotaManutencao, Permissao.FrotaAprovar];
+    private static readonly Permissao[] Todas = [Permissao.FrotaCadastros, Permissao.FrotaOperacao, Permissao.FrotaRelatorios, Permissao.FrotaManutencao, Permissao.FrotaAprovar, Permissao.FrotaTms];
+    private static readonly Permissao[] PermissoesTms = [Permissao.FrotaTms, Permissao.FrotaOperacao, Permissao.FrotaRelatorios];
     private static readonly Permissao[] Manutencao = [Permissao.FrotaManutencao, Permissao.FrotaAprovar, Permissao.FrotaRelatorios];
 
     public void RegistrarTelas(CatalogoTelas c)
@@ -153,9 +169,24 @@ public sealed class ModuloFrota : IModuloDesktop
         Relatorio(c, "RelColetasMotorista", FrotaTelas.RelColetasMotorista, Vorticis.Frota.TabelasFrota.TituloColetasMotorista);
         Relatorio(c, "RelDiariasAcerto", FrotaTelas.RelDiariasAcerto, Vorticis.Frota.TabelasFrota.TituloDiariasAcerto);
         Relatorio(c, "RelResumoFrota", FrotaTelas.RelResumo, Vorticis.Frota.TabelasFrota.TituloResumo);
+        Tms(c, "TabelasFrete", FrotaTelas.TabelasFrete, "Cadastros › Tabelas de frete", m => new TabelasFreteViewModel(m), v => v.CarregarAsync());
+        Tms(c, "Cotacoes", FrotaTelas.Cotacoes, "Emissão › Cotações de frete", m => new CotacoesViewModel(m), v => v.CarregarAsync());
+        Tms(c, "Ctes", FrotaTelas.Ctes, "Emissão › Conhecimentos de transporte (CT-e)", m => new CtesViewModel(m), v => v.CarregarAsync());
+        Tms(c, "Manifestos", FrotaTelas.Manifestos, "Emissão › Manifestos de carga (MDF-e)", m => new ManifestosViewModel(m), v => v.CarregarAsync());
+        Tms(c, "Entregas", FrotaTelas.Entregas, "Operação › Entregas e ocorrências", m => new EntregasViewModel(m), v => v.CarregarAsync());
+        Tms(c, "FaturasFrete", FrotaTelas.Faturas, "Emissão › Faturas de frete", m => new FaturasFreteViewModel(m), v => v.CarregarAsync());
+        Relatorio(c, "RelFretesCliente", FrotaTelas.RelFretesCliente, TabelasTms.TituloFretesCliente);
+        Relatorio(c, "RelFretesTrecho", FrotaTelas.RelFretesTrecho, TabelasTms.TituloFretesTrecho);
+        Relatorio(c, "RelConhecimentos", FrotaTelas.RelConhecimentos, TabelasTms.TituloConhecimentos);
+        Relatorio(c, "RelPrazoEntrega", FrotaTelas.RelPrazoEntrega, TabelasTms.TituloPrazoEntrega);
+        Relatorio(c, "RelFaturasFrete", FrotaTelas.RelFaturas, TabelasTms.TituloFaturas);
         c.Instancia("ParametrosModulo", m => new ParametrosFrotaViewModel(m), aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
             .Tela(TelasComuns.Parametros, "Cadastros › Parâmetros", m => m.TemAcessoNaEmpresa, v => v.CarregarAsync());
     }
+
+    private static void Tms<T>(CatalogoTelas c, string instancia, string chave, string titulo, Func<MainViewModelBase, T> criar, Func<T, Task> carregar) where T : FrotaBase =>
+        c.Instancia(instancia, criar, atualizarPermissoes: v => v.AtualizarPermissoes(), aoTrocarEmpresa: (v, ativa) => ativa ? carregar(v) : Task.CompletedTask)
+            .Tela(chave, titulo, m => Pode(m, PermissoesTms), carregar);
 
     private static void Relatorio(CatalogoTelas c, string instancia, string chave, string titulo) =>
         c.Instancia(instancia, m => new RelatorioFrotaViewModel(m, titulo), atualizarPermissoes: v => v.AtualizarPermissoesExportacao(),

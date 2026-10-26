@@ -161,3 +161,15 @@ frota.rel.coletasmotorista=12-frota.md#relatorios-da-frota
 frota.rel.resumo=12-frota.md#relatorios-da-frota
 frota.rel.preventivas=12-frota.md#relatorios-da-manutencao
 frota.rel.historicoman=12-frota.md#relatorios-da-manutencao
+; ---- TMS (gestão do transporte)
+tms.tabelas=14-tms.md#tabelas-de-frete
+tms.cotacoes=14-tms.md#cotacoes-de-frete
+tms.ctes=14-tms.md#conhecimentos-de-transporte-ct-e
+tms.manifestos=14-tms.md#manifestos-de-carga-mdf-e
+tms.entregas=14-tms.md#entregas-e-ocorrencias
+tms.faturas=14-tms.md#faturas-de-frete
+tms.rel.fretescliente=14-tms.md#relatorios-do-tms
+tms.rel.fretestrecho=14-tms.md#relatorios-do-tms
+tms.rel.ctes=14-tms.md#relatorios-do-tms
+tms.rel.prazo=14-tms.md#relatorios-do-tms
+tms.rel.faturas=14-tms.md#relatorios-do-tms

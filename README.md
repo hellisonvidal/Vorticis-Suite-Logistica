@@ -12,6 +12,7 @@ Aplicativo desktop para Windows com PostgreSQL na própria máquina; arquitetura
 | 1. MVP contábil | Plano de contas (modelo + manutenção), centros de custo, saldos iniciais, lançamento com validação de partidas dobradas, estorno, fechamento/reabertura de período, Diário, Razão, Balancete, **relatórios em tela com exportação para PDF, Excel (.xlsx) e CSV**, **Consultas rápidas de saldos e lançamentos**, **importação de lançamentos (planilhas com layouts personalizados, extratos OFX, layout padrão)**, **importação do plano de contas de planilha com conversão de máscara**, **livros em PDF (Diário com termos de abertura e encerramento, Razão, Balancete)** ✔ |
 | 3. Demonstrações e ECD | Encerramento do exercício (IND_LCTO = E) e desfazer; Balanço Patrimonial e DRE (tela e PDF); **plano referencial da RFB: importação da tabela oficial e vínculo das contas (sugestões automáticas, cópia do ano anterior, pendências para a ECD)**. **gerador do arquivo da ECD (Livro G, leiaute 9) com pendências e assinatura digital no formato do PVA** ([docs/05-ecd.md](docs/05-ecd.md); tela pendente). **Pendente:** DFC |
 | Gerencial e Frota | **Gerencial** (painel do empresário, pedidos de venda e compra que geram nota, duplicatas e estoque, contas a pagar e a receber separadas, relatórios de vendas, compras e recebimentos) e **Frota** (veículos, manutenção, abastecimento, relatórios) ✔ |
+| TMS (gestão do transporte) | Tabelas de frete (frete-peso com cubagem e mínimo, ad valorem, GRIS, pedágio por fração, taxas, ICMS por dentro, prazo), cotações, CT-e (digitação, chave de acesso conferida, minuta), manifestos (MDF-e), entregas e ocorrências, faturas de frete com conta a receber e relatórios; esquema `tms` (`db/073`). **Pendente:** transmissão de CT-e/MDF-e à SEFAZ ✔ |
 
 Ver o [roadmap](docs/04-roadmap.md).
 
@@ -25,7 +26,7 @@ src/Vorticis.Infra           PostgreSQL (Npgsql), migrador, plano de contas mode
 src/Vorticis.Desktop.Comum   Casco comum dos executáveis (Avalonia/MVVM): bootstrap, janela principal com menu do módulo, login, banco, empresas, usuários, perfis, certificados, backup, configurações
 src/Vorticis.Desktop         Módulo Contábil (biblioteca de telas e menus)
 src/Vorticis.Fiscal(.Desktop)  Regras, serviços, repositórios e telas do módulo Fiscal: XML de NF-e/NFS-e, livros, contabilização, Simples, Lucro Presumido/Real, retenções e guias
-src/Vorticis.Erp, Vorticis.Frota (+ .Desktop)  Módulos Gerencial e Frota
+src/Vorticis.Erp, Vorticis.Frota (+ .Desktop)  Módulos Gerencial e Frota (com o TMS: Tms.cs, ServicoFrotaTms.cs, TmsViewModels.cs)
 src/Vorticis.Logistica.Desktop  Executável do produto (VorticisLogistica.exe): reúne todos os módulos acima
 tests/                      Unitários, integração com PostgreSQL e testes de interface headless
 docs/                       Arquitetura, regras, desafios fiscais, roadmap

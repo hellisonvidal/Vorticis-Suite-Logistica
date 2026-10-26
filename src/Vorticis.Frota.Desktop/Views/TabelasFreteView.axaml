@@ -1,0 +1,80 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Frota.Desktop.ViewModels"
+             x:Class="Vorticis.Frota.Desktop.Views.TabelasFreteView" x:DataType="vm:TabelasFreteViewModel">
+  <Grid ColumnDefinitions="*,12,430" RowDefinitions="Auto,Auto,*" Margin="8">
+    <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="8" Margin="0,0,0,6">
+      <TextBlock Classes="titulo" Text="Tabelas de frete" VerticalAlignment="Center" />
+    </StackPanel>
+    <TextBlock Grid.Row="1" Grid.ColumnSpan="3" Text="{Binding Totais}" FontSize="12" Margin="0,0,0,6" />
+    <DataGrid Grid.Row="2" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionada}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Código" Binding="{ReflectionBinding Codigo}" Width="70" />
+        <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" />
+        <DataGridTextColumn Header="Abrangência" Binding="{ReflectionBinding Abrangencia}" Width="160" />
+        <DataGridTextColumn Header="R$/kg" Binding="{ReflectionBinding ValorKg}" Width="80" />
+        <DataGridTextColumn Header="Mínimo" Binding="{ReflectionBinding Minimo}" Width="90" />
+        <DataGridTextColumn Header="Prazo" Binding="{ReflectionBinding Prazo}" Width="80" />
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="80" />
+      </DataGrid.Columns>
+    </DataGrid>
+    <ScrollViewer Grid.Row="2" Grid.Column="2">
+    <StackPanel Spacing="6" IsEnabled="{Binding PodeEditar}">
+      <Grid ColumnDefinitions="140,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
+        <TextBlock Classes="rotulo" Text="Código" />
+        <TextBox Grid.Column="1" Text="{Binding Codigo}" Width="120" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="1" Classes="rotulo" Text="Descrição" />
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Descricao}" />
+        <TextBlock Grid.Row="2" Classes="rotulo" Text="Rota" />
+        <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding RotasOpcoes}" SelectedItem="{Binding Rota}" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="3" Classes="rotulo" Text="UF origem" />
+        <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{x:Static vm:TabelasFreteViewModel.UfsOpcionais}" SelectedItem="{Binding UfOrigem}" Width="110" />
+        <TextBlock Grid.Row="4" Classes="rotulo" Text="UF destino" />
+        <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{x:Static vm:TabelasFreteViewModel.UfsOpcionais}" SelectedItem="{Binding UfDestino}" Width="110" />
+        <TextBlock Grid.Row="5" Classes="rotulo" Text="Valor por kg" />
+        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding ValorKg}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="6" Classes="rotulo" Text="Frete mínimo" />
+        <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding FreteMinimo}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="7" Classes="rotulo" Text="Fator de cubagem (kg/m³)" />
+        <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding FatorCubagem}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="8" Classes="rotulo" Text="Ad valorem (%)" />
+        <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding AdValorem}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="9" Classes="rotulo" Text="GRIS (%)" />
+        <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding Gris}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="10" Classes="rotulo" Text="Pedágio por fração de 100 kg" />
+        <TextBox Grid.Row="10" Grid.Column="1" Text="{Binding Pedagio}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="11" Classes="rotulo" Text="Taxa de coleta" />
+        <TextBox Grid.Row="11" Grid.Column="1" Text="{Binding TaxaColeta}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="12" Classes="rotulo" Text="Taxa de entrega" />
+        <TextBox Grid.Row="12" Grid.Column="1" Text="{Binding TaxaEntrega}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="13" Classes="rotulo" Text="Outras taxas" />
+        <TextBox Grid.Row="13" Grid.Column="1" Text="{Binding OutrasTaxas}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="14" Classes="rotulo" Text="Alíquota de ICMS (%)" />
+        <TextBox Grid.Row="14" Grid.Column="1" Text="{Binding AliquotaIcms}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="15" Classes="rotulo" Text="Prazo de entrega (dias)" />
+        <TextBox Grid.Row="15" Grid.Column="1" Text="{Binding PrazoDias}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="16" Classes="rotulo" Text="" />
+        <CheckBox Grid.Row="16" Grid.Column="1" IsChecked="{Binding Ativa}" Content="Ativa" />
+        <TextBlock Grid.Row="17" Grid.ColumnSpan="2" Text="Simulação" FontWeight="Bold" FontSize="12" Margin="0,6,0,0" />
+        <TextBlock Grid.Row="18" Classes="rotulo" Text="Peso (kg)" />
+        <TextBox Grid.Row="18" Grid.Column="1" Text="{Binding SimPeso}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="19" Classes="rotulo" Text="m³" />
+        <TextBox Grid.Row="19" Grid.Column="1" Text="{Binding SimM3}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="20" Classes="rotulo" Text="Valor da mercadoria" />
+        <TextBox Grid.Row="20" Grid.Column="1" Text="{Binding SimValor}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="21" Classes="rotulo" Text="" />
+        <Button Grid.Row="21" Grid.Column="1" Content="Simular" Command="{Binding SimularCommand}" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="22" Classes="rotulo" Text="Resultado" />
+        <TextBlock Grid.Row="22" Grid.Column="1" Text="{Binding Simulacao}" TextWrapping="Wrap" />
+      </Grid>
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <Button Content="Nova tabela" Command="{Binding NovaCommand}" />
+        <Button Content="Gravar" Classes="accent" Command="{Binding GravarCommand}" />
+        <Button Content="Excluir" Command="{Binding ExcluirCommand}" />
+      </StackPanel>
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="Informe a tabela de preços do frete. Use a simulação para conferir o valor antes de gravar. UF em branco ou (todas) vale para qualquer estado." />
+      <c:MensagensView />
+    </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

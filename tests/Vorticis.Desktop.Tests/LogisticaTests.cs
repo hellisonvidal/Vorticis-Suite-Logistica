@@ -12,6 +12,7 @@ namespace Vorticis.Desktop.Tests;
 /// <summary>Vorticis Suite Logística: um programa só, com as telas de Frota, Gerencial, Contábil e Fiscal num menu único (sem a Folha).</summary>
 public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoDeTeste db) : IClassFixture<Vorticis.Infra.Tests.BancoDeTeste>
 {
+    private static readonly IReadOnlyList<string> TabelasTmsTitulos = Vorticis.Frota.TabelasTms.Titulos;
     private static IEnumerable<ItemMenu> Folhas(IEnumerable<ItemMenu> itens) => itens.SelectMany(i => i.Filhos is null ? [i] : Folhas(i.Filhos));
 
     private static async Task<T> ForaDaSessao<T>(Task<T> tarefa)
@@ -33,7 +34,14 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
         Assert.All(itens.Where(i => i.Habilitado && i.Chave is not null && i.Chave != TelasComuns.Sair), i => Assert.True(vm.ConheceTela(i.Chave!), $"{i.Titulo}: {i.Chave}"));
         // Emissão: as funções do antigo submenu Faturamento (pedidos de venda e notas de saída) direto no menu; o Financeiro não tem mais Faturamento
         var emissao = vm.Menus.Single(m => m.Titulo == "_Emissão");
-        Assert.Equal(4, Folhas(emissao.Filhos!).Count(i => !i.Habilitado && !i.EhSeparador));
+        Assert.Equal(["Emissão de NF-e na SEFAZ (em breve)", "Transmissão de CT-e e MDF-e à SEFAZ (em breve)", "NFS-e – Nota fiscal de serviço (Padrão Nacional) (em breve)"],
+                     Folhas(emissao.Filhos!).Where(i => !i.Habilitado && !i.EhSeparador).Select(i => i.Titulo));
+        // TMS: cotações, CT-e, manifestos e faturas de frete no Emissão; entregas na Operação; tabelas de frete nos Cadastros; relatórios em Relatórios › Transporte (TMS)
+        foreach (var chave in new[] { Frota.Desktop.ViewModels.FrotaTelas.Cotacoes, Frota.Desktop.ViewModels.FrotaTelas.Ctes, Frota.Desktop.ViewModels.FrotaTelas.Manifestos,
+                                      Frota.Desktop.ViewModels.FrotaTelas.Faturas })
+            Assert.Contains(emissao.Filhos!, i => i.Chave == chave && i.Habilitado);
+        Assert.Contains(vm.Menus.Single(m => m.Titulo == "_Operação").Filhos!, i => i.Chave == Frota.Desktop.ViewModels.FrotaTelas.Entregas);
+        Assert.Contains(Folhas(vm.Menus[0].Filhos!), i => i.Chave == Frota.Desktop.ViewModels.FrotaTelas.TabelasFrete);
         foreach (var chave in new[] { Erp.Desktop.ViewModels.ErpTelas.PedidosVenda, Fiscal.Desktop.ViewModels.Telas.NotaSaida })
         {
             Assert.Contains(emissao.Filhos!, i => i.Chave == chave && i.Habilitado);
@@ -54,7 +62,9 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
         Assert.Contains(vm.Menus.Single(m => m.Titulo == "_Operação").Filhos!, i => i.Titulo == "Diárias");
         // Relatórios por submenus; todos os relatórios saíram dos menus de origem
         var relatorios = vm.Menus.Single(m => m.Titulo == "_Relatórios");
-        Assert.Equal(["_Frota e operação", "_Manutenção", "_Financeiro e gerencial", "_Contábil"], relatorios.Filhos!.Select(m => m.Titulo));
+        Assert.Equal(["_Frota e operação", "_Manutenção", "_Transporte (TMS)", "_Financeiro e gerencial", "_Contábil"], relatorios.Filhos!.Select(m => m.Titulo));
+        Assert.Equal(TabelasTmsTitulos, relatorios.Filhos!.Single(m => m.Titulo == "_Transporte (TMS)").Filhos!.Select(i => i.Titulo));
+        Assert.DoesNotContain(vm.Menus, m => m.Titulo == "_Emissão" && m.Filhos!.Any(i => i.Titulo.Contains("Relat")));
         foreach (var chave in new[] { Frota.Desktop.ViewModels.FrotaTelas.Painel, Frota.Desktop.ViewModels.FrotaTelas.RelNotas, ViewModels.Telas.Balancete, Fiscal.Desktop.ViewModels.Telas.RelDuplicatasPagar })
             Assert.Single(Folhas(vm.Menus), i => i.Chave == chave);
         Assert.Contains(Folhas(relatorios.Filhos!), i => i.Chave == ViewModels.Telas.Balancete);
