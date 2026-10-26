@@ -18,8 +18,8 @@ O Vorticis Suite Logística é instalado numa pasta própria (*Vorticis Logistic
 | **Cadastros** | Transportadoras, contadores, clientes, fornecedores, veículos, motoristas, **frotas**, **rotas**, documentos e vencimentos; os cadastros do financeiro (produtos, formas de pagamento, contas bancárias) e do contábil (plano de contas, históricos...) em submenus; os **Parâmetros** | [Frota](12-frota.md), [Contábil](03-contabil.md) |
 | **Operação** | Abastecimentos e viagens; **Diárias** e submenu **Coletas** (*Ordens de coleta*) | [Frota](12-frota.md#abastecimentos), [Diárias](12-frota.md#diarias), [Coletas](12-frota.md#ordens-de-coleta) |
 | **Manutenção** | Planos de manutenção, peças e serviços, ordens de serviço, autorização de serviços e notas de compra | [Frota](12-frota.md#ordens-de-servico) |
-| **Emissão** | CT-e, MDF-e e NFS-e (em breve) | — |
-| **Financeiro** | Contas a pagar, contas a receber e conciliação bancária; faturamento (pedidos de venda e notas de saída), compras, estoque e monitores | [Gerencial](10-gerencial.md) |
+| **Emissão** | As funções de faturamento: **Pedidos de venda** e **Notas fiscais de saída** (a emissão de NF-e na SEFAZ, em breve); CT-e, MDF-e e NFS-e (em breve) | [Gerencial](10-gerencial.md) |
+| **Financeiro** | Contas a pagar, contas a receber e conciliação bancária; compras, estoque e monitores | [Gerencial](10-gerencial.md) |
 | **Gerencial** | Submenu **Contábil** (lançamentos, fechamentos, imobilizado, consultas e integrações) | [Contábil](03-contabil.md) |
 | **Relatórios** | Todos os relatórios do programa, em submenus: **Frota e operação**, **Manutenção**, **Financeiro e gerencial** e **Contábil** | [Frota](12-frota.md#relatorios-da-frota) |
 

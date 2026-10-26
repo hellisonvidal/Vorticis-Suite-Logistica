@@ -31,7 +31,16 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
         // toda função habilitada abre uma tela conhecida; o que ainda falta (emissão de CT-e, MDF-e e NFS-e) fica "em breve"
         var itens = Folhas(vm.Menus).Where(i => !i.EhSeparador).ToList();
         Assert.All(itens.Where(i => i.Habilitado && i.Chave is not null && i.Chave != TelasComuns.Sair), i => Assert.True(vm.ConheceTela(i.Chave!), $"{i.Titulo}: {i.Chave}"));
-        Assert.Equal(3, Folhas(vm.Menus.Single(m => m.Titulo == "_Emissão").Filhos!).Count(i => !i.Habilitado));
+        // Emissão: as funções do antigo submenu Faturamento (pedidos de venda e notas de saída) direto no menu; o Financeiro não tem mais Faturamento
+        var emissao = vm.Menus.Single(m => m.Titulo == "_Emissão");
+        Assert.Equal(4, Folhas(emissao.Filhos!).Count(i => !i.Habilitado && !i.EhSeparador));
+        foreach (var chave in new[] { Erp.Desktop.ViewModels.ErpTelas.PedidosVenda, Fiscal.Desktop.ViewModels.Telas.NotaSaida })
+        {
+            Assert.Contains(emissao.Filhos!, i => i.Chave == chave && i.Habilitado);
+            Assert.Single(Folhas(vm.Menus), i => i.Chave == chave);
+        }
+        Assert.DoesNotContain(Folhas(vm.Menus.Single(m => m.Titulo == "_Financeiro").Filhos!), i => i.Titulo.Replace("_", "") == "Faturamento");
+        Assert.DoesNotContain(vm.Menus.Single(m => m.Titulo == "_Financeiro").Filhos!, i => i.Titulo.Replace("_", "") == "Faturamento");
         // Gerencial: só o submenu Contábil (sem os relatórios, que vão para Relatórios); a Folha saiu do programa
         var gerencial = vm.Menus.Single(m => m.Titulo == "_Gerencial");
         Assert.Equal(["_Contábil"], gerencial.Filhos!.Select(m => m.Titulo));
