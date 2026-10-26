@@ -114,7 +114,7 @@ Embaixo ficam as decisões dos últimos 30 dias (quem decidiu, quando e o valor)
 
 ## Notas de compra
 
-**Onde fica:** *Manutenção › Notas de compra*.
+**Onde fica:** no programa Frota, *Manutenção › Notas de compra*. No Vorticis Suite Logística esta tela não fica no menu: as notas das oficinas e das peças são lançadas como notas fiscais de entrada, em *Operações › Compras › Notas fiscais de entrada*.
 
 1. **Nova nota**: escolha a **Ordem de serviço** atendida. A oficina da ordem vem como fornecedor, e embaixo aparece o valor da ordem para conferir com a nota.
 2. Informe o **Fornecedor**, o **CNPJ/CPF**, o **Número** e a **série**, a **Emissão** e, se tiver, a **Chave de acesso** de 44 dígitos (o sistema confere o dígito e se a chave é do CNPJ informado).

@@ -43,7 +43,7 @@ public class ParametrosMenusLoteTests(SessaoHeadless headless, Vorticis.Infra.Te
         Assert.DoesNotContain(cadastros, i => i.Titulo.Contains("Parâmetros dos"));
         Assert.Single(cadastros, i => i.Titulo == "Parâmetros" && i.Chave == TelasComuns.Parametros);
         var abas = Assert.IsType<ParametrosAbasViewModel>(vm.ViewModelDaTela(TelasComuns.Parametros));
-        Assert.Equal(["Frota", "Gerencial e financeiro", "Contábil", "Menus"], abas.Abas.Select(a => a.Titulo));
+        Assert.Equal(["Frota", "Gerencial", "Contábil", "Menus"], abas.Abas.Select(a => a.Titulo));
         Assert.IsType<Vorticis.Frota.Desktop.ViewModels.ParametrosFrotaViewModel>(abas.Abas[0].Conteudo);
         Assert.IsType<Vorticis.Fiscal.Desktop.ViewModels.ParametrosFiscalViewModel>(abas.Abas[1].Conteudo);
         Assert.IsType<Vorticis.Desktop.ViewModels.ParametrosContabilViewModel>(abas.Abas[2].Conteudo);
@@ -90,9 +90,9 @@ public class ParametrosMenusLoteTests(SessaoHeadless headless, Vorticis.Infra.Te
         Assert.False(vm.TelaBloqueadaPorMenu(TelasComuns.Manual));
 
         // submenu que ficou sem nenhum item visível some; voltar tudo restaura o menu
-        var operacao = vm.Menus.Single(m => Sem(m) == "Operação");
-        vm.AplicarPreferenciasMenu(new PreferenciasMenu(operacao.Filhos!.Where(f => !f.EhSeparador).Select(f => "Operação › " + Sem(f)).ToHashSet(), new HashSet<string>()));
-        Assert.DoesNotContain(vm.MenusVisiveis, m => Sem(m) == "Operação");
+        var operacao = vm.Menus.Single(m => Sem(m) == "Operações");
+        vm.AplicarPreferenciasMenu(new PreferenciasMenu(operacao.Filhos!.Where(f => !f.EhSeparador).Select(f => "Operações › " + Sem(f)).ToHashSet(), new HashSet<string>()));
+        Assert.DoesNotContain(vm.MenusVisiveis, m => Sem(m) == "Operações");
         vm.AplicarPreferenciasMenu(PreferenciasMenu.Vazia);
         Assert.Same(vm.Menus, vm.MenusVisiveis);
         Assert.False(vm.TelaBloqueadaPorMenu(bloqueadas[0]));

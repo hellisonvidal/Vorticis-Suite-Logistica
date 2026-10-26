@@ -60,7 +60,7 @@ public class FrotaTelasTests(SessaoHeadless headless, BancoDeTeste db) : IClassF
         Assert.Equal(["Abastecimentos", "Viagens", "Diárias", "_Coletas", "Entregas e ocorrências"], operacao.Filhos!.Where(i => !i.EhSeparador).Select(i => i.Titulo));
         Assert.Equal(["Ordens de coleta"], operacao.Filhos!.Single(i => i.Titulo == "_Coletas").Filhos!.Select(i => i.Titulo));
         var manutencao = Assert.Single(vm.Menus, m => m.Titulo == "_Manutenção");
-        Assert.Equal(["Planos de manutenção", "Peças e serviços", "Ordens de serviço", "Autorização de serviços", "Notas de compra"], manutencao.Filhos!.Select(i => i.Titulo));
+        Assert.Equal(["Planos de manutenção", "Peças e serviços", "Ordens de serviço", "Autorização de serviços"], manutencao.Filhos!.Select(i => i.Titulo));
         // TMS: cotações, CT-e, manifestos e faturas de frete no menu Emissão
         var emissao = Assert.Single(vm.Menus, m => m.Titulo == "_Emissão");
         Assert.Equal(["Cotações de frete", "Conhecimentos de transporte (CT-e)", "Manifestos de carga (MDF-e)", "Faturas de frete"],

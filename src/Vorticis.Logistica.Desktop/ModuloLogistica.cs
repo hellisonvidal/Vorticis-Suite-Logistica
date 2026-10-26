@@ -33,6 +33,8 @@ public sealed class ModuloLogistica() : ModuloCombinado(Frota, Contabil, Fiscal,
     public bool UsaCalendarioObrigacoes => false;
     public string RotuloEmpresas => "Transportadoras";
     public string RotuloEmpresaAtiva => "Transportadora";
+    /// <summary>Os contadores ficam só na aba Contadores de Cadastros › Transportadoras.</summary>
+    public bool ContadoresNoMenuCadastros => false;
 
     /// <summary>Atalhos das partes, sem os de telas que este programa não mostra (ex.: Consulta de documentos fiscais).</summary>
     public override IReadOnlyList<AtalhoTela> Atalhos =>
@@ -45,19 +47,19 @@ public sealed class ModuloLogistica() : ModuloCombinado(Frota, Contabil, Fiscal,
     [
         .. DaParte(Frota, Frota.ItensCadastros),
         ItemMenu.Separador,
-        ItemMenu.Submenu("_Gerencial e financeiro", [.. DaParte(Gerencial, Gerencial.ItensCadastros)]),
+        ItemMenu.Submenu("_Gerencial", [.. DaParte(Gerencial, Gerencial.ItensCadastros)]),
         ItemMenu.Submenu("_Contábil", [.. DaParte(Contabil, Contabil.ItensCadastros)]),
     ];
 
     /// <summary>
     /// Cadastros › Parâmetros é uma janela só, com uma aba para cada área (cada uma é a tela de parâmetros do módulo, com os mesmos campos e a mesma
-    /// gravação) e a aba Menus. Os parâmetros do Fiscal são os mesmos do Gerencial e financeiro (contas a pagar e a receber), por isso não têm aba própria.
+    /// gravação) e a aba Menus. Os parâmetros do Fiscal são os mesmos do Gerencial (contas a pagar e a receber), por isso não têm aba própria.
     /// </summary>
     protected override void RegistrarTelasPrimeiro(CatalogoTelas catalogo) =>
         catalogo.Instancia("ParametrosLogistica", m => new ParametrosAbasViewModel(m,
             [
                 ("Frota", Chave(Frota, TelasComuns.Parametros)),
-                ("Gerencial e financeiro", Chave(Gerencial, TelasComuns.Parametros)),
+                ("Gerencial", Chave(Gerencial, TelasComuns.Parametros)),
                 ("Contábil", Chave(Contabil, TelasComuns.Parametros)),
             ]), atualizarPermissoes: v => v.AtualizarPermissoes(), aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
             .Tela(TelasComuns.Parametros, "Cadastros › Parâmetros", m => m.TemAcessoNaEmpresa, v => v.CarregarAsync());
@@ -82,9 +84,12 @@ public sealed class ModuloLogistica() : ModuloCombinado(Frota, Contabil, Fiscal,
             var relContabil = DaParte(Contabil, Topo(Contabil, "Relatórios")!.Filhos!);
             var operacao = DaParte(Frota, Frota.Menus.Where(m => Sem(m) == "Operação")).Single();
             var transporte = DaParte(Frota, Frota.Menus.Where(m => Sem(m) == "Emissão")).Single();
+            // Operações: a operação da frota e do transporte, mais compras, estoque e monitores (vindos do Gerencial)
+            ItemMenu Sub(ItemMenu m) => m with { Titulo = m.Titulo.Replace("_", "") };
             return
             [
-                operacao,
+                ItemMenu.Submenu("_Operações",
+                    [.. operacao.Filhos!, ItemMenu.Separador, .. new[] { G("Compras"), G("Estoque"), G("Monitores") }.Where(m => m is not null).Select(m => Sub(m!))]),
                 .. DaParte(Frota, Frota.Menus.Where(m => Sem(m) == "Manutenção")),
                 // Emissão: as funções do Faturamento (pedidos de venda e notas de saída) e os documentos do TMS (cotações, CT-e, MDF-e e faturas de frete)
                 ItemMenu.Submenu("_Emissão",
@@ -92,16 +97,14 @@ public sealed class ModuloLogistica() : ModuloCombinado(Frota, Contabil, Fiscal,
                      .. transporte.Filhos!, ItemMenu.Separador,
                      ItemMenu.EmBreve("Transmissão de CT-e e MDF-e à SEFAZ"),
                      ItemMenu.EmBreve("NFS-e – Nota fiscal de serviço (Padrão Nacional)")]),
-                ItemMenu.Submenu("_Financeiro",
-                    [.. financeiro.Filhos!, ItemMenu.Separador,
-                     .. new[] { G("Compras"), G("Estoque"), G("Monitores") }.Where(m => m is not null).Select(m => m! with { Titulo = m.Titulo.Replace("_", "") })]),
+                ItemMenu.Submenu("_Financeiro", [.. financeiro.Filhos!]),
                 ItemMenu.Submenu("_Gerencial",
                     Submenu("_Contábil", Contabil, m => Sem(m) != "Relatórios")),
                 ItemMenu.Submenu("_Relatórios",
                     ItemMenu.Submenu("_Frota e operação", [.. relOperacao]),
                     ItemMenu.Submenu("_Manutenção", [.. relManutencao]),
                     ItemMenu.Submenu("_Transporte (TMS)", [.. relTms]),
-                    ItemMenu.Submenu("_Financeiro e gerencial", [.. relGerencial]),
+                    ItemMenu.Submenu("_Gerencial", [.. relGerencial]),
                     ItemMenu.Submenu("_Contábil", [.. relContabil])),
             ];
         }

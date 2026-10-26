@@ -54,8 +54,7 @@ public sealed class ModuloFrota : IModuloDesktop
             ItemMenu.Tela("Planos de manutenção", FrotaTelas.Planos),
             ItemMenu.Tela("Peças e serviços", FrotaTelas.Itens),
             ItemMenu.Tela("Ordens de serviço", FrotaTelas.Ordens),
-            ItemMenu.Tela("Autorização de serviços", FrotaTelas.Autorizacao),
-            ItemMenu.Tela("Notas de compra", FrotaTelas.Notas)),
+            ItemMenu.Tela("Autorização de serviços", FrotaTelas.Autorizacao)),
         ItemMenu.Submenu("_Relatórios",
             ItemMenu.Tela("Painel da frota", FrotaTelas.Painel),
             ItemMenu.Tela("Custos por veículo", FrotaTelas.RelCustos),
@@ -173,7 +172,7 @@ public sealed class ModuloFrota : IModuloDesktop
         Tms(c, "Cotacoes", FrotaTelas.Cotacoes, "Emissão › Cotações de frete", m => new CotacoesViewModel(m), v => v.CarregarAsync());
         Tms(c, "Ctes", FrotaTelas.Ctes, "Emissão › Conhecimentos de transporte (CT-e)", m => new CtesViewModel(m), v => v.CarregarAsync());
         Tms(c, "Manifestos", FrotaTelas.Manifestos, "Emissão › Manifestos de carga (MDF-e)", m => new ManifestosViewModel(m), v => v.CarregarAsync());
-        Tms(c, "Entregas", FrotaTelas.Entregas, "Operação › Entregas e ocorrências", m => new EntregasViewModel(m), v => v.CarregarAsync());
+        Tms(c, "Entregas", FrotaTelas.Entregas, "Operações › Entregas e ocorrências", m => new EntregasViewModel(m), v => v.CarregarAsync());
         Tms(c, "FaturasFrete", FrotaTelas.Faturas, "Emissão › Faturas de frete", m => new FaturasFreteViewModel(m), v => v.CarregarAsync());
         Relatorio(c, "RelFretesCliente", FrotaTelas.RelFretesCliente, TabelasTms.TituloFretesCliente);
         Relatorio(c, "RelFretesTrecho", FrotaTelas.RelFretesTrecho, TabelasTms.TituloFretesTrecho);

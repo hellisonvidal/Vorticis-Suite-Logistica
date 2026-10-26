@@ -15,13 +15,13 @@ O Vorticis Suite Logística é instalado numa pasta própria (*Vorticis Logistic
 
 | Menu | O que tem | Detalhes no manual |
 |---|---|---|
-| **Cadastros** | Transportadoras, contadores, clientes, fornecedores, veículos, motoristas, **frotas**, **rotas**, **tabelas de frete**, documentos e vencimentos; os cadastros do financeiro (produtos, formas de pagamento, contas bancárias) e do contábil (plano de contas, históricos...) em submenus; os **Parâmetros** | [Frota](12-frota.md), [Contábil](03-contabil.md) |
-| **Operação** | Abastecimentos e viagens; **Diárias**, submenu **Coletas** (*Ordens de coleta*) e **Entregas e ocorrências** | [Frota](12-frota.md#abastecimentos), [Diárias](12-frota.md#diarias), [Coletas](12-frota.md#ordens-de-coleta), [Entregas](14-tms.md#entregas-e-ocorrencias) |
-| **Manutenção** | Planos de manutenção, peças e serviços, ordens de serviço, autorização de serviços e notas de compra | [Frota](12-frota.md#ordens-de-servico) |
+| **Cadastros** | Transportadoras (com a aba **Contadores**: o contador e o escritório contábil ficam só ali), clientes, fornecedores, veículos, motoristas, **frotas**, **rotas**, **tabelas de frete**, documentos e vencimentos; os cadastros do financeiro (produtos, formas de pagamento, contas bancárias) e do contábil (plano de contas, históricos...) em submenus; os **Parâmetros** | [Frota](12-frota.md), [Contábil](03-contabil.md) |
+| **Operações** | Abastecimentos e viagens; **Diárias**, submenu **Coletas** (*Ordens de coleta*) e **Entregas e ocorrências**; submenus **Compras** (pedidos de compra, notas fiscais de entrada e importação de XML), **Estoque** e **Monitores** | [Frota](12-frota.md#abastecimentos), [Diárias](12-frota.md#diarias), [Coletas](12-frota.md#ordens-de-coleta), [Entregas](14-tms.md#entregas-e-ocorrencias) |
+| **Manutenção** | Planos de manutenção, peças e serviços, ordens de serviço e autorização de serviços (as notas das oficinas e das peças são lançadas em *Operações › Compras › Notas fiscais de entrada*) | [Frota](12-frota.md#ordens-de-servico) |
 | **Emissão** | As funções de faturamento: **Pedidos de venda** e **Notas fiscais de saída** (a emissão de NF-e na SEFAZ, em breve); o TMS: **Cotações de frete**, **Conhecimentos de transporte (CT-e)**, **Manifestos de carga (MDF-e)** e **Faturas de frete**; a transmissão de CT-e e MDF-e à SEFAZ e a NFS-e (em breve) | [Gerencial](10-gerencial.md), [TMS](14-tms.md) |
-| **Financeiro** | Contas a pagar, contas a receber e conciliação bancária; compras, estoque e monitores | [Gerencial](10-gerencial.md) |
+| **Financeiro** | Contas a pagar, contas a receber e conciliação bancária | [Gerencial](10-gerencial.md) |
 | **Gerencial** | Submenu **Contábil** (lançamentos, fechamentos, imobilizado, consultas e integrações) | [Contábil](03-contabil.md) |
-| **Relatórios** | Todos os relatórios do programa, em submenus: **Frota e operação**, **Manutenção**, **Transporte (TMS)**, **Financeiro e gerencial** e **Contábil** | [Frota](12-frota.md#relatorios-da-frota) |
+| **Relatórios** | Todos os relatórios do programa, em submenus: **Frota e operação**, **Manutenção**, **Transporte (TMS)**, **Gerencial** e **Contábil** | [Frota](12-frota.md#relatorios-da-frota) |
 
 Neste programa **não** há o menu Fiscal, o calendário de obrigações nem o *Painel do empresário*: use o menu **Financeiro** para as contas a pagar e a receber. A tela inicial também não mostra o quadro de próximas obrigações.
 
@@ -36,7 +36,7 @@ Os atalhos de teclado do Frota valem aqui (**Ctrl+B** abastecimentos, **Ctrl+P**
 | Aba | O que tem |
 |---|---|
 | **Frota** | Avisos de vencimento, alerta de consumo, limite de autorização das ordens de serviço, fator rodoviário das rotas e valores das diárias e contas da contabilização das diárias. |
-| **Gerencial e financeiro** | Os parâmetros do financeiro e do fiscal usados nas contas a pagar e a receber (contas de fornecedores e clientes, juros, multa, descontos e históricos das baixas). |
+| **Gerencial** | Os parâmetros do financeiro e do fiscal usados nas contas a pagar e a receber (contas de fornecedores e clientes, juros, multa, descontos e históricos das baixas). |
 | **Contábil** | Regras de lançamento, centros de custo, encerramento e o **Tipo de contabilização** (On-line ou Em lote, veja [Contabilização em lote](03-contabil.md#contabilizacao-em-lote)). |
 | **Menus** | Escolha dos itens de menu que você quer ver (veja abaixo). |
 

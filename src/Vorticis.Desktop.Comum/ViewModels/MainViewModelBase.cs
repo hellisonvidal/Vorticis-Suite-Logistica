@@ -285,7 +285,7 @@ public abstract partial class MainViewModelBase : ObservableObject, IContexto, I
     private IReadOnlyList<ItemMenu> MontarMenus()
     {
         var cadastros = new List<ItemMenu> { ItemMenu.Tela(Modulo.RotuloEmpresas, TelasComuns.Empresas) };
-        if (Modulo.UsaCadastrosComuns) cadastros.Add(ItemMenu.Tela("Contadores", TelasComuns.Contabilidade));
+        if (Modulo.UsaCadastrosComuns && Modulo.ContadoresNoMenuCadastros) cadastros.Add(ItemMenu.Tela("Contadores", TelasComuns.Contabilidade));
         if (Modulo.UsaCadastrosComuns && Modulo.UsaClientesFornecedores)
             cadastros.AddRange([ItemMenu.Tela("Clientes", TelasComuns.Clientes), ItemMenu.Tela("Fornecedores", TelasComuns.Fornecedores)]);
         if (Modulo.ItensCadastros.Count > 0) cadastros.AddRange(Modulo.ItensCadastros.Prepend(ItemMenu.Separador));

@@ -70,6 +70,9 @@ public interface IModuloDesktop
     /// </summary>
     bool UsaCadastrosComuns => true;
 
+    /// <summary>Mostra Contadores no menu Cadastros. Sem ele, os contadores ficam só na aba Contadores do cadastro da empresa.</summary>
+    bool ContadoresNoMenuCadastros => true;
+
     /// <summary>
     /// Recursos ligados nos parâmetros da empresa ativa (ex.: "gerencial" no Contábil): os itens de menu marcados com
     /// <see cref="ItemMenu.SoCom"/> só aparecem quando o recurso está na lista.
