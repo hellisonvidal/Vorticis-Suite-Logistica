@@ -1,0 +1,31 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Views"
+             x:Class="Vorticis.Desktop.Views.DiarioView"
+             x:DataType="vm:DiarioViewModel">
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="Livro Diário" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="140" />
+      <TextBlock Text="a" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Fim}" Width="140" />
+      <Button Content="Gerar" Command="{Binding GerarCommand}" Classes="accent" />
+      <Rectangle Width="1" Fill="#D0D5DD" Margin="6,4" />
+      <c:BarraExportacaoView />
+    </StackPanel>
+    <c:MensagensView DockPanel.Dock="Bottom" Margin="0,6,0,0" />
+    <DataGrid ItemsSource="{Binding Linhas}" SelectedItem="{Binding Selecionada}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Nº" Binding="{ReflectionBinding Numero}" Width="70" />
+        <DataGridTextColumn Header="Data" Binding="{ReflectionBinding Data}" Width="115" />
+        <DataGridTextColumn Header="Conta" Binding="{ReflectionBinding Conta}" Width="280" />
+        <DataGridTextColumn Header="Débito" Binding="{ReflectionBinding Debito}" Width="120" />
+        <DataGridTextColumn Header="Crédito" Binding="{ReflectionBinding Credito}" Width="120" />
+        <DataGridTextColumn Header="Histórico" Binding="{ReflectionBinding Historico}" Width="*" />
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="100" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>

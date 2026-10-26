@@ -1,0 +1,65 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Frota.Desktop.ViewModels"
+             x:Class="Vorticis.Frota.Desktop.Views.RotasView" x:DataType="vm:RotasViewModel">
+  <Grid ColumnDefinitions="*,12,470" RowDefinitions="Auto,*" Margin="8">
+    <TextBlock Grid.ColumnSpan="3" Classes="titulo" Text="Rotas" Margin="0,0,0,8" />
+    <DataGrid Grid.Row="1" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionada}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Código" Binding="{ReflectionBinding Codigo}" Width="70" />
+        <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="170" />
+        <DataGridTextColumn Header="Trajeto" Binding="{ReflectionBinding Trajeto}" Width="*" />
+        <DataGridTextColumn Header="Distância" Binding="{ReflectionBinding Distancia}" Width="100" />
+        <DataGridTextColumn Header="Tempo" Binding="{ReflectionBinding Tempo}" Width="75" />
+        <DataGridTextColumn Header="Pedágios" Binding="{ReflectionBinding Pedagios}" Width="90" />
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="75" />
+      </DataGrid.Columns>
+    </DataGrid>
+    <ScrollViewer Grid.Row="1" Grid.Column="2">
+    <StackPanel Spacing="6" IsEnabled="{Binding PodeEditar}">
+      <Grid ColumnDefinitions="110,*" RowDefinitions="Auto,Auto" RowSpacing="6">
+        <TextBlock Classes="rotulo" Text="Código" />
+        <TextBox Grid.Column="1" Text="{Binding Codigo}" Width="90" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="1" Classes="rotulo" Text="Descrição" />
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Descricao}" />
+      </Grid>
+      <TextBlock Text="Origem, paradas e destino" FontWeight="SemiBold" />
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <ComboBox ItemsSource="{x:Static vm:RotasViewModel.Ufs}" SelectedItem="{Binding Uf}" Width="75" />
+        <ComboBox ItemsSource="{Binding MunicipiosUf}" SelectedItem="{Binding Municipio}" Width="210" PlaceholderText="Município" />
+        <Button Content="Adicionar" Command="{Binding AdicionarParadaCommand}" />
+      </StackPanel>
+      <ListBox ItemsSource="{Binding Paradas}" SelectedItem="{Binding ParadaSelecionada}" Height="140">
+        <ListBox.ItemTemplate>
+          <DataTemplate x:DataType="vm:ParadaLinha"><TextBlock Text="{Binding Texto}" /></DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <Button Content="Subir" Command="{Binding SubirParadaCommand}" />
+        <Button Content="Descer" Command="{Binding DescerParadaCommand}" />
+        <Button Content="Remover" Command="{Binding RemoverParadaCommand}" />
+      </StackPanel>
+      <TextBlock Text="Adicione na ordem do percurso: a primeira cidade é a origem e a última o destino." FontSize="11" Foreground="Gray" TextWrapping="Wrap" />
+      <Grid ColumnDefinitions="110,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="6">
+        <TextBlock Classes="rotulo" Text="Distância (km)" />
+        <TextBox Grid.Column="1" Text="{Binding DistanciaKm}" Width="120" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="1" Classes="rotulo" Text="Tempo estimado (h)" />
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding TempoHoras}" Width="120" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="2" Classes="rotulo" Text="Pedágios (R$)" />
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Pedagios}" Width="120" HorizontalAlignment="Left" />
+      </Grid>
+      <TextBlock Text="{Binding ResumoDistancia}" FontSize="11" Foreground="Gray" TextWrapping="Wrap" />
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <Button Content="Recalcular estimativa" Command="{Binding RecalcularEstimativaCommand}" />
+        <Button Content="Buscar distância rodoviária" Command="{Binding BuscarRodoviariaCommand}" />
+      </StackPanel>
+      <CheckBox Content="Rota ativa" IsChecked="{Binding Ativa}" />
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <Button Content="Nova rota" Command="{Binding NovaCommand}" />
+        <Button Content="Gravar" Classes="accent" Command="{Binding GravarCommand}" />
+        <Button Content="Excluir" Command="{Binding ExcluirCommand}" />
+      </StackPanel>
+      <c:MensagensView />
+    </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

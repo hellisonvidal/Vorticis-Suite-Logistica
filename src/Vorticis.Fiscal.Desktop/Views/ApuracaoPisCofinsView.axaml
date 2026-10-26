@@ -1,0 +1,43 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Fiscal.Desktop.ViewModels"
+             x:Class="Vorticis.Fiscal.Desktop.Views.ApuracaoPisCofinsView"
+             x:DataType="vm:ApuracaoPisCofinsViewModel">
+  <!-- Apuração › PIS e COFINS -->
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <TextBlock Classes="titulo" Text="PIS e COFINS" VerticalAlignment="Center" />
+        <TextBlock Text="Competência" VerticalAlignment="Center" />
+        <CalendarDatePicker SelectedDate="{Binding CompetenciaData}" Width="140" />
+        <ComboBox ItemsSource="{x:Static vm:ApuracaoPisCofinsViewModel.Regimes}" SelectedIndex="{Binding Regime}" Width="230" />
+        <CheckBox Content="Excluir o ICMS da base (Tema 69/STF)" IsChecked="{Binding ExcluirIcms}" />
+        <Button Content="Sugerir pelas notas" Command="{Binding SugerirCommand}" Classes="accent" />
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <TextBlock Text="Receita da base" VerticalAlignment="Center" />
+        <TextBox Text="{Binding ReceitaTexto}" Width="120" />
+        <TextBlock Text="Base dos créditos" VerticalAlignment="Center" />
+        <TextBox Text="{Binding BaseCreditosTexto}" Width="120" />
+        <TextBlock Text="PIS retido" VerticalAlignment="Center" />
+        <TextBox Text="{Binding PisRetidoTexto}" Width="95" />
+        <TextBlock Text="COFINS retida" VerticalAlignment="Center" />
+        <TextBox Text="{Binding CofinsRetidoTexto}" Width="95" />
+        <Button Content="Calcular" Command="{Binding CalcularCommand}" IsEnabled="{Binding PodeApurar}" />
+        <Button Content="Salvar apuração" Command="{Binding SalvarCommand}" IsEnabled="{Binding PodeApurar}" />
+        <Button Content="Contabilizar provisão" Command="{Binding ContabilizarCommand}" IsEnabled="{Binding PodeContabilizar}" />
+        <Button Content="Desfazer provisão" Command="{Binding DesfazerCommand}" IsEnabled="{Binding PodeDesfazer}" />
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <c:BarraExportacaoView />
+        <TextBlock Text="{Binding Situacao}" FontSize="11" Foreground="Gray" VerticalAlignment="Center" />
+      </StackPanel>
+      <c:MensagensView />
+      <TextBlock Text="{Binding AvisosTexto}" Classes="erro" IsVisible="{Binding AvisosTexto, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+    </StackPanel>
+    <ScrollViewer>
+      <ItemsControl ItemsSource="{Binding Exibidas}" />
+    </ScrollViewer>
+  </DockPanel>
+</UserControl>

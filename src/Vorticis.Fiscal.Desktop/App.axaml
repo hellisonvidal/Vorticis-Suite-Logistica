@@ -1,0 +1,53 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Vorticis.Fiscal.Desktop.App"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Fiscal.Desktop.ViewModels"
+             xmlns:v="using:Vorticis.Fiscal.Desktop.Views"
+             RequestedThemeVariant="Light">
+  <Application.DataTemplates>
+    <!-- Telas comuns (login, empresas, usuários, backup...) -->
+    <c:TemplatesComuns />
+    <!-- Telas do módulo Fiscal -->
+    <DataTemplate DataType="vm:TabelaExibida"><v:TabelaExibidaView /></DataTemplate>
+    <DataTemplate DataType="vm:ImportacaoXmlViewModel"><v:ImportacaoXmlView /></DataTemplate>
+    <DataTemplate DataType="vm:DocumentosViewModel"><v:DocumentosView /></DataTemplate>
+    <DataTemplate DataType="vm:LivroEntradasViewModel"><v:LivroFiscalView /></DataTemplate>
+    <DataTemplate DataType="vm:LivroSaidasViewModel"><v:LivroFiscalView /></DataTemplate>
+    <DataTemplate DataType="vm:LivroApuracaoIcmsViewModel"><v:LivroApuracaoView /></DataTemplate>
+    <DataTemplate DataType="vm:LivroApuracaoIpiViewModel"><v:LivroApuracaoView /></DataTemplate>
+    <DataTemplate DataType="vm:NotaEntradaViewModel"><v:DigitacaoDocumentoView /></DataTemplate>
+    <DataTemplate DataType="vm:NotaSaidaViewModel"><v:DigitacaoDocumentoView /></DataTemplate>
+    <DataTemplate DataType="vm:ProdutosViewModel"><v:ProdutosView /></DataTemplate>
+    <DataTemplate DataType="vm:RelatorioProdutosViewModel"><v:RelatorioProdutosView /></DataTemplate>
+    <DataTemplate DataType="vm:RelatorioItensNotasViewModel"><v:RelatorioItensNotasView /></DataTemplate>
+    <DataTemplate DataType="vm:ResumoCfopViewModel"><v:ResumoCfopView /></DataTemplate>
+    <DataTemplate DataType="vm:BensDaNotaViewModel"><v:BensDaNotaView /></DataTemplate>
+    <DataTemplate DataType="vm:ResumoNotasViewModel"><v:ResumoNotasView /></DataTemplate>
+    <DataTemplate DataType="vm:RelatorioBaixasViewModel"><v:RelatorioBaixasView /></DataTemplate>
+    <DataTemplate DataType="vm:RegrasContabilizacaoViewModel"><v:RegrasContabilizacaoView /></DataTemplate>
+    <DataTemplate DataType="vm:ContabilizarNotasViewModel"><v:ContabilizarNotasView /></DataTemplate>
+    <DataTemplate DataType="vm:FechamentoFiscalViewModel"><v:FechamentoFiscalView /></DataTemplate>
+    <DataTemplate DataType="vm:AjustesIcmsViewModel"><v:AjustesIcmsView /></DataTemplate>
+    <DataTemplate DataType="vm:ContasConsumoViewModel"><v:ContasConsumoView /></DataTemplate>
+    <DataTemplate DataType="vm:InventarioViewModel"><v:InventarioView /></DataTemplate>
+    <DataTemplate DataType="vm:ApuracaoSimplesViewModel"><v:ApuracaoSimplesView /></DataTemplate>
+    <DataTemplate DataType="vm:BaseMensalViewModel"><v:BaseMensalView /></DataTemplate>
+    <DataTemplate DataType="vm:ApuracaoPresumidoViewModel"><v:ApuracaoPresumidoView /></DataTemplate>
+    <DataTemplate DataType="vm:ApuracaoRealViewModel"><v:ApuracaoRealView /></DataTemplate>
+    <DataTemplate DataType="vm:ApuracaoPisCofinsViewModel"><v:ApuracaoPisCofinsView /></DataTemplate>
+    <DataTemplate DataType="vm:RetencoesViewModel"><v:RetencoesView /></DataTemplate>
+    <DataTemplate DataType="vm:GuiasViewModel"><v:GuiasView /></DataTemplate>
+    <DataTemplate DataType="vm:EfdIcmsAssistenteViewModel"><v:EfdAssistenteView /></DataTemplate>
+    <DataTemplate DataType="vm:EfdContribuicoesAssistenteViewModel"><v:EfdAssistenteView /></DataTemplate>
+    <DataTemplate DataType="vm:ContasTributosViewModel"><v:ContasTributosView /></DataTemplate>
+    <DataTemplate DataType="vm:DuplicatasViewModel"><v:DuplicatasView /></DataTemplate>
+    <DataTemplate DataType="vm:ConciliacaoDuplicatasViewModel"><v:ConciliacaoDuplicatasView /></DataTemplate>
+    <DataTemplate DataType="vm:RelDuplicatasPagarViewModel"><v:RelatorioDuplicatasView /></DataTemplate>
+    <DataTemplate DataType="vm:RelDuplicatasReceberViewModel"><v:RelatorioDuplicatasView /></DataTemplate>
+    <DataTemplate DataType="vm:RelPosicaoDuplicatasViewModel"><v:RelatorioDuplicatasView /></DataTemplate>
+  </Application.DataTemplates>
+  <Application.Styles>
+    <StyleInclude Source="avares://Vorticis.Desktop.Comum/Estilos.axaml" />
+  </Application.Styles>
+</Application>

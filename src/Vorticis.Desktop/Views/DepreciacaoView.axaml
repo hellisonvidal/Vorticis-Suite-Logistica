@@ -1,0 +1,39 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Views"
+             x:Class="Vorticis.Desktop.Views.DepreciacaoView"
+             x:DataType="vm:DepreciacaoViewModel">
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="Depreciação mensal" VerticalAlignment="Center" />
+      <TextBlock Text="Competência" VerticalAlignment="Center" />
+      <ComboBox ItemsSource="{x:Static vm:DepreciacaoViewModel.Meses}" SelectedIndex="{Binding Mes}" Width="150" />
+      <NumericUpDown Value="{Binding Ano}" Minimum="2000" Maximum="2100" FormatString="0" Width="130" />
+      <Button Content="Calcular" Command="{Binding CalcularCommand}" />
+      <Button Content="Lançar na contabilidade" Command="{Binding LancarCommand}" Classes="accent" />
+      <Button Content="Estornar competência" Command="{Binding EstornarCommand}" />
+    </StackPanel>
+    <StackPanel DockPanel.Dock="Bottom" Spacing="4" Margin="0,6,0,0">
+      <TextBlock Text="{Binding Resumo}" FontWeight="SemiBold" />
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="Contábil: (custo − valor residual) pela vida útil do bem, a partir do mês do início de uso (CPC 27). Fiscal: taxa da RFB sobre o custo, acelerada por turnos. O lançamento debita a despesa e credita a depreciação (amortização) acumulada, no último dia do mês." />
+      <c:MensagensView />
+    </StackPanel>
+    <DataGrid ItemsSource="{Binding Linhas}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Cód." Binding="{ReflectionBinding Codigo}" Width="60" />
+        <DataGridTextColumn Header="Bem" Binding="{ReflectionBinding Descricao}" Width="*" MinWidth="150" />
+        <DataGridTextColumn Header="Grupo" Binding="{ReflectionBinding Grupo}" Width="170" />
+        <DataGridTextColumn Header="Custo" Binding="{ReflectionBinding Custo}" Width="105" />
+        <DataGridTextColumn Header="Acumulado" Binding="{ReflectionBinding AcumuladoAnterior}" Width="100" />
+        <DataGridTextColumn Header="Contábil" Binding="{ReflectionBinding Contabil}" Width="95" />
+        <DataGridTextColumn Header="Fiscal" Binding="{ReflectionBinding Fiscal}" Width="95" />
+        <DataGridTextColumn Header="Diferença" Binding="{ReflectionBinding Diferenca}" Width="95" />
+        <DataGridTextColumn Header="Saldo" Binding="{ReflectionBinding Saldo}" Width="105" />
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="190" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>

@@ -1,0 +1,49 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Folha.Desktop.ViewModels"
+             x:Class="Vorticis.Folha.Desktop.Views.ESocialView"
+             x:DataType="vm:ESocialViewModel">
+  <Grid ColumnDefinitions="330,16,*" RowDefinitions="Auto,*" Margin="8">
+    <StackPanel Grid.ColumnSpan="3" Spacing="6" Margin="0,0,0,8">
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <TextBlock Classes="titulo" Text="eSocial – leiaute S-1.3" VerticalAlignment="Center" />
+        <TextBlock Text="Competência" VerticalAlignment="Center" />
+        <c:SeletorCompetencia Competencia="{Binding Competencia}" />
+      </StackPanel>
+      <TextBlock Text="Seu perfil não permite gerar eventos do eSocial." Classes="erro" IsVisible="{Binding !PodeUsar}" />
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="Gera os XMLs do leiaute S-1.3 (já conferidos com os XSDs oficiais) e permite exportá-los em arquivo. Para assinar e transmitir direto ao eSocial, use Obrigações › eSocial › Transmissão. Eventos exportados, enviados ou processados não são regerados." />
+    </StackPanel>
+    <StackPanel Grid.Row="1" Spacing="4" IsEnabled="{Binding PodeUsar}">
+      <TextBlock Text="Eventos a gerar" FontWeight="SemiBold" Foreground="#1F3A5F" />
+      <ItemsControl ItemsSource="{Binding Tipos}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:TipoEsocialOpcao">
+            <CheckBox Content="{Binding Texto}" IsChecked="{Binding Marcado}" />
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+      <Button Content="Gerar XMLs" Command="{Binding GerarCommand}" Classes="accent" HorizontalAlignment="Left" Margin="0,8,0,0" />
+      <TextBlock Text="Pasta de exportação" FontSize="11" Margin="0,8,0,0" />
+      <TextBox Text="{Binding Pasta}" />
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button Content="Exportar selecionado" Command="{Binding ExportarSelecionadoCommand}" />
+        <Button Content="Exportar todos" Command="{Binding ExportarTodosCommand}" />
+      </StackPanel>
+      <c:MensagensView />
+    </StackPanel>
+    <Grid Grid.Row="1" Grid.Column="2" RowDefinitions="*,8,*">
+      <DataGrid ItemsSource="{Binding Eventos}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Evento" Binding="{ReflectionBinding Tipo}" Width="70" />
+          <DataGridTextColumn Header="Referência" Binding="{ReflectionBinding Referencia}" Width="150" />
+          <DataGridTextColumn Header="Id do evento" Binding="{ReflectionBinding Id}" Width="*" />
+          <DataGridTextColumn Header="Gerado em" Binding="{ReflectionBinding Gerado}" Width="130" />
+          <DataGridTextColumn Header="Status" Binding="{ReflectionBinding Status}" Width="180" />
+        </DataGrid.Columns>
+      </DataGrid>
+      <TextBox Grid.Row="2" Text="{Binding Xml}" IsReadOnly="True" AcceptsReturn="True" FontFamily="Consolas, Menlo, monospace" FontSize="11" Watermark="Selecione um evento para ver o XML" />
+    </Grid>
+  </Grid>
+</UserControl>

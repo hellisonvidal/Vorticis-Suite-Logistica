@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Vorticis.Fiscal\Vorticis.Fiscal.csproj" />
+    <ProjectReference Include="..\..\src\Vorticis.Fiscal.Desktop\Vorticis.Fiscal.Desktop.csproj" />
+    <!-- BancoDeTeste (banco PostgreSQL descartável por classe de teste) -->
+    <ProjectReference Include="..\Vorticis.Infra.Tests\Vorticis.Infra.Tests.csproj" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+    <Using Include="Vorticis.Infra.Tests" />
+  </ItemGroup>
+</Project>

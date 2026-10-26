@@ -1,0 +1,16 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
+             x:Class="Vorticis.Desktop.Comum.Views.MensagensView"
+             x:DataType="vm:ModuloViewModel">
+  <StackPanel Spacing="2">
+    <TextBlock Classes="ok" Text="{Binding Mensagem}" IsVisible="{Binding Mensagem, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+    <ItemsControl ItemsSource="{Binding Erros}">
+      <ItemsControl.ItemTemplate>
+        <DataTemplate x:DataType="x:String">
+          <TextBlock Classes="erro" Text="{Binding StringFormat='• {0}'}" />
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+  </StackPanel>
+</UserControl>

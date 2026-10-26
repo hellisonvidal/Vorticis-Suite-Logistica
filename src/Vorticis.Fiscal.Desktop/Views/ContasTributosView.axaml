@@ -1,0 +1,33 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:g="using:Vorticis.Fiscal.Desktop.Views"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Fiscal.Desktop.ViewModels"
+             x:Class="Vorticis.Fiscal.Desktop.Views.ContasTributosView"
+             x:DataType="vm:ContasTributosViewModel">
+  <!-- Apuração › Contas dos tributos (provisões) -->
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="Contas contábeis dos tributos apurados" />
+      <TextBlock FontSize="12" Foreground="#44506A" TextWrapping="Wrap"
+                 Text="Contas usadas para contabilizar a provisão de cada tributo apurado (débito na despesa, crédito no passivo a recolher). As contas de despesa de IRPJ e CSLL também permitem ao Lucro Real somar de volta ao lucro a provisão já lançada." />
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <ComboBox ItemsSource="{Binding Tributos}" SelectedIndex="{Binding Tributo}" Width="110" />
+        <TextBlock Text="Despesa" VerticalAlignment="Center" />
+        <TextBox Text="{Binding Despesa}" Watermark="ex.: 4.5.01.001" Width="140" />
+        <TextBlock Text="Passivo (a recolher)" VerticalAlignment="Center" />
+        <TextBox Text="{Binding Passivo}" Watermark="ex.: 2.1.04.004" Width="140" />
+        <Button Content="Salvar" Command="{Binding SalvarCommand}" IsEnabled="{Binding PodeManter}" Classes="accent" />
+        <Button Content="Remover" Command="{Binding ExcluirCommand}" IsEnabled="{Binding PodeManter}" />
+      </StackPanel>
+      <c:MensagensView />
+    </StackPanel>
+    <DataGrid g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Contas}" SelectedItem="{Binding Selecionada}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Tributo" Binding="{ReflectionBinding Tributo}" Width="100" />
+        <DataGridTextColumn Header="Conta de despesa" Binding="{ReflectionBinding Despesa}" Width="200" />
+        <DataGridTextColumn Header="Conta de passivo" Binding="{ReflectionBinding Passivo}" Width="200" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>

@@ -1,0 +1,57 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Views"
+             x:Class="Vorticis.Desktop.Views.ConciliacaoView"
+             x:DataType="vm:ConciliacaoViewModel">
+  <DockPanel Margin="8">
+    <DockPanel DockPanel.Dock="Right" Width="280" Margin="12,0,0,0">
+      <TextBlock DockPanel.Dock="Top" Text="Contas analíticas" FontWeight="SemiBold" />
+      <TextBox DockPanel.Dock="Top" Text="{Binding FiltroConta}" Watermark="Filtrar: reduzido, código ou nome" Margin="0,4" />
+      <ListBox ItemsSource="{Binding Contas}" SelectedItem="{Binding ContaSelecionada}">
+        <ListBox.ItemTemplate>
+          <DataTemplate x:DataType="vm:ContaSelecionavel">
+            <TextBlock Text="{Binding Rotulo}" FontSize="11.5" FontFamily="Consolas, Menlo, monospace" />
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </DockPanel>
+    <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <TextBlock Classes="titulo" Text="Conciliação automática" VerticalAlignment="Center" />
+        <TextBox Text="{Binding Conta}" Watermark="Conta ou reduzido (vazio = todas)" Width="220" />
+        <TextBlock Text="até" VerticalAlignment="Center" />
+        <CalendarDatePicker SelectedDate="{Binding Ate}" Width="130" />
+        <Button Content="Consultar" Command="{Binding ConsultarCommand}" />
+        <CheckBox Content="Mostrar conciliadas" IsChecked="{Binding MostrarConciliadas}" />
+        <CheckBox Content="Somente com documento" IsChecked="{Binding SomenteComDocumento}" />
+      </StackPanel>
+      <TextBlock Text="{Binding NomeConta}" FontWeight="SemiBold" Foreground="#1F3A5F" />
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button Content="Conciliar automaticamente (nº do documento)" Command="{Binding ConciliarAutomaticoCommand}" Classes="accent" />
+        <Button Content="Conciliar selecionadas" Command="{Binding ConciliarSelecionadasCommand}" />
+        <Button Content="Desfazer conciliação" Command="{Binding DesfazerCommand}" />
+      </StackPanel>
+    </StackPanel>
+    <StackPanel DockPanel.Dock="Bottom" Spacing="4" Margin="0,6,0,0">
+      <TextBlock Text="{Binding Resumo}" FontWeight="SemiBold" />
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="Automática: junta as partidas em aberto com o mesmo nº de documento (ignorando espaços, zeros à esquerda e maiúsculas) cujos débitos e créditos se anulam — por exemplo, a nota fiscal lançada na compra e o pagamento da mesma nota. Manual: marque as partidas que se compensam. O que fica em aberto compõe o saldo da conta." />
+      <c:MensagensView />
+    </StackPanel>
+    <DataGrid ItemsSource="{Binding Linhas}" SelectedItem="{Binding LinhaSelecionada}" AutoGenerateColumns="False" CanUserSortColumns="True">
+      <DataGrid.Columns>
+        <DataGridCheckBoxColumn Header="" Binding="{ReflectionBinding Selecionada}" Width="40" />
+        <DataGridTextColumn Header="Data" Binding="{ReflectionBinding Data}" Width="100" IsReadOnly="True" />
+        <DataGridTextColumn Header="Nº" Binding="{ReflectionBinding Numero}" Width="60" IsReadOnly="True" />
+        <DataGridTextColumn Header="Conta" Binding="{ReflectionBinding Conta}" Width="200" IsReadOnly="True" />
+        <DataGridTextColumn Header="Documento" Binding="{ReflectionBinding Documento}" Width="110" IsReadOnly="True" />
+        <DataGridTextColumn Header="Débito" Binding="{ReflectionBinding Debito}" Width="105" IsReadOnly="True" />
+        <DataGridTextColumn Header="Crédito" Binding="{ReflectionBinding Credito}" Width="105" IsReadOnly="True" />
+        <DataGridTextColumn Header="Histórico" Binding="{ReflectionBinding Historico}" Width="*" IsReadOnly="True" />
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="130" IsReadOnly="True" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>

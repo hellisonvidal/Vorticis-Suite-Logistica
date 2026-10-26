@@ -1,0 +1,41 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Frota.Desktop.ViewModels"
+             x:Class="Vorticis.Frota.Desktop.Views.FrotasView" x:DataType="vm:FrotasViewModel">
+  <Grid ColumnDefinitions="*,12,380" RowDefinitions="Auto,*" Margin="8">
+    <TextBlock Grid.ColumnSpan="3" Classes="titulo" Text="Frotas" Margin="0,0,0,8" />
+    <DataGrid Grid.Row="1" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionada}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Código" Binding="{ReflectionBinding Codigo}" Width="70" />
+        <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" />
+        <DataGridTextColumn Header="Tipo" Binding="{ReflectionBinding Tipo}" Width="100" />
+        <DataGridTextColumn Header="Responsável" Binding="{ReflectionBinding Responsavel}" Width="150" />
+        <DataGridTextColumn Header="Centro de custo padrão" Binding="{ReflectionBinding CentroCusto}" Width="200" />
+        <DataGridTextColumn Header="Veículos" Binding="{ReflectionBinding Veiculos}" Width="80" />
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="80" />
+      </DataGrid.Columns>
+    </DataGrid>
+    <StackPanel Grid.Row="1" Grid.Column="2" Spacing="6" IsEnabled="{Binding PodeEditar}">
+      <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
+        <TextBlock Classes="rotulo" Text="Código" />
+        <TextBox Grid.Column="1" Text="{Binding Codigo}" Width="90" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="1" Classes="rotulo" Text="Descrição" />
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Descricao}" />
+        <TextBlock Grid.Row="2" Classes="rotulo" Text="Tipo" />
+        <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{x:Static vm:FrotasViewModel.Tipos}" SelectedItem="{Binding Tipo}" Width="160" />
+        <TextBlock Grid.Row="3" Classes="rotulo" Text="Responsável" />
+        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Responsavel}" />
+        <TextBlock Grid.Row="4" Classes="rotulo" Text="Centro de custo padrão" TextWrapping="Wrap" />
+        <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding CentrosOpcoes}" SelectedItem="{Binding CentroCusto}" HorizontalAlignment="Stretch" />
+        <CheckBox Grid.Row="5" Grid.Column="1" Content="Frota ativa" IsChecked="{Binding Ativa}" />
+      </Grid>
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <Button Content="Nova frota" Command="{Binding NovaCommand}" />
+        <Button Content="Gravar" Classes="accent" Command="{Binding GravarCommand}" />
+        <Button Content="Excluir" Command="{Binding ExcluirCommand}" />
+      </StackPanel>
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="Para colocar um veículo na frota, abra Cadastros › Veículos e escolha a frota. Para um centro de custo representar a frota, use o campo Frota em Cadastros › Centros de custo." />
+      <c:MensagensView />
+    </StackPanel>
+  </Grid>
+</UserControl>

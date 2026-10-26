@@ -1,0 +1,25 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Folha.Desktop.ViewModels"
+             xmlns:v="using:Vorticis.Folha.Desktop.Views"
+             x:Class="Vorticis.Folha.Desktop.Views.ProvisoesFolhaView"
+             x:DataType="vm:ProvisoesFolhaViewModel">
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <TextBlock Classes="titulo" Text="Provisões de férias e 13º salário" VerticalAlignment="Center" />
+        <TextBlock Text="Competência" VerticalAlignment="Center" />
+        <c:SeletorCompetencia Competencia="{Binding Competencia}" />
+        <Button Content="Calcular provisões" Command="{Binding CalcularCommand}" Classes="accent" IsEnabled="{Binding PodeCalcular}" />
+        <Button Content="Mostrar" Command="{Binding GerarCommand}" />
+        <Rectangle Width="1" Fill="#D0D5DD" Margin="6,4" />
+        <c:BarraExportacaoView />
+      </StackPanel>
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="Provisão mensal: férias = 1/12 da remuneração-base + 1/3; 13º = 1/12; mais INSS patronal, RAT, terceiros e FGTS sobre cada uma (Simples Nacional conforme o anexo). Contabilize em Folha › Contabilização." />
+    </StackPanel>
+    <c:MensagensView DockPanel.Dock="Bottom" />
+    <v:TabelaRelatorioGrid Tabela="{Binding Tabela}" />
+  </DockPanel>
+</UserControl>

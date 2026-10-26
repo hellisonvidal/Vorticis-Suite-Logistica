@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <EmbeddedResource Include="Obrigacoes\obrigacoes_federais.json" LogicalName="Vorticis.Domain.Obrigacoes.obrigacoes_federais.json" />
+  </ItemGroup>
+</Project>

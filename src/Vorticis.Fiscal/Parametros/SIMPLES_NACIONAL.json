@@ -1,0 +1,410 @@
+{
+ "vigencia_inicio": "2018-01-01",
+ "fundamento": "LC 123/2006, Anexos I a V (redação da LC 155/2016), em vigor desde 01/01/2018; repartição conforme Res. CGSN 140/2018",
+ "limite_rbt12": 4800000,
+ "sublimite_icms_iss": 3600000,
+ "limite_fator_r": 0.28,
+ "minimo_das": 10,
+ "anexos": {
+  "I": [
+   {
+    "ate": 180000,
+    "aliquota": 4,
+    "deduzir": 0,
+    "reparticao": {
+     "IRPJ": 5.5,
+     "CSLL": 3.5,
+     "COFINS": 12.74,
+     "PIS": 2.76,
+     "CPP": 41.5,
+     "ICMS": 34
+    }
+   },
+   {
+    "ate": 360000,
+    "aliquota": 7.3,
+    "deduzir": 5940,
+    "reparticao": {
+     "IRPJ": 5.5,
+     "CSLL": 3.5,
+     "COFINS": 12.74,
+     "PIS": 2.76,
+     "CPP": 41.5,
+     "ICMS": 34
+    }
+   },
+   {
+    "ate": 720000,
+    "aliquota": 9.5,
+    "deduzir": 13860,
+    "reparticao": {
+     "IRPJ": 5.5,
+     "CSLL": 3.5,
+     "COFINS": 12.74,
+     "PIS": 2.76,
+     "CPP": 42,
+     "ICMS": 33.5
+    }
+   },
+   {
+    "ate": 1800000,
+    "aliquota": 10.7,
+    "deduzir": 22500,
+    "reparticao": {
+     "IRPJ": 5.5,
+     "CSLL": 3.5,
+     "COFINS": 12.74,
+     "PIS": 2.76,
+     "CPP": 42,
+     "ICMS": 33.5
+    }
+   },
+   {
+    "ate": 3600000,
+    "aliquota": 14.3,
+    "deduzir": 87300,
+    "reparticao": {
+     "IRPJ": 5.5,
+     "CSLL": 3.5,
+     "COFINS": 12.74,
+     "PIS": 2.76,
+     "CPP": 42,
+     "ICMS": 33.5
+    }
+   },
+   {
+    "ate": 4800000,
+    "aliquota": 19,
+    "deduzir": 378000,
+    "reparticao": {
+     "IRPJ": 13.5,
+     "CSLL": 10,
+     "COFINS": 28.27,
+     "PIS": 6.13,
+     "CPP": 42.1,
+     "ICMS": 0
+    }
+   }
+  ],
+  "II": [
+   {
+    "ate": 180000,
+    "aliquota": 4.5,
+    "deduzir": 0,
+    "reparticao": {
+     "IRPJ": 5.5,
+     "CSLL": 3.5,
+     "COFINS": 11.51,
+     "PIS": 2.49,
+     "CPP": 37.5,
+     "IPI": 7.5,
+     "ICMS": 32
+    }
+   },
+   {
+    "ate": 360000,
+    "aliquota": 7.8,
+    "deduzir": 5940,
+    "reparticao": {
+     "IRPJ": 5.5,
+     "CSLL": 3.5,
+     "COFINS": 11.51,
+     "PIS": 2.49,
+     "CPP": 37.5,
+     "IPI": 7.5,
+     "ICMS": 32
+    }
+   },
+   {
+    "ate": 720000,
+    "aliquota": 10,
+    "deduzir": 13860,
+    "reparticao": {
+     "IRPJ": 5.5,
+     "CSLL": 3.5,
+     "COFINS": 11.51,
+     "PIS": 2.49,
+     "CPP": 37.5,
+     "IPI": 7.5,
+     "ICMS": 32
+    }
+   },
+   {
+    "ate": 1800000,
+    "aliquota": 11.2,
+    "deduzir": 22500,
+    "reparticao": {
+     "IRPJ": 5.5,
+     "CSLL": 3.5,
+     "COFINS": 11.51,
+     "PIS": 2.49,
+     "CPP": 37.5,
+     "IPI": 7.5,
+     "ICMS": 32
+    }
+   },
+   {
+    "ate": 3600000,
+    "aliquota": 14.7,
+    "deduzir": 85500,
+    "reparticao": {
+     "IRPJ": 5.5,
+     "CSLL": 3.5,
+     "COFINS": 11.51,
+     "PIS": 2.49,
+     "CPP": 37.5,
+     "IPI": 7.5,
+     "ICMS": 32
+    }
+   },
+   {
+    "ate": 4800000,
+    "aliquota": 30,
+    "deduzir": 720000,
+    "reparticao": {
+     "IRPJ": 8.5,
+     "CSLL": 7.5,
+     "COFINS": 20.96,
+     "PIS": 4.54,
+     "CPP": 23.5,
+     "IPI": 35,
+     "ICMS": 0
+    }
+   }
+  ],
+  "III": [
+   {
+    "ate": 180000,
+    "aliquota": 6,
+    "deduzir": 0,
+    "reparticao": {
+     "IRPJ": 4,
+     "CSLL": 3.5,
+     "COFINS": 12.82,
+     "PIS": 2.78,
+     "CPP": 43.4,
+     "ISS": 33.5
+    }
+   },
+   {
+    "ate": 360000,
+    "aliquota": 11.2,
+    "deduzir": 9360,
+    "reparticao": {
+     "IRPJ": 4,
+     "CSLL": 3.5,
+     "COFINS": 14.05,
+     "PIS": 3.05,
+     "CPP": 43.4,
+     "ISS": 32
+    }
+   },
+   {
+    "ate": 720000,
+    "aliquota": 13.5,
+    "deduzir": 17640,
+    "reparticao": {
+     "IRPJ": 4,
+     "CSLL": 3.5,
+     "COFINS": 13.64,
+     "PIS": 2.96,
+     "CPP": 43.4,
+     "ISS": 32.5
+    }
+   },
+   {
+    "ate": 1800000,
+    "aliquota": 16,
+    "deduzir": 35640,
+    "reparticao": {
+     "IRPJ": 4,
+     "CSLL": 3.5,
+     "COFINS": 13.64,
+     "PIS": 2.96,
+     "CPP": 43.4,
+     "ISS": 32.5
+    }
+   },
+   {
+    "ate": 3600000,
+    "aliquota": 21,
+    "deduzir": 125640,
+    "reparticao": {
+     "IRPJ": 4,
+     "CSLL": 3.5,
+     "COFINS": 12.82,
+     "PIS": 2.78,
+     "CPP": 43.4,
+     "ISS": 33.5
+    }
+   },
+   {
+    "ate": 4800000,
+    "aliquota": 33,
+    "deduzir": 648000,
+    "reparticao": {
+     "IRPJ": 35,
+     "CSLL": 15,
+     "COFINS": 16.03,
+     "PIS": 3.47,
+     "CPP": 30.5,
+     "ISS": 0
+    }
+   }
+  ],
+  "IV": [
+   {
+    "ate": 180000,
+    "aliquota": 4.5,
+    "deduzir": 0,
+    "reparticao": {
+     "IRPJ": 18.8,
+     "CSLL": 15.2,
+     "COFINS": 17.67,
+     "PIS": 3.83,
+     "ISS": 44.5
+    }
+   },
+   {
+    "ate": 360000,
+    "aliquota": 9,
+    "deduzir": 8100,
+    "reparticao": {
+     "IRPJ": 19.8,
+     "CSLL": 15.2,
+     "COFINS": 20.55,
+     "PIS": 4.45,
+     "ISS": 40
+    }
+   },
+   {
+    "ate": 720000,
+    "aliquota": 10.2,
+    "deduzir": 12420,
+    "reparticao": {
+     "IRPJ": 20.8,
+     "CSLL": 15.2,
+     "COFINS": 19.73,
+     "PIS": 4.27,
+     "ISS": 40
+    }
+   },
+   {
+    "ate": 1800000,
+    "aliquota": 14,
+    "deduzir": 39780,
+    "reparticao": {
+     "IRPJ": 17.8,
+     "CSLL": 19.2,
+     "COFINS": 18.9,
+     "PIS": 4.1,
+     "ISS": 40
+    }
+   },
+   {
+    "ate": 3600000,
+    "aliquota": 22,
+    "deduzir": 183780,
+    "reparticao": {
+     "IRPJ": 18.8,
+     "CSLL": 19.2,
+     "COFINS": 18.08,
+     "PIS": 3.92,
+     "ISS": 40
+    }
+   },
+   {
+    "ate": 4800000,
+    "aliquota": 33,
+    "deduzir": 828000,
+    "reparticao": {
+     "IRPJ": 53.5,
+     "CSLL": 21.5,
+     "COFINS": 20.55,
+     "PIS": 4.45,
+     "ISS": 0
+    }
+   }
+  ],
+  "V": [
+   {
+    "ate": 180000,
+    "aliquota": 15.5,
+    "deduzir": 0,
+    "reparticao": {
+     "IRPJ": 25,
+     "CSLL": 15,
+     "COFINS": 14.1,
+     "PIS": 3.05,
+     "CPP": 28.85,
+     "ISS": 14
+    }
+   },
+   {
+    "ate": 360000,
+    "aliquota": 18,
+    "deduzir": 4500,
+    "reparticao": {
+     "IRPJ": 23,
+     "CSLL": 15,
+     "COFINS": 14.1,
+     "PIS": 3.05,
+     "CPP": 27.85,
+     "ISS": 17
+    }
+   },
+   {
+    "ate": 720000,
+    "aliquota": 19.5,
+    "deduzir": 9900,
+    "reparticao": {
+     "IRPJ": 24,
+     "CSLL": 15,
+     "COFINS": 14.92,
+     "PIS": 3.23,
+     "CPP": 23.85,
+     "ISS": 19
+    }
+   },
+   {
+    "ate": 1800000,
+    "aliquota": 20.5,
+    "deduzir": 17100,
+    "reparticao": {
+     "IRPJ": 21,
+     "CSLL": 15,
+     "COFINS": 15.74,
+     "PIS": 3.41,
+     "CPP": 23.85,
+     "ISS": 21
+    }
+   },
+   {
+    "ate": 3600000,
+    "aliquota": 23,
+    "deduzir": 62100,
+    "reparticao": {
+     "IRPJ": 23,
+     "CSLL": 12.5,
+     "COFINS": 14.1,
+     "PIS": 3.05,
+     "CPP": 23.85,
+     "ISS": 23.5
+    }
+   },
+   {
+    "ate": 4800000,
+    "aliquota": 30.5,
+    "deduzir": 540000,
+    "reparticao": {
+     "IRPJ": 35,
+     "CSLL": 15.5,
+     "COFINS": 16.44,
+     "PIS": 3.56,
+     "CPP": 29.5,
+     "ISS": 0
+    }
+   }
+  ]
+ }
+}

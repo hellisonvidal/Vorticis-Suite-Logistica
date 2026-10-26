@@ -1,0 +1,58 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Frota.Desktop.ViewModels"
+             x:Class="Vorticis.Frota.Desktop.Views.AbastecimentosView" x:DataType="vm:AbastecimentosViewModel">
+  <Grid ColumnDefinitions="*,12,380" RowDefinitions="Auto,Auto,*" Margin="8">
+    <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="8" Margin="0,0,0,6">
+      <TextBlock Classes="titulo" Text="Abastecimentos" VerticalAlignment="Center" />
+      <TextBlock Text="Período" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="130" />
+      <TextBlock Text="a" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Fim}" Width="130" />
+    </StackPanel>
+    <TextBlock Grid.Row="1" Grid.ColumnSpan="3" Text="{Binding Totais}" FontSize="12" Margin="0,0,0,6" />
+    <DataGrid Grid.Row="2" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Data" Binding="{ReflectionBinding Data}" Width="95" />
+        <DataGridTextColumn Header="Placa" Binding="{ReflectionBinding Placa}" Width="95" />
+        <DataGridTextColumn Header="Motorista" Binding="{ReflectionBinding Motorista}" Width="*" />
+        <DataGridTextColumn Header="Km" Binding="{ReflectionBinding Km}" Width="90" />
+        <DataGridTextColumn Header="Litros" Binding="{ReflectionBinding Litros}" Width="80" />
+        <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="95" />
+        <DataGridTextColumn Header="R$/litro" Binding="{ReflectionBinding PrecoLitro}" Width="75" />
+        <DataGridTextColumn Header="Combustível" Binding="{ReflectionBinding Combustivel}" Width="120" />
+        <DataGridTextColumn Header="Média" Binding="{ReflectionBinding Media}" Width="100" />
+      </DataGrid.Columns>
+    </DataGrid>
+    <StackPanel Grid.Row="2" Grid.Column="2" Spacing="6" IsEnabled="{Binding PodeEditar}">
+      <Grid ColumnDefinitions="110,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
+        <TextBlock Classes="rotulo" Text="Veículo" />
+        <ComboBox Grid.Column="1" ItemsSource="{Binding VeiculosOpcoes}" SelectedItem="{Binding Veiculo}" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="1" Classes="rotulo" Text="Motorista" />
+        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding MotoristasOpcoes}" SelectedItem="{Binding Motorista}" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="2" Classes="rotulo" Text="Data" />
+        <CalendarDatePicker Grid.Row="2" Grid.Column="1" SelectedDate="{Binding Data}" Width="140" />
+        <TextBlock Grid.Row="3" Classes="rotulo" Text="Km do hodômetro" />
+        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Km}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="4" Classes="rotulo" Text="Combustível" />
+        <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{x:Static vm:AbastecimentosViewModel.Combustiveis}" SelectedItem="{Binding Combustivel}" Width="160" />
+        <TextBlock Grid.Row="5" Classes="rotulo" Text="Litros" />
+        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Litros}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="6" Classes="rotulo" Text="Valor total" />
+        <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Valor}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="7" Classes="rotulo" Text="Posto" />
+        <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding Posto}" />
+        <TextBlock Grid.Row="8" Classes="rotulo" Text="Observação" />
+        <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding Observacao}" />
+        <CheckBox Grid.Row="9" Grid.Column="1" Content="Completou o tanque" IsChecked="{Binding TanqueCheio}" />
+      </Grid>
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <Button Content="Novo abastecimento" Command="{Binding NovoCommand}" />
+        <Button Content="Gravar" Classes="accent" Command="{Binding GravarCommand}" />
+        <Button Content="Excluir" Command="{Binding ExcluirCommand}" />
+      </StackPanel>
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="A média (km/l) é calculada de tanque cheio a tanque cheio; abastecimentos parciais entram na soma dos litros. Arla 32 não entra na média." />
+      <c:MensagensView />
+    </StackPanel>
+  </Grid>
+</UserControl>

@@ -1,0 +1,179 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Folha.Desktop.ViewModels"
+             xmlns:cad="using:Vorticis.Folha.Cadastros"
+             xmlns:ctb="using:Vorticis.Application.Contabil"
+             x:Class="Vorticis.Folha.Desktop.Views.FuncionariosView"
+             x:DataType="vm:FuncionariosViewModel">
+  <Grid ColumnDefinitions="*,12,560" RowDefinitions="Auto,*" Margin="8">
+    <c:BarraCadastroView Grid.ColumnSpan="3" Margin="0,0,0,8" />
+    <DockPanel Grid.Row="1" IsEnabled="{Binding !EmEdicao}">
+      <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="0,0,0,8">
+        <TextBlock Classes="titulo" Text="Funcionários" VerticalAlignment="Center" />
+        <TextBox Text="{Binding Filtro}" Watermark="Filtrar por nome, matrícula ou CPF" Width="260" />
+      </StackPanel>
+      <DataGrid ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Matrícula" Binding="{ReflectionBinding Matricula}" Width="90" />
+          <DataGridTextColumn Header="Nome" Binding="{ReflectionBinding Nome}" Width="*" />
+          <DataGridTextColumn Header="CPF" Binding="{ReflectionBinding Cpf}" Width="120" />
+          <DataGridTextColumn Header="Cargo" Binding="{ReflectionBinding Cargo}" Width="150" />
+          <DataGridTextColumn Header="Admissão" Binding="{ReflectionBinding Admissao}" Width="90" />
+          <DataGridTextColumn Header="Salário" Binding="{ReflectionBinding Salario}" Width="100" />
+          <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="150" />
+        </DataGrid.Columns>
+      </DataGrid>
+    </DockPanel>
+    <DockPanel Grid.Row="1" Grid.Column="2">
+      <TextBlock DockPanel.Dock="Top" Text="Seu perfil permite apenas consultar." Classes="erro" IsVisible="{Binding !PodeEditar}" />
+      <c:MensagensView DockPanel.Dock="Bottom" />
+      <TabControl>
+        <TabItem Header="Pessoal">
+          <ScrollViewer>
+            <Grid ColumnDefinitions="110,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6" Margin="0,8,8,0">
+              <TextBlock Classes="rotulo" Text="Matrícula" />
+              <TextBox Grid.Column="1" Text="{Binding Matricula}" IsEnabled="{Binding EmInclusao}" Watermark="Vazio = próxima" Width="160" HorizontalAlignment="Left" />
+              <TextBlock Grid.Row="1" Classes="rotulo" Text="Nome" />
+              <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Nome}" IsEnabled="{Binding EmEdicao}" />
+              <TextBlock Grid.Row="2" Classes="rotulo" Text="CPF" />
+              <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Cpf}" IsEnabled="{Binding EmEdicao}" Width="160" HorizontalAlignment="Left" />
+              <TextBlock Grid.Row="3" Classes="rotulo" Text="PIS/NIS" />
+              <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Pis}" IsEnabled="{Binding EmEdicao}" Width="160" HorizontalAlignment="Left" />
+              <TextBlock Grid.Row="4" Classes="rotulo" Text="Nascimento" />
+              <CalendarDatePicker Grid.Row="4" Grid.Column="1" SelectedDate="{Binding Nascimento}" IsEnabled="{Binding EmEdicao}" HorizontalAlignment="Left" Width="160" />
+              <TextBlock Grid.Row="5" Classes="rotulo" Text="Sexo" />
+              <ComboBox Grid.Row="5" Grid.Column="1" ItemsSource="{x:Static vm:FuncionariosViewModel.Sexos}" SelectedItem="{Binding Sexo}" IsEnabled="{Binding EmEdicao}" Width="160" />
+              <TextBlock Grid.Row="6" Classes="rotulo" Text="Raça/cor" />
+              <ComboBox Grid.Row="6" Grid.Column="1" ItemsSource="{x:Static vm:FuncionariosViewModel.Racas}" SelectedItem="{Binding Raca}" IsEnabled="{Binding EmEdicao}" Width="200" />
+              <TextBlock Grid.Row="7" Classes="rotulo" Text="Estado civil" />
+              <ComboBox Grid.Row="7" Grid.Column="1" ItemsSource="{x:Static vm:FuncionariosViewModel.EstadosCivis}" SelectedItem="{Binding EstadoCivil}" IsEnabled="{Binding EmEdicao}" Width="200" />
+              <TextBlock Grid.Row="8" Classes="rotulo" Text="E-mail" />
+              <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding Email}" IsEnabled="{Binding EmEdicao}" />
+              <TextBlock Grid.Row="9" Classes="rotulo" Text="Telefone" />
+              <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding Telefone}" IsEnabled="{Binding EmEdicao}" Width="160" HorizontalAlignment="Left" />
+              <TextBlock Grid.Row="10" Classes="rotulo" Text="CEP" />
+              <TextBox Grid.Row="10" Grid.Column="1" Text="{Binding Cep}" IsEnabled="{Binding EmEdicao}" Width="160" HorizontalAlignment="Left" />
+              <TextBlock Grid.Row="11" Classes="rotulo" Text="Logradouro" />
+              <Grid Grid.Row="11" Grid.Column="1" ColumnDefinitions="60,6,*,6,90">
+                <TextBox Text="{Binding TipoLogradouro}" IsEnabled="{Binding EmEdicao}" Watermark="Tipo" MaxLength="4" ToolTip.Tip="Tipo de logradouro (eSocial, tabela 20): R, AV, TV..." />
+                <TextBox Grid.Column="2" Text="{Binding Logradouro}" IsEnabled="{Binding EmEdicao}" />
+                <TextBox Grid.Column="4" Text="{Binding Numero}" IsEnabled="{Binding EmEdicao}" Watermark="Nº" />
+              </Grid>
+              <TextBlock Grid.Row="12" Classes="rotulo" Text="Complemento" />
+              <TextBox Grid.Row="12" Grid.Column="1" Text="{Binding Complemento}" IsEnabled="{Binding EmEdicao}" />
+              <TextBlock Grid.Row="13" Classes="rotulo" Text="Bairro" />
+              <TextBox Grid.Row="13" Grid.Column="1" Text="{Binding Bairro}" IsEnabled="{Binding EmEdicao}" />
+              <TextBlock Grid.Row="14" Classes="rotulo" Text="Município IBGE/UF" />
+              <StackPanel Grid.Row="14" Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                <TextBox Text="{Binding CodMunicipio}" IsEnabled="{Binding EmEdicao}" Width="120" Watermark="Cód. IBGE" MaxLength="7" />
+                <TextBox Text="{Binding Uf}" IsEnabled="{Binding EmEdicao}" Width="60" Watermark="UF" MaxLength="2" />
+              </StackPanel>
+            </Grid>
+          </ScrollViewer>
+        </TabItem>
+        <TabItem Header="Contrato">
+          <ScrollViewer>
+            <Grid ColumnDefinitions="130,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6" Margin="0,8,8,0">
+              <TextBlock Classes="rotulo" Text="Admissão" />
+              <CalendarDatePicker Grid.Column="1" SelectedDate="{Binding Admissao}" IsEnabled="{Binding EmEdicao}" Width="160" HorizontalAlignment="Left" />
+              <TextBlock Grid.Row="1" Classes="rotulo" Text="Categoria eSocial" />
+              <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{x:Static vm:FuncionariosViewModel.Categorias}" SelectedItem="{Binding Categoria}" IsEnabled="{Binding EmEdicao}" Width="260" />
+              <TextBlock Grid.Row="2" Classes="rotulo" Text="Tipo de contrato" />
+              <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{x:Static vm:FuncionariosViewModel.Contratos}" SelectedItem="{Binding Contrato}" IsEnabled="{Binding EmEdicao}" Width="260" />
+              <TextBlock Grid.Row="3" Classes="rotulo" Text="Término do contrato" />
+              <CalendarDatePicker Grid.Row="3" Grid.Column="1" SelectedDate="{Binding Termino}" IsEnabled="{Binding EmEdicao}" Width="160" HorizontalAlignment="Left" />
+              <TextBlock Grid.Row="4" Classes="rotulo" Text="Cargo" />
+              <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding Cargos}" SelectedItem="{Binding Cargo}" IsEnabled="{Binding EmEdicao}" Width="260">
+                <ComboBox.ItemTemplate><DataTemplate x:DataType="cad:Cargo"><TextBlock Text="{Binding Nome}" /></DataTemplate></ComboBox.ItemTemplate>
+              </ComboBox>
+              <TextBlock Grid.Row="5" Classes="rotulo" Text="CBO" />
+              <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                <TextBox Text="{Binding Cbo}" IsEnabled="{Binding EmEdicao}" Width="120" MaxLength="7" />
+                <TextBlock Text="CNPJ do sindicato" VerticalAlignment="Center" />
+                <TextBox Text="{Binding CnpjSindicato}" IsEnabled="{Binding EmEdicao}" Width="180" MaxLength="18" ToolTip.Tip="Sindicato representativo da categoria (obrigatório no S-2200 do eSocial)" />
+              </StackPanel>
+              <TextBlock Grid.Row="6" Classes="rotulo" Text="Departamento" />
+              <ComboBox Grid.Row="6" Grid.Column="1" ItemsSource="{Binding Departamentos}" SelectedItem="{Binding Departamento}" IsEnabled="{Binding EmEdicao}" Width="260">
+                <ComboBox.ItemTemplate><DataTemplate x:DataType="cad:Departamento"><TextBlock Text="{Binding Nome}" /></DataTemplate></ComboBox.ItemTemplate>
+              </ComboBox>
+              <TextBlock Grid.Row="7" Classes="rotulo" Text="Tipo de salário" />
+              <ComboBox Grid.Row="7" Grid.Column="1" ItemsSource="{x:Static vm:FuncionariosViewModel.TiposSalario}" SelectedItem="{Binding TipoSalario}" IsEnabled="{Binding EmEdicao}" Width="260" />
+              <TextBlock Grid.Row="8" Classes="rotulo" Text="Salário (R$)" />
+              <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding Salario}" IsEnabled="{Binding EmEdicao}" Width="160" HorizontalAlignment="Left" />
+              <TextBlock Grid.Row="9" Classes="rotulo" Text="Jornada (h)" />
+              <StackPanel Grid.Row="9" Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                <TextBox Text="{Binding JornadaSemanal}" IsEnabled="{Binding EmEdicao}" Width="70" ToolTip.Tip="Horas semanais" />
+                <TextBlock Text="por semana ·" VerticalAlignment="Center" />
+                <TextBox Text="{Binding JornadaMensal}" IsEnabled="{Binding EmEdicao}" Width="70" ToolTip.Tip="Horas mensais (divisor do valor-hora)" />
+                <TextBlock Text="por mês" VerticalAlignment="Center" />
+              </StackPanel>
+              <TextBlock Grid.Row="10" Classes="rotulo" Text="Centro de custo" />
+              <ComboBox Grid.Row="10" Grid.Column="1" ItemsSource="{Binding Centros}" SelectedItem="{Binding Centro}" IsEnabled="{Binding EmEdicao}" Width="260">
+                <ComboBox.ItemTemplate><DataTemplate x:DataType="ctb:CentroCustoDetalhe"><TextBlock Text="{Binding Codigo}" /></DataTemplate></ComboBox.ItemTemplate>
+              </ComboBox>
+              <TextBlock Grid.Row="11" Classes="rotulo" Text="Insalubridade" />
+              <ComboBox Grid.Row="11" Grid.Column="1" ItemsSource="{x:Static vm:FuncionariosViewModel.Insalubridades}" SelectedItem="{Binding Insalubridade}" IsEnabled="{Binding EmEdicao}" Width="260" />
+              <CheckBox Grid.Row="12" Grid.Column="1" Content="Periculosidade (30% do salário; não acumula com insalubridade)" IsChecked="{Binding Periculosidade}" IsEnabled="{Binding EmEdicao}" />
+              <TextBlock Grid.Row="13" Classes="rotulo" Text="Situação" />
+              <StackPanel Grid.Row="13" Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                <ComboBox ItemsSource="{x:Static vm:FuncionariosViewModel.Situacoes}" SelectedItem="{Binding Situacao}" IsEnabled="{Binding EmEdicao}" Width="130" />
+                <CalendarDatePicker SelectedDate="{Binding Desligamento}" IsEnabled="{Binding EmEdicao}" Width="150" ToolTip.Tip="Desligamento (use Rescisões para calcular)" />
+              </StackPanel>
+            </Grid>
+          </ScrollViewer>
+        </TabItem>
+        <TabItem Header="Banco">
+          <Grid ColumnDefinitions="110,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="6" Margin="0,8,8,0">
+            <TextBlock Classes="rotulo" Text="Banco (COMPE)" />
+            <TextBox Grid.Column="1" Text="{Binding Banco}" IsEnabled="{Binding EmEdicao}" Width="100" HorizontalAlignment="Left" MaxLength="3" />
+            <TextBlock Grid.Row="1" Classes="rotulo" Text="Agência" />
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Agencia}" IsEnabled="{Binding EmEdicao}" Width="140" HorizontalAlignment="Left" />
+            <TextBlock Grid.Row="2" Classes="rotulo" Text="Conta" />
+            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Conta}" IsEnabled="{Binding EmEdicao}" Width="180" HorizontalAlignment="Left" />
+            <TextBlock Grid.Row="3" Classes="rotulo" Text="Tipo de conta" />
+            <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{x:Static vm:FuncionariosViewModel.TiposConta}" SelectedItem="{Binding TipoConta}" IsEnabled="{Binding EmEdicao}" Width="200" />
+            <TextBlock Grid.Row="4" Classes="rotulo" Text="Chave PIX" />
+            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding ChavePix}" IsEnabled="{Binding EmEdicao}" />
+          </Grid>
+        </TabItem>
+        <TabItem Header="Dependentes">
+          <DockPanel Margin="0,8,0,0">
+            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="0,0,0,6">
+              <Button Content="Adicionar dependente" Command="{Binding AdicionarDependenteCommand}" IsEnabled="{Binding EmEdicao}" />
+              <TextBlock Text="IRRF: R$ 189,59 por dependente · salário-família: menor de 14 anos ou inválido" FontSize="11" Foreground="Gray" VerticalAlignment="Center" />
+            </StackPanel>
+            <ItemsControl ItemsSource="{Binding Dependentes}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:DependenteEdicao">
+                  <Border BorderBrush="#D0D5DD" BorderThickness="1" CornerRadius="4" Padding="6" Margin="0,0,0,6">
+                    <Grid ColumnDefinitions="90,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="4">
+                      <TextBlock Classes="rotulo" Text="Nome" />
+                      <TextBox Grid.Column="1" Text="{Binding Nome}" IsEnabled="{Binding $parent[UserControl].((vm:FuncionariosViewModel)DataContext).EmEdicao}" />
+                      <TextBlock Grid.Row="1" Classes="rotulo" Text="CPF" />
+                      <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                        <TextBox Text="{Binding Cpf}" Width="140" IsEnabled="{Binding $parent[UserControl].((vm:FuncionariosViewModel)DataContext).EmEdicao}" />
+                        <CalendarDatePicker SelectedDate="{Binding Nascimento}" Width="140" IsEnabled="{Binding $parent[UserControl].((vm:FuncionariosViewModel)DataContext).EmEdicao}" ToolTip.Tip="Data de nascimento" />
+                      </StackPanel>
+                      <TextBlock Grid.Row="2" Classes="rotulo" Text="Parentesco" />
+                      <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{x:Static vm:FuncionariosViewModel.TiposDependente}" SelectedItem="{Binding Tipo}"
+                                IsEnabled="{Binding $parent[UserControl].((vm:FuncionariosViewModel)DataContext).EmEdicao}" Width="300" />
+                      <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" Spacing="12">
+                        <CheckBox Content="Deduz IRRF" IsChecked="{Binding DepIrrf}" IsEnabled="{Binding $parent[UserControl].((vm:FuncionariosViewModel)DataContext).EmEdicao}" />
+                        <CheckBox Content="Salário-família" IsChecked="{Binding DepSalarioFamilia}" IsEnabled="{Binding $parent[UserControl].((vm:FuncionariosViewModel)DataContext).EmEdicao}" />
+                        <CheckBox Content="Incapaz" IsChecked="{Binding Incapaz}" IsEnabled="{Binding $parent[UserControl].((vm:FuncionariosViewModel)DataContext).EmEdicao}" />
+                      </StackPanel>
+                      <Button Grid.Row="4" Grid.Column="1" Content="Remover" HorizontalAlignment="Left"
+                              Command="{Binding $parent[UserControl].((vm:FuncionariosViewModel)DataContext).RemoverDependenteCommand}" CommandParameter="{Binding}"
+                              IsEnabled="{Binding $parent[UserControl].((vm:FuncionariosViewModel)DataContext).EmEdicao}" />
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </DockPanel>
+        </TabItem>
+      </TabControl>
+    </DockPanel>
+  </Grid>
+</UserControl>

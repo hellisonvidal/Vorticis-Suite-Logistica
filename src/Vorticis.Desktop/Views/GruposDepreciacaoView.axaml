@@ -1,0 +1,49 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Views"
+             x:Class="Vorticis.Desktop.Views.GruposDepreciacaoView"
+             x:DataType="vm:GruposDepreciacaoViewModel">
+  <Grid ColumnDefinitions="*,16,400" RowDefinitions="Auto,*,Auto" Margin="8">
+    <c:BarraCadastroView Grid.ColumnSpan="3" Margin="0,0,0,8" />
+    <DockPanel Grid.Row="1" IsEnabled="{Binding !EmEdicao}">
+      <TextBlock DockPanel.Dock="Top" Classes="titulo" Text="Regras de depreciação (grupos de bens)" Margin="0,0,0,8" />
+      <DataGrid ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Cód." Binding="{ReflectionBinding Codigo}" Width="56" />
+          <DataGridTextColumn Header="Grupo" Binding="{ReflectionBinding Descricao}" Width="*" MinWidth="160" />
+          <DataGridTextColumn Header="Taxa RFB" Binding="{ReflectionBinding Taxa}" Width="80" />
+          <DataGridTextColumn Header="Vida útil fiscal" Binding="{ReflectionBinding VidaUtil}" Width="110" />
+          <DataGridTextColumn Header="Contas (bem / acumulada / despesa)" Binding="{ReflectionBinding Contas}" Width="250" />
+        </DataGrid.Columns>
+      </DataGrid>
+    </DockPanel>
+    <TextBlock Grid.Row="2" Grid.ColumnSpan="3" FontSize="11" Foreground="Gray" TextWrapping="Wrap" Margin="0,6,0,0"
+               Text="Taxas fiscais: IN RFB 1.700/2017, Anexo III, e RIR/2018 arts. 317 a 330 (bens móveis em 2 ou 3 turnos: depreciação fiscal acelerada em 1,5 ou 2,0 — art. 323). Contabilmente (NBC TG 27 / CPC 27) a vida útil, o valor residual e o método de cada bem são estimados pela empresa; a vida útil fiscal é só a sugestão inicial. A diferença entre as duas é controlada no LALUR." />
+    <StackPanel Grid.Row="1" Grid.Column="2" Spacing="6">
+      <TextBlock Text="Grupo" FontWeight="SemiBold" Foreground="#1F3A5F" />
+      <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6" IsEnabled="{Binding EmEdicao}">
+        <TextBlock Classes="rotulo" Text="Código" />
+        <TextBox Grid.Column="1" Text="{Binding Codigo}" Width="80" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="1" Classes="rotulo" Text="Descrição" />
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Descricao}" />
+        <TextBlock Grid.Row="2" Classes="rotulo" Text="Taxa anual (%)" />
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Taxa}" Width="80" HorizontalAlignment="Left" />
+        <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" Spacing="14">
+          <CheckBox Content="Deprecia" IsChecked="{Binding Deprecia}" />
+          <CheckBox Content="Intangível (amortização)" IsChecked="{Binding Intangivel}" />
+        </StackPanel>
+        <TextBlock Grid.Row="4" Classes="rotulo" Text="Conta do bem" />
+        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding ContaBem}" Watermark="sugestão para novos bens" />
+        <TextBlock Grid.Row="5" Classes="rotulo" Text="Deprec. acumulada" />
+        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding ContaAcumulada}" />
+        <TextBlock Grid.Row="6" Classes="rotulo" Text="Despesa" />
+        <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding ContaDespesa}" />
+        <TextBlock Grid.Row="7" Classes="rotulo" Text="Base legal" />
+        <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding BaseLegal}" TextWrapping="Wrap" />
+      </Grid>
+      <c:MensagensView />
+    </StackPanel>
+  </Grid>
+</UserControl>

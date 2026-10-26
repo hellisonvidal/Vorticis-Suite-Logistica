@@ -1,0 +1,108 @@
+name: CI
+
+on:
+  push:
+    branches: [main, "claude/**", "ccr-**", "frota-*"]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  testes:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      VORTICIS_TEST_PG: Host=localhost;Username=postgres;Password=postgres;Database=postgres
+      PGPASSWORD: postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - name: Testes SQL das migrações
+        run: |
+          createdb -h localhost -U postgres vorticis_sql
+          cat db/0*.sql db/tests/*.sql | psql -h localhost -U postgres -d vorticis_sql -v ON_ERROR_STOP=1 -q
+      - name: Build
+        run: dotnet build -c Release
+      - name: Testes (.NET)
+        run: dotnet test -c Release --no-build
+
+  instalador-windows:
+    runs-on: windows-latest
+    timeout-minutes: 40
+    needs: testes
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - name: Baixar PostgreSQL para Windows (binários oficiais)
+        shell: pwsh
+        run: ./instalador/baixar-postgresql.ps1 -Destino pgsql
+      - name: Teste do banco local no Windows (initdb, start, migrações, stop)
+        shell: pwsh
+        env:
+          VORTICIS_PG_EMBUTIDO_BIN: ${{ github.workspace }}\pgsql\bin
+        run: |
+          dotnet build tests/Vorticis.Infra.Tests -c Release
+          tests/Vorticis.Infra.Tests/bin/Release/net10.0/Vorticis.Infra.Tests.exe -class Vorticis.Infra.Tests.ServidorEmbutidoTests -failSkips
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Publicar o Vorticis Suite Logística (arquivo único) com o PostgreSQL
+        shell: pwsh
+        run: |
+          dotnet publish src/Vorticis.Logistica.Desktop -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Move-Item pgsql publish/pgsql
+          # Visual C++ Redistributable 2015-2022 (x64): o instalador o instala em silêncio se faltar; vai também nos portáteis
+          Invoke-WebRequest https://aka.ms/vs/17/release/vc_redist.x64.exe -OutFile publish/vc_redist.x64.exe -UseBasicParsing
+          if ((Get-Item publish/vc_redist.x64.exe).Length -lt 10MB) { throw "vc_redist.x64.exe baixado está incompleto" }
+          foreach ($dll in "vcruntime140.dll", "vcruntime140_1.dll", "msvcp140.dll") {
+            if (-not (Test-Path "publish/pgsql/bin/$dll")) { throw "pgsql/bin sem $dll (runtime do Visual C++)" }
+          }
+          if (-not (Test-Path publish/pgsql/bin/initdb.exe)) { throw "pgsql/bin sem initdb.exe" }
+          # Portátil: o executável numa pasta, com o pgsql
+          New-Item -ItemType Directory -Path portatil/VorticisLogistica -Force | Out-Null
+          Copy-Item publish/VorticisLogistica.exe portatil/VorticisLogistica
+          Copy-Item publish/pgsql portatil/VorticisLogistica/pgsql -Recurse
+          Copy-Item publish/vc_redist.x64.exe portatil/VorticisLogistica
+      - name: Gerar instalador (Inno Setup)
+        shell: pwsh
+        run: |
+          $versao = (Select-Xml -Path Directory.Build.props -XPath "//Version").Node.InnerText
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { choco install innosetup -y --no-progress; if ($LASTEXITCODE -ne 0) { exit 1 } }
+          foreach ($iss in "instalador/VorticisLogistica.iss") {
+            & $iscc "/DVersao=$versao" $iss
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+          Get-ChildItem saida | Format-Table Name, @{n="MB"; e={[math]::Round($_.Length / 1MB, 1)}}
+      - name: Teste de instalação do Vorticis Suite Logística (Windows limpo, sem configuração)
+        shell: powershell
+        run: |
+          # começa do zero, como numa transportadora que só instala o Vorticis Suite Logística
+          Remove-Item "$env:LOCALAPPDATA\Vorticis", "$env:APPDATA\Vorticis" -Recurse -Force -ErrorAction SilentlyContinue
+          $setup = (Get-ChildItem saida/Setup-VorticisSuiteLogistica-*.exe).FullName
+          ./instalador/teste-instalacao.ps1 -Setup $setup -Pasta "Programs\Vorticis Logistica" -Programa VorticisLogistica.exe -Arquivos VorticisLogistica.ico
+      - uses: actions/upload-artifact@v4
+        with:
+          retention-days: 3   # apagados sozinhos em 3 dias (o armazenamento do GitHub é limitado)
+          name: Setup-VorticisSuiteLogistica
+          path: saida/Setup-VorticisSuiteLogistica-*.exe
+          compression-level: 0
+      - uses: actions/upload-artifact@v4
+        with:
+          retention-days: 3   # apagados sozinhos em 3 dias (o armazenamento do GitHub é limitado)
+          name: VorticisSuiteLogistica-portatil
+          path: portatil/VorticisLogistica/

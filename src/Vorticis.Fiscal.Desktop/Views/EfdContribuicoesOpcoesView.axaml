@@ -1,0 +1,17 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Vorticis.Fiscal.Desktop.ViewModels"
+             x:Class="Vorticis.Fiscal.Desktop.Views.EfdContribuicoesOpcoesView"
+             x:DataType="vm:EfdContribuicoesAssistenteViewModel">
+  <StackPanel Spacing="6">
+    <Grid ColumnDefinitions="230,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="6">
+      <TextBlock Text="Natureza da pessoa jurídica" VerticalAlignment="Center" />
+      <ComboBox Grid.Column="1" ItemsSource="{x:Static vm:EfdContribuicoesAssistenteViewModel.Naturezas}" SelectedIndex="{Binding Natureza}" Width="520" />
+      <TextBlock Grid.Row="1" Text="Atividade preponderante" VerticalAlignment="Center" />
+      <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{x:Static vm:EfdContribuicoesAssistenteViewModel.Atividades}" SelectedIndex="{Binding Atividade}" Width="260" />
+      <TextBlock Grid.Row="2" Text="Recibo da escrituração anterior" VerticalAlignment="Center" />
+      <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding NumeroRecibo}" Width="360" HorizontalAlignment="Left" Watermark="só para escrituração retificadora" />
+    </Grid>
+    <Button Content="Salvar estas opções como padrão da empresa" Command="{Binding SalvarConfiguracaoCommand}" HorizontalAlignment="Left" />
+  </StackPanel>
+</UserControl>

@@ -1,0 +1,40 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Views"
+             x:Class="Vorticis.Desktop.Views.DiferencasSaldosView"
+             x:DataType="vm:DiferencasSaldosViewModel">
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="Diferenças de saldos" VerticalAlignment="Center" />
+      <TextBlock Text="Período" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="130" />
+      <TextBlock Text="a" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Fim}" Width="130" />
+      <Button Content="Analisar" Command="{Binding AnalisarCommand}" Classes="accent" />
+      <CheckBox Content="Só contas com diferença ou alerta" IsChecked="{Binding SomenteComDiferenca}" />
+    </StackPanel>
+    <StackPanel DockPanel.Dock="Bottom" Spacing="4" Margin="0,6,0,0">
+      <TextBlock Text="{Binding Resumo}" FontWeight="SemiBold" />
+      <ItemsControl ItemsSource="{Binding Inconsistencias}" MaxHeight="150">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="x:String"><TextBlock Text="{Binding StringFormat='⚠ {0}'}" Classes="erro" /></DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="Compara o saldo de cada conta no dia anterior ao início com o saldo no fim do período (a diferença é o movimento líquido) e verifica: débitos = créditos, contas com saldo contrário à natureza e a coerência entre as partidas e os saldos mensais." />
+      <c:MensagensView />
+    </StackPanel>
+    <DataGrid ItemsSource="{Binding Linhas}" IsReadOnly="True" AutoGenerateColumns="False" FontFamily="Consolas, Menlo, monospace">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Conta" Binding="{ReflectionBinding Codigo}" Width="150" />
+        <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" />
+        <DataGridTextColumn Header="Saldo inicial" Binding="{ReflectionBinding SaldoAnterior}" Width="140" />
+        <DataGridTextColumn Header="Saldo final" Binding="{ReflectionBinding SaldoFinal}" Width="140" />
+        <DataGridTextColumn Header="Diferença" Binding="{ReflectionBinding Diferenca}" Width="130" />
+        <DataGridTextColumn Header="Alerta" Binding="{ReflectionBinding Alerta}" Width="120" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>

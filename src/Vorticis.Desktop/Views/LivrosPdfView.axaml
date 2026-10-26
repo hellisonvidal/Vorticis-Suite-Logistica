@@ -1,0 +1,59 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Views"
+             x:Class="Vorticis.Desktop.Views.LivrosPdfView"
+             x:DataType="vm:LivrosPdfViewModel">
+  <ScrollViewer>
+    <StackPanel Spacing="8" MaxWidth="760" HorizontalAlignment="Left" Margin="8">
+      <TextBlock Classes="titulo" Text="Livro Contábil Completo" />
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <TextBlock Text="Período" VerticalAlignment="Center" />
+        <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="140" />
+        <TextBlock Text="a" VerticalAlignment="Center" />
+        <CalendarDatePicker SelectedDate="{Binding Fim}" Width="140" />
+      </StackPanel>
+
+      <TextBlock Text="O que entra no livro" FontWeight="SemiBold" Foreground="#1F3A5F" Margin="0,8,0,0" />
+      <WrapPanel>
+        <CheckBox Content="Termo de abertura" IsChecked="{Binding IncluirTermoAbertura}" Width="230" />
+        <CheckBox Content="Livro Diário" IsChecked="{Binding IncluirDiario}" Width="230" />
+        <CheckBox Content="Livro Razão" IsChecked="{Binding IncluirRazao}" Width="230" />
+        <CheckBox Content="Balancete de verificação" IsChecked="{Binding IncluirBalancete}" Width="230" />
+        <CheckBox Content="Balanço Patrimonial" IsChecked="{Binding IncluirBalanco}" Width="230" />
+        <CheckBox Content="DRE" IsChecked="{Binding IncluirDre}" Width="230" />
+        <CheckBox Content="DMPL" IsChecked="{Binding IncluirDmpl}" Width="230" />
+        <CheckBox Content="DLPA" IsChecked="{Binding IncluirDlpa}" Width="230" />
+        <CheckBox Content="Termo de encerramento" IsChecked="{Binding IncluirTermoEncerramento}" Width="230" />
+        <CheckBox Content="Assinatura do sócio/responsável" IsChecked="{Binding AssinaturaResponsavel}" Width="230" />
+        <CheckBox Content="Assinatura do contador" IsChecked="{Binding AssinaturaContador}" Width="230" />
+        <CheckBox Content="Assinar digitalmente o PDF" IsChecked="{Binding AssinarPdfDigitalmente}" Width="230" />
+      </WrapPanel>
+
+      <TextBlock Text="Livro, termos de abertura e encerramento e assinaturas" FontWeight="SemiBold" Foreground="#1F3A5F" Margin="0,8,0,0" />
+      <Grid ColumnDefinitions="230,*,12,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
+        <TextBlock Text="Número do livro a gerar" VerticalAlignment="Center" />
+        <NumericUpDown Grid.Column="1" Value="{Binding NumeroLivro}" Minimum="1" Maximum="9999" FormatString="0" Width="130" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="1" Text="Representante legal / CPF" VerticalAlignment="Center" />
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Representante}" Watermark="Nome" />
+        <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding RepresentanteCpf}" Watermark="000.000.000-00" c:Mascara.Tipo="Cpf" />
+        <TextBlock Grid.Row="2" Text="Contador / CRC" VerticalAlignment="Center" />
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Contador}" Watermark="Nome" />
+        <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding Crc}" Watermark="CRC (ex.: SP-123456/O-7)" />
+        <TextBlock Grid.Row="3" Text="NIRE (do cadastro da empresa)" VerticalAlignment="Center" />
+        <TextBox Name="CampoNire" Grid.Row="3" Grid.Column="1" Text="{Binding Nire}" IsReadOnly="True" Watermark="Não cadastrado" />
+        <TextBlock Grid.Row="3" Grid.Column="3" Text="{Binding AvisoNire}" IsVisible="{Binding SemNire}" Foreground="#B54708" FontSize="11"
+                   TextWrapping="Wrap" VerticalAlignment="Center" />
+        <TextBlock Grid.Row="4" Text="Arquivamento dos atos (opcional)" VerticalAlignment="Center" />
+        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding DataArquivamento}" Watermark="dd/mm/aaaa" />
+      </Grid>
+
+      <Button Content="Gerar Livro Contábil Completo (PDF)" Command="{Binding GerarLivroCommand}" Classes="accent" IsEnabled="{Binding PodeGerar}"
+              HorizontalAlignment="Left" Margin="0,8,0,0" />
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="O PDF é salvo em Documentos\Vorticis Contabil\Relatorios e aberto no leitor padrão. O livro segue a ITG 2000 (folhas numeradas, termos com identificação da entidade e assinaturas do representante legal e do contador); cada parte começa em página nova. As assinaturas marcadas fecham o conteúdo, antes do termo de encerramento. Para quem é obrigado à ECD, o livro oficial é o arquivo digital do SPED." />
+      <c:MensagensView />
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

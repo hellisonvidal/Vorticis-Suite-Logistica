@@ -1,0 +1,44 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Views"
+             x:Class="Vorticis.Desktop.Views.EncerramentoView"
+             x:DataType="vm:EncerramentoViewModel">
+  <ScrollViewer>
+    <StackPanel Spacing="8" MaxWidth="760" HorizontalAlignment="Left" Margin="8">
+      <TextBlock Classes="titulo" Text="Encerramento do exercício" />
+      <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="#44506A"
+                 Text="Na data final do exercício, zera as contas de resultado contra a conta de Apuração do Resultado e transfere o lucro (ou prejuízo) para o patrimônio líquido. Os lançamentos levam o indicador de encerramento (E) exigido pela ECD. O mês de dezembro precisa estar aberto." />
+      <Grid ColumnDefinitions="230,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="6">
+        <TextBlock Text="Exercício" VerticalAlignment="Center" />
+        <NumericUpDown Grid.Column="1" Value="{Binding Ano}" Minimum="2000" Maximum="2100" FormatString="0" Width="130" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="1" Text="Conta de apuração do resultado" VerticalAlignment="Center" />
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ContaApuracao}" Width="200" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="2" Text="Lucros acumulados" VerticalAlignment="Center" />
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ContaLucros}" Width="200" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="3" Text="Prejuízos acumulados" VerticalAlignment="Center" />
+        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding ContaPrejuizos}" Width="200" HorizontalAlignment="Left" />
+      </Grid>
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button Content="Calcular prévia" Command="{Binding PreverCommand}" />
+        <Button Content="Encerrar exercício" Command="{Binding EncerrarCommand}" Classes="accent" IsEnabled="{Binding !Encerrado}" />
+      </StackPanel>
+      <Border BorderBrush="#D0D5DD" BorderThickness="1" CornerRadius="4" Padding="12,8"
+              IsVisible="{Binding Previa, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+        <TextBlock Text="{Binding Previa}" FontFamily="Consolas, Menlo, monospace" TextWrapping="Wrap" />
+      </Border>
+      <Border BorderBrush="#D0D5DD" BorderThickness="0,1,0,0" Padding="0,10,0,0" Margin="0,8,0,0" IsVisible="{Binding Encerrado}">
+        <StackPanel Spacing="6">
+          <TextBlock Text="Desfazer o encerramento" FontWeight="SemiBold" Foreground="#B3261E" />
+          <TextBlock TextWrapping="Wrap" FontSize="12" Text="Estorna os lançamentos de encerramento (também com indicador E) para permitir ajustes e um novo encerramento." />
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <TextBox Text="{Binding Motivo}" Watermark="Motivo (obrigatório)" Width="360" />
+            <Button Content="Desfazer" Command="{Binding DesfazerCommand}" />
+          </StackPanel>
+        </StackPanel>
+      </Border>
+      <c:MensagensView />
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

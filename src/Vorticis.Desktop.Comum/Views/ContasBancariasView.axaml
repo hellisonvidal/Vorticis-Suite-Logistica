@@ -1,0 +1,46 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
+             x:Class="Vorticis.Desktop.Comum.Views.ContasBancariasView"
+             x:DataType="vm:ContasBancariasViewModel">
+  <!-- Cadastros › Contas bancárias (no Contábil: Bancos): formulário em cima, lista embaixo -->
+  <DockPanel Margin="8">
+    <c:BarraCadastroView DockPanel.Dock="Top" Margin="0,0,0,8" />
+    <TextBlock DockPanel.Dock="Top" Classes="titulo" Text="Bancos (contas bancárias)" Margin="0,0,0,6" />
+    <Border DockPanel.Dock="Top" BorderBrush="#D0D5DD" BorderThickness="1" CornerRadius="4" Padding="8" Margin="0,0,0,8">
+      <StackPanel Spacing="6">
+        <WrapPanel IsEnabled="{Binding EmEdicao}">
+          <WrapPanel.Styles><Style Selector="WrapPanel &gt; StackPanel"><Setter Property="Margin" Value="0,0,12,6" /></Style></WrapPanel.Styles>
+          <StackPanel Spacing="2"><TextBlock Text="Código" FontSize="12" />
+            <TextBox Text="{Binding Codigo}" Width="80" IsReadOnly="{Binding !EmInclusao}" /></StackPanel>
+          <StackPanel Spacing="2"><TextBlock Text="Descrição" FontSize="12" />
+            <TextBox Text="{Binding Descricao}" Width="240" Watermark="ex.: Banco do Brasil – movimento" /></StackPanel>
+          <StackPanel Spacing="2"><TextBlock Text="Banco" FontSize="12" />
+            <TextBox Text="{Binding Banco}" Width="70" Watermark="001" MaxLength="3" /></StackPanel>
+          <StackPanel Spacing="2"><TextBlock Text="Agência" FontSize="12" />
+            <TextBox Text="{Binding Agencia}" Width="100" Watermark="1234-5" /></StackPanel>
+          <StackPanel Spacing="2"><TextBlock Text="Conta" FontSize="12" />
+            <TextBox Text="{Binding Conta}" Width="140" Watermark="12345-6" /></StackPanel>
+          <StackPanel Spacing="2"><TextBlock Text="Conta contábil" FontSize="12" />
+            <TextBox Text="{Binding ContaContabil}" Width="150" Watermark="1.1.02.001 (opcional)" /></StackPanel>
+          <StackPanel Spacing="2" VerticalAlignment="Bottom"><CheckBox Content="Ativa" IsChecked="{Binding Ativa}" /></StackPanel>
+        </WrapPanel>
+        <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                   Text="Banco é o código de compensação (001 Banco do Brasil, 104 Caixa, 237 Bradesco, 341 Itaú...). A conta contábil, se informada, precisa existir no plano de contas da empresa." />
+        <c:MensagensView />
+      </StackPanel>
+    </Border>
+    <DataGrid ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False" IsEnabled="{Binding !EmEdicao}">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Código" Binding="{ReflectionBinding Codigo}" Width="0.5*" />
+        <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="2*" />
+        <DataGridTextColumn Header="Banco" Binding="{ReflectionBinding Banco}" Width="0.5*" />
+        <DataGridTextColumn Header="Agência" Binding="{ReflectionBinding Agencia}" Width="0.7*" />
+        <DataGridTextColumn Header="Conta" Binding="{ReflectionBinding Conta}" Width="0.9*" />
+        <DataGridTextColumn Header="Conta contábil" Binding="{ReflectionBinding ContaContabil}" Width="0.9*" />
+        <DataGridCheckBoxColumn Header="Ativa" Binding="{ReflectionBinding Ativa}" Width="0.4*" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>

@@ -1,0 +1,29 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Fiscal.Desktop.ViewModels"
+             x:Class="Vorticis.Fiscal.Desktop.Views.RelatorioItensNotasView"
+             x:DataType="vm:RelatorioItensNotasViewModel">
+  <!-- Relatórios › Itens das notas fiscais -->
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="Itens das notas fiscais" />
+      <WrapPanel>
+        <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="140" Margin="0,0,6,6" />
+        <TextBlock Text="a" VerticalAlignment="Center" Margin="0,0,6,6" />
+        <CalendarDatePicker SelectedDate="{Binding Fim}" Width="140" Margin="0,0,10,6" />
+        <ComboBox ItemsSource="{x:Static vm:RelatorioItensNotasViewModel.Operacoes}" SelectedIndex="{Binding Operacao}" Width="170" Margin="0,0,8,6" />
+        <TextBox Text="{Binding Participante}" Watermark="Participante (código, nome ou CNPJ)" Width="240" Margin="0,0,8,6" />
+        <TextBox Text="{Binding Produto}" Watermark="Produto (código, descrição ou GTIN)" Width="240" Margin="0,0,8,6" />
+        <TextBox Text="{Binding Cfop}" Watermark="CFOP" Width="80" Margin="0,0,8,6" />
+        <TextBox Text="{Binding Ncm}" Watermark="NCM" Width="110" Margin="0,0,8,6" />
+        <Button Content="Gerar" Command="{Binding GerarCommand}" Classes="accent" Margin="0,0,8,6" />
+        <c:BarraExportacaoView />
+      </WrapPanel>
+    </StackPanel>
+    <c:MensagensView DockPanel.Dock="Bottom" Margin="0,6,0,0" />
+    <ScrollViewer>
+      <ItemsControl ItemsSource="{Binding Exibidas}" />
+    </ScrollViewer>
+  </DockPanel>
+</UserControl>

@@ -1,0 +1,94 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Comum.Views"
+             x:Class="Vorticis.Desktop.Comum.Views.ConexaoView"
+             x:DataType="vm:ConexaoViewModel">
+  <ScrollViewer>
+    <StackPanel Spacing="10" MaxWidth="640" HorizontalAlignment="Left" Margin="8">
+      <TextBlock Classes="titulo" Text="Conexão com o banco de dados" />
+      <TextBlock Text="{Binding ConexaoAtual}" FontWeight="SemiBold" Foreground="#1F3A5F" />
+      <TextBlock Classes="erro" Text="{Binding Falha, StringFormat='Falha ao conectar: {0}'}" TextWrapping="Wrap"
+                 IsVisible="{Binding Falha, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+      <TextBlock Text="{Binding AvisoLogin}" TextWrapping="Wrap" FontSize="12" Foreground="#8A5A00" />
+
+      <!-- Configuração automática -->
+      <Border BorderBrush="#1F3A5F" BorderThickness="2" CornerRadius="4" Padding="12" Background="#F3F7FC">
+        <StackPanel Spacing="8">
+          <TextBlock FontWeight="SemiBold" Text="Configuração automática do banco de dados (recomendado)" />
+          <TextBlock TextWrapping="Wrap" FontSize="12"
+                     Text="Localiza o banco embutido, confere o Visual C++, cria e inicia o banco, aplica as migrações e testa a conexão, mostrando cada passo. Não é preciso digitar nada." />
+          <Grid ColumnDefinitions="160,*" RowDefinitions="Auto,Auto" RowSpacing="6" IsVisible="{Binding PedirCredenciais}">
+            <TextBlock Text="Usuário do PostgreSQL" VerticalAlignment="Center" />
+            <TextBox Grid.Column="1" Text="{Binding UsuarioAuto}" />
+            <TextBlock Grid.Row="1" Text="Senha" VerticalAlignment="Center" />
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SenhaAuto}" PasswordChar="●" />
+          </Grid>
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <Button Content="Configurar automaticamente" Classes="accent" Command="{Binding ConfigurarAutomaticamenteCommand}" IsEnabled="{Binding PodeConfigurar}" />
+            <Button Content="Recriar o banco local (preserva a pasta antiga como backup)" Command="{Binding RecriarBancoLocalCommand}"
+                    IsVisible="{Binding OferecerRecriar}" IsEnabled="{Binding PodeConfigurar}" />
+            <Button Content="Copiar diagnóstico" Click="CopiarDiagnostico_Click" />
+          </StackPanel>
+          <TextBox Text="{Binding LogConfiguracao, Mode=OneWay}" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap" MaxHeight="220"
+                   FontFamily="Consolas,Menlo,monospace" FontSize="11" IsVisible="{Binding TemLog}" />
+          <TextBlock FontSize="11" Foreground="Gray" Text="{Binding ArquivoLogConfiguracao, StringFormat='Registro gravado em {0}'}" />
+        </StackPanel>
+      </Border>
+
+      <!-- Banco local -->
+      <Border BorderBrush="#C8D3E6" BorderThickness="1" CornerRadius="4" Padding="12" IsVisible="{Binding BancoLocalDisponivel}">
+        <StackPanel Spacing="8">
+          <RadioButton GroupName="ModoBanco" IsChecked="{Binding UsarBancoLocal}" FontWeight="SemiBold"
+                       Content="Banco de dados local do Vorticis (recomendado)" />
+          <TextBlock TextWrapping="Wrap" FontSize="12" Text="{Binding DescricaoBancoLocal}" />
+          <Grid ColumnDefinitions="160,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="6" IsEnabled="{Binding UsarBancoLocal}">
+            <TextBlock Classes="rotulo" Text="Porta" VerticalAlignment="Center" />
+            <NumericUpDown Grid.Column="1" Value="{Binding PortaLocal}" Minimum="1024" Maximum="65535" FormatString="0" Width="160"
+                           HorizontalAlignment="Left" ToolTip.Tip="Porta TCP do banco local (somente neste computador). Mudar reinicia o banco." />
+            <TextBlock Grid.Row="1" Classes="rotulo" Text="Pasta dos dados" VerticalAlignment="Center" />
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding PastaBancoLocal, Mode=OneWay}" IsReadOnly="True" />
+            <TextBlock Grid.Row="2" Classes="rotulo" Text="Nova senha do banco" VerticalAlignment="Center" />
+            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding NovaSenhaLocal}" PasswordChar="{Binding CaractereSenha}"
+                     Watermark="Deixe em branco para manter a atual" />
+            <TextBlock Grid.Row="3" Classes="rotulo" Text="Confirme a nova senha" VerticalAlignment="Center" />
+            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding ConfirmacaoSenhaLocal}" PasswordChar="{Binding CaractereSenha}" />
+          </Grid>
+          <TextBlock FontSize="12" Foreground="#1B6E3A" Text="Em uso neste momento." IsVisible="{Binding UsandoBancoLocal}" />
+        </StackPanel>
+      </Border>
+
+      <!-- Servidor (avançado) -->
+      <Expander Header="Avançado: usar um servidor PostgreSQL externo (rede ou nuvem)" IsExpanded="{Binding ServidorExpandido}">
+      <Border BorderBrush="#C8D3E6" BorderThickness="1" CornerRadius="4" Padding="12">
+        <StackPanel Spacing="8">
+          <RadioButton GroupName="ModoBanco" IsChecked="{Binding EditandoServidor}" FontWeight="SemiBold" IsVisible="{Binding BancoLocalDisponivel}"
+                       Content="Servidor PostgreSQL (rede ou nuvem)" />
+          <TextBlock FontWeight="SemiBold" Text="Servidor PostgreSQL" IsVisible="{Binding !BancoLocalDisponivel}" />
+          <Grid ColumnDefinitions="160,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="6" IsEnabled="{Binding EditandoServidor}">
+            <TextBlock Text="Servidor" VerticalAlignment="Center" />
+            <TextBox Grid.Column="1" Text="{Binding Servidor}" />
+            <TextBlock Grid.Row="1" Text="Porta" VerticalAlignment="Center" />
+            <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding Porta}" Minimum="1" Maximum="65535" FormatString="0" Width="160" HorizontalAlignment="Left" />
+            <TextBlock Grid.Row="2" Text="Banco de dados" VerticalAlignment="Center" />
+            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Banco}" />
+            <TextBlock Grid.Row="3" Text="Usuário" VerticalAlignment="Center" />
+            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Usuario}" />
+            <TextBlock Grid.Row="4" Text="Senha" VerticalAlignment="Center" />
+            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Senha}" PasswordChar="{Binding CaractereSenha}" />
+          </Grid>
+        </StackPanel>
+      </Border>
+      </Expander>
+
+      <CheckBox Content="Mostrar senhas" IsChecked="{Binding MostrarSenha}" />
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button Content="Testar conexão" Command="{Binding TestarCommand}" IsEnabled="{Binding EditandoServidor}" />
+        <Button Content="Salvar e reconectar" Command="{Binding SalvarConfiguracaoCommand}" Classes="accent" />
+      </StackPanel>
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="{Binding Arquivo, StringFormat='A configuração é gravada em {0}. No Windows, as senhas ficam cifradas (DPAPI) e só podem ser lidas pelo seu usuário do Windows. Salvar encerra a sessão atual.'}" />
+      <v:MensagensView />
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

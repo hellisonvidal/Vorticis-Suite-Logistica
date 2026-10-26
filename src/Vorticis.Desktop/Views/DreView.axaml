@@ -1,0 +1,30 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             x:Class="Vorticis.Desktop.Views.DreView"
+             x:DataType="vm:DreViewModel">
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="Demonstração do Resultado (DRE)" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="140" />
+      <TextBlock Text="a" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Fim}" Width="140" />
+      <TextBlock Text="Nível" VerticalAlignment="Center" />
+      <ComboBox ItemsSource="{x:Static vm:DreViewModel.Niveis}" SelectedItem="{Binding Nivel}" Width="70" />
+      <Button Content="Gerar" Command="{Binding GerarCommand}" Classes="accent" />
+      <Rectangle Width="1" Fill="#D0D5DD" Margin="6,4" />
+      <c:BarraExportacaoView />
+    </StackPanel>
+    <StackPanel DockPanel.Dock="Bottom" Margin="0,6,0,0">
+      <TextBlock Text="{Binding Resumo}" FontSize="11" Foreground="Gray" TextWrapping="Wrap" />
+      <c:MensagensView />
+    </StackPanel>
+    <DataGrid ItemsSource="{Binding Dre}" IsReadOnly="True" AutoGenerateColumns="False" FontFamily="Consolas, Menlo, monospace">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" />
+        <DataGridTextColumn Header="R$" Binding="{ReflectionBinding Valor}" Width="130" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>

@@ -1,0 +1,31 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Views"
+             x:Class="Vorticis.Desktop.Views.PeriodosView"
+             x:DataType="vm:PeriodosViewModel">
+  <Grid ColumnDefinitions="320,*" RowDefinitions="Auto,*" Margin="8">
+    <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="10" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="Fechamento de períodos" VerticalAlignment="Center" />
+      <NumericUpDown Value="{Binding Ano}" Minimum="2000" Maximum="2100" FormatString="0" Width="130" />
+      <Button Content="Carregar" Command="{Binding CarregarCommand}" />
+    </StackPanel>
+    <ListBox Grid.Row="1" ItemsSource="{Binding Periodos}" SelectedItem="{Binding Selecionado}">
+      <ListBox.ItemTemplate>
+        <DataTemplate x:DataType="vm:PeriodoView">
+          <TextBlock Text="{Binding Rotulo}" />
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+    <StackPanel Grid.Row="1" Grid.Column="1" Margin="16,0" Spacing="10">
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button Content="Fechar competência" Command="{Binding FecharCommand}" Classes="accent" IsEnabled="{Binding PodeFechar}" />
+        <Button Content="Reabrir competência" Command="{Binding ReabrirCommand}" IsEnabled="{Binding PodeReabrir}" />
+      </StackPanel>
+      <TextBlock TextWrapping="Wrap" Foreground="Gray" MaxWidth="560" HorizontalAlignment="Left"
+                 Text="Fecha-se em ordem cronológica e reabre-se em ordem inversa. Antes de fechar, o sistema confere rascunhos pendentes, débito = crédito no mês, saldos mensais e numeração sem lacunas. Período fechado não aceita lançamentos." />
+      <c:MensagensView />
+    </StackPanel>
+  </Grid>
+</UserControl>

@@ -1,0 +1,96 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Frota.Desktop.ViewModels"
+             x:Class="Vorticis.Frota.Desktop.Views.OrdensView" x:DataType="vm:OrdensViewModel">
+  <Grid ColumnDefinitions="*,12,470" RowDefinitions="Auto,Auto,*" Margin="8">
+    <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="8" Margin="0,0,0,6">
+      <TextBlock Classes="titulo" Text="Ordens de serviço" VerticalAlignment="Center" />
+      <TextBlock Text="Período" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="130" />
+      <TextBlock Text="a" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Fim}" Width="130" />
+    </StackPanel>
+    <TextBlock Grid.Row="1" Grid.ColumnSpan="3" Text="{Binding Totais}" FontSize="12" Margin="0,0,0,6" />
+    <DataGrid Grid.Row="2" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionada}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Nº" Binding="{ReflectionBinding Numero}" Width="55" />
+        <DataGridTextColumn Header="Abertura" Binding="{ReflectionBinding Data}" Width="90" />
+        <DataGridTextColumn Header="Placa" Binding="{ReflectionBinding Placa}" Width="90" />
+        <DataGridTextColumn Header="Tipo" Binding="{ReflectionBinding Tipo}" Width="90" />
+        <DataGridTextColumn Header="Serviço" Binding="{ReflectionBinding Descricao}" Width="*" />
+        <DataGridTextColumn Header="Previsão" Binding="{ReflectionBinding Previsao}" Width="90" />
+        <DataGridTextColumn Header="Total" Binding="{ReflectionBinding Total}" Width="95" />
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="160" />
+      </DataGrid.Columns>
+    </DataGrid>
+    <ScrollViewer Grid.Row="2" Grid.Column="2">
+    <StackPanel Spacing="6" IsEnabled="{Binding PodeEditar}">
+      <TextBlock Text="{Binding SituacaoTexto}" FontWeight="SemiBold" />
+      <StackPanel Spacing="6" IsEnabled="{Binding Editavel}">
+        <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
+          <TextBlock Classes="rotulo" Text="Veículo" />
+          <ComboBox Grid.Column="1" ItemsSource="{Binding VeiculosOpcoes}" SelectedItem="{Binding Veiculo}" HorizontalAlignment="Stretch" />
+          <TextBlock Grid.Row="1" Classes="rotulo" Text="Plano atendido" />
+          <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding PlanosOpcoes}" SelectedItem="{Binding Plano}" HorizontalAlignment="Stretch" />
+          <TextBlock Grid.Row="2" Classes="rotulo" Text="Tipo" />
+          <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{x:Static vm:OrdensViewModel.Tipos}" SelectedItem="{Binding Tipo}" Width="140" />
+          <TextBlock Grid.Row="3" Classes="rotulo" Text="Abertura / previsão" />
+          <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" Spacing="6">
+            <CalendarDatePicker SelectedDate="{Binding Data}" Width="130" />
+            <CalendarDatePicker SelectedDate="{Binding Previsao}" Width="130" />
+          </StackPanel>
+          <TextBlock Grid.Row="4" Classes="rotulo" Text="Km do veículo" />
+          <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Km}" Width="130" HorizontalAlignment="Left" />
+          <TextBlock Grid.Row="5" Classes="rotulo" Text="Serviço" />
+          <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Descricao}" />
+          <TextBlock Grid.Row="6" Classes="rotulo" Text="Oficina" />
+          <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Oficina}" />
+          <TextBlock Grid.Row="7" Classes="rotulo" Text="Solicitante" />
+          <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding Solicitante}" />
+        </Grid>
+        <TextBlock Text="Peças e serviços" FontWeight="SemiBold" Margin="0,4,0,0" />
+        <ComboBox ItemsSource="{Binding CatalogoOpcoes}" SelectedItem="{Binding ItemCatalogo}" HorizontalAlignment="Stretch" />
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <ComboBox ItemsSource="{x:Static vm:OrdensViewModel.TiposItem}" SelectedItem="{Binding ItemTipo}" Width="95" />
+          <TextBox Text="{Binding ItemDescricao}" Width="140" Watermark="Descrição" />
+          <TextBox Text="{Binding ItemQuantidade}" Width="55" Watermark="Qtd." />
+          <TextBox Text="{Binding ItemValor}" Width="80" Watermark="Valor un." />
+          <Button Content="Adicionar" Command="{Binding AdicionarItemCommand}" />
+        </StackPanel>
+        <DataGrid ItemsSource="{Binding Itens}" SelectedItem="{Binding ItemSelecionado}" IsReadOnly="True" AutoGenerateColumns="False" Height="140">
+          <DataGrid.Columns>
+            <DataGridTextColumn Header="Tipo" Binding="{ReflectionBinding TipoTexto}" Width="70" />
+            <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" />
+            <DataGridTextColumn Header="Qtd." Binding="{ReflectionBinding QuantidadeTexto}" Width="55" />
+            <DataGridTextColumn Header="Valor un." Binding="{ReflectionBinding ValorTexto}" Width="85" />
+            <DataGridTextColumn Header="Total" Binding="{ReflectionBinding TotalTexto}" Width="90" />
+          </DataGrid.Columns>
+        </DataGrid>
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <Button Content="Remover item" Command="{Binding RemoverItemCommand}" />
+          <TextBlock Text="Sem itens:" VerticalAlignment="Center" FontSize="11" IsVisible="{Binding ValoresManuais}" />
+          <TextBox Text="{Binding Pecas}" Width="90" Watermark="Peças" IsVisible="{Binding ValoresManuais}" />
+          <TextBox Text="{Binding MaoObra}" Width="90" Watermark="Serviços" IsVisible="{Binding ValoresManuais}" />
+        </StackPanel>
+        <TextBlock Text="{Binding TotalOrdem}" FontSize="12" />
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <Button Content="Nova ordem" Command="{Binding NovaCommand}" />
+        <Button Content="Gravar" Classes="accent" Command="{Binding GravarCommand}" />
+        <Button Content="Excluir" Command="{Binding ExcluirCommand}" />
+        <Button Content="Pedir autorização" Command="{Binding PedirAutorizacaoCommand}" />
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <TextBlock Text="Conclusão" VerticalAlignment="Center" />
+        <CalendarDatePicker SelectedDate="{Binding Conclusao}" Width="130" />
+        <Button Content="Concluir" Command="{Binding ConcluirCommand}" />
+        <Button Content="Cancelar" Command="{Binding CancelarCommand}" />
+        <Button Content="Reabrir" Command="{Binding ReabrirCommand}" />
+      </StackPanel>
+      <TextBlock Text="{Binding NotasDaOrdem}" FontSize="12" TextWrapping="Wrap" />
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="Fluxo: grave a ordem com as peças e serviços, clique em Pedir autorização e, depois de autorizada (Manutenção › Autorização de serviços), conclua. Para mudar uma ordem já enviada, use Reabrir." />
+      <c:MensagensView />
+    </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

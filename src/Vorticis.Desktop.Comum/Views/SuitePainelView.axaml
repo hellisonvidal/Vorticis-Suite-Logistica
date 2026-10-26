@@ -1,0 +1,71 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
+             x:Class="Vorticis.Desktop.Comum.Views.SuitePainelView" x:DataType="vm:SuiteViewModel">
+  <!-- Suite, layout D: painel inicial com um cartão por módulo (atalhos e botão para abrir o módulo) -->
+  <UserControl.Styles>
+    <Style Selector="Button.atalho">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Padding" Value="0,3" />
+      <Setter Property="Cursor" Value="Hand" />
+    </Style>
+    <Style Selector="Button.atalho:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="Button.atalho:pointerover TextBlock">
+      <Setter Property="TextDecorations" Value="Underline" />
+    </Style>
+  </UserControl.Styles>
+  <ScrollViewer Background="#EEF1F5">
+    <StackPanel Margin="28,22" Spacing="6">
+      <TextBlock Text="{Binding Saudacao}" FontSize="26" FontWeight="Bold" Foreground="#0F172A" />
+      <TextBlock Text="{Binding Hoje}" FontSize="13.5" Foreground="#64748B" Margin="0,0,0,14" />
+      <ItemsControl Name="CartoesModulos" ItemsSource="{Binding Modulos}">
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate><UniformGrid Columns="3" /></ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:ModuloSuite">
+            <Border Margin="0,0,18,18" CornerRadius="16" Background="White" BorderBrush="#E2E8F0" BorderThickness="1" BoxShadow="0 4 14 0 #1F94A3B8"
+                    ClipToBounds="True">
+              <DockPanel>
+                <Border DockPanel.Dock="Top" Background="{Binding Cor}" Padding="18,16">
+                  <StackPanel Orientation="Horizontal" Spacing="14">
+                    <Border Width="48" Height="48" CornerRadius="12" Background="White">
+                      <TextBlock Text="{Binding Sigla}" FontSize="16" FontWeight="Bold" Foreground="{Binding Cor}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <StackPanel VerticalAlignment="Center">
+                      <TextBlock Text="{Binding Nome}" FontSize="21" FontWeight="Bold" Foreground="White" />
+                      <TextBlock Text="{Binding NomeCompleto}" FontSize="12" Foreground="#E2E8F0" />
+                    </StackPanel>
+                  </StackPanel>
+                </Border>
+                <Grid DockPanel.Dock="Bottom" ColumnDefinitions="Auto,*" Margin="18,6,18,16">
+                  <Button Content="Abrir módulo  →" Background="{Binding Cor}" Foreground="White" FontWeight="SemiBold" Padding="16,8" CornerRadius="10"
+                          Command="{Binding $parent[UserControl].((vm:SuiteViewModel)DataContext).TrocarCommand}" CommandParameter="{Binding}" />
+                  <TextBlock Grid.Column="1" Text="{Binding Abertas, StringFormat='{}{0} função(ões) aberta(s)'}" IsVisible="{Binding TemAbertas}"
+                             Foreground="#64748B" FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                </Grid>
+                <StackPanel Margin="18,14,18,6" Spacing="2">
+                  <TextBlock Text="{Binding Subtitulo}" Foreground="#334155" FontSize="13.5" TextWrapping="Wrap" Margin="0,0,0,6" />
+                  <ItemsControl ItemsSource="{Binding Atalhos}">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate x:DataType="vm:NoSuite">
+                        <Button Classes="atalho" Command="{Binding $parent[UserControl].((vm:SuiteViewModel)DataContext).AbrirFuncaoCommand}" CommandParameter="{Binding}">
+                          <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Ellipse Width="7" Height="7" Fill="{Binding Modulo.Cor}" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding Titulo}" Foreground="#0F172A" />
+                          </StackPanel>
+                        </Button>
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </StackPanel>
+              </DockPanel>
+            </Border>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

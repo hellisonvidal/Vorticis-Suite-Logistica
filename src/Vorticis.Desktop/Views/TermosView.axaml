@@ -1,0 +1,51 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Views"
+             x:Class="Vorticis.Desktop.Views.TermosView"
+             x:DataType="vm:TermosViewModel">
+  <ScrollViewer>
+    <StackPanel Spacing="8" MaxWidth="760" HorizontalAlignment="Left" Margin="8">
+      <TextBlock Classes="titulo" Text="Termos de abertura e de encerramento" />
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <TextBlock Text="Período" VerticalAlignment="Center" />
+        <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="140" />
+        <TextBlock Text="a" VerticalAlignment="Center" />
+        <CalendarDatePicker SelectedDate="{Binding Fim}" Width="140" />
+      </StackPanel>
+
+      <Grid ColumnDefinitions="230,*,12,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6" Margin="0,8,0,0">
+        <TextBlock Text="Livro" VerticalAlignment="Center" />
+        <ComboBox Grid.Column="1" ItemsSource="{x:Static vm:TermosViewModel.Livros}" SelectedItem="{Binding Livro}" MinWidth="220" />
+        <TextBlock Grid.Row="1" Text="Número do livro" VerticalAlignment="Center" />
+        <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding NumeroLivro}" Minimum="1" Maximum="9999" FormatString="0" Width="130" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="2" Text="Total de folhas (opcional)" VerticalAlignment="Center" />
+        <NumericUpDown Grid.Row="2" Grid.Column="1" Value="{Binding Folhas}" Minimum="1" Maximum="99999" FormatString="0" Width="130" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="2" Grid.Column="3" Text="Em branco: o termo sai com linha para preencher à mão." FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                   VerticalAlignment="Center" />
+        <TextBlock Grid.Row="3" Text="Representante legal / CPF" VerticalAlignment="Center" />
+        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Representante}" Watermark="Nome" />
+        <TextBox Grid.Row="3" Grid.Column="3" Text="{Binding RepresentanteCpf}" Watermark="000.000.000-00" c:Mascara.Tipo="Cpf" />
+        <TextBlock Grid.Row="4" Text="Contador / CRC" VerticalAlignment="Center" />
+        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Contador}" Watermark="Nome" />
+        <TextBox Grid.Row="4" Grid.Column="3" Text="{Binding Crc}" Watermark="CRC (ex.: SP-123456/O-7)" />
+        <TextBlock Grid.Row="5" Text="NIRE (do cadastro da empresa)" VerticalAlignment="Center" />
+        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Nire}" IsReadOnly="True" Watermark="Não cadastrado" />
+        <TextBlock Grid.Row="5" Grid.Column="3" Text="{Binding AvisoNire}" IsVisible="{Binding SemNire}" Foreground="#B54708" FontSize="11"
+                   TextWrapping="Wrap" VerticalAlignment="Center" />
+        <TextBlock Grid.Row="6" Text="Arquivamento dos atos (opcional)" VerticalAlignment="Center" />
+        <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding DataArquivamento}" Watermark="dd/mm/aaaa" />
+      </Grid>
+
+      <CheckBox Content="Assinar digitalmente o PDF (certificado padrão)" IsChecked="{Binding AssinarPdfDigitalmente}" Margin="0,8,0,0" />
+      <WrapPanel Margin="0,8,0,0">
+        <Button Content="Gerar Termo de Abertura (PDF)" Command="{Binding GerarAberturaCommand}" Classes="accent" IsEnabled="{Binding PodeGerar}" Margin="0,0,8,8" />
+        <Button Content="Gerar Termo de Encerramento (PDF)" Command="{Binding GerarEncerramentoCommand}" IsEnabled="{Binding PodeGerar}" Margin="0,0,8,8" />
+      </WrapPanel>
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="Cada termo sai em seu próprio PDF, com o mesmo texto do Livro Diário (ITG 2000): identificação da entidade e assinaturas do representante legal e do contador. Representante e contador vêm dos cadastros de Sócios e Contadores da empresa." />
+      <c:MensagensView />
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

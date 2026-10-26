@@ -1,0 +1,26 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Views"
+             x:Class="Vorticis.Desktop.Views.DmplView"
+             x:DataType="vm:DmplViewModel">
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="DMPL — Mutações do Patrimônio Líquido" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="140" />
+      <TextBlock Text="a" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Fim}" Width="140" />
+      <Button Content="Gerar" Command="{Binding GerarCommand}" Classes="accent" />
+      <Rectangle Width="1" Fill="#D0D5DD" Margin="6,4" />
+      <c:BarraExportacaoView />
+    </StackPanel>
+    <StackPanel DockPanel.Dock="Bottom" Spacing="2" Margin="0,6,0,0">
+      <TextBlock Text="{Binding Resumo}" FontWeight="SemiBold" />
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="Modelo do CPC 26 (NBC TG 26): colunas por componente do PL (capital, reservas de capital, reservas de lucros, ajustes de avaliação patrimonial e lucros ou prejuízos acumulados). As contas do PL são enquadradas nas colunas pela descrição; as mutações vêm dos lançamentos do período, classificadas pela contrapartida. O resultado do exercício é o da DRE e o saldo final confere com o Balanço." />
+      <c:MensagensView />
+    </StackPanel>
+    <DataGrid Name="GradeDmpl" ItemsSource="{Binding Dmpl}" IsReadOnly="True" AutoGenerateColumns="False" />
+  </DockPanel>
+</UserControl>

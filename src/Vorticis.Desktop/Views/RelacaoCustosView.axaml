@@ -1,0 +1,35 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             x:Class="Vorticis.Desktop.Views.RelacaoCustosView"
+             x:DataType="vm:RelacaoCustosViewModel">
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="Relação de custos e despesas" />
+      <WrapPanel>
+        <WrapPanel.Styles><Style Selector="WrapPanel &gt; :is(Control)"><Setter Property="Margin" Value="0,0,10,6" /></Style></WrapPanel.Styles>
+      <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="140" />
+      <TextBlock Text="a" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Fim}" Width="140" />
+      <ComboBox ItemsSource="{Binding Centros}" SelectedItem="{Binding Centro}" DisplayMemberBinding="{ReflectionBinding Texto}" MinWidth="220" />
+      <TextBox Text="{Binding ContaPrefixo}" Watermark="Conta ou grupo (ex.: 4.2)" Width="170" />
+      <TextBlock Text="Nível do centro (0 = todos)" VerticalAlignment="Center" />
+      <NumericUpDown Value="{Binding Nivel}" Minimum="0" Maximum="9" FormatString="0" Width="110" />
+      <ComboBox ItemsSource="{Binding Agrupamentos}" SelectedIndex="{Binding Agrupamento}" />
+      <ComboBox ItemsSource="{Binding Comparacoes}" SelectedIndex="{Binding Comparacao}" />
+      </WrapPanel>
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <Button Content="Gerar" Command="{Binding GerarCommand}" Classes="accent" />
+        <Rectangle Width="1" Fill="#D0D5DD" Margin="6,4" />
+        <c:BarraExportacaoView />
+      </StackPanel>
+    </StackPanel>
+    <StackPanel DockPanel.Dock="Bottom" Spacing="2" Margin="0,6,0,0">
+      <TextBlock Text="{Binding Resumo}" FontWeight="SemiBold" />
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap" Text="Custos, despesas e deduções da receita, com a participação de cada linha no total e a comparação com outro período." />
+      <c:MensagensView />
+    </StackPanel>
+    <DataGrid Name="Grade" ItemsSource="{Binding Linhas}" IsReadOnly="True" AutoGenerateColumns="False" />
+  </DockPanel>
+</UserControl>

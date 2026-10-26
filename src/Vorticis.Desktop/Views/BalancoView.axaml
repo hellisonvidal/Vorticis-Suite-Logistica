@@ -1,0 +1,41 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             x:Class="Vorticis.Desktop.Views.BalancoView"
+             x:DataType="vm:BalancoViewModel">
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="Balanço Patrimonial" VerticalAlignment="Center" />
+      <TextBlock Text="Em" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Data31}" Width="140" />
+      <TextBlock Text="Nível" VerticalAlignment="Center" />
+      <ComboBox ItemsSource="{x:Static vm:BalancoViewModel.Niveis}" SelectedItem="{Binding Nivel}" Width="70" />
+      <Button Content="Gerar" Command="{Binding GerarCommand}" Classes="accent" />
+      <Rectangle Width="1" Fill="#D0D5DD" Margin="6,4" />
+      <c:BarraExportacaoView />
+    </StackPanel>
+    <StackPanel DockPanel.Dock="Bottom" Margin="0,6,0,0">
+      <TextBlock Text="{Binding Resumo}" FontWeight="SemiBold" />
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="Estrutura conforme o plano de contas da empresa. O enquadramento nas linhas da Lei 6.404 depende do mapeamento ao plano referencial." />
+      <c:MensagensView />
+    </StackPanel>
+    <Grid ColumnDefinitions="*,12,*" RowDefinitions="Auto,*">
+      <TextBlock Text="ATIVO" FontWeight="SemiBold" Foreground="#1F3A5F" />
+      <TextBlock Grid.Column="2" Text="PASSIVO E PATRIMÔNIO LÍQUIDO" FontWeight="SemiBold" Foreground="#1F3A5F" />
+      <DataGrid Grid.Row="1" ItemsSource="{Binding Ativo}" IsReadOnly="True" AutoGenerateColumns="False" FontFamily="Consolas, Menlo, monospace">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" />
+          <DataGridTextColumn Header="R$" Binding="{ReflectionBinding Valor}" Width="130" />
+        </DataGrid.Columns>
+      </DataGrid>
+      <DataGrid Grid.Row="1" Grid.Column="2" ItemsSource="{Binding PassivoPl}" IsReadOnly="True" AutoGenerateColumns="False" FontFamily="Consolas, Menlo, monospace">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" />
+          <DataGridTextColumn Header="R$" Binding="{ReflectionBinding Valor}" Width="130" />
+        </DataGrid.Columns>
+      </DataGrid>
+    </Grid>
+  </DockPanel>
+</UserControl>

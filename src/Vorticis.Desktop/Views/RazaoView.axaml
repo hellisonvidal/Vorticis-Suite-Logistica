@@ -1,0 +1,45 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Views"
+             x:Class="Vorticis.Desktop.Views.RazaoView"
+             x:DataType="vm:RazaoViewModel">
+  <DockPanel Margin="8">
+    <DockPanel DockPanel.Dock="Right" Width="290" Margin="12,0,0,0">
+      <TextBlock DockPanel.Dock="Top" Text="Contas analíticas" FontWeight="SemiBold" />
+      <TextBox DockPanel.Dock="Top" Text="{Binding FiltroConta}" Watermark="Filtrar: reduzido, código ou nome" Margin="0,4" />
+      <TextBlock DockPanel.Dock="Bottom" FontSize="11" Foreground="Gray" TextWrapping="Wrap" Text="Clique numa conta para ver o razão no período." />
+      <ListBox ItemsSource="{Binding Contas}" SelectedItem="{Binding ContaSelecionada}">
+        <ListBox.ItemTemplate>
+          <DataTemplate x:DataType="vm:ContaSelecionavel">
+            <TextBlock Text="{Binding Rotulo}" FontSize="11.5" FontFamily="Consolas, Menlo, monospace" />
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </DockPanel>
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="Livro Razão" VerticalAlignment="Center" />
+      <TextBox Text="{Binding Conta}" Watermark="Conta ou reduzido" Width="160" />
+      <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="140" />
+      <TextBlock Text="a" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Fim}" Width="140" />
+      <Button Content="Gerar" Command="{Binding GerarCommand}" Classes="accent" />
+      <Rectangle Width="1" Fill="#D0D5DD" Margin="6,4" />
+      <c:BarraExportacaoView />
+    </StackPanel>
+    <TextBlock DockPanel.Dock="Top" Text="{Binding Cabecalho}" FontWeight="SemiBold" Margin="0,0,0,6" />
+    <c:MensagensView DockPanel.Dock="Bottom" />
+    <DataGrid ItemsSource="{Binding Linhas}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Data" Binding="{ReflectionBinding Data}" Width="115" />
+        <DataGridTextColumn Header="Nº" Binding="{ReflectionBinding Numero}" Width="70" />
+        <DataGridTextColumn Header="Histórico" Binding="{ReflectionBinding Historico}" Width="*" />
+        <DataGridTextColumn Header="Débito" Binding="{ReflectionBinding Debito}" Width="130" />
+        <DataGridTextColumn Header="Crédito" Binding="{ReflectionBinding Credito}" Width="130" />
+        <DataGridTextColumn Header="Saldo" Binding="{ReflectionBinding Saldo}" Width="150" />
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="100" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>

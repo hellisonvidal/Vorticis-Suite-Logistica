@@ -1,0 +1,41 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Vorticis.Folha.Desktop.App"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Folha.Desktop.ViewModels"
+             xmlns:v="using:Vorticis.Folha.Desktop.Views"
+             RequestedThemeVariant="Light">
+  <Application.DataTemplates>
+    <!-- Telas comuns (login, empresas, usuários, backup...) -->
+    <c:TemplatesComuns />
+    <!-- Telas do módulo Folha -->
+    <DataTemplate DataType="vm:FuncionariosViewModel"><v:FuncionariosView /></DataTemplate>
+    <DataTemplate DataType="vm:CargosViewModel"><v:CargosView /></DataTemplate>
+    <DataTemplate DataType="vm:DepartamentosViewModel"><v:DepartamentosView /></DataTemplate>
+    <DataTemplate DataType="vm:ProLaboreViewModel"><v:ProLaboreView /></DataTemplate>
+    <DataTemplate DataType="vm:RubricasViewModel"><v:RubricasView /></DataTemplate>
+    <DataTemplate DataType="vm:ParametrosFolhaViewModel"><v:ParametrosFolhaView /></DataTemplate>
+    <DataTemplate DataType="vm:EventosVariaveisViewModel"><v:EventosVariaveisView /></DataTemplate>
+    <DataTemplate DataType="vm:FolhaMensalViewModel"><v:FolhaMensalView /></DataTemplate>
+    <DataTemplate DataType="vm:FeriasViewModel"><v:FeriasView /></DataTemplate>
+    <DataTemplate DataType="vm:DecimoTerceiroViewModel"><v:DecimoTerceiroView /></DataTemplate>
+    <DataTemplate DataType="vm:RescisoesViewModel"><v:RescisoesView /></DataTemplate>
+    <DataTemplate DataType="vm:ContabilizacaoFolhaViewModel"><v:ContabilizacaoFolhaView /></DataTemplate>
+    <DataTemplate DataType="vm:AssistenteEsocialViewModel"><v:AssistenteEsocialView /></DataTemplate>
+    <DataTemplate DataType="vm:ESocialViewModel"><v:ESocialView /></DataTemplate>
+    <DataTemplate DataType="vm:TransmissaoEsocialViewModel"><v:TransmissaoEsocialView /></DataTemplate>
+    <DataTemplate DataType="vm:ResumoFolhaViewModel"><v:ResumoFolhaView /></DataTemplate>
+    <DataTemplate DataType="vm:EncargosFolhaViewModel"><v:EncargosFolhaView /></DataTemplate>
+    <DataTemplate DataType="vm:ProvisoesFolhaViewModel"><v:ProvisoesFolhaView /></DataTemplate>
+  </Application.DataTemplates>
+  <Application.Styles>
+    <StyleInclude Source="avares://Vorticis.Desktop.Comum/Estilos.axaml" />
+    <Style Selector="TextBlock.rotulo">
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="DataGridCell.numerica">
+      <Setter Property="HorizontalContentAlignment" Value="Right" />
+    </Style>
+  </Application.Styles>
+</Application>

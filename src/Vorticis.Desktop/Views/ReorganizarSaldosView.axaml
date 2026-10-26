@@ -1,0 +1,27 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             x:Class="Vorticis.Desktop.Views.ReorganizarSaldosView"
+             x:DataType="vm:ReorganizarSaldosViewModel">
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="10" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="Reorganizar saldos" />
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <NumericUpDown Value="{Binding Ano}" Minimum="2000" Maximum="2100" FormatString="0" Width="130" />
+        <Button Content="Recalcular saldos" Command="{Binding ReorganizarCommand}" Classes="accent" IsEnabled="{Binding PodeReorganizar}" />
+      </StackPanel>
+      <TextBlock TextWrapping="Wrap" Foreground="Gray" MaxWidth="640" HorizontalAlignment="Left"
+                 Text="Recalcula os saldos mensais do exercício a partir das partidas efetivadas, corrigindo divergências (útil após importações ou falhas). As contas que mudaram são listadas com os valores antes e depois." />
+      <c:MensagensView />
+    </StackPanel>
+    <DataGrid ItemsSource="{Binding Alteracoes}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Conta" Binding="{ReflectionBinding Conta}" Width="*" />
+        <DataGridTextColumn Header="Mês" Binding="{ReflectionBinding Competencia}" Width="80" />
+        <DataGridTextColumn Header="Antes" Binding="{ReflectionBinding Antes}" Width="260" />
+        <DataGridTextColumn Header="Depois" Binding="{ReflectionBinding Depois}" Width="260" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>

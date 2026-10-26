@@ -1,0 +1,50 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Views"
+             x:Class="Vorticis.Desktop.Views.LancamentoView"
+             x:DataType="vm:LancamentoViewModel">
+  <Grid RowDefinitions="Auto,Auto,*" Margin="8,4,8,6">
+    <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,0,0,4">
+      <TextBlock Classes="titulo" Text="Lançamentos contábeis" VerticalAlignment="Center" />
+    </StackPanel>
+    <c:MensagensView Grid.Row="1" />
+    <!-- Lançamentos efetuados (os estornados permanecem, marcados) e o estorno do selecionado -->
+    <DockPanel Grid.Row="2" Margin="0,2,0,0">
+      <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="0,0,0,2">
+        <Button Name="BotaoNovo" Content="Novo (Ctrl+N)" Command="{Binding NovoLancamentoCommand}" HotKey="Ctrl+N" Classes="accent" />
+        <Button Name="BotaoEditar" Content="Editar" Command="{Binding EditarSelecionadoCommand}" ToolTip.Tip="Abre o lançamento selecionado no pop-up para alteração" />
+        <Button Name="BotaoConsultar" Content="Consultar" Command="{Binding ConsultarSelecionadoCommand}" ToolTip.Tip="Abre o lançamento selecionado somente para leitura" />
+        <Button Name="BotaoExcluir" Content="Excluir" Command="{Binding ExcluirSelecionadoCommand}" IsVisible="{Binding PodeExcluir}" ToolTip.Tip="Exclui o lançamento selecionado, após confirmação" />
+        <Button Name="BotaoEstornarGrade" Content="Estornar" Command="{Binding EstornarCommand}" IsVisible="{Binding PodeEstornar}" />
+        <TextBlock Text="Lançamentos efetuados" FontWeight="SemiBold" Foreground="#1F3A5F" VerticalAlignment="Center" Margin="8,0,0,0"
+                   ToolTip.Tip="Duplo clique ou Enter num lançamento para abri-lo" />
+        <CalendarDatePicker SelectedDate="{Binding ListaInicio}" Width="128" />
+        <TextBlock Text="a" VerticalAlignment="Center" />
+        <CalendarDatePicker SelectedDate="{Binding ListaFim}" Width="128" />
+        <Button Content="Atualizar" Command="{Binding CarregarEfetuadosCommand}" />
+      </StackPanel>
+      <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Spacing="8" Margin="0,6,0,0" IsVisible="{Binding PodeEstornar}">
+        <TextBlock Text="Estornar o selecionado em" VerticalAlignment="Center" />
+        <CalendarDatePicker SelectedDate="{Binding DataEstorno}" Width="128" />
+        <TextBox Text="{Binding MotivoEstorno}" Watermark="Motivo do estorno (obrigatório)" Width="300" />
+        <Button Content="Estornar" Command="{Binding EstornarCommand}" />
+      </StackPanel>
+      <DataGrid x:Name="ListaEfetuados" ItemsSource="{Binding Efetuados}" SelectedItem="{Binding EfetuadoSelecionado}" IsReadOnly="True"
+                AutoGenerateColumns="False" DoubleTapped="AoDuploCliqueEfetuado" KeyDown="AoTeclarLista">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Nº" Binding="{ReflectionBinding Numero}" Width="58" />
+          <DataGridTextColumn Header="Data" Binding="{ReflectionBinding Data}" Width="100" />
+          <DataGridTextColumn Header="Débito" Binding="{ReflectionBinding Debito}" Width="*" />
+          <DataGridTextColumn Header="Crédito" Binding="{ReflectionBinding Credito}" Width="*" />
+          <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="100" />
+          <DataGridTextColumn Header="Documento" Binding="{ReflectionBinding Documento}" Width="90" />
+          <DataGridTextColumn Header="Histórico" Binding="{ReflectionBinding Historico}" Width="*" />
+          <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="80" />
+        </DataGrid.Columns>
+      </DataGrid>
+    </DockPanel>
+
+  </Grid>
+</UserControl>

@@ -1,0 +1,130 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Views"
+             xmlns:app="using:Vorticis.Application.Contabil"
+             x:Class="Vorticis.Desktop.Views.ImportacaoExtratoView"
+             x:DataType="vm:ImportacaoExtratoViewModel">
+  <!-- Integrações › Importar › Extratos bancários (OFX e PDF) -->
+  <UserControl.Styles>
+    <Style Selector="TextBlock.secao">
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Foreground" Value="#1F3A5F" />
+      <Setter Property="Margin" Value="0,6,0,0" />
+    </Style>
+    <Style Selector="TextBlock.dica">
+      <Setter Property="FontSize" Value="11" />
+      <Setter Property="Foreground" Value="Gray" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+  </UserControl.Styles>
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="6">
+      <TextBlock Classes="dica" FontSize="12" Foreground="#44506A"
+                 Text="1. Carregue o extrato: OFX do internet banking, ou PDF, TXT ou CSV. Cada movimento vira um lançamento: entradas debitam a conta do banco e creditam a contrapartida; saídas, o contrário. Movimentos já importados não são duplicados." />
+      <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="6">
+        <TextBlock Text="Arquivo do extrato" VerticalAlignment="Center" />
+        <TextBox Grid.Column="1" Text="{Binding Arquivo}" Watermark="extrato.ofx, extrato.pdf, extrato.csv..." />
+        <Button Grid.Column="2" Content="Procurar..." Click="ProcurarOfx" />
+        <Button Grid.Column="3" Content="Carregar" Command="{Binding LerExtratoCommand}" />
+      </Grid>
+      <TextBlock Text="{Binding DadosExtrato}" FontWeight="SemiBold" TextWrapping="Wrap" />
+
+      <!-- 2. Layout personalizado: só para PDF, TXT e CSV, montado a partir do documento carregado -->
+      <Border IsVisible="{Binding UsaLayout}" BorderBrush="#D0D5DD" BorderThickness="1" CornerRadius="4" Padding="8,6">
+        <StackPanel Spacing="4">
+          <TextBlock Classes="secao" Margin="0" Text="2. Layout do extrato (confira na aba Documento carregado como as colunas ficaram)" />
+          <WrapPanel>
+            <TextBlock Text="Layout salvo" VerticalAlignment="Center" Margin="0,0,6,6" />
+            <ComboBox ItemsSource="{Binding Layouts}" SelectedItem="{Binding LayoutSelecionado}" Width="200" PlaceholderText="(nenhum)" Margin="0,0,8,6" />
+            <Button Content="Novo" Command="{Binding NovoLayoutCommand}" Margin="0,0,6,6" />
+            <Button Content="Sugerir pelo documento" Command="{Binding SugerirLayoutCommand}" Margin="0,0,14,6" />
+            <TextBlock Text="Nome" VerticalAlignment="Center" Margin="0,0,6,6" />
+            <TextBox Text="{Binding NomeLayout}" Watermark="ex.: Banco do Brasil PDF" Width="200" Margin="0,0,6,6" />
+            <Button Content="Salvar layout" Command="{Binding SalvarLayoutCommand}" Margin="0,0,6,6" />
+            <Button Content="Excluir layout" Command="{Binding ExcluirLayoutCommand}" Margin="0,0,0,6" />
+          </WrapPanel>
+          <WrapPanel>
+            <TextBlock Text="Colunas separadas por" VerticalAlignment="Center" Margin="0,0,6,6" />
+            <ComboBox ItemsSource="{x:Static vm:ImportacaoExtratoViewModel.Separadores}" SelectedIndex="{Binding Separador}" Width="190" Margin="0,0,14,6" />
+            <TextBlock Text="Coluna da data" VerticalAlignment="Center" Margin="0,0,6,6" />
+            <NumericUpDown Value="{Binding ColunaData}" Minimum="1" Maximum="30" Increment="1" FormatString="0" Width="110" Margin="0,0,14,6" />
+            <TextBlock Text="Formato da data" VerticalAlignment="Center" Margin="0,0,6,6" />
+            <ComboBox ItemsSource="{x:Static vm:ImportacaoExtratoViewModel.FormatosData}" SelectedItem="{Binding FormatoData}" Width="130" Margin="0,0,14,6" />
+            <TextBlock Text="Ano (datas sem ano)" VerticalAlignment="Center" Margin="0,0,6,6" />
+            <NumericUpDown Value="{Binding Ano}" Minimum="2000" Maximum="2100" Increment="1" FormatString="0" Width="120" Margin="0,0,0,6" />
+          </WrapPanel>
+          <WrapPanel>
+            <TextBlock Text="Coluna do valor" VerticalAlignment="Center" Margin="0,0,6,6" />
+            <NumericUpDown Value="{Binding ColunaValor}" Minimum="0" Maximum="30" Increment="1" FormatString="0" Width="110" Margin="0,0,14,6"
+                           ToolTip.Tip="0 = automático: o valor da linha; com dois valores, o penúltimo (o último costuma ser o saldo)" />
+            <TextBlock Text="da descrição" VerticalAlignment="Center" Margin="0,0,6,6" />
+            <NumericUpDown Value="{Binding ColunaDescricao}" Minimum="0" Maximum="30" Increment="1" FormatString="0" Width="110" Margin="0,0,14,6"
+                           ToolTip.Tip="0 = junta o texto das demais colunas" />
+            <TextBlock Text="do documento" VerticalAlignment="Center" Margin="0,0,6,6" />
+            <NumericUpDown Value="{Binding ColunaDocumento}" Minimum="0" Maximum="30" Increment="1" FormatString="0" Width="110" Margin="0,0,14,6"
+                           ToolTip.Tip="0 = sem documento" />
+            <TextBlock Text="Ignorar linhas com" VerticalAlignment="Center" Margin="0,0,6,6" />
+            <TextBox Text="{Binding Ignorar}" Watermark="SALDO, TOTAL" Width="170" Margin="0,0,14,6" />
+            <CheckBox Content="Inverter sinal (saídas vêm positivas)" IsChecked="{Binding InverterSinal}" Margin="0,0,0,6" />
+          </WrapPanel>
+          <TextBlock Classes="dica" Text="Colunas: 1 = primeira. No valor, 0 = automático (com valor e saldo na linha, fica o valor); na descrição, 0 junta o texto das outras colunas; no documento, 0 = sem documento. Valores com D ou sinal de menos são saídas." />
+        </StackPanel>
+      </Border>
+
+      <TextBlock Classes="secao" Text="3. Contas e histórico" />
+      <WrapPanel>
+        <TextBlock Text="Conta do banco" VerticalAlignment="Center" Margin="0,0,6,6" />
+        <TextBox Text="{Binding ContaBanco}" Watermark="ex.: 1.1.01.002" Width="140" Margin="0,0,14,6" />
+        <TextBlock Text="Contrapartida das entradas" VerticalAlignment="Center" Margin="0,0,6,6" />
+        <TextBox Text="{Binding ContrapartidaEntradas}" Watermark="ex.: 1.1.02.001" Width="140" Margin="0,0,14,6" />
+        <TextBlock Text="das saídas" VerticalAlignment="Center" Margin="0,0,6,6" />
+        <TextBox Text="{Binding ContrapartidaSaidas}" Watermark="ex.: 2.1.01.001" Width="140" Margin="0,0,8,6" />
+        <Button Content="Preencher vazias" Command="{Binding AplicarContrapartidasCommand}" Margin="0,0,14,6" />
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="Histórico" VerticalAlignment="Center" Margin="0,0,6,6" />
+          <TextBox Text="{Binding PrefixoHistorico}" Watermark="prefixo, ex.: Extrato Itaú:" Width="200" Margin="0,0,6,6" />
+        </StackPanel>
+      </WrapPanel>
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button Content="Pré-visualizar" Command="{Binding PreVisualizarCommand}" />
+        <Button Content="Importar" Command="{Binding ImportarCommand}" Classes="accent" />
+      </StackPanel>
+      <c:MensagensView />
+    </StackPanel>
+    <Grid RowDefinitions="*,8,*" Margin="0,8,0,0">
+      <TabControl Padding="0,4,0,0">
+        <TabItem Header="Movimentos">
+          <DataGrid ItemsSource="{Binding Transacoes}" AutoGenerateColumns="False" CanUserSortColumns="False">
+            <DataGrid.Columns>
+              <DataGridCheckBoxColumn Header="" Binding="{ReflectionBinding Importar}" Width="44" />
+              <DataGridTextColumn Header="Data" Binding="{ReflectionBinding Data}" Width="112" IsReadOnly="True" />
+              <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" IsReadOnly="True" />
+              <DataGridTextColumn Header="Doc" Binding="{ReflectionBinding Documento}" Width="90" IsReadOnly="True" />
+              <DataGridTextColumn Header="Entrada" Binding="{ReflectionBinding Entrada}" Width="110" IsReadOnly="True" />
+              <DataGridTextColumn Header="Saída" Binding="{ReflectionBinding Saida}" Width="110" IsReadOnly="True" />
+              <DataGridTextColumn Header="Contrapartida" Binding="{ReflectionBinding Contrapartida}" Width="150" />
+            </DataGrid.Columns>
+          </DataGrid>
+        </TabItem>
+        <TabItem Header="Documento carregado" IsVisible="{Binding UsaLayout}">
+          <DataGrid ItemsSource="{Binding LinhasDocumento}" AutoGenerateColumns="False" CanUserSortColumns="False" IsReadOnly="True">
+            <DataGrid.Columns>
+              <DataGridTextColumn Header="Linha" Binding="{ReflectionBinding Numero}" Width="60" />
+              <DataGridTextColumn Header="Movimento" Binding="{ReflectionBinding Movimento}" Width="160" />
+              <DataGridTextColumn Header="Coluna 1" Binding="{ReflectionBinding C1}" Width="*" />
+              <DataGridTextColumn Header="Coluna 2" Binding="{ReflectionBinding C2}" Width="*" />
+              <DataGridTextColumn Header="Coluna 3" Binding="{ReflectionBinding C3}" Width="*" />
+              <DataGridTextColumn Header="Coluna 4" Binding="{ReflectionBinding C4}" Width="*" />
+              <DataGridTextColumn Header="Coluna 5" Binding="{ReflectionBinding C5}" Width="*" />
+              <DataGridTextColumn Header="Coluna 6" Binding="{ReflectionBinding C6}" Width="*" />
+              <DataGridTextColumn Header="Demais" Binding="{ReflectionBinding Demais}" Width="*" />
+            </DataGrid.Columns>
+          </DataGrid>
+        </TabItem>
+      </TabControl>
+      <v:PreviaImportacaoView Grid.Row="2" />
+    </Grid>
+  </DockPanel>
+</UserControl>

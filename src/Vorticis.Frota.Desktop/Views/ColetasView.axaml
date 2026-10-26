@@ -1,0 +1,74 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Frota.Desktop.ViewModels"
+             x:Class="Vorticis.Frota.Desktop.Views.ColetasView" x:DataType="vm:ColetasViewModel">
+  <Grid ColumnDefinitions="*,12,430" RowDefinitions="Auto,Auto,*" Margin="8">
+    <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="8" Margin="0,0,0,6">
+      <TextBlock Classes="titulo" Text="Ordens de coleta" VerticalAlignment="Center" />
+      <TextBlock Text="Período" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="130" />
+      <TextBlock Text="a" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Fim}" Width="130" />
+      <TextBlock Text="Situação" VerticalAlignment="Center" />
+      <ComboBox ItemsSource="{x:Static vm:ColetasViewModel.FiltroSituacoes}" SelectedItem="{Binding FiltroSituacao}" Width="150" />
+    </StackPanel>
+    <TextBlock Grid.Row="1" Grid.ColumnSpan="3" Text="{Binding Totais}" FontSize="12" Margin="0,0,0,6" />
+    <DataGrid Grid.Row="2" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionada}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Nº" Binding="{ReflectionBinding Numero}" Width="55" />
+        <DataGridTextColumn Header="Agendada para" Binding="{ReflectionBinding Agendada}" Width="130" />
+        <DataGridTextColumn Header="Remetente" Binding="{ReflectionBinding Remetente}" Width="150" />
+        <DataGridTextColumn Header="Destinatário" Binding="{ReflectionBinding Destinatario}" Width="150" />
+        <DataGridTextColumn Header="Endereço de coleta" Binding="{ReflectionBinding Endereco}" Width="*" />
+        <DataGridTextColumn Header="Peso (kg)" Binding="{ReflectionBinding Peso}" Width="80" />
+        <DataGridTextColumn Header="Placa" Binding="{ReflectionBinding Placa}" Width="85" />
+        <DataGridTextColumn Header="Motorista" Binding="{ReflectionBinding Motorista}" Width="120" />
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="95" />
+      </DataGrid.Columns>
+    </DataGrid>
+    <ScrollViewer Grid.Row="2" Grid.Column="2">
+    <StackPanel Spacing="6" IsEnabled="{Binding PodeEditar}">
+      <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
+        <TextBlock Classes="rotulo" Text="Data e hora" />
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+          <CalendarDatePicker SelectedDate="{Binding Dia}" Width="140" />
+          <TextBox Text="{Binding Hora}" Width="80" Watermark="08:00" />
+        </StackPanel>
+        <TextBlock Grid.Row="1" Classes="rotulo" Text="Remetente" />
+        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding ParticipantesOpcoes}" SelectedItem="{Binding Remetente}" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="2" Classes="rotulo" Text="Destinatário" />
+        <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding ParticipantesOpcoes}" SelectedItem="{Binding Destinatario}" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="3" Classes="rotulo" Text="Endereço de coleta" />
+        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Endereco}" AcceptsReturn="False" />
+        <TextBlock Grid.Row="4" Classes="rotulo" Text="Mercadoria" />
+        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Mercadoria}" />
+        <TextBlock Grid.Row="5" Classes="rotulo" Text="Volumes / peso" />
+        <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" Spacing="6">
+          <TextBox Text="{Binding Volumes}" Width="100" Watermark="Volumes" />
+          <TextBox Text="{Binding Peso}" Width="130" Watermark="Peso (kg)" />
+        </StackPanel>
+        <TextBlock Grid.Row="6" Classes="rotulo" Text="Valor da mercadoria" />
+        <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Valor}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="7" Classes="rotulo" Text="Veículo" />
+        <ComboBox Grid.Row="7" Grid.Column="1" ItemsSource="{Binding VeiculosOpcoes}" SelectedItem="{Binding Veiculo}" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="8" Classes="rotulo" Text="Motorista" />
+        <ComboBox Grid.Row="8" Grid.Column="1" ItemsSource="{Binding MotoristasOpcoes}" SelectedItem="{Binding Motorista}" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="9" Classes="rotulo" Text="Rota" />
+        <ComboBox Grid.Row="9" Grid.Column="1" ItemsSource="{Binding RotasOpcoes}" SelectedItem="{Binding Rota}" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="10" Classes="rotulo" Text="Situação" />
+        <ComboBox Grid.Row="10" Grid.Column="1" ItemsSource="{x:Static vm:ColetasViewModel.Situacoes}" SelectedItem="{Binding Situacao}" Width="160" />
+        <TextBlock Grid.Row="11" Classes="rotulo" Text="Observação" />
+        <TextBox Grid.Row="11" Grid.Column="1" Text="{Binding Observacao}" />
+      </Grid>
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <Button Content="Nova ordem" Command="{Binding NovaCommand}" />
+        <Button Content="Gravar" Classes="accent" Command="{Binding GravarCommand}" />
+        <Button Content="Imprimir ordem (PDF)" Command="{Binding ImprimirCommand}" />
+        <Button Content="Excluir" Command="{Binding ExcluirCommand}" />
+      </StackPanel>
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="Para andar a coleta, mude a situação e grave: agendada, em coleta, coletada. Coleta coletada ou cancelada não pode mais ser alterada." />
+      <c:MensagensView />
+    </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

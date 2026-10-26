@@ -1,0 +1,49 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:g="using:Vorticis.Fiscal.Desktop.Views" xmlns:vm="using:Vorticis.Fiscal.Desktop.ViewModels"
+             x:Class="Vorticis.Fiscal.Desktop.Views.AjustesIcmsView" x:DataType="vm:AjustesIcmsViewModel">
+  <!-- Lançamentos › SPED Fiscal › Ajustes da apuração do ICMS (E111) -->
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <TextBlock Classes="titulo" Text="Ajustes da apuração do ICMS (E111)" VerticalAlignment="Center" />
+        <TextBlock Text="Competência" VerticalAlignment="Center" />
+        <CalendarDatePicker SelectedDate="{Binding Competencia}" SelectedDateFormat="Custom" CustomDateFormatString="MM/yyyy" Width="120" />
+      </StackPanel>
+      <TextBlock FontSize="11" Foreground="#44506A" TextWrapping="Wrap"
+                 Text="Código da tabela 5.1.1 da UF (8 posições): UF + 0 (ICMS próprio) + tipo + sequência. Tipo: 0 outros débitos, 1 estorno de créditos, 2 outros créditos, 3 estorno de débitos, 4 deduções, 5 débitos especiais. Ex.: SP020099." />
+      <WrapPanel IsEnabled="{Binding PodeManter}">
+        <StackPanel Margin="0,0,10,6" Spacing="2">
+          <TextBlock Text="Código do ajuste" FontSize="12" />
+          <TextBox Text="{Binding Codigo}" Width="120" MaxLength="8" Watermark="SP020099" />
+        </StackPanel>
+        <StackPanel Margin="0,0,10,6" Spacing="2">
+          <TextBlock Text="Tipo (pelo código)" FontSize="12" />
+          <TextBlock Text="{Binding TipoCodigo}" Width="170" Margin="0,6,0,0" FontWeight="SemiBold" />
+        </StackPanel>
+        <StackPanel Margin="0,0,10,6" Spacing="2">
+          <TextBlock Text="Descrição complementar" FontSize="12" />
+          <TextBox Text="{Binding Descricao}" Width="360" />
+        </StackPanel>
+        <StackPanel Margin="0,0,10,6" Spacing="2">
+          <TextBlock Text="Valor" FontSize="12" />
+          <TextBox Text="{Binding Valor}" Width="120" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Bottom" Margin="0,0,0,6">
+          <Button Content="Novo" Command="{Binding NovoCommand}" />
+          <Button Content="Gravar" Classes="accent" Command="{Binding GravarCommand}" />
+          <Button Content="Excluir" Command="{Binding ExcluirCommand}" />
+        </StackPanel>
+      </WrapPanel>
+      <TextBlock Text="{Binding Totais}" FontWeight="SemiBold" TextWrapping="Wrap" />
+      <c:MensagensView />
+    </StackPanel>
+    <DataGrid g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Código" Binding="{ReflectionBinding Codigo}" Width="110" />
+        <DataGridTextColumn Header="Tipo" Binding="{ReflectionBinding Tipo}" Width="200" />
+        <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" />
+        <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="130" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>

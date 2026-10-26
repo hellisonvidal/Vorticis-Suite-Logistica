@@ -1,0 +1,26 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:g="using:Vorticis.Fiscal.Desktop.Views"
+             xmlns:vm="using:Vorticis.Fiscal.Desktop.ViewModels"
+             x:Class="Vorticis.Fiscal.Desktop.Views.ImportacaoXmlView"
+             x:DataType="vm:ImportacaoXmlViewModel">
+  <!-- Documentos fiscais › Importação de XML -->
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="Importação de XML de notas fiscais" />
+      <TextBlock FontSize="12" Foreground="#44506A" TextWrapping="Wrap"
+                 Text="Importe NF-e e NFC-e (modelos 55 e 65, procNFe) e NFS-e do padrão nacional (ADN), em arquivos .xml, .zip (com subpastas) ou pastas inteiras (com subpastas). Notas emitidas pela empresa são saídas; notas em que ela é destinatária/tomadora são entradas. Notas de outras empresas são recusadas, chaves já importadas são ignoradas, eventos de cancelamento atualizam a nota e clientes/fornecedores novos são cadastrados. A importação roda em segundo plano e pode ser cancelada." />
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button Content="Importar arquivos..." Click="EscolherArquivos" IsEnabled="{Binding PodeIniciar}" Classes="accent" />
+        <TextBlock Text="ou pasta:" VerticalAlignment="Center" Margin="12,0,0,0" />
+        <TextBox Text="{Binding Pasta}" Width="380" Watermark="C:\XML\NotasFiscais" />
+        <Button Content="Procurar..." Click="EscolherPasta" IsEnabled="{Binding !Importando}" />
+        <CheckBox Content="Incluir subpastas" IsChecked="{Binding IncluirSubpastas}" />
+        <Button Content="Importar pasta" Command="{Binding ImportarPastaCommand}" IsEnabled="{Binding PodeIniciar}" />
+      </StackPanel>
+      <c:MensagensView />
+    </StackPanel>
+    <g:PainelImportacaoView />
+  </DockPanel>
+</UserControl>

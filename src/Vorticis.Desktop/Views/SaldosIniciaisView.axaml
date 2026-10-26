@@ -1,0 +1,38 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Views"
+             x:Class="Vorticis.Desktop.Views.SaldosIniciaisView"
+             x:DataType="vm:SaldosIniciaisViewModel">
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <TextBlock Classes="titulo" Text="Saldos iniciais (implantação)" VerticalAlignment="Center" />
+        <TextBlock Text="Exercício" VerticalAlignment="Center" />
+        <NumericUpDown Value="{Binding Ano}" Minimum="2000" Maximum="2100" FormatString="0" Width="130" />
+        <CheckBox Content="Mostrar só contas preenchidas" IsChecked="{Binding SomentePreenchidas}" />
+      </StackPanel>
+      <TextBlock FontSize="12" Foreground="#44506A" TextWrapping="Wrap"
+                 Text="Informe o saldo de cada conta patrimonial no balanço de abertura. O lançamento é feito na data de início do exercício. D/C já vem com a natureza da conta; troque para contas com saldo invertido." />
+    </StackPanel>
+    <Grid DockPanel.Dock="Bottom" ColumnDefinitions="*,Auto" Margin="0,8,0,0">
+      <c:MensagensView />
+      <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16" VerticalAlignment="Top">
+        <TextBlock Text="{Binding TotalDebito, StringFormat='Débitos: {0}'}" VerticalAlignment="Center" />
+        <TextBlock Text="{Binding TotalCredito, StringFormat='Créditos: {0}'}" VerticalAlignment="Center" />
+        <TextBlock Text="{Binding Diferenca, StringFormat='Diferença: {0}'}" FontWeight="SemiBold" VerticalAlignment="Center"
+                   Foreground="{Binding Balanceado, Converter={x:Static c:Conversores.OkOuErro}}" />
+        <Button Content="Lançar saldos iniciais" Command="{Binding LancarCommand}" Classes="accent" IsEnabled="{Binding Balanceado}" />
+      </StackPanel>
+    </Grid>
+    <DataGrid ItemsSource="{Binding Linhas}" AutoGenerateColumns="False" CanUserSortColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Conta" Binding="{ReflectionBinding Codigo}" IsReadOnly="True" Width="140" />
+        <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" IsReadOnly="True" Width="*" />
+        <DataGridTextColumn Header="Saldo" Binding="{ReflectionBinding Valor}" Width="160" />
+        <DataGridTextColumn Header="D/C" Binding="{ReflectionBinding Dc}" Width="70" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>

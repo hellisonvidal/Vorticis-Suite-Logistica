@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\Vorticis.Application\Vorticis.Application.csproj" />
+    <PackageReference Include="MiniExcel" />
+    <PackageReference Include="Npgsql" />
+    <PackageReference Include="PDFsharp-MigraDoc" />
+    <PackageReference Include="PdfPig" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- As migrações SQL ficam em db/ (fonte única) e são embutidas no assembly. -->
+    <EmbeddedResource Include="..\..\db\*.sql" LogicalName="Migracoes.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="Dados\*.json" LogicalName="Dados.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="Dados\Fontes\*.ttf" LogicalName="Fontes.%(Filename)%(Extension)" />
+  </ItemGroup>
+</Project>

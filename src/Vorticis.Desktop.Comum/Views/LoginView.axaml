@@ -1,0 +1,47 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Comum.Views"
+             x:Class="Vorticis.Desktop.Comum.Views.LoginView"
+             x:DataType="vm:LoginViewModel">
+  <Grid Background="#F4F6FA">
+    <Border Width="400" HorizontalAlignment="Center" VerticalAlignment="Center" Background="White"
+            CornerRadius="8" BorderBrush="{Binding PincelDestaque}" BorderThickness="0,6,0,0" Padding="32,28" BoxShadow="0 4 18 0 #1A1F3A5F">
+      <StackPanel Spacing="10">
+        <TextBlock Text="{Binding NomeModulo}" FontSize="28" FontWeight="Bold" Foreground="{Binding PincelDestaque}" HorizontalAlignment="Center" />
+        <TextBlock Text="{Binding SubtituloModulo}" FontSize="13" Foreground="#5B6478" HorizontalAlignment="Center" Margin="0,0,0,10" />
+
+        <!-- Instalação nova: acesso de implantação para cadastrar o administrador -->
+        <Border IsVisible="{Binding ImplantacaoAtiva}" Background="#FFF7E0" BorderBrush="#E0B84C" BorderThickness="1" CornerRadius="4" Padding="10,8">
+          <TextBlock Text="{Binding AvisoImplantacao}" TextWrapping="Wrap" FontSize="12" Foreground="#5C4500" />
+        </Border>
+
+        <!-- Entrar -->
+        <StackPanel Spacing="8" IsVisible="{Binding EmEntrar}">
+          <TextBlock Text="Usuário" FontSize="12" />
+          <TextBox Text="{Binding Usuario}" Name="CampoUsuario" />
+          <TextBlock Text="Senha" FontSize="12" />
+          <TextBox Text="{Binding Senha}" PasswordChar="●" />
+          <CheckBox Content="Salvar login neste computador" IsChecked="{Binding SalvarLogin}" FontSize="12"
+                    ToolTip.Tip="Guarda usuário e senha (cifrada pelo Windows, só para o seu usuário). Não use em computadores compartilhados." />
+          <Button Content="Entrar" Command="{Binding EntrarCommand}" IsDefault="True" Classes="accent"
+                  HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="0,8,0,0" />
+        </StackPanel>
+
+        <!-- Troca obrigatória -->
+        <StackPanel Spacing="8" IsVisible="{Binding EmTrocaObrigatoria}">
+          <TextBlock Text="Nova senha" FontSize="12" />
+          <TextBox Text="{Binding Senha}" PasswordChar="●" />
+          <TextBlock Text="Confirme a nova senha" FontSize="12" />
+          <TextBox Text="{Binding Confirmacao}" PasswordChar="●" />
+          <CheckBox Content="Salvar login neste computador" IsChecked="{Binding SalvarLogin}" FontSize="12"
+                    ToolTip.Tip="Guarda usuário e senha (cifrada pelo Windows, só para o seu usuário). Não use em computadores compartilhados." />
+          <Button Content="Salvar senha e entrar" Command="{Binding TrocarSenhaCommand}" IsDefault="True"
+                  Classes="accent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="0,8,0,0" />
+        </StackPanel>
+
+        <v:MensagensView />
+      </StackPanel>
+    </Border>
+  </Grid>
+</UserControl>

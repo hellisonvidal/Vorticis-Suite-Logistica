@@ -1,0 +1,26 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Frota.Desktop.ViewModels"
+             x:Class="Vorticis.Frota.Desktop.Views.RelatorioFrotaView" x:DataType="vm:RelatorioFrotaViewModel">
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="{Binding Titulo}" VerticalAlignment="Center" />
+      <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding UsaPeriodo}">
+      <TextBlock Text="Período" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="130" />
+      <TextBlock Text="a" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Fim}" Width="130" />
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding UsaFiltros}">
+      <TextBlock Text="Veículo" VerticalAlignment="Center" />
+      <ComboBox ItemsSource="{Binding FiltroVeiculos}" SelectedItem="{Binding FiltroVeiculo}" Width="200" />
+      <TextBlock Text="Motorista" VerticalAlignment="Center" />
+      <ComboBox ItemsSource="{Binding FiltroMotoristas}" SelectedItem="{Binding FiltroMotorista}" Width="180" />
+      </StackPanel>
+      <Button Content="Gerar" Command="{Binding GerarCommand}" Classes="accent" />
+      <Rectangle Width="1" Fill="#D0D5DD" Margin="6,4" />
+      <c:BarraExportacaoView />
+    </StackPanel>
+    <c:MensagensView DockPanel.Dock="Bottom" Margin="0,6,0,0" />
+    <DataGrid Name="Grade" ItemsSource="{Binding Linhas}" IsReadOnly="True" AutoGenerateColumns="False" />
+  </DockPanel>
+</UserControl>

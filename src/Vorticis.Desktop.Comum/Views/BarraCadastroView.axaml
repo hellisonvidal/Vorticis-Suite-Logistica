@@ -1,0 +1,19 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
+             x:Class="Vorticis.Desktop.Comum.Views.BarraCadastroView"
+             x:DataType="vm:CadastroViewModel">
+  <!-- Barra padrão dos cadastros -->
+  <StackPanel Spacing="4">
+    <StackPanel Orientation="Horizontal" Spacing="6">
+      <Button Content="Incluir" Command="{Binding IncluirCommand}" MinWidth="86" HorizontalContentAlignment="Center" />
+      <Button Content="Alterar" Command="{Binding AlterarCommand}" MinWidth="86" HorizontalContentAlignment="Center" />
+      <Button Content="Excluir" Command="{Binding ExcluirCommand}" MinWidth="86" HorizontalContentAlignment="Center" />
+      <Rectangle Width="1" Fill="#D0D5DD" Margin="6,2" />
+      <Button Content="Salvar" Command="{Binding SalvarCommand}" Classes="accent" MinWidth="86" HorizontalContentAlignment="Center" />
+      <Button Content="Cancelar" Command="{Binding CancelarCommand}" MinWidth="86" HorizontalContentAlignment="Center" />
+    </StackPanel>
+    <TextBlock Text="{Binding SituacaoCadastro}" FontSize="11" Foreground="#44506A"
+               IsVisible="{Binding SituacaoCadastro, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+  </StackPanel>
+</UserControl>

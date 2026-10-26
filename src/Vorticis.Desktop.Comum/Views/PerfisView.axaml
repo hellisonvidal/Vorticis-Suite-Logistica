@@ -1,0 +1,83 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Comum.Views"
+             x:Class="Vorticis.Desktop.Comum.Views.PerfisView"
+             x:DataType="vm:PerfisViewModel">
+  <DockPanel>
+  <Border DockPanel.Dock="Top" IsVisible="{Binding ConfiguracaoInicial}" Background="#FFF6E0" BorderBrush="#E8C66A"
+          BorderThickness="1" CornerRadius="4" Padding="12,10" Margin="8,8,8,0">
+    <Grid ColumnDefinitions="*,Auto">
+      <StackPanel Spacing="4">
+        <TextBlock FontWeight="SemiBold" Text="Configuração inicial (obrigatória): perfis de acesso dos usuários" />
+        <TextBlock TextWrapping="Wrap" FontSize="12"
+                   Text="Antes de usar o sistema, defina o que cada perfil de usuário pode acessar. Os perfis Administrador (todas as funções), Contador, Assistente e Consulta já vêm prontos: revise as funções liberadas, ajuste ou crie novos perfis e clique em Concluir. O cadastro de empresas pode ser feito depois." />
+      </StackPanel>
+      <Button Grid.Column="1" Content="Concluir configuração dos perfis" Classes="accent" VerticalAlignment="Center"
+              Margin="12,0,0,0" Command="{Binding ConcluirConfiguracaoInicialCommand}" />
+    </Grid>
+  </Border>
+  <Grid ColumnDefinitions="300,16,*" RowDefinitions="Auto,*" Margin="8">
+    <Grid Grid.ColumnSpan="3" ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+      <v:BarraCadastroView />
+      <Button Grid.Column="1" Content="Duplicar perfil" Command="{Binding DuplicarCommand}" VerticalAlignment="Top"
+              ToolTip.Tip="Inclui um perfil novo com as mesmas funções do selecionado." />
+    </Grid>
+    <DockPanel Grid.Row="1" IsEnabled="{Binding !EmEdicao}">
+      <TextBlock DockPanel.Dock="Top" Classes="titulo" Text="Perfis de acesso" Margin="0,0,0,8" />
+      <ListBox ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}">
+        <ListBox.ItemTemplate>
+          <DataTemplate x:DataType="vm:PerfilLinha">
+            <StackPanel>
+              <TextBlock Text="{Binding Nome}" FontWeight="SemiBold" />
+              <TextBlock Text="{Binding Numero}" FontSize="11" Foreground="Gray" />
+              <TextBlock Text="{Binding Resumo}" FontSize="11" Foreground="Gray" />
+            </StackPanel>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </DockPanel>
+
+    <ScrollViewer Grid.Row="1" Grid.Column="2">
+      <StackPanel Spacing="8" MaxWidth="680" HorizontalAlignment="Left">
+        <Grid ColumnDefinitions="110,*" RowDefinitions="Auto,Auto" RowSpacing="6" IsEnabled="{Binding EmEdicao}">
+          <TextBlock Text="Nome" VerticalAlignment="Center" />
+          <TextBox Grid.Column="1" Text="{Binding Nome}" />
+          <TextBlock Grid.Row="1" Text="Descrição" VerticalAlignment="Center" />
+          <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Descricao}" />
+        </Grid>
+        <TextBlock Text="{Binding Situacao}" FontSize="11" Foreground="#44506A" />
+        <v:MensagensView />
+
+        <Grid ColumnDefinitions="*,Auto,Auto" Margin="0,6,0,0">
+          <TextBlock Text="Funções liberadas por este perfil" FontWeight="SemiBold" VerticalAlignment="Center" />
+          <Button Grid.Column="1" Content="Marcar todas" Command="{Binding MarcarTodasCommand}" CommandParameter="{x:True}" FontSize="12" Margin="0,0,6,0"
+                  IsEnabled="{Binding PodeMarcar}" />
+          <Button Grid.Column="2" Content="Desmarcar todas" Command="{Binding MarcarTodasCommand}" CommandParameter="{x:False}" FontSize="12"
+                  IsEnabled="{Binding PodeMarcar}" />
+        </Grid>
+        <ItemsControl ItemsSource="{Binding Grupos}" IsEnabled="{Binding PodeMarcar}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:GrupoFuncoes">
+              <Border BorderBrush="#D0D5DD" BorderThickness="1" CornerRadius="4" Padding="10,6" Margin="0,4">
+                <StackPanel Spacing="2">
+                  <TextBlock Text="{Binding Nome}" FontWeight="SemiBold" Foreground="#1F3A5F" />
+                  <ItemsControl ItemsSource="{Binding Funcoes}">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate x:DataType="vm:FuncaoMarcavel">
+                        <CheckBox Content="{Binding Descricao}" IsChecked="{Binding Marcada}" />
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </StackPanel>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <TextBlock TextWrapping="Wrap" FontSize="11" Foreground="Gray"
+                   Text="Cadastro de empresas, usuários, perfis, conexão e backup pertencem a quem tem o perfil Administrador, que libera sempre todas as funções." />
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+  </DockPanel>
+</UserControl>

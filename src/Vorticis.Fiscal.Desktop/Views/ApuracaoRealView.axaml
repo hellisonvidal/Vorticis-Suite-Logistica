@@ -1,0 +1,100 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:g="using:Vorticis.Fiscal.Desktop.Views"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Fiscal.Desktop.ViewModels"
+             x:Class="Vorticis.Fiscal.Desktop.Views.ApuracaoRealView"
+             x:DataType="vm:ApuracaoRealViewModel">
+  <!-- Apuração › Lucro Real (trimestral, LALUR/LACS básico) -->
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <TextBlock Classes="titulo" Text="Lucro Real · IRPJ e CSLL trimestrais" VerticalAlignment="Center" />
+        <NumericUpDown Value="{Binding Ano}" Minimum="2000" Maximum="2100" FormatString="0" Width="120" />
+        <ComboBox ItemsSource="{x:Static vm:ApuracaoTrimestralViewModel.Trimestres}" SelectedIndex="{Binding Trimestre}" Width="190" />
+        <Button Content="Preparar (contabilidade e LALUR)" Command="{Binding PrepararCommand}" Classes="accent" />
+        <Button Content="Calcular" Command="{Binding CalcularCommand}" IsEnabled="{Binding PodeApurar}" />
+        <Button Content="Salvar apuração" Command="{Binding SalvarCommand}" IsEnabled="{Binding PodeApurar}" />
+        <Button Content="Contabilizar provisão" Command="{Binding ContabilizarCommand}" IsEnabled="{Binding PodeContabilizar}" />
+        <Button Content="Desfazer provisão" Command="{Binding DesfazerCommand}" IsEnabled="{Binding PodeDesfazer}" />
+      </StackPanel>
+      <WrapPanel>
+        <TextBlock Text="Lucro contábil" VerticalAlignment="Center" Margin="0,0,6,6" />
+        <TextBox Text="{Binding LucroContabilTexto}" Width="115" Margin="0,0,12,6" />
+        <TextBlock Text="Prejuízo fiscal a compensar" VerticalAlignment="Center" Margin="0,0,6,6" />
+        <TextBox Text="{Binding SaldoPrejuizoTexto}" Width="115" Margin="0,0,12,6" />
+        <TextBlock Text="Base negativa CSLL" VerticalAlignment="Center" Margin="0,0,6,6" />
+        <TextBox Text="{Binding SaldoBaseNegativaTexto}" Width="115" Margin="0,0,12,6" />
+        <TextBlock Text="IRRF" VerticalAlignment="Center" Margin="0,0,6,6" />
+        <TextBox Text="{Binding IrrfTexto}" Width="100" Margin="0,0,12,6" />
+        <TextBlock Text="CSLL retida" VerticalAlignment="Center" Margin="0,0,6,6" />
+        <TextBox Text="{Binding CsllRetidaTexto}" Width="100" Margin="0,0,12,6" />
+        <TextBlock Text="Outras deduções" VerticalAlignment="Center" Margin="0,0,6,6" />
+        <TextBox Text="{Binding OutrasDeducoesTexto}" Width="100" Margin="0,0,12,6" />
+        <TextBlock Text="Receita bruta" VerticalAlignment="Center" Margin="0,0,6,6" />
+        <TextBox Text="{Binding ReceitaTexto}" Width="115" Margin="0,0,12,6" />
+        <c:BarraExportacaoView />
+      </WrapPanel>
+      <TextBlock Text="{Binding ContabilTexto}" FontSize="11" Foreground="Gray" TextWrapping="Wrap" />
+      <TextBlock Text="{Binding Situacao}" FontSize="11" Foreground="Gray" />
+      <c:MensagensView />
+      <TextBlock Text="{Binding AvisosTexto}" Classes="erro" IsVisible="{Binding AvisosTexto, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+    </StackPanel>
+    <Grid ColumnDefinitions="620,12,*">
+      <Grid RowDefinitions="*,6,*">
+        <DockPanel>
+          <StackPanel DockPanel.Dock="Bottom" Spacing="4" Margin="0,4,0,0">
+            <WrapPanel>
+              <ComboBox ItemsSource="{x:Static vm:ApuracaoRealViewModel.Tributos}" SelectedIndex="{Binding LalurTributo}" Width="130" Margin="0,0,6,4" />
+              <ComboBox ItemsSource="{x:Static vm:ApuracaoRealViewModel.Tipos}" SelectedIndex="{Binding LalurTipo}" Width="100" Margin="0,0,6,4" />
+              <TextBox Text="{Binding LalurDescricao}" Watermark="Descrição" Width="200" Margin="0,0,6,4" />
+              <TextBox Text="{Binding LalurValor}" Watermark="Valor" Width="100" Margin="0,0,6,4" />
+              <TextBox Text="{Binding LalurCodigoEcf}" Watermark="Cód. ECF" Width="90" Margin="0,0,6,4" />
+            </WrapPanel>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <Button Content="Incluir no LALUR/LACS" Command="{Binding AdicionarLalurCommand}" IsEnabled="{Binding PodeManterLalur}" />
+              <Button Content="Excluir selecionado" Command="{Binding ExcluirLalurCommand}" IsEnabled="{Binding PodeManterLalur}" />
+            </StackPanel>
+          </StackPanel>
+          <DockPanel>
+            <TextBlock DockPanel.Dock="Top" Text="LALUR / LACS · Parte A (adições e exclusões do ano)" FontWeight="SemiBold" Foreground="#1F3A5F" />
+            <DataGrid g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Lalur}" SelectedItem="{Binding LalurSelecionada}" IsReadOnly="True" AutoGenerateColumns="False">
+              <DataGrid.Columns>
+                <DataGridTextColumn Header="Período" Binding="{ReflectionBinding Periodo}" Width="85" />
+                <DataGridTextColumn Header="Tributo" Binding="{ReflectionBinding Tributo}" Width="95" />
+                <DataGridTextColumn Header="Tipo" Binding="{ReflectionBinding Tipo}" Width="75" />
+                <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" />
+                <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="100" />
+                <DataGridTextColumn Header="ECF" Binding="{ReflectionBinding CodigoEcf}" Width="80" />
+              </DataGrid.Columns>
+            </DataGrid>
+          </DockPanel>
+        </DockPanel>
+        <DockPanel Grid.Row="2">
+          <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Spacing="8" Margin="0,4,0,0">
+            <TextBlock Text="Saldo inicial IRPJ" VerticalAlignment="Center" />
+            <TextBox Text="{Binding SaldoInicialIrpj}" Width="110" />
+            <TextBlock Text="CSLL" VerticalAlignment="Center" />
+            <TextBox Text="{Binding SaldoInicialCsll}" Width="110" />
+            <Button Content="Gravar saldos iniciais" Command="{Binding DefinirSaldosIniciaisCommand}" IsEnabled="{Binding PodeManterLalur}" />
+          </StackPanel>
+          <DockPanel>
+            <TextBlock DockPanel.Dock="Top" Text="Parte B · prejuízos fiscais e base negativa (razão)" FontWeight="SemiBold" Foreground="#1F3A5F" />
+            <DataGrid g:GradesFiscais.Ajustar="True" ItemsSource="{Binding ParteB}" IsReadOnly="True" AutoGenerateColumns="False">
+              <DataGrid.Columns>
+                <DataGridTextColumn Header="Tributo" Binding="{ReflectionBinding Tributo}" Width="70" />
+                <DataGridTextColumn Header="Movimento" Binding="{ReflectionBinding Tipo}" Width="120" />
+                <DataGridTextColumn Header="Período" Binding="{ReflectionBinding Periodo}" Width="90" />
+                <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="110" />
+                <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" />
+              </DataGrid.Columns>
+            </DataGrid>
+          </DockPanel>
+        </DockPanel>
+      </Grid>
+      <ScrollViewer Grid.Column="2">
+        <ItemsControl ItemsSource="{Binding Exibidas}" />
+      </ScrollViewer>
+    </Grid>
+  </DockPanel>
+</UserControl>

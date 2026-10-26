@@ -1,0 +1,96 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:g="using:Vorticis.Fiscal.Desktop.Views" xmlns:vm="using:Vorticis.Fiscal.Desktop.ViewModels"
+             x:Class="Vorticis.Fiscal.Desktop.Views.ContasConsumoView" x:DataType="vm:ContasConsumoViewModel">
+  <!-- Lançamentos › SPED Fiscal › Contas de consumo (C500/D500) -->
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <TextBlock Classes="titulo" Text="Contas de energia, gás, água e comunicação" VerticalAlignment="Center" />
+        <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="140" />
+        <TextBlock Text="a" VerticalAlignment="Center" />
+        <CalendarDatePicker SelectedDate="{Binding Fim}" Width="140" />
+        <Button Content="Consultar" Command="{Binding ConsultarCommand}" />
+      </StackPanel>
+      <WrapPanel IsEnabled="{Binding PodeManter}">
+        <StackPanel Margin="0,0,10,6" Spacing="2">
+          <TextBlock Text="Modelo" FontSize="12" />
+          <ComboBox ItemsSource="{x:Static vm:ContasConsumoViewModel.Modelos}" SelectedIndex="{Binding Modelo}" Width="330" />
+        </StackPanel>
+        <StackPanel Margin="0,0,10,6" Spacing="2">
+          <TextBlock Text="Fornecedor (concessionária/operadora)" FontSize="12" />
+          <ComboBox ItemsSource="{Binding Fornecedores}" SelectedItem="{Binding Fornecedor}" Width="300" PlaceholderText="Cadastre em Cadastros › Fornecedores" />
+        </StackPanel>
+        <StackPanel Margin="0,0,10,6" Spacing="2">
+          <TextBlock Text="Número" FontSize="12" />
+          <TextBox Text="{Binding Numero}" Width="110" />
+        </StackPanel>
+        <StackPanel Margin="0,0,10,6" Spacing="2">
+          <TextBlock Text="Série" FontSize="12" />
+          <TextBox Text="{Binding Serie}" Width="60" MaxLength="4" />
+        </StackPanel>
+        <StackPanel Margin="0,0,10,6" Spacing="2">
+          <TextBlock Text="Emissão" FontSize="12" />
+          <CalendarDatePicker SelectedDate="{Binding Emissao}" Width="140" />
+        </StackPanel>
+        <StackPanel Margin="0,0,10,6" Spacing="2">
+          <TextBlock Text="Entrada" FontSize="12" />
+          <CalendarDatePicker SelectedDate="{Binding DataEntrada}" Width="140" />
+        </StackPanel>
+        <StackPanel Margin="0,0,10,6" Spacing="2">
+          <TextBlock Text="Classe de consumo" FontSize="12" />
+          <TextBox Text="{Binding Classe}" Width="70" MaxLength="2" ToolTip.Tip="01 comercial, 04 industrial, 06 residencial... (energia e gás)" />
+        </StackPanel>
+        <StackPanel Margin="0,0,10,6" Spacing="2">
+          <TextBlock Text="Valor da nota" FontSize="12" />
+          <TextBox Text="{Binding Valor}" Width="110" />
+        </StackPanel>
+        <StackPanel Margin="0,0,10,6" Spacing="2">
+          <TextBlock Text="CFOP" FontSize="12" />
+          <TextBox Text="{Binding Cfop}" Width="70" MaxLength="4" />
+        </StackPanel>
+        <StackPanel Margin="0,0,10,6" Spacing="2">
+          <TextBlock Text="CST ICMS" FontSize="12" />
+          <TextBox Text="{Binding Cst}" Width="70" MaxLength="3" />
+        </StackPanel>
+        <StackPanel Margin="0,0,10,6" Spacing="2">
+          <TextBlock Text="Base do ICMS" FontSize="12" />
+          <TextBox Text="{Binding BaseIcms}" Width="110" />
+        </StackPanel>
+        <StackPanel Margin="0,0,10,6" Spacing="2">
+          <TextBlock Text="Alíquota (%)" FontSize="12" />
+          <TextBox Text="{Binding Aliquota}" Width="80" />
+        </StackPanel>
+        <StackPanel Margin="0,0,10,6" Spacing="2">
+          <TextBlock Text="ICMS" FontSize="12" />
+          <TextBox Text="{Binding Icms}" Width="100" />
+        </StackPanel>
+        <StackPanel Margin="0,0,10,6" Spacing="2">
+          <TextBlock Text="PIS" FontSize="12" />
+          <TextBox Text="{Binding Pis}" Width="90" />
+        </StackPanel>
+        <StackPanel Margin="0,0,10,6" Spacing="2">
+          <TextBlock Text="COFINS" FontSize="12" />
+          <TextBox Text="{Binding Cofins}" Width="90" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Bottom" Margin="0,0,0,6">
+          <Button Content="Nova" Command="{Binding NovaCommand}" />
+          <Button Content="Gravar" Classes="accent" Command="{Binding GravarCommand}" />
+          <Button Content="Excluir" Command="{Binding ExcluirCommand}" />
+        </StackPanel>
+      </WrapPanel>
+      <TextBlock Text="{Binding Totais}" FontWeight="SemiBold" />
+      <c:MensagensView />
+    </StackPanel>
+    <DataGrid g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionada}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Entrada" Binding="{ReflectionBinding Entrada}" Width="100" />
+        <DataGridTextColumn Header="Modelo" Binding="{ReflectionBinding Modelo}" Width="80" />
+        <DataGridTextColumn Header="Fornecedor" Binding="{ReflectionBinding Fornecedor}" Width="*" />
+        <DataGridTextColumn Header="Número" Binding="{ReflectionBinding Numero}" Width="100" />
+        <DataGridTextColumn Header="CFOP" Binding="{ReflectionBinding Cfop}" Width="70" />
+        <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="120" />
+        <DataGridTextColumn Header="ICMS" Binding="{ReflectionBinding Icms}" Width="110" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>

@@ -1,0 +1,28 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             x:Class="Vorticis.Desktop.Views.RelatorioDepreciacaoView"
+             x:DataType="vm:RelatorioDepreciacaoViewModel">
+  <!-- Relatórios › Depreciação (relação de bens, valor depreciado, valor residual, resumo por grupo) -->
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="{Binding Titulo}" />
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <ComboBox ItemsSource="{Binding Grupos}" SelectedItem="{Binding Grupo}" DisplayMemberBinding="{ReflectionBinding Texto}" MinWidth="260"
+                  IsVisible="{Binding FiltraGrupo}" />
+        <CheckBox Content="Incluir bens baixados" IsChecked="{Binding IncluirBaixados}" />
+        <Button Content="Gerar" Command="{Binding GerarCommand}" Classes="accent" />
+        <Rectangle Width="1" Fill="#D0D5DD" Margin="6,4" />
+        <c:BarraExportacaoView />
+      </StackPanel>
+    </StackPanel>
+    <StackPanel DockPanel.Dock="Bottom" Spacing="2" Margin="0,6,0,0">
+      <TextBlock Text="{Binding Resumo}" FontWeight="SemiBold" />
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="Valores na posição da última depreciação lançada de cada bem (Imobilizado › Cálculo e lançamento da depreciação); a depreciação anterior à implantação entra no acumulado." />
+      <c:MensagensView />
+    </StackPanel>
+    <DataGrid Name="Grade" ItemsSource="{Binding Linhas}" IsReadOnly="True" AutoGenerateColumns="False" />
+  </DockPanel>
+</UserControl>

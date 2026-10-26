@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Testes dos módulos Escritório, ERP e Condomínio (regras puras e integração com PostgreSQL). -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Vorticis.Erp\Vorticis.Erp.csproj" />
+    <ProjectReference Include="..\..\src\Vorticis.Frota\Vorticis.Frota.csproj" />
+    <ProjectReference Include="..\Vorticis.Infra.Tests\Vorticis.Infra.Tests.csproj" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+</Project>

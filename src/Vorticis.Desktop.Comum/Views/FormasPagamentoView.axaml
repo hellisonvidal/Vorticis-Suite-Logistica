@@ -1,0 +1,52 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
+             x:Class="Vorticis.Desktop.Comum.Views.FormasPagamentoView"
+             x:DataType="vm:FormasPagamentoViewModel">
+  <!-- Cadastros › Formas de pagamento: formulário em cima, lista embaixo (todas as colunas cabem na largura da janela) -->
+  <DockPanel Margin="8">
+    <c:BarraCadastroView DockPanel.Dock="Top" Margin="0,0,0,8" />
+    <TextBlock DockPanel.Dock="Top" Classes="titulo" Text="Formas de pagamento" Margin="0,0,0,6" />
+    <Border DockPanel.Dock="Top" BorderBrush="#D0D5DD" BorderThickness="1" CornerRadius="4" Padding="8" Margin="0,0,0,8">
+      <StackPanel Spacing="6">
+        <WrapPanel IsEnabled="{Binding EmEdicao}">
+          <WrapPanel.Styles><Style Selector="WrapPanel &gt; StackPanel"><Setter Property="Margin" Value="0,0,12,6" /></Style></WrapPanel.Styles>
+          <StackPanel Spacing="2"><TextBlock Text="Código" FontSize="12" />
+            <TextBox Text="{Binding Codigo}" Width="80" IsReadOnly="{Binding !EmInclusao}" /></StackPanel>
+          <StackPanel Spacing="2"><TextBlock Text="Descrição" FontSize="12" />
+            <TextBox Text="{Binding Descricao}" Width="240" Watermark="ex.: Boleto 30/60/90" /></StackPanel>
+          <StackPanel Spacing="2"><TextBlock Text="Meio" FontSize="12" />
+            <ComboBox ItemsSource="{Binding Meios}" SelectedItem="{Binding Meio}" DisplayMemberBinding="{ReflectionBinding Texto}" Width="190" /></StackPanel>
+          <StackPanel Spacing="2"><TextBlock Text="Parcelas" FontSize="12" />
+            <NumericUpDown Value="{Binding Parcelas}" Minimum="1" Maximum="120" FormatString="0" Width="110" /></StackPanel>
+          <StackPanel Spacing="2"><TextBlock Text="1º vencimento (dias)" FontSize="12" />
+            <NumericUpDown Value="{Binding PrimeiroVencimento}" Minimum="0" Maximum="999" FormatString="0" Width="130" /></StackPanel>
+          <StackPanel Spacing="2"><TextBlock Text="Dias entre parcelas" FontSize="12" />
+            <NumericUpDown Value="{Binding Intervalo}" Minimum="0" Maximum="365" FormatString="0" Width="130" /></StackPanel>
+          <StackPanel Spacing="2"><TextBlock Text="Prazos (dias)" FontSize="12" />
+            <TextBox Text="{Binding Prazos}" Width="170" Watermark="0 = à vista; 30/60/90" /></StackPanel>
+          <StackPanel Spacing="2"><TextBlock Text="Conta bancária" FontSize="12" />
+            <ComboBox ItemsSource="{Binding Contas}" SelectedItem="{Binding Conta}" DisplayMemberBinding="{ReflectionBinding Texto}" Width="220" /></StackPanel>
+          <StackPanel Spacing="2" VerticalAlignment="Bottom"><CheckBox Content="Ativa" IsChecked="{Binding Ativa}" /></StackPanel>
+        </WrapPanel>
+        <TextBlock Text="{Binding Exemplo}" FontSize="11.5" Foreground="#44506A" TextWrapping="Wrap" />
+        <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                   Text="Informe as parcelas, o 1º vencimento e os dias entre parcelas: os prazos são montados sozinhos (ou digite os prazos à mão, ex.: 0/30/45). Os prazos contam a partir da emissão da nota." />
+        <c:MensagensView />
+      </StackPanel>
+    </Border>
+    <DataGrid ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False" IsEnabled="{Binding !EmEdicao}">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Código" Binding="{ReflectionBinding Codigo}" Width="0.5*" />
+        <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="2*" />
+        <DataGridTextColumn Header="Meio" Binding="{ReflectionBinding Meio}" Width="1.2*" />
+        <DataGridTextColumn Header="Parcelas" Binding="{ReflectionBinding Parcelas}" Width="0.6*" />
+        <DataGridTextColumn Header="Intervalo" Binding="{ReflectionBinding Intervalo}" Width="0.7*" />
+        <DataGridTextColumn Header="Prazos (dias)" Binding="{ReflectionBinding Prazos}" Width="1.1*" />
+        <DataGridTextColumn Header="Conta bancária" Binding="{ReflectionBinding Conta}" Width="1.3*" />
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="0.6*" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>

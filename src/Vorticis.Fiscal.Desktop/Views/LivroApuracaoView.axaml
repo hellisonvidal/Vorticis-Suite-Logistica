@@ -1,0 +1,24 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Fiscal.Desktop.ViewModels"
+             x:Class="Vorticis.Fiscal.Desktop.Views.LivroApuracaoView"
+             x:DataType="vm:LivroApuracaoViewModel">
+  <!-- Relatórios › Livros › Livro de Apuração do ICMS / do IPI -->
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="{Binding Titulo}" VerticalAlignment="Center" />
+      <ComboBox ItemsSource="{x:Static vm:LivroApuracaoViewModel.Meses}" SelectedIndex="{Binding Mes}" Width="130" />
+      <TextBox Text="{Binding Ano}" Width="70" Watermark="Ano" />
+      <TextBlock Text="Saldo credor anterior (R$)" VerticalAlignment="Center" IsVisible="{Binding MostrarSaldo}" />
+      <TextBox Text="{Binding SaldoCredorAnterior}" Width="110" Watermark="0,00" IsVisible="{Binding MostrarSaldo}" />
+      <Button Content="Gerar" Command="{Binding GerarCommand}" Classes="accent" />
+      <Rectangle Width="1" Fill="#D0D5DD" Margin="6,4" />
+      <c:BarraExportacaoView />
+    </StackPanel>
+    <c:MensagensView DockPanel.Dock="Bottom" Margin="0,6,0,0" />
+    <ScrollViewer>
+      <ItemsControl ItemsSource="{Binding Exibidas}" />
+    </ScrollViewer>
+  </DockPanel>
+</UserControl>

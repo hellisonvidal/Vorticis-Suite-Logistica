@@ -1,0 +1,53 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Fiscal.Desktop.ViewModels"
+             xmlns:imo="using:Vorticis.Application.Imobilizado"
+             xmlns:g="using:Vorticis.Fiscal.Desktop.Views"
+             x:Class="Vorticis.Fiscal.Desktop.Views.BensDaNotaView"
+             x:DataType="vm:BensDaNotaViewModel">
+  <!-- Lançamentos › Bens do imobilizado da nota (aberta pela nota de entrada com CFOP de ativo imobilizado) -->
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="Bens do imobilizado da nota" />
+      <TextBlock Text="{Binding Cabecalho}" TextWrapping="Wrap" Foreground="#44506A" />
+      <StackPanel Orientation="Horizontal" Spacing="10" IsVisible="{Binding TemLinhas}">
+        <TextBlock Text="Aquisição" VerticalAlignment="Center" />
+        <CalendarDatePicker SelectedDate="{Binding Aquisicao}" Width="140" />
+        <TextBlock Text="Início do uso" VerticalAlignment="Center" />
+        <CalendarDatePicker SelectedDate="{Binding InicioUso}" Width="140" />
+        <Button Content="Cadastrar no imobilizado" Command="{Binding CadastrarCommand}" Classes="accent" />
+      </StackPanel>
+    </StackPanel>
+    <c:MensagensView DockPanel.Dock="Bottom" Margin="0,6,0,0" />
+    <DataGrid g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Linhas}" AutoGenerateColumns="False" CanUserSortColumns="False" IsVisible="{Binding TemLinhas}">
+      <DataGrid.Columns>
+        <DataGridCheckBoxColumn Header="Cadastrar" Binding="{ReflectionBinding Cadastrar}" Width="80" />
+        <DataGridTextColumn Header="CFOP" Binding="{ReflectionBinding Cfop}" IsReadOnly="True" Width="60" />
+        <DataGridTextColumn Header="Descrição do bem" Binding="{ReflectionBinding Descricao}" Width="*" />
+        <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="100" />
+        <DataGridTemplateColumn Header="Grupo (regra de depreciação)" Width="230">
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate x:DataType="vm:BemDaNotaLinha">
+              <ComboBox ItemsSource="{ReflectionBinding $parent[UserControl].DataContext.Grupos}" SelectedItem="{Binding Grupo}"
+                        HorizontalAlignment="Stretch" PlaceholderText="Escolha o grupo">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate x:DataType="imo:GrupoBem">
+                    <TextBlock><Run Text="{Binding Codigo}" /><Run Text=" – " /><Run Text="{Binding Descricao}" /></TextBlock>
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+        <DataGridTextColumn Header="Vida útil (meses)" Binding="{ReflectionBinding VidaUtil}" Width="110" />
+        <DataGridTextColumn Header="Conta do bem" Binding="{ReflectionBinding ContaBem}" Width="110" />
+        <DataGridTextColumn Header="Depr. acumulada" Binding="{ReflectionBinding ContaAcumulada}" Width="110" />
+        <DataGridTextColumn Header="Despesa" Binding="{ReflectionBinding ContaDespesa}" Width="110" />
+        <DataGridTextColumn Header="Plaqueta" Binding="{ReflectionBinding Plaqueta}" Width="90" />
+        <DataGridTextColumn Header="Localização" Binding="{ReflectionBinding Localizacao}" Width="110" />
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" IsReadOnly="True" Width="200" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>

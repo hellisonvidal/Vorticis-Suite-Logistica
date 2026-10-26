@@ -1,0 +1,109 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Comum.Views"
+             x:Class="Vorticis.Desktop.Comum.Views.ParticipantesView"
+             x:DataType="vm:ParticipantesViewModel">
+  <UserControl.Styles>
+    <Style Selector="TextBlock.rotulo">
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="TextBlock.secao">
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Foreground" Value="#1F3A5F" />
+      <Setter Property="Margin" Value="0,10,0,2" />
+    </Style>
+  </UserControl.Styles>
+  <!-- Mesmo padrão do cadastro de empresas: formulário em seções à esquerda, cadastrados à direita -->
+  <Grid ColumnDefinitions="*,16,300" RowDefinitions="Auto,*" Margin="8,4,8,0">
+    <v:BarraCadastroView Grid.ColumnSpan="3" Margin="0,0,0,8" />
+
+    <ScrollViewer Grid.Row="1">
+      <StackPanel Spacing="6" MaxWidth="760" HorizontalAlignment="Left" Margin="0,0,12,8">
+        <StackPanel Orientation="Horizontal" Spacing="12">
+          <TextBlock Classes="titulo" Text="{Binding TituloFormulario}" />
+          <TextBlock Text="{Binding NumeroRegistro}" FontSize="14" Foreground="#44506A" VerticalAlignment="Bottom" Margin="0,0,0,2" />
+        </StackPanel>
+
+        <TextBlock Classes="secao" Text="Identificação" />
+        <Grid ColumnDefinitions="170,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="6" IsEnabled="{Binding EmEdicao}">
+          <TextBlock Classes="rotulo" Text="CPF / CNPJ" />
+          <Grid Grid.Column="1" ColumnDefinitions="*,Auto" ColumnSpacing="8">
+            <TextBox Text="{Binding CpfCnpj}" v:Mascara.Tipo="CpfCnpj" />
+            <Button Grid.Column="1" Content="Buscar dados na Receita" Command="{Binding BuscarCnpjCommand}"
+                    MinWidth="190" HorizontalContentAlignment="Center" />
+          </Grid>
+          <TextBlock Grid.Row="1" Classes="rotulo" Text="Nome / razão social" />
+          <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Nome}" />
+          <TextBlock Grid.Row="2" Classes="rotulo" Text="Nome fantasia" />
+          <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding NomeFantasia}" />
+          <TextBlock Grid.Row="3" Classes="rotulo" Text="Inscrição estadual" />
+          <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding InscricaoEstadual}" Watermark="Somente números, ou ISENTO" Width="260"
+                   HorizontalAlignment="Left" />
+          <TextBlock Grid.Row="4" Classes="rotulo" Text="Código" />
+          <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Codigo}" Width="120" HorizontalAlignment="Left" />
+        </Grid>
+
+        <TextBlock Classes="secao" Text="Endereço e contato" />
+        <Grid ColumnDefinitions="170,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="6" IsEnabled="{Binding EmEdicao}">
+          <TextBlock Classes="rotulo" Text="CEP" />
+          <TextBox Grid.Column="1" Text="{Binding Cep}" Width="180" HorizontalAlignment="Left" Watermark="00000-000" v:Mascara.Tipo="Cep" />
+          <TextBlock Grid.Row="1" Classes="rotulo" Text="Logradouro / número" />
+          <Grid Grid.Row="1" Grid.Column="1" ColumnDefinitions="*,8,110">
+            <TextBox Text="{Binding Logradouro}" Watermark="Logradouro" />
+            <TextBox Grid.Column="2" Text="{Binding Numero}" Watermark="Nº" />
+          </Grid>
+          <TextBlock Grid.Row="2" Classes="rotulo" Text="Complemento / bairro" />
+          <Grid Grid.Row="2" Grid.Column="1" ColumnDefinitions="*,8,*">
+            <TextBox Text="{Binding Complemento}" Watermark="Complemento" />
+            <TextBox Grid.Column="2" Text="{Binding Bairro}" Watermark="Bairro" />
+          </Grid>
+          <TextBlock Grid.Row="3" Classes="rotulo" Text="Município / UF / IBGE" />
+          <Grid Grid.Row="3" Grid.Column="1" ColumnDefinitions="*,8,70,8,110">
+            <TextBox Text="{Binding Municipio}" Watermark="Município" />
+            <TextBox Grid.Column="2" Text="{Binding Uf}" MaxLength="2" Watermark="UF" />
+            <TextBox Grid.Column="4" Text="{Binding MunicipioIbge}" Watermark="Cód. IBGE" />
+          </Grid>
+          <TextBlock Grid.Row="4" Classes="rotulo" Text="E-mail / telefone" />
+          <Grid Grid.Row="4" Grid.Column="1" ColumnDefinitions="*,8,*">
+            <TextBox Text="{Binding Email}" Watermark="E-mail" />
+            <TextBox Grid.Column="2" Text="{Binding Telefone}" Watermark="Telefone" />
+          </Grid>
+        </Grid>
+
+        <TextBlock Classes="secao" Text="Contabilidade" />
+        <Grid ColumnDefinitions="170,*" RowDefinitions="Auto,Auto" RowSpacing="6" IsEnabled="{Binding EmEdicao}">
+          <TextBlock Classes="rotulo" Text="Conta contábil" />
+          <TextBox Grid.Column="1" Text="{Binding Conta}" Watermark="código ou reduzido (opcional)" Width="260" HorizontalAlignment="Left" />
+          <StackPanel Grid.Row="1" Grid.Column="1" Spacing="2">
+            <CheckBox Content="Participante" IsChecked="{Binding ControleConta}" IsEnabled="{Binding UsaParticipantes}"
+                      ToolTip.Tip="Alocado dentro da conta contábil acima: os lançamentos nela informam este participante" />
+            <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                       Text="Fica alocado dentro da conta contábil (o balancete mostra a soma da conta, com detalhamento opcional). Disponível quando a empresa usa o plano de contas com participantes (Cadastros › Empresas › aba Contabilidade)." />
+          </StackPanel>
+        </Grid>
+        <v:MensagensView Margin="0,8,0,0" />
+      </StackPanel>
+    </ScrollViewer>
+
+    <DockPanel Grid.Row="1" Grid.Column="2" IsEnabled="{Binding !EmEdicao}">
+      <TextBlock DockPanel.Dock="Top" Text="{Binding TituloLista}" FontWeight="SemiBold" Margin="0,0,0,6" />
+      <TextBox DockPanel.Dock="Top" Text="{Binding Filtro}" Watermark="Filtrar por código, nome ou CPF/CNPJ" Margin="0,0,0,6" />
+      <ListBox ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}">
+        <ListBox.ItemTemplate>
+          <DataTemplate x:DataType="vm:ParticipanteLinha">
+            <StackPanel>
+              <TextBlock FontSize="12" TextWrapping="Wrap">
+                <Run Text="{Binding Codigo, Mode=OneWay}" FontWeight="SemiBold" /><Run Text="  " /><Run Text="{Binding Nome, Mode=OneWay}" />
+              </TextBlock>
+              <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap">
+                <Run Text="{Binding Documento, Mode=OneWay}" /><Run Text="{Binding Detalhe, Mode=OneWay}" />
+              </TextBlock>
+            </StackPanel>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </DockPanel>
+  </Grid>
+</UserControl>

@@ -1,0 +1,31 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
+             x:Class="Vorticis.Desktop.Comum.Views.SobreView"
+             x:DataType="vm:SobreViewModel">
+  <ScrollViewer>
+    <StackPanel Spacing="8" MaxWidth="720" HorizontalAlignment="Left" Margin="8">
+      <TextBlock Text="{Binding Nome}" FontSize="24" FontWeight="Bold" Foreground="#1F3A5F" />
+      <TextBlock Text="{Binding Cabecalho}" />
+      <TextBlock Text="{Binding Usuario, StringFormat='Usuário: {0}'}" />
+      <TextBlock Text="{Binding Conexao, StringFormat='Banco de dados: {0}'}" />
+
+      <TextBlock Classes="titulo" Text="Atalhos de teclado" Margin="0,12,0,0" />
+      <ItemsControl ItemsSource="{Binding Atalhos}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:LinhaAtalho">
+            <Grid ColumnDefinitions="160,*" Margin="0,2">
+              <TextBlock Text="{Binding Teclas}" FontWeight="SemiBold" /><TextBlock Grid.Column="1" Text="{Binding Descricao}" />
+            </Grid>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+
+      <TextBlock Classes="titulo" Text="Perfis de acesso" Margin="0,12,0,0" />
+      <TextBlock TextWrapping="Wrap" Text="O administrador cria perfis (Configurações › Perfis de acesso) marcando, função a função, o que cada um pode fazer, e atribui a cada usuário um perfil por empresa (Configurações › Usuários). Perfis padrão: Contador (tudo), Assistente (lança e estorna, não fecha períodos) e Consulta (relatórios). Cadastro de empresas, usuários, perfis, conexão e backup são exclusivos do administrador." />
+
+      <TextBlock Classes="titulo" Text="Consulta de CNPJ" Margin="0,12,0,0" />
+      <TextBlock TextWrapping="Wrap" Text="Os dados cadastrais vêm da base pública do CNPJ divulgada pela Receita Federal (dados abertos, atualização mensal), por meio da BrasilAPI e, como reserva, do serviço Minha Receita. Empresas abertas há poucas semanas podem ainda não constar. Sempre revise os dados antes de cadastrar." />
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

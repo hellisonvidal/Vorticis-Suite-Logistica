@@ -1,0 +1,57 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:g="using:Vorticis.Fiscal.Desktop.Views" xmlns:vm="using:Vorticis.Fiscal.Desktop.ViewModels"
+             x:Class="Vorticis.Fiscal.Desktop.Views.InventarioView" x:DataType="vm:InventarioViewModel">
+  <!-- Lançamentos › SPED Fiscal › Inventário de estoque (bloco H) -->
+  <Grid ColumnDefinitions="320,12,*" RowDefinitions="Auto,*" Margin="8">
+    <TextBlock Grid.ColumnSpan="3" Classes="titulo" Text="Inventário de estoque (bloco H)" Margin="0,0,0,8" />
+    <DockPanel Grid.Row="1">
+      <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Spacing="6" Margin="0,6,0,0">
+        <Button Content="Novo" Command="{Binding NovoCommand}" />
+        <Button Content="Excluir" Command="{Binding ExcluirCommand}" IsEnabled="{Binding PodeManter}" />
+      </StackPanel>
+      <DataGrid g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Data" Binding="{ReflectionBinding Data}" Width="95" />
+          <DataGridTextColumn Header="EFD" Binding="{ReflectionBinding Efd}" Width="80" />
+          <DataGridTextColumn Header="Total" Binding="{ReflectionBinding Total}" Width="*" />
+        </DataGrid.Columns>
+      </DataGrid>
+    </DockPanel>
+    <DockPanel Grid.Row="1" Grid.Column="2">
+      <StackPanel DockPanel.Dock="Top" Spacing="6" IsEnabled="{Binding PodeManter}">
+        <WrapPanel>
+          <StackPanel Margin="0,0,10,6" Spacing="2">
+            <TextBlock Text="Data do inventário" FontSize="12" />
+            <CalendarDatePicker SelectedDate="{Binding Data}" Width="140" />
+          </StackPanel>
+          <StackPanel Margin="0,0,10,6" Spacing="2">
+            <TextBlock Text="Informar na EFD de" FontSize="12" />
+            <CalendarDatePicker SelectedDate="{Binding CompetenciaEfd}" SelectedDateFormat="Custom" CustomDateFormatString="MM/yyyy" Width="120" />
+          </StackPanel>
+          <StackPanel Margin="0,0,10,6" Spacing="2">
+            <TextBlock Text="Conta contábil do estoque" FontSize="12" />
+            <TextBox Text="{Binding ContaContabil}" Width="150" Watermark="ex.: 1.1.04.001" />
+          </StackPanel>
+        </WrapPanel>
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <ComboBox ItemsSource="{Binding Produtos}" SelectedItem="{Binding Produto}" Width="340" PlaceholderText="Produto (Cadastros › Produtos)" />
+          <Button Content="Adicionar item" Command="{Binding AdicionarItemCommand}" />
+          <Button Content="Remover item" Command="{Binding RemoverItemCommand}" />
+          <Button Content="Gravar inventário" Classes="accent" Command="{Binding GravarCommand}" />
+        </StackPanel>
+        <TextBlock Text="{Binding Total}" FontWeight="SemiBold" />
+        <c:MensagensView />
+      </StackPanel>
+      <DataGrid g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Itens}" SelectedItem="{Binding ItemSelecionado}" AutoGenerateColumns="False" Margin="0,6,0,0">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Código" Binding="{ReflectionBinding Codigo}" Width="80" IsReadOnly="True" />
+          <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" IsReadOnly="True" />
+          <DataGridTextColumn Header="Unidade" Binding="{ReflectionBinding Unidade}" Width="80" />
+          <DataGridTextColumn Header="Qtde" Binding="{ReflectionBinding Quantidade}" Width="100" />
+          <DataGridTextColumn Header="Unitário" Binding="{ReflectionBinding ValorUnitario}" Width="110" />
+          <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="120" IsReadOnly="True" />
+        </DataGrid.Columns>
+      </DataGrid>
+    </DockPanel>
+  </Grid>
+</UserControl>

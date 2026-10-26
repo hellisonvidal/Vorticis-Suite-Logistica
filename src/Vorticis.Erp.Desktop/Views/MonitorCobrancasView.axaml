@@ -1,0 +1,42 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Erp.Desktop.ViewModels"
+             x:Class="Vorticis.Erp.Desktop.Views.MonitorCobrancasView" x:DataType="vm:MonitorCobrancasViewModel">
+  <!-- Monitores › Monitor de cobranças -->
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="Monitor de cobranças" VerticalAlignment="Center" />
+      <TextBox Text="{Binding Cliente}" Watermark="Filtrar por cliente" Width="220" />
+      <CheckBox Content="Só vencidas" IsChecked="{Binding SomenteVencidas}" />
+      <Button Content="Atualizar" Command="{Binding AtualizarCommand}" Classes="accent" />
+      <TextBlock Text="{Binding AtualizadoEm}" VerticalAlignment="Center" Foreground="Gray" FontSize="11" />
+    </StackPanel>
+    <c:MensagensView DockPanel.Dock="Bottom" />
+    <Grid ColumnDefinitions="320,12,*" RowDefinitions="Auto,12,*">
+      <DataGrid ItemsSource="{Binding Indicadores}" IsReadOnly="True" AutoGenerateColumns="False" Height="190">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Indicador" Binding="{ReflectionBinding Descricao}" Width="*" />
+          <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="150" />
+        </DataGrid.Columns>
+      </DataGrid>
+      <DockPanel Grid.Row="2">
+        <TextBlock DockPanel.Dock="Top" Text="Maiores atrasos por cliente" FontWeight="SemiBold" Margin="0,0,0,4" />
+        <DataGrid ItemsSource="{Binding Atrasos}" IsReadOnly="True" AutoGenerateColumns="False">
+          <DataGrid.Columns>
+            <DataGridTextColumn Header="Cliente" Binding="{ReflectionBinding Descricao}" Width="*" />
+            <DataGridTextColumn Header="Vencido" Binding="{ReflectionBinding Valor}" Width="120" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </DockPanel>
+      <DataGrid Grid.Column="2" Grid.RowSpan="3" ItemsSource="{Binding Linhas}" IsReadOnly="True" AutoGenerateColumns="False">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Vencimento" Binding="{ReflectionBinding Vencimento}" Width="100" />
+          <DataGridTextColumn Header="Cliente" Binding="{ReflectionBinding Cliente}" Width="*" />
+          <DataGridTextColumn Header="Documento/parcela" Binding="{ReflectionBinding Documento}" Width="140" />
+          <DataGridTextColumn Header="Saldo" Binding="{ReflectionBinding Saldo}" Width="120" />
+          <DataGridTextColumn Header="Prazo" Binding="{ReflectionBinding Prazo}" Width="140" />
+          <DataGridTextColumn Header="Faixa" Binding="{ReflectionBinding Faixa}" Width="190" />
+        </DataGrid.Columns>
+      </DataGrid>
+    </Grid>
+  </DockPanel>
+</UserControl>

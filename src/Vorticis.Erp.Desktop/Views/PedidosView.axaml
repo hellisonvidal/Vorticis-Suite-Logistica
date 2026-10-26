@@ -1,0 +1,83 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Erp.Desktop.ViewModels"
+             x:Class="Vorticis.Erp.Desktop.Views.PedidosView" x:DataType="vm:PedidosViewModel">
+  <Grid ColumnDefinitions="*,12,520" RowDefinitions="Auto,*" Margin="8">
+    <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="8" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="{Binding Titulo}" VerticalAlignment="Center" />
+      <TextBlock Text="De" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="130" />
+      <TextBlock Text="a" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Fim}" Width="130" />
+    </StackPanel>
+    <DataGrid Grid.Row="1" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Nº" Binding="{ReflectionBinding Numero}" Width="60" />
+        <DataGridTextColumn Header="Data" Binding="{ReflectionBinding Data}" Width="100" />
+        <DataGridTextColumn Header="Cliente / fornecedor" Binding="{ReflectionBinding Participante}" Width="*" />
+        <DataGridTextColumn Header="Total" Binding="{ReflectionBinding Total}" Width="120" />
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="100" />
+        <DataGridTextColumn Header="Concluído em" Binding="{ReflectionBinding Concluido}" Width="110" />
+      </DataGrid.Columns>
+    </DataGrid>
+    <ScrollViewer Grid.Row="1" Grid.Column="2">
+      <StackPanel Spacing="6">
+        <TextBlock Text="Seu perfil permite apenas consultar." Classes="erro" IsVisible="{Binding !PodeEditar}" />
+        <StackPanel Orientation="Horizontal" Spacing="6" IsEnabled="{Binding PodeEditar}">
+          <Button Content="Novo pedido" Command="{Binding NovoCommand}" />
+          <Button Content="Gravar pedido" Classes="accent" Command="{Binding GravarCommand}" IsEnabled="{Binding EmAberto}" />
+          <Button Content="Cancelar pedido" Command="{Binding CancelarCommand}" IsEnabled="{Binding EmAberto}" />
+        </StackPanel>
+        <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="6" IsEnabled="{Binding EmAberto}">
+          <TextBlock Classes="rotulo" Text="{Binding RotuloParticipante}" />
+          <ComboBox Grid.Column="1" ItemsSource="{Binding Participantes}" SelectedItem="{Binding Participante}" HorizontalAlignment="Stretch" />
+          <TextBlock Grid.Row="1" Classes="rotulo" Text="Data" />
+          <CalendarDatePicker Grid.Row="1" Grid.Column="1" SelectedDate="{Binding Data}" />
+          <TextBlock Grid.Row="2" Classes="rotulo" Text="Parcelas" />
+          <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Spacing="6">
+            <NumericUpDown Value="{Binding Parcelas}" Minimum="1" Maximum="120" FormatString="0" Width="100" />
+            <TextBlock Text="a cada" VerticalAlignment="Center" />
+            <NumericUpDown Value="{Binding Intervalo}" Minimum="0" Maximum="365" FormatString="0" Width="100" />
+            <TextBlock Text="dias" VerticalAlignment="Center" />
+          </StackPanel>
+          <TextBlock Grid.Row="3" Classes="rotulo" Text="1º vencimento" />
+          <CalendarDatePicker Grid.Row="3" Grid.Column="1" SelectedDate="{Binding PrimeiroVencimento}" Watermark="data + intervalo" />
+        </Grid>
+        <TextBlock Text="Itens" FontWeight="SemiBold" Foreground="#134E4A" />
+        <StackPanel Spacing="4" IsEnabled="{Binding EmAberto}">
+          <ComboBox ItemsSource="{Binding ProdutosDisponiveis}" SelectedItem="{Binding Produto}" HorizontalAlignment="Stretch" PlaceholderText="Produto" />
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <TextBox Text="{Binding Quantidade}" Watermark="Qtde" Width="80" />
+            <TextBox Text="{Binding Unitario}" Watermark="Unitário" Width="110" />
+            <TextBox Text="{Binding Desconto}" Watermark="Desconto" Width="100" />
+            <Button Content="Incluir item" Command="{Binding IncluirItemCommand}" />
+            <Button Content="Remover" Command="{Binding RemoverItemCommand}" />
+          </StackPanel>
+        </StackPanel>
+        <DataGrid ItemsSource="{Binding Itens}" SelectedItem="{Binding ItemSelecionado}" IsReadOnly="True" AutoGenerateColumns="False" Height="160">
+          <DataGrid.Columns>
+            <DataGridTextColumn Header="Produto" Binding="{ReflectionBinding Produto}" Width="*" />
+            <DataGridTextColumn Header="Qtde" Binding="{ReflectionBinding Quantidade}" Width="70" />
+            <DataGridTextColumn Header="Unitário" Binding="{ReflectionBinding Unitario}" Width="90" />
+            <DataGridTextColumn Header="Desc." Binding="{ReflectionBinding Desconto}" Width="80" />
+            <DataGridTextColumn Header="Total" Binding="{ReflectionBinding Total}" Width="100" />
+          </DataGrid.Columns>
+        </DataGrid>
+        <TextBlock Text="{Binding TotalPedido}" FontWeight="SemiBold" />
+        <TextBox Text="{Binding Observacao}" Watermark="Observação" />
+        <Border BorderBrush="#99C9C2" BorderThickness="1" CornerRadius="4" Padding="6" IsEnabled="{Binding EmAberto}">
+          <StackPanel Spacing="4">
+            <TextBlock Text="Nota fiscal" FontWeight="SemiBold" />
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <TextBox Text="{Binding NumeroNota}" Watermark="Número" Width="110" />
+              <TextBox Text="{Binding SerieNota}" Watermark="Série" Width="60" />
+              <TextBox Text="{Binding ChaveNota}" Watermark="Chave (opcional)" Width="300" />
+            </StackPanel>
+            <Button Content="{Binding RotuloConcluir}" Classes="accent" Command="{Binding ConcluirCommand}" IsEnabled="{Binding PodeEditar}" />
+            <TextBlock Text="{Binding AjudaConclusao}" FontSize="11" Foreground="Gray" TextWrapping="Wrap" />
+          </StackPanel>
+        </Border>
+        <c:MensagensView />
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

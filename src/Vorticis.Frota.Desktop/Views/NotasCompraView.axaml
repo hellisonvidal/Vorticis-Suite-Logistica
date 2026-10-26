@@ -1,0 +1,60 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Frota.Desktop.ViewModels"
+             x:Class="Vorticis.Frota.Desktop.Views.NotasCompraView" x:DataType="vm:NotasCompraViewModel">
+  <Grid ColumnDefinitions="*,12,420" RowDefinitions="Auto,Auto,*" Margin="8">
+    <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="8" Margin="0,0,0,6">
+      <TextBlock Classes="titulo" Text="Notas de compra" VerticalAlignment="Center" />
+      <TextBlock Text="Período" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="130" />
+      <TextBlock Text="a" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Fim}" Width="130" />
+    </StackPanel>
+    <TextBlock Grid.Row="1" Grid.ColumnSpan="3" Text="{Binding Totais}" FontSize="12" Margin="0,0,0,6" />
+    <DataGrid Grid.Row="2" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionada}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Emissão" Binding="{ReflectionBinding Emissao}" Width="90" />
+        <DataGridTextColumn Header="Número/série" Binding="{ReflectionBinding Numero}" Width="100" />
+        <DataGridTextColumn Header="Fornecedor" Binding="{ReflectionBinding Fornecedor}" Width="*" />
+        <DataGridTextColumn Header="Ordem de serviço" Binding="{ReflectionBinding Ordem}" Width="150" />
+        <DataGridTextColumn Header="Total" Binding="{ReflectionBinding Total}" Width="100" />
+      </DataGrid.Columns>
+    </DataGrid>
+    <ScrollViewer Grid.Row="2" Grid.Column="2">
+    <StackPanel Spacing="6" IsEnabled="{Binding PodeEditar}">
+      <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
+        <TextBlock Classes="rotulo" Text="Ordem de serviço" />
+        <ComboBox Grid.Column="1" ItemsSource="{Binding OrdensOpcoes}" SelectedItem="{Binding Ordem}" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="1" Classes="rotulo" Text="Fornecedor" />
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Fornecedor}" />
+        <TextBlock Grid.Row="2" Classes="rotulo" Text="CNPJ/CPF" />
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Cnpj}" Width="170" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="3" Classes="rotulo" Text="Número / série" />
+        <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" Spacing="6">
+          <TextBox Text="{Binding Numero}" Width="120" />
+          <TextBox Text="{Binding Serie}" Width="60" />
+        </StackPanel>
+        <TextBlock Grid.Row="4" Classes="rotulo" Text="Emissão" />
+        <CalendarDatePicker Grid.Row="4" Grid.Column="1" SelectedDate="{Binding Emissao}" Width="130" />
+        <TextBlock Grid.Row="5" Classes="rotulo" Text="Chave de acesso" />
+        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Chave}" Watermark="44 dígitos (opcional)" />
+        <TextBlock Grid.Row="6" Classes="rotulo" Text="Peças / serviços" />
+        <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal" Spacing="6">
+          <TextBox Text="{Binding ValorPecas}" Width="110" Watermark="Peças" />
+          <TextBox Text="{Binding ValorServicos}" Width="110" Watermark="Serviços" />
+        </StackPanel>
+        <TextBlock Grid.Row="7" Classes="rotulo" Text="Observação" />
+        <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding Observacao}" />
+        <TextBlock Grid.Row="8" Grid.ColumnSpan="2" Text="{Binding Conferencia}" FontSize="12" TextWrapping="Wrap" />
+      </Grid>
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <Button Content="Nova nota" Command="{Binding NovaCommand}" />
+        <Button Content="Gravar" Classes="accent" Command="{Binding GravarCommand}" />
+        <Button Content="Excluir" Command="{Binding ExcluirCommand}" />
+      </StackPanel>
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="Ligue cada nota à ordem de serviço que ela atende: o relatório de acompanhamento compara as notas com o valor autorizado." />
+      <c:MensagensView />
+    </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

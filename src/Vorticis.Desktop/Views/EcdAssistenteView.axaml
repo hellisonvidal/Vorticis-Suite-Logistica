@@ -1,0 +1,184 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             xmlns:app="using:Vorticis.Application.Sped"
+             xmlns:sis="using:Vorticis.Application.Sistema"
+             x:Class="Vorticis.Desktop.Views.EcdAssistenteView"
+             x:DataType="vm:EcdAssistenteViewModel">
+  <TabControl SelectedIndex="{Binding Aba}" Margin="8">
+    <TabItem Header="Assistente">
+      <ScrollViewer>
+        <StackPanel Spacing="8" MaxWidth="860" HorizontalAlignment="Left" Margin="4,8">
+          <TextBlock Classes="titulo" Text="Gerar ECD (SPED Contábil)" />
+          <TextBlock Text="{Binding IndicadorPasso}" FontSize="12" Foreground="#44506A" TextWrapping="Wrap" />
+          <TextBlock Text="{Binding TituloPasso}" FontWeight="SemiBold" FontSize="15" Foreground="#1F3A5F" />
+          <TextBlock Text="{Binding ExplicacaoPasso}" TextWrapping="Wrap" FontSize="12" Foreground="#44506A" />
+
+          <!-- 1. Empresa e exercício -->
+          <StackPanel Spacing="6" IsVisible="{Binding NoPasso1}">
+            <Grid ColumnDefinitions="230,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
+              <TextBlock Text="Empresa" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="{Binding EmpresaNome}" FontWeight="SemiBold" VerticalAlignment="Center" />
+              <TextBlock Grid.Row="1" Text="Exercício (ano)" VerticalAlignment="Center" />
+              <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding Ano}" Minimum="2000" Maximum="2100" FormatString="0" Width="130" HorizontalAlignment="Left" />
+              <TextBlock Grid.Row="2" Text="NIRE" VerticalAlignment="Center" />
+              <TextBlock Grid.Row="2" Grid.Column="1" VerticalAlignment="Center">
+                <Run Text="{Binding Nire}" /><Run Text="  (alterar em Cadastros › Empresas)" Foreground="#667085" />
+              </TextBlock>
+              <TextBlock Grid.Row="3" Text="Grande porte" VerticalAlignment="Center" />
+              <CheckBox Grid.Row="3" Grid.Column="1" IsChecked="{Binding GrandePorte}" IsEnabled="False" Content="conforme Cadastros › Contabilidade da empresa" />
+              <TextBlock Grid.Row="4" Text="Natureza do livro" VerticalAlignment="Center" />
+              <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Natureza}" Width="260" HorizontalAlignment="Left" />
+              <TextBlock Grid.Row="5" Text="Número do livro" VerticalAlignment="Center" />
+              <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                <NumericUpDown Value="{Binding NumeroLivro}" Minimum="1" Maximum="9999" FormatString="0" Width="130" />
+                <TextBlock VerticalAlignment="Center" FontSize="12" Foreground="#667085" Text="{Binding NumeroLivroSugerido, StringFormat='sugerido: {0}'}" />
+              </StackPanel>
+              <TextBlock Grid.Row="6" Text="Mutações do patrimônio líquido" VerticalAlignment="Center" />
+              <ComboBox Grid.Row="6" Grid.Column="1" ItemsSource="{Binding OpcoesMutacoes}" SelectedItem="{Binding Mutacoes}" Width="320" />
+              <TextBlock Grid.Row="7" Text="Nível de aglutinação" VerticalAlignment="Center" />
+              <NumericUpDown Grid.Row="7" Grid.Column="1" Value="{Binding NivelAglutinacao}" Minimum="2" Maximum="9" FormatString="0" Width="130" HorizontalAlignment="Left" />
+              <TextBlock Grid.Row="8" Text="Certidão do contador (UF/AAAA/NÚMERO)" VerticalAlignment="Center" />
+              <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding CertidaoCrc}" Width="260" HorizontalAlignment="Left" Watermark="opcional" />
+            </Grid>
+            <CheckBox IsChecked="{Binding HistoricosPadronizados}" Content="Incluir os históricos padronizados (I075)" />
+            <CheckBox IsChecked="{Binding ResponsavelPessoaJuridica}" Content="Responsável pela assinatura: e-CNPJ da empresa (em vez do sócio com e-CPF)" />
+            <CheckBox IsChecked="{Binding AssinarComoProcurador}" Content="Assinar como procurador (qualificação 309), no lugar do responsável — exige procuração vigente do contador procurador, em Cadastros › Contadores" />
+          </StackPanel>
+
+          <!-- 2. Pré-requisitos -->
+          <StackPanel Spacing="6" IsVisible="{Binding NoPasso2}">
+            <ItemsControl ItemsSource="{Binding PreRequisitos}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:ItemPreRequisito">
+                  <Grid ColumnDefinitions="28,*,Auto" Margin="0,3">
+                    <TextBlock Text="{Binding Marca}" Foreground="{Binding Cor}" FontWeight="Bold" />
+                    <StackPanel Grid.Column="1">
+                      <TextBlock Text="{Binding Titulo}" />
+                      <TextBlock Text="{Binding Detalhe}" FontSize="12" Foreground="#667085" />
+                    </StackPanel>
+                    <Button Grid.Column="2" Content="{Binding TextoAtalho}" IsVisible="{Binding TemAtalho}"
+                            Command="{Binding $parent[ItemsControl].((vm:EcdAssistenteViewModel)DataContext).AbrirAtalhoCommand}"
+                            CommandParameter="{Binding Tela}" />
+                  </Grid>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Button Content="Verificar novamente" Command="{Binding ValidarCommand}" HorizontalAlignment="Left" />
+          </StackPanel>
+
+          <!-- 3. Validação prévia -->
+          <StackPanel Spacing="6" IsVisible="{Binding NoPasso3}">
+            <TextBlock Text="{Binding ResumoValidacao}" FontWeight="SemiBold" TextWrapping="Wrap" />
+            <ItemsControl ItemsSource="{Binding Pendencias}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:LinhaPendencia">
+                  <Grid ColumnDefinitions="90,*" Margin="0,2">
+                    <TextBlock Text="{Binding Marca}" Foreground="{Binding Cor}" FontWeight="SemiBold" />
+                    <TextBlock Grid.Column="1" Text="{Binding Mensagem}" TextWrapping="Wrap" />
+                  </Grid>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Button Content="Validar novamente" Command="{Binding ValidarCommand}" HorizontalAlignment="Left" />
+          </StackPanel>
+
+          <!-- 4. Assinaturas -->
+          <StackPanel Spacing="6" IsVisible="{Binding NoPasso4}">
+            <TextBlock Classes="erro" Text="{Binding AvisoRepositorio}" TextWrapping="Wrap"
+                       IsVisible="{Binding AvisoRepositorio, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+            <ItemsControl ItemsSource="{Binding Signatarios}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:SignatarioAssinatura">
+                  <Border BorderBrush="#D0D5DD" BorderThickness="1" CornerRadius="4" Padding="10,8" Margin="0,4">
+                    <StackPanel Spacing="6">
+                      <TextBlock FontWeight="SemiBold">
+                        <Run Text="{Binding Nome}" /><Run Text=" — " /><Run Text="{Binding Qualificacao}" />
+                      </TextBlock>
+                      <TextBlock Text="{Binding Documento, StringFormat='CPF/CNPJ: {0}'}" FontSize="12" Foreground="#667085" />
+                      <TextBlock Classes="erro" Text="CPF/CNPJ inválido no cadastro." IsVisible="{Binding !DocumentoValido}" />
+                      <ComboBox SelectedIndex="{Binding ModoIndice}" Width="360">
+                        <ComboBoxItem Content="Não assinar agora (assino no PVA)" />
+                        <ComboBoxItem Content="Certificado A1 — arquivo .pfx" />
+                        <ComboBoxItem Content="Certificado A3 (token/cartão no Windows)" />
+                        <ComboBoxItem Content="Certificado cadastrado (ou padrão)" />
+                      </ComboBox>
+                      <StackPanel Orientation="Horizontal" Spacing="6" IsVisible="{Binding PedeArquivo}">
+                        <TextBox Text="{Binding ArquivoPfx}" Width="420" Watermark="Arquivo .pfx ou .p12" />
+                        <Button Content="Procurar..." Click="ProcurarPfx" />
+                      </StackPanel>
+                      <ComboBox IsVisible="{Binding PedeInstalado}" ItemsSource="{Binding $parent[ItemsControl].((vm:EcdAssistenteViewModel)DataContext).Instalados}"
+                                SelectedItem="{Binding Instalado}" Width="560" PlaceholderText="Escolha o certificado do Windows">
+                        <ComboBox.ItemTemplate>
+                          <DataTemplate x:DataType="sis:DadosCertificado"><TextBlock Text="{Binding Titular}" /></DataTemplate>
+                        </ComboBox.ItemTemplate>
+                      </ComboBox>
+                      <ComboBox IsVisible="{Binding PedeCadastrado}" ItemsSource="{Binding $parent[ItemsControl].((vm:EcdAssistenteViewModel)DataContext).Cadastrados}"
+                                SelectedItem="{Binding Cadastrado}" Width="560" PlaceholderText="Escolha o certificado cadastrado">
+                        <ComboBox.ItemTemplate>
+                          <DataTemplate x:DataType="sis:CertificadoDigital"><TextBlock><Run Text="{Binding Tipo}" /><Run Text=" — " /><Run Text="{Binding Descricao}" /></TextBlock></DataTemplate>
+                        </ComboBox.ItemTemplate>
+                      </ComboBox>
+                      <TextBox IsVisible="{Binding PedeSenha}" Text="{Binding Senha}" PasswordChar="●" Width="260" HorizontalAlignment="Left" Watermark="Senha do certificado" />
+                    </StackPanel>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+
+          <!-- 5. Gerar e salvar -->
+          <StackPanel Spacing="8" IsVisible="{Binding NoPasso5}">
+            <Border Background="#FFF4E5" CornerRadius="4" Padding="12,8" IsVisible="{Binding TemAvisoProcuracao}">
+              <TextBlock Text="{Binding AvisoProcuracao}" TextWrapping="Wrap" Foreground="#7A4B00" />
+            </Border>
+            <Button Content="Gerar arquivo da ECD" Command="{Binding GerarCommand}" Classes="accent" HorizontalAlignment="Left" />
+            <Border BorderBrush="#D0D5DD" BorderThickness="1" CornerRadius="4" Padding="12,8" IsVisible="{Binding Gerado}">
+              <TextBlock Text="{Binding ResumoArquivo}" TextWrapping="Wrap" FontFamily="Consolas, Menlo, monospace" FontSize="12" />
+            </Border>
+            <StackPanel Orientation="Horizontal" Spacing="6" IsVisible="{Binding Gerado}">
+              <TextBlock Text="Pasta" VerticalAlignment="Center" />
+              <TextBox Text="{Binding Pasta}" Width="460" />
+              <Button Content="Escolher..." Click="EscolherPasta" />
+              <Button Content="Salvar arquivo" Command="{Binding SalvarCommand}" Classes="accent" />
+            </StackPanel>
+            <Border Background="#EEF4FF" CornerRadius="4" Padding="12,8" IsVisible="{Binding Salvo}">
+              <StackPanel Spacing="4">
+                <TextBlock Text="Pronto! Último passo, no PVA da Receita Federal" FontWeight="SemiBold" />
+                <TextBlock Text="{Binding CaminhoSalvo, StringFormat='Arquivo: {0}'}" TextWrapping="Wrap" />
+                <TextBlock x:Name="Instrucoes" TextWrapping="Wrap" />
+                <TextBlock x:Name="Observacao" TextWrapping="Wrap" FontSize="12" Foreground="#44506A" />
+              </StackPanel>
+            </Border>
+            <Button Content="Gerar outra ECD" Command="{Binding ReiniciarCommand}" HorizontalAlignment="Left" IsVisible="{Binding Salvo}" />
+          </StackPanel>
+
+          <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,6,0,0">
+            <Button Content="‹ Voltar" Command="{Binding VoltarCommand}" IsEnabled="{Binding PodeVoltar}" />
+            <Button Content="Avançar ›" Command="{Binding AvancarCommand}" Classes="accent" IsVisible="{Binding !NoUltimoPasso}" />
+          </StackPanel>
+          <c:MensagensView />
+        </StackPanel>
+      </ScrollViewer>
+    </TabItem>
+    <TabItem Header="ECDs geradas">
+      <StackPanel Spacing="8" Margin="4,8">
+        <Button Content="Atualizar" Command="{Binding CarregarGeradasCommand}" HorizontalAlignment="Left" />
+        <DataGrid ItemsSource="{Binding Geradas}" AutoGenerateColumns="False" IsReadOnly="True" Height="360">
+          <DataGrid.Columns>
+            <DataGridTextColumn Header="Gerada em" Binding="{Binding GeradoEm, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}" />
+            <DataGridTextColumn Header="Ano" Binding="{Binding Ano}" />
+            <DataGridTextColumn Header="Início" Binding="{Binding Inicio, StringFormat='{}{0:dd/MM/yyyy}'}" />
+            <DataGridTextColumn Header="Fim" Binding="{Binding Fim, StringFormat='{}{0:dd/MM/yyyy}'}" />
+            <DataGridTextColumn Header="Livro nº" Binding="{Binding NumeroOrdem}" />
+            <DataGridTextColumn Header="Natureza" Binding="{Binding NaturezaLivro}" />
+            <DataGridTextColumn Header="Linhas" Binding="{Binding Linhas}" />
+            <DataGridTextColumn Header="Assinaturas" Binding="{Binding Assinaturas}" />
+            <DataGridTextColumn Header="Hash SHA-1" Binding="{Binding HashSha1}" Width="*" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </StackPanel>
+    </TabItem>
+  </TabControl>
+</UserControl>

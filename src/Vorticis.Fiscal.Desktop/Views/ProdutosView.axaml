@@ -1,0 +1,66 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:g="using:Vorticis.Fiscal.Desktop.Views"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Fiscal.Desktop.ViewModels"
+             x:Class="Vorticis.Fiscal.Desktop.Views.ProdutosView"
+             x:DataType="vm:ProdutosViewModel">
+  <!-- Cadastros › Produtos -->
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="Cadastro de produtos" />
+      <TextBlock FontSize="12" Foreground="#44506A" TextWrapping="Wrap"
+                 Text="Produtos usados na digitação de notas. Na importação de XML, o produto é vinculado (ou cadastrado) automaticamente pelo código do emitente, código de barras ou descrição." />
+      <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnSpacing="8" RowSpacing="6" IsEnabled="{Binding PodeManter}">
+        <TextBlock Text="Código" VerticalAlignment="Center" />
+        <TextBox Grid.Column="1" Text="{Binding Codigo}" IsReadOnly="True" Width="90" />
+        <TextBlock Grid.Column="2" Text="Descrição" VerticalAlignment="Center" />
+        <TextBox Grid.Column="3" Grid.ColumnSpan="3" Text="{Binding Descricao}" MinWidth="420" />
+        <TextBlock Grid.Row="1" Text="Unidade" VerticalAlignment="Center" />
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Unidade}" Width="90" />
+        <TextBlock Grid.Row="1" Grid.Column="2" Text="NCM" VerticalAlignment="Center" />
+        <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding Ncm}" Width="120" />
+        <TextBlock Grid.Row="1" Grid.Column="4" Text="CEST" VerticalAlignment="Center" />
+        <TextBox Grid.Row="1" Grid.Column="5" Text="{Binding Cest}" Width="110" />
+        <TextBlock Grid.Row="2" Text="Cód. barras" VerticalAlignment="Center" />
+        <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Gtin}" Watermark="GTIN/EAN" Width="190" />
+        <TextBlock Grid.Row="2" Grid.Column="3" Text="Origem" VerticalAlignment="Center" HorizontalAlignment="Right" />
+        <ComboBox Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="2" ItemsSource="{x:Static vm:ProdutosViewModel.Origens}" SelectedIndex="{Binding Origem}" Width="300" />
+        <TextBlock Grid.Row="3" Text="Tipo do item" VerticalAlignment="Center" />
+        <ComboBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" ItemsSource="{x:Static vm:ProdutosViewModel.Tipos}" SelectedIndex="{Binding Tipo}" Width="300" />
+        <CheckBox Grid.Row="3" Grid.Column="4" Content="Ativo" IsChecked="{Binding Ativo}" />
+        <WrapPanel Grid.Row="4" Grid.ColumnSpan="6">
+          <TextBox Text="{Binding CfopEntrada}" Watermark="CFOP entrada" Width="110" Margin="0,0,6,0" />
+          <TextBox Text="{Binding CstEntrada}" Watermark="CST entrada" Width="105" Margin="0,0,6,0" />
+          <TextBox Text="{Binding CfopSaida}" Watermark="CFOP saída" Width="110" Margin="0,0,6,0" />
+          <TextBox Text="{Binding CstSaida}" Watermark="CST saída" Width="105" Margin="0,0,14,0" />
+          <TextBox Text="{Binding AliqIcms}" Watermark="ICMS %" Width="80" Margin="0,0,6,0" />
+          <TextBox Text="{Binding AliqIpi}" Watermark="IPI %" Width="80" Margin="0,0,6,0" />
+          <TextBox Text="{Binding AliqPis}" Watermark="PIS %" Width="80" Margin="0,0,6,0" />
+          <TextBox Text="{Binding AliqCofins}" Watermark="COFINS %" Width="90" />
+        </WrapPanel>
+      </Grid>
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button Content="Novo" Command="{Binding NovoCommand}" />
+        <Button Content="Salvar" Command="{Binding SalvarCommand}" IsEnabled="{Binding PodeManter}" Classes="accent" />
+        <Button Content="Excluir" Command="{Binding ExcluirCommand}" IsEnabled="{Binding PodeManter}" />
+        <Rectangle Width="1" Fill="#D0D5DD" Margin="6,4" />
+        <TextBox Text="{Binding Filtro}" Watermark="Filtrar: descrição, código, GTIN ou NCM" Width="260" />
+        <CheckBox Content="Somente ativos" IsChecked="{Binding SomenteAtivos}" />
+        <Button Content="Consultar" Command="{Binding ConsultarCommand}" />
+      </StackPanel>
+      <c:MensagensView />
+    </StackPanel>
+    <DataGrid g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Produtos}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Código" Binding="{ReflectionBinding Codigo}" Width="75" />
+        <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" MinWidth="200" />
+        <DataGridTextColumn Header="Un." Binding="{ReflectionBinding Unidade}" Width="55" />
+        <DataGridTextColumn Header="NCM" Binding="{ReflectionBinding Ncm}" Width="95" />
+        <DataGridTextColumn Header="GTIN" Binding="{ReflectionBinding Gtin}" Width="135" />
+        <DataGridTextColumn Header="Tipo do item" Binding="{ReflectionBinding Tipo}" Width="210" />
+        <DataGridTextColumn Header="Ativo" Binding="{ReflectionBinding Ativo}" Width="60" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>

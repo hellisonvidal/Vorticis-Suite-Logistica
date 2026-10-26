@@ -1,0 +1,44 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Views"
+             xmlns:app="using:Vorticis.Application.Contabil"
+             x:Class="Vorticis.Desktop.Views.ImportacaoLancamentosPadraoView"
+             x:DataType="vm:ImportacaoLancamentosPadraoViewModel">
+  <!-- Integrações › Importar › Lançamentos contábeis (layout padrão) -->
+  <UserControl.Styles>
+    <Style Selector="TextBlock.secao">
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Foreground" Value="#1F3A5F" />
+      <Setter Property="Margin" Value="0,6,0,0" />
+    </Style>
+    <Style Selector="TextBlock.dica">
+      <Setter Property="FontSize" Value="11" />
+      <Setter Property="Foreground" Value="Gray" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+  </UserControl.Styles>
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="6" MaxWidth="1000" HorizontalAlignment="Left">
+      <TextBlock Classes="dica" FontSize="12" Foreground="#44506A"
+                 Text="Importe lançamentos já prontos (de outro sistema ou digitados numa planilha) no layout padrão do Vorticis: uma linha por partida, agrupadas pelo número do lançamento. Aceita Excel (.xlsx) ou CSV separado por ponto e vírgula." />
+      <TextBlock FontFamily="Consolas, Menlo, monospace" FontSize="12" Text="{x:Static vm:ImportacaoLancamentosPadraoViewModel.Colunas}" />
+      <TextBlock Classes="dica" Text="LANCAMENTO: número que agrupa as partidas · DATA: dd/mm/aaaa · CONTA: código analítico · DC: D ou C · VALOR: 1.500,00 · CENTRO_CUSTO e DOCUMENTO são opcionais." />
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button Content="Gerar planilha modelo (.xlsx)" Command="{Binding GerarModeloCommand}" />
+      </StackPanel>
+      <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="6">
+        <TextBlock Text="Arquivo" VerticalAlignment="Center" />
+        <TextBox Grid.Column="1" Text="{Binding Arquivo}" Watermark="Arquivo .xlsx ou .csv" />
+        <Button Grid.Column="2" Content="Procurar..." Click="ProcurarPadrao" />
+      </Grid>
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button Content="Pré-visualizar" Command="{Binding PreVisualizarCommand}" />
+        <Button Content="Importar" Command="{Binding ImportarCommand}" Classes="accent" />
+      </StackPanel>
+      <c:MensagensView />
+    </StackPanel>
+    <v:PreviaImportacaoView Margin="0,8,0,0" />
+  </DockPanel>
+</UserControl>

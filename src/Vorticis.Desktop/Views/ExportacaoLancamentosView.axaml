@@ -1,0 +1,43 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Views"
+             x:Class="Vorticis.Desktop.Views.ExportacaoLancamentosView"
+             x:DataType="vm:ExportacaoLancamentosViewModel">
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <TextBlock Classes="titulo" Text="Exportar lançamentos contábeis" VerticalAlignment="Center" />
+        <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="140" />
+        <TextBlock Text="a" VerticalAlignment="Center" />
+        <CalendarDatePicker SelectedDate="{Binding Fim}" Width="140" />
+        <CheckBox Content="Incluir estornados e estornos" IsChecked="{Binding IncluirEstornados}" />
+        <Button Content="Gerar" Command="{Binding GerarCommand}" Classes="accent" />
+        <Rectangle Width="1" Fill="#D0D5DD" Margin="6,4" />
+        <c:BarraExportacaoView />
+      </StackPanel>
+      <TextBlock FontSize="11" Foreground="Gray"
+                 Text="Uma linha por partida (conta debitada ou creditada), com documento, centro de custo e participante. Gere e escolha o formato." />
+    </StackPanel>
+    <StackPanel DockPanel.Dock="Bottom" Margin="0,6,0,0" Spacing="4">
+      <TextBlock Text="{Binding Resumo}" FontWeight="SemiBold" />
+      <c:MensagensView />
+    </StackPanel>
+    <DataGrid ItemsSource="{Binding Linhas}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Nº" Binding="{ReflectionBinding Numero}" Width="60" />
+        <DataGridTextColumn Header="Data" Binding="{ReflectionBinding Data}" Width="100" />
+        <DataGridTextColumn Header="Conta" Binding="{ReflectionBinding Conta}" Width="110" />
+        <DataGridTextColumn Header="Descrição da conta" Binding="{ReflectionBinding Descricao}" Width="*" />
+        <DataGridTextColumn Header="D/C" Binding="{ReflectionBinding DC}" Width="50" />
+        <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="110" />
+        <DataGridTextColumn Header="Histórico" Binding="{ReflectionBinding Historico}" Width="*" />
+        <DataGridTextColumn Header="Documento" Binding="{ReflectionBinding Documento}" Width="100" />
+        <DataGridTextColumn Header="C. custo" Binding="{ReflectionBinding CentroCusto}" Width="80" />
+        <DataGridTextColumn Header="Part." Binding="{ReflectionBinding Participante}" Width="70" />
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="90" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>

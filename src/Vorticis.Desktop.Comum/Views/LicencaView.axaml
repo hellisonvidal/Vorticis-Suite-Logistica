@@ -1,0 +1,49 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Comum.Views"
+             x:Class="Vorticis.Desktop.Comum.Views.LicencaView"
+             x:DataType="vm:LicencaViewModel">
+  <ScrollViewer>
+    <StackPanel Spacing="10" MaxWidth="760" HorizontalAlignment="Left" Margin="8">
+      <TextBlock Classes="titulo" Text="Licença e registro" />
+      <Border Background="#EEF3FA" BorderBrush="#C8D3E6" BorderThickness="1" CornerRadius="6" Padding="16,12">
+        <StackPanel Spacing="4">
+          <TextBlock Text="{Binding Versao}" FontSize="12" Foreground="#44506A" />
+          <TextBlock Text="{Binding Situacao}" FontSize="16" FontWeight="SemiBold" Foreground="#1F3A5F" TextWrapping="Wrap" />
+          <TextBlock Text="{Binding Detalhe}" FontSize="12" Foreground="#44506A"
+                     IsVisible="{Binding Detalhe, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+        </StackPanel>
+      </Border>
+
+      <StackPanel Spacing="6" IsVisible="{Binding EhAdministrador}">
+        <TextBlock Text="Titular da licença (administrador)" FontWeight="SemiBold" Foreground="#1F3A5F" Margin="0,8,0,0" />
+        <Grid ColumnDefinitions="140,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="6">
+          <TextBlock Classes="rotulo" Text="Nome / razão social" VerticalAlignment="Center" />
+          <TextBox Grid.Column="1" Text="{Binding Titular}" />
+          <TextBlock Grid.Row="1" Text="CPF ou CNPJ" VerticalAlignment="Center" />
+          <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Documento}" v:Mascara.Tipo="CpfCnpj" Width="240" HorizontalAlignment="Left" />
+          <TextBlock Grid.Row="2" Text="E-mail" VerticalAlignment="Center" />
+          <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Email}" />
+        </Grid>
+        <Button Content="Salvar registro" Command="{Binding RegistrarCommand}" Classes="accent" />
+        <v:MensagensView />
+      </StackPanel>
+
+      <TextBlock Classes="titulo" Text="Componentes de terceiros" Margin="0,12,0,0" />
+      <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="#44506A"
+                 Text="O Vorticis Contábil usa os componentes abaixo, de código aberto, distribuídos conforme as respectivas licenças." />
+      <ItemsControl ItemsSource="{x:Static vm:LicencaViewModel.Componentes}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:ComponenteTerceiro">
+            <Grid ColumnDefinitions="220,220,*" Margin="0,2">
+              <TextBlock Text="{Binding Nome}" FontWeight="SemiBold" />
+              <TextBlock Grid.Column="1" Text="{Binding Licenca}" />
+              <TextBlock Grid.Column="2" Text="{Binding Uso}" Foreground="#44506A" />
+            </Grid>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

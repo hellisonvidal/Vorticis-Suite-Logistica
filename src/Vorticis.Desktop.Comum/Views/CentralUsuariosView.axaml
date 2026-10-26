@@ -1,0 +1,39 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
+             x:Class="Vorticis.Desktop.Comum.Views.CentralUsuariosView"
+             x:DataType="vm:CentralUsuariosViewModel">
+  <UserControl.Styles>
+    <Style Selector="TabControl#AbasUsuarios > TabItem">
+      <Setter Property="FontSize" Value="15" />
+      <Setter Property="MinHeight" Value="34" />
+      <Setter Property="Padding" Value="10,0" />
+    </Style>
+  </UserControl.Styles>
+  <TabControl Name="AbasUsuarios" SelectedIndex="{Binding AbaSelecionada}" Padding="0">
+    <TabItem Header="Usuários" IsEnabled="{Binding PodeUsuarios}">
+      <ContentControl Content="{Binding Main.Usuarios}" />
+    </TabItem>
+    <TabItem Header="Perfis de acesso" IsEnabled="{Binding PodePerfis}">
+      <ContentControl Content="{Binding Main.Perfis}" />
+    </TabItem>
+    <TabItem Header="Alterar minha senha">
+      <ContentControl Content="{Binding Main.AlterarSenha}" />
+    </TabItem>
+    <TabItem Header="Registro de acessos" IsEnabled="{Binding PodeAdministrar}">
+      <DockPanel Margin="8">
+        <TextBlock DockPanel.Dock="Top" FontSize="12" Foreground="#44506A" Margin="0,0,0,8" TextWrapping="Wrap"
+                   Text="Últimas tentativas de entrada no sistema (com sucesso e recusadas). Após 5 tentativas erradas o usuário fica bloqueado por 15 minutos." />
+        <DataGrid ItemsSource="{Binding Registros}" IsReadOnly="True" AutoGenerateColumns="False">
+          <DataGrid.Columns>
+            <DataGridTextColumn Header="Data e hora" Binding="{ReflectionBinding Quando}" Width="160" />
+            <DataGridTextColumn Header="Login" Binding="{ReflectionBinding Login}" Width="150" />
+            <DataGridTextColumn Header="Resultado" Binding="{ReflectionBinding Resultado}" Width="100" />
+            <DataGridTextColumn Header="Motivo" Binding="{ReflectionBinding Motivo}" Width="*" />
+            <DataGridTextColumn Header="Computador" Binding="{ReflectionBinding Estacao}" Width="180" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </DockPanel>
+    </TabItem>
+  </TabControl>
+</UserControl>

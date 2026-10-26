@@ -1,0 +1,42 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Frota.Desktop.ViewModels"
+             x:Class="Vorticis.Frota.Desktop.Views.PlanosView" x:DataType="vm:PlanosViewModel">
+  <Grid ColumnDefinitions="*,12,380" RowDefinitions="Auto,*" Margin="8">
+    <TextBlock Grid.ColumnSpan="3" Classes="titulo" Text="Planos de manutenção" Margin="0,0,0,8" />
+    <DataGrid Grid.Row="1" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Placa" Binding="{ReflectionBinding Placa}" Width="95" />
+        <DataGridTextColumn Header="Serviço" Binding="{ReflectionBinding Servico}" Width="*" />
+        <DataGridTextColumn Header="A cada" Binding="{ReflectionBinding Intervalo}" Width="150" />
+        <DataGridTextColumn Header="Última vez" Binding="{ReflectionBinding Ultima}" Width="160" />
+        <DataGridTextColumn Header="Próxima" Binding="{ReflectionBinding Proxima}" Width="170" />
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="90" />
+      </DataGrid.Columns>
+    </DataGrid>
+    <StackPanel Grid.Row="1" Grid.Column="2" Spacing="6" IsEnabled="{Binding PodeEditar}">
+      <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
+        <TextBlock Classes="rotulo" Text="Veículo" />
+        <ComboBox Grid.Column="1" ItemsSource="{Binding VeiculosOpcoes}" SelectedItem="{Binding Veiculo}" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="1" Classes="rotulo" Text="Serviço" />
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Descricao}" Watermark="Ex.: troca de óleo e filtros" />
+        <TextBlock Grid.Row="2" Classes="rotulo" Text="A cada (km)" />
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding IntervaloKm}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="3" Classes="rotulo" Text="A cada (dias)" />
+        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding IntervaloDias}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="4" Classes="rotulo" Text="Última vez (km)" />
+        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding UltimaKm}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="5" Classes="rotulo" Text="Última vez (data)" />
+        <CalendarDatePicker Grid.Row="5" Grid.Column="1" SelectedDate="{Binding UltimaData}" Width="140" />
+        <CheckBox Grid.Row="6" Grid.Column="1" Content="Plano ativo" IsChecked="{Binding Ativo}" />
+      </Grid>
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <Button Content="Novo plano" Command="{Binding NovoCommand}" />
+        <Button Content="Gravar" Classes="accent" Command="{Binding GravarCommand}" />
+        <Button Content="Excluir" Command="{Binding ExcluirCommand}" />
+      </StackPanel>
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="Vale o que vencer primeiro (km ou dias). Ao concluir uma ordem de serviço preventiva deste plano, a última vez é atualizada sozinha." />
+      <c:MensagensView />
+    </StackPanel>
+  </Grid>
+</UserControl>

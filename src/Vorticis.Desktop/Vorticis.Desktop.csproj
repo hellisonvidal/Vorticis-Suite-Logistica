@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Executável do módulo Contábil: só o que é contábil; o casco (login, empresas, usuários...) vem do Vorticis.Desktop.Comum. -->
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <AssemblyName>VorticisContabil</AssemblyName>
+    <Product>Vorticis Contábil</Product>
+    <Title>Vorticis Contábil</Title>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <!-- Ícone do executável (gerado por instalador/icone/gerar_icone.py) -->
+    <ApplicationIcon>..\..\instalador\icone\VorticisContabil.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Vorticis.Desktop.Comum\Vorticis.Desktop.Comum.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Vorticis.Desktop.Comum" />
+    <Using Include="Vorticis.Desktop.Comum.ViewModels" />
+    <Using Include="Vorticis.Desktop.Comum.Views" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Vorticis.Desktop.Tests" />
+  </ItemGroup>
+</Project>

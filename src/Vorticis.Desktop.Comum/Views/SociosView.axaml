@@ -1,0 +1,61 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Comum.Views"
+             x:Class="Vorticis.Desktop.Comum.Views.SociosView"
+             x:DataType="vm:SociosViewModel">
+  <UserControl.Styles>
+    <Style Selector="TextBlock.rotulo"><Setter Property="FontSize" Value="12" /><Setter Property="VerticalAlignment" Value="Center" /></Style>
+  </UserControl.Styles>
+  <Grid ColumnDefinitions="*,12,380" RowDefinitions="Auto,*" Margin="8">
+    <Grid Grid.ColumnSpan="3" ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+      <v:BarraCadastroView />
+      <Button Grid.Column="1" Content="Importar quadro societário da Receita" Command="{Binding ImportarDaReceitaCommand}"
+              IsEnabled="{Binding PodeEditar}" VerticalAlignment="Top" />
+    </Grid>
+    <DockPanel Grid.Row="1" IsEnabled="{Binding !EmEdicao}">
+      <TextBlock DockPanel.Dock="Top" Classes="titulo" Text="Sócios" Margin="0,0,0,6" />
+      <TextBlock DockPanel.Dock="Bottom" Text="{Binding Resumo}" FontWeight="SemiBold" Margin="0,6,0,0" />
+      <DataGrid ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Nº" Binding="{ReflectionBinding Numero}" Width="70" />
+          <DataGridTextColumn Header="Nome" Binding="{ReflectionBinding Nome}" Width="*" MinWidth="200" />
+          <DataGridTextColumn Header="CPF / CNPJ" Binding="{ReflectionBinding Documento}" Width="140" />
+          <DataGridTextColumn Header="Qualificação" Binding="{ReflectionBinding Qualificacao}" Width="160" />
+          <DataGridTextColumn Header="Capital" Binding="{ReflectionBinding Participacao}" Width="90" />
+          <DataGridTextColumn Header="Entrada" Binding="{ReflectionBinding Entrada}" Width="110" />
+          <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="120" />
+          <DataGridTextColumn Header="Rep. legal" Binding="{ReflectionBinding Representante}" Width="100" />
+        </DataGrid.Columns>
+      </DataGrid>
+    </DockPanel>
+    <ScrollViewer Grid.Row="1" Grid.Column="2">
+      <StackPanel Spacing="6">
+        <TextBlock Text="Seu perfil permite apenas consultar." Classes="erro" IsVisible="{Binding !PodeEditar}" />
+        <TextBlock Text="Dados do sócio" FontWeight="SemiBold" Foreground="#1F3A5F" />
+        <StackPanel Spacing="6" IsEnabled="{Binding EmEdicao}">
+        <TextBox Text="{Binding Nome}" Watermark="Nome completo / razão social" />
+        <ComboBox ItemsSource="{x:Static vm:OpcaoTipoPessoa.Todas}" SelectedItem="{Binding Tipo}" HorizontalAlignment="Stretch">
+          <ComboBox.ItemTemplate><DataTemplate x:DataType="vm:OpcaoTipoPessoa"><TextBlock Text="{Binding Nome}" /></DataTemplate></ComboBox.ItemTemplate>
+        </ComboBox>
+        <TextBox Text="{Binding Documento}" Watermark="CPF ou CNPJ" v:Mascara.Tipo="CpfCnpj" />
+        <TextBlock Text="{Binding DocumentoMascarado, StringFormat='Na base pública da RFB: {0} (complete o documento acima)'}" FontSize="11" Foreground="Gray"
+                   IsVisible="{Binding DocumentoMascarado, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+        <AutoCompleteBox Text="{Binding Qualificacao}" ItemsSource="{x:Static vm:SociosViewModel.Qualificacoes}" Watermark="Qualificação" FilterMode="Contains" />
+        <Grid ColumnDefinitions="110,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="6">
+          <TextBlock Classes="rotulo" Text="Capital (%)" />
+          <TextBox Grid.Column="1" Text="{Binding Participacao}" Watermark="ex.: 50" />
+          <TextBlock Grid.Row="1" Classes="rotulo" Text="Entrada" />
+          <CalendarDatePicker Grid.Row="1" Grid.Column="1" SelectedDate="{Binding Entrada}" />
+          <TextBlock Grid.Row="2" Classes="rotulo" Text="Saída" />
+          <CalendarDatePicker Grid.Row="2" Grid.Column="1" SelectedDate="{Binding Saida}" />
+        </Grid>
+        <CheckBox Content="Representante legal (assina a ECD e os termos)" IsChecked="{Binding Representante}" />
+        <TextBox Text="{Binding Email}" Watermark="E-mail" />
+        <TextBox Text="{Binding Telefone}" Watermark="Telefone" />
+        </StackPanel>
+        <v:MensagensView />
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

@@ -1,0 +1,171 @@
+[
+ {
+  "id": "basico",
+  "nome": "Modelo básico - comércio e serviços",
+  "descricao": "Plano de contas enxuto de uso geral para empresas comerciais e de serviços (modelo original do Vorticis), com a estrutura da Lei 6.404/76 e COD_NAT da ECD.",
+  "base": "Lei 6.404/76 (arts. 176 a 187), CPC 26 (R1) / NBC TG 26 e COD_NAT da ECD",
+  "regimes": [
+   "SimplesNacional",
+   "LucroPresumido",
+   "LucroReal"
+  ],
+  "arquivo": "plano_modelo.json",
+  "apuracao": "5.1.01.001",
+  "lucros": "2.3.03.001",
+  "prejuizos": "2.3.03.002"
+ },
+ {
+  "id": "comercio_simples",
+  "nome": "Comércio - Simples Nacional",
+  "descricao": "Empresa de comércio no Simples Nacional: compra e revenda de mercadorias (estoque de mercadorias e CMV). Tributos recolhidos pelo DAS; receitas segregadas conforme o PGDAS-D.",
+  "base": "Lei 6.404/76 (arts. 176 a 187, com a Lei 11.638/07), CPC 26 (R1) / NBC TG 26, ITG 2000 e COD_NAT da ECD",
+  "regimes": [
+   "SimplesNacional"
+  ],
+  "arquivo": "plano_comercio_simples.json",
+  "apuracao": "5.1.01.001",
+  "lucros": "2.3.03.001",
+  "prejuizos": "2.3.03.002"
+ },
+ {
+  "id": "comercio_presumido",
+  "nome": "Comércio - Lucro Presumido",
+  "descricao": "Empresa de comércio no Lucro Presumido: compra e revenda de mercadorias (estoque de mercadorias e CMV). PIS/COFINS cumulativos, IRPJ e CSLL sobre a base presumida.",
+  "base": "Lei 6.404/76 (arts. 176 a 187, com a Lei 11.638/07), CPC 26 (R1) / NBC TG 26, ITG 2000 e COD_NAT da ECD",
+  "regimes": [
+   "LucroPresumido"
+  ],
+  "arquivo": "plano_comercio_presumido.json",
+  "apuracao": "5.1.01.001",
+  "lucros": "2.3.03.001",
+  "prejuizos": "2.3.03.002"
+ },
+ {
+  "id": "comercio_real",
+  "nome": "Comércio - Lucro Real",
+  "descricao": "Empresa de comércio no Lucro Real: compra e revenda de mercadorias (estoque de mercadorias e CMV). PIS/COFINS não cumulativos com créditos, IRPJ/CSLL correntes e diferidos (CPC 32), provisões (CPC 25) e redução ao valor recuperável (CPC 01).",
+  "base": "Lei 6.404/76 (arts. 176 a 187, com a Lei 11.638/07), CPC 26 (R1) / NBC TG 26, ITG 2000 e COD_NAT da ECD; CPC 16, CPC 27, CPC 32",
+  "regimes": [
+   "LucroReal"
+  ],
+  "arquivo": "plano_comercio_real.json",
+  "apuracao": "5.1.01.001",
+  "lucros": "2.3.06.001",
+  "prejuizos": "2.3.06.002"
+ },
+ {
+  "id": "servicos_simples",
+  "nome": "Serviços - Simples Nacional",
+  "descricao": "Empresa de serviços no Simples Nacional: prestação de serviços (custo dos serviços prestados e ISS). Tributos recolhidos pelo DAS; receitas segregadas conforme o PGDAS-D.",
+  "base": "Lei 6.404/76 (arts. 176 a 187, com a Lei 11.638/07), CPC 26 (R1) / NBC TG 26, ITG 2000 e COD_NAT da ECD",
+  "regimes": [
+   "SimplesNacional"
+  ],
+  "arquivo": "plano_servicos_simples.json",
+  "apuracao": "5.1.01.001",
+  "lucros": "2.3.03.001",
+  "prejuizos": "2.3.03.002"
+ },
+ {
+  "id": "servicos_presumido",
+  "nome": "Serviços - Lucro Presumido",
+  "descricao": "Empresa de serviços no Lucro Presumido: prestação de serviços (custo dos serviços prestados e ISS). PIS/COFINS cumulativos, IRPJ e CSLL sobre a base presumida.",
+  "base": "Lei 6.404/76 (arts. 176 a 187, com a Lei 11.638/07), CPC 26 (R1) / NBC TG 26, ITG 2000 e COD_NAT da ECD",
+  "regimes": [
+   "LucroPresumido"
+  ],
+  "arquivo": "plano_servicos_presumido.json",
+  "apuracao": "5.1.01.001",
+  "lucros": "2.3.03.001",
+  "prejuizos": "2.3.03.002"
+ },
+ {
+  "id": "servicos_real",
+  "nome": "Serviços - Lucro Real",
+  "descricao": "Empresa de serviços no Lucro Real: prestação de serviços (custo dos serviços prestados e ISS). PIS/COFINS não cumulativos com créditos, IRPJ/CSLL correntes e diferidos (CPC 32), provisões (CPC 25) e redução ao valor recuperável (CPC 01).",
+  "base": "Lei 6.404/76 (arts. 176 a 187, com a Lei 11.638/07), CPC 26 (R1) / NBC TG 26, ITG 2000 e COD_NAT da ECD; CPC 16, CPC 27, CPC 32",
+  "regimes": [
+   "LucroReal"
+  ],
+  "arquivo": "plano_servicos_real.json",
+  "apuracao": "5.1.01.001",
+  "lucros": "2.3.06.001",
+  "prejuizos": "2.3.06.002"
+ },
+ {
+  "id": "industria_simples",
+  "nome": "Indústria - Simples Nacional",
+  "descricao": "Empresa de indústria no Simples Nacional: industrialização (matérias-primas, produtos em elaboração e acabados, CPV e IPI). Tributos recolhidos pelo DAS; receitas segregadas conforme o PGDAS-D.",
+  "base": "Lei 6.404/76 (arts. 176 a 187, com a Lei 11.638/07), CPC 26 (R1) / NBC TG 26, ITG 2000 e COD_NAT da ECD",
+  "regimes": [
+   "SimplesNacional"
+  ],
+  "arquivo": "plano_industria_simples.json",
+  "apuracao": "5.1.01.001",
+  "lucros": "2.3.03.001",
+  "prejuizos": "2.3.03.002"
+ },
+ {
+  "id": "industria_presumido",
+  "nome": "Indústria - Lucro Presumido",
+  "descricao": "Empresa de indústria no Lucro Presumido: industrialização (matérias-primas, produtos em elaboração e acabados, CPV e IPI). PIS/COFINS cumulativos, IRPJ e CSLL sobre a base presumida.",
+  "base": "Lei 6.404/76 (arts. 176 a 187, com a Lei 11.638/07), CPC 26 (R1) / NBC TG 26, ITG 2000 e COD_NAT da ECD",
+  "regimes": [
+   "LucroPresumido"
+  ],
+  "arquivo": "plano_industria_presumido.json",
+  "apuracao": "5.1.01.001",
+  "lucros": "2.3.03.001",
+  "prejuizos": "2.3.03.002"
+ },
+ {
+  "id": "industria_real",
+  "nome": "Indústria - Lucro Real",
+  "descricao": "Empresa de indústria no Lucro Real: industrialização (matérias-primas, produtos em elaboração e acabados, CPV e IPI). PIS/COFINS não cumulativos com créditos, IRPJ/CSLL correntes e diferidos (CPC 32), provisões (CPC 25) e redução ao valor recuperável (CPC 01).",
+  "base": "Lei 6.404/76 (arts. 176 a 187, com a Lei 11.638/07), CPC 26 (R1) / NBC TG 26, ITG 2000 e COD_NAT da ECD; CPC 16, CPC 27, CPC 32",
+  "regimes": [
+   "LucroReal"
+  ],
+  "arquivo": "plano_industria_real.json",
+  "apuracao": "5.1.01.001",
+  "lucros": "2.3.06.001",
+  "prejuizos": "2.3.06.002"
+ },
+ {
+  "id": "itg1000_me_epp",
+  "nome": "ITG 1000 - Microempresa e Empresa de Pequeno Porte",
+  "descricao": "Plano enxuto para ME e EPP (Simples Nacional ou Presumido) que adotam a ITG 1000 (Modelo Contábil para Microempresa e Empresa de Pequeno Porte): Balanço Patrimonial e DRE simplificados, com comércio, indústria e serviços no mesmo plano.",
+  "base": "Resolução CFC 1.418/12 (ITG 1000), Lei Complementar 123/06, Lei 6.404/76 (estrutura) e COD_NAT da ECD",
+  "regimes": [
+   "MEI"
+  ],
+  "arquivo": "plano_itg1000_me_epp.json",
+  "apuracao": "5.1.01.001",
+  "lucros": "2.3.03.001",
+  "prejuizos": "2.3.03.002"
+ },
+ {
+  "id": "entidade_sem_fins_lucrativos",
+  "nome": "ITG 2002 - Entidade sem finalidade de lucros",
+  "descricao": "Plano para associações, fundações e demais entidades sem fins lucrativos: patrimônio social, superávit ou déficit, subvenções e convênios, trabalho voluntário e isenções usufruídas.",
+  "base": "Resolução CFC 1.409/12 (ITG 2002 R1), NBC TG 26, NBC TG 07 (subvenções), Lei 6.404/76 (estrutura) e COD_NAT da ECD",
+  "regimes": [
+   "ImuneIsenta"
+  ],
+  "arquivo": "plano_entidade_sem_fins_lucrativos.json",
+  "apuracao": "5.1.01.001",
+  "lucros": "2.3.03.001",
+  "prejuizos": "2.3.03.002"
+ },
+ {
+  "id": "completo_geral",
+  "nome": "Plano completo geral (CPC)",
+  "descricao": "Plano completo para qualquer atividade (comércio, indústria e serviços) e porte, com todos os grupos da Lei 6.404/76 e do CPC 26: contratos com clientes, arrendamentos, tributos diferidos, provisões, impairment, ajustes de avaliação patrimonial e participações.",
+  "base": "Lei 6.404/76 (arts. 176 a 187, com a Lei 11.638/07), CPC 26 (R1) / NBC TG 26, ITG 2000 e COD_NAT da ECD; CPC 01, 06, 16, 25, 27, 32, 47",
+  "regimes": [],
+  "arquivo": "plano_completo_geral.json",
+  "apuracao": "5.1.01.001",
+  "lucros": "2.3.06.001",
+  "prejuizos": "2.3.06.002"
+ }
+]

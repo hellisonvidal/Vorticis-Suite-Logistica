@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Regras e serviços do módulo ERP (pedidos, estoque, transporte e painel do empresário) sobre os produtos, notas e duplicatas do Fiscal. -->
+  <ItemGroup>
+    <ProjectReference Include="..\Vorticis.Fiscal\Vorticis.Fiscal.csproj" />
+  </ItemGroup>
+</Project>

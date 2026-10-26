@@ -1,0 +1,323 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Comum.Views"
+             xmlns:cad="using:Vorticis.Application.Cadastros"
+             xmlns:seg="using:Vorticis.Application.Seguranca"
+             x:Class="Vorticis.Desktop.Comum.Views.CadastroEmpresaView"
+             x:DataType="vm:CadastroEmpresaViewModel">
+  <UserControl.Styles>
+    <Style Selector="TextBlock.rotulo">
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="TextBlock.secao">
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Foreground" Value="#1F3A5F" />
+      <Setter Property="Margin" Value="0,10,0,2" />
+    </Style>
+    <Style Selector="TabControl#AbasEmpresa > TabItem">
+      <Setter Property="FontSize" Value="15" />
+      <Setter Property="MinHeight" Value="34" />
+      <Setter Property="Padding" Value="10,0" />
+    </Style>
+    <Style Selector="TextBlock.empresa-aba">
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="Foreground" Value="#44506A" />
+      <Setter Property="Margin" Value="8,6,8,0" />
+    </Style>
+  </UserControl.Styles>
+  <TabControl Name="AbasEmpresa" SelectedIndex="{Binding AbaSelecionada}" Padding="0">
+    <TabItem Header="Dados cadastrais">
+  <Grid ColumnDefinitions="*,16,300" RowDefinitions="Auto,*" Margin="8,4,8,0">
+    <v:BarraCadastroView Grid.ColumnSpan="3" Margin="0,0,0,8" />
+
+    <ScrollViewer Grid.Row="1">
+      <StackPanel Spacing="6" MaxWidth="760" HorizontalAlignment="Left" Margin="0,0,12,8">
+        <StackPanel Orientation="Horizontal" Spacing="12">
+          <TextBlock Classes="titulo" Text="{Binding TituloFormulario}" />
+          <TextBlock Text="{Binding NumeroRegistro}" FontSize="14" Foreground="#44506A" VerticalAlignment="Bottom" Margin="0,0,0,2" />
+        </StackPanel>
+
+        <TextBlock Classes="secao" Text="Identificação" />
+        <Grid ColumnDefinitions="170,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
+          <TextBlock Classes="rotulo" Text="CNPJ" />
+          <Grid Grid.Column="1" ColumnDefinitions="*,Auto" ColumnSpacing="8">
+            <TextBox Text="{Binding Cnpj}" Watermark="00.000.000/0000-00 (aceita alfanumérico)" v:Mascara.Tipo="Cnpj" IsEnabled="{Binding EmInclusao}" />
+            <Button Grid.Column="1" Content="Buscar dados na Receita" Command="{Binding ConsultarCnpjCommand}" IsEnabled="{Binding EmInclusao}"
+                    MinWidth="190" HorizontalContentAlignment="Center" />
+          </Grid>
+          <TextBlock Grid.Row="1" Classes="rotulo" Text="Razão social" />
+          <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding RazaoSocial}" IsEnabled="{Binding EmEdicao}" />
+          <TextBlock Grid.Row="2" Classes="rotulo" Text="Nome fantasia" />
+          <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding NomeFantasia}" IsEnabled="{Binding EmEdicao}" />
+          <TextBlock Grid.Row="3" Classes="rotulo" Text="Natureza jurídica / CNAE" />
+          <Grid Grid.Row="3" Grid.Column="1" ColumnDefinitions="*,8,*">
+            <TextBox Text="{Binding NaturezaJuridica}" Watermark="Natureza jurídica (CONCLA, ex.: 2062)" IsEnabled="{Binding EmEdicao}" />
+            <TextBox Grid.Column="2" Text="{Binding Cnae}" Watermark="CNAE principal (7 dígitos)" IsEnabled="{Binding EmEdicao}" />
+          </Grid>
+          <TextBlock Grid.Row="4" Classes="rotulo" Text="Inscrição estadual" />
+          <Grid Grid.Row="4" Grid.Column="1" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+            <TextBox Text="{Binding InscricaoEstadual}" Watermark="Somente números, ou ISENTO" IsEnabled="{Binding EmEdicao}" />
+            <Button Grid.Column="1" Content="Buscar IE (SINTEGRA)" Command="{Binding BuscarInscricaoEstadualCommand}"
+                    MinWidth="190" HorizontalContentAlignment="Center"
+                    ToolTip.Tip="Consulta a inscrição estadual do CNPJ na UF da empresa (UF ou código IBGE) e pergunta se deve salvar." />
+            <Button Grid.Column="2" Content="Abrir SINTEGRA" Command="{Binding AbrirSintegraCommand}"
+                    ToolTip.Tip="Abre o portal do SINTEGRA para conferir no site do estado." />
+          </Grid>
+          <TextBlock Grid.Row="5" Classes="rotulo" Text="NIRE" />
+          <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Nire}" MaxLength="11" Width="180" HorizontalAlignment="Left" IsEnabled="{Binding EmEdicao}"
+                   Watermark="11 dígitos" ToolTip.Tip="Número de Identificação do Registro de Empresas (Junta Comercial). Exigido na ECD e na ECF; deixe em branco se a entidade não tem registro em Junta." />
+          <TextBlock Grid.Row="6" Classes="rotulo" Text="Início das atividades" />
+          <CalendarDatePicker Grid.Row="6" Grid.Column="1" SelectedDate="{Binding InicioAtividades}" IsEnabled="{Binding EmEdicao}" Width="180"
+                              HorizontalAlignment="Left" />
+          <StackPanel Grid.Row="7" Grid.Column="1" Spacing="2">
+            <TextBlock Text="{Binding OrigemDados}" FontSize="11" Foreground="#1B6E3A" TextWrapping="Wrap"
+                       IsVisible="{Binding OrigemDados, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+            <TextBlock Text="{Binding Aviso}" Classes="erro" FontWeight="SemiBold"
+                       IsVisible="{Binding Aviso, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+          </StackPanel>
+        </Grid>
+
+        <TextBlock Classes="secao" Text="Endereço e contato" />
+        <Grid ColumnDefinitions="170,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="6" IsEnabled="{Binding EmEdicao}">
+          <TextBlock Classes="rotulo" Text="CEP" />
+          <TextBox Grid.Column="1" Text="{Binding Cep}" Width="180" HorizontalAlignment="Left" Watermark="00000-000" v:Mascara.Tipo="Cep" />
+          <TextBlock Grid.Row="1" Classes="rotulo" Text="Logradouro / número" />
+          <Grid Grid.Row="1" Grid.Column="1" ColumnDefinitions="*,8,110">
+            <TextBox Text="{Binding Logradouro}" Watermark="Logradouro" />
+            <TextBox Grid.Column="2" Text="{Binding Numero}" Watermark="Nº" />
+          </Grid>
+          <TextBlock Grid.Row="2" Classes="rotulo" Text="Complemento / bairro" />
+          <Grid Grid.Row="2" Grid.Column="1" ColumnDefinitions="*,8,*">
+            <TextBox Text="{Binding Complemento}" Watermark="Complemento" />
+            <TextBox Grid.Column="2" Text="{Binding Bairro}" Watermark="Bairro" />
+          </Grid>
+          <TextBlock Grid.Row="3" Classes="rotulo" Text="Município / UF / IBGE" />
+          <Grid Grid.Row="3" Grid.Column="1" ColumnDefinitions="*,8,70,8,110">
+            <TextBox Text="{Binding Municipio}" Watermark="Município" />
+            <TextBox Grid.Column="2" Text="{Binding Uf}" MaxLength="2" Watermark="UF" />
+            <TextBox Grid.Column="4" Text="{Binding MunicipioIbge}" Watermark="Cód. IBGE" />
+          </Grid>
+          <TextBlock Grid.Row="4" Classes="rotulo" Text="E-mail / telefone" />
+          <Grid Grid.Row="4" Grid.Column="1" ColumnDefinitions="*,8,*">
+            <TextBox Text="{Binding Email}" Watermark="E-mail" />
+            <TextBox Grid.Column="2" Text="{Binding Telefone}" Watermark="Telefone" />
+          </Grid>
+        </Grid>
+
+        <TextBlock Classes="secao" Text="Módulos" />
+        <WrapPanel IsEnabled="{Binding EmEdicao}" ToolTip.Tip="Módulos em que a empresa está ativa. O módulo em uso não pode ser desmarcado.">
+          <CheckBox Margin="0,0,16,4" Name="ModuloContabilCheck" Content="Contábil" IsChecked="{Binding ModuloContabil}" IsEnabled="{Binding ContabilEditavel}" />
+          <CheckBox Margin="0,0,16,4" Name="ModuloFiscalCheck" Content="Fiscal" IsChecked="{Binding ModuloFiscal}" IsEnabled="{Binding FiscalEditavel}" />
+          <CheckBox Margin="0,0,16,4" Name="ModuloFolhaCheck" Content="Folha de Pagamento" IsChecked="{Binding ModuloFolha}" IsEnabled="{Binding FolhaEditavel}" />
+          <CheckBox Margin="0,0,16,4" Content="Escritório" IsChecked="{Binding ModuloEscritorio}" IsEnabled="{Binding EscritorioEditavel}" />
+          <CheckBox Margin="0,0,16,4" Content="Gerencial" IsChecked="{Binding ModuloErp}" IsEnabled="{Binding ErpEditavel}" />
+          <CheckBox Margin="0,0,16,4" Content="Condomínio" IsChecked="{Binding ModuloCondominio}" IsEnabled="{Binding CondominioEditavel}" />
+          <CheckBox Margin="0,0,16,4" Content="Frota" IsChecked="{Binding ModuloFrota}" IsEnabled="{Binding FrotaEditavel}" />
+        </WrapPanel>
+
+        <TextBlock Classes="secao" Text="Escrituração" />
+        <Grid ColumnDefinitions="170,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="6">
+          <TextBlock Classes="rotulo" Text="Regime tributário" />
+          <ComboBox Grid.Column="1" ItemsSource="{x:Static vm:CadastroEmpresaViewModel.Regimes}" SelectedItem="{Binding Regime}" Width="260"
+                    IsEnabled="{Binding EmInclusao}" ToolTip.Tip="O regime tem histórico por ano; é definido na inclusão.">
+            <ComboBox.ItemTemplate>
+              <DataTemplate x:DataType="cad:RegimeTributario">
+                <TextBlock Text="{Binding Converter={x:Static v:Conversores.NomeRegime}}" />
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+          <TextBlock Grid.Row="1" Classes="rotulo" Text="Primeiro exercício" IsVisible="{Binding EmInclusao}" />
+          <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding AnoExercicio}" Minimum="2000" Maximum="2100" FormatString="0" Width="180"
+                         HorizontalAlignment="Left" IsVisible="{Binding EmInclusao}" />
+          <TextBlock Grid.Row="2" Grid.Column="1" FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                     Text="O modelo de plano de contas, as máscaras, o uso de participantes e de centros de custo e as demais opções contábeis ficam na aba Contabilidade." />
+        </Grid>
+        <v:MensagensView Margin="0,8,0,0" />
+      </StackPanel>
+    </ScrollViewer>
+
+    <DockPanel Grid.Row="1" Grid.Column="2" IsEnabled="{Binding !EmEdicao}">
+      <TextBlock DockPanel.Dock="Top" Text="Empresas cadastradas" FontWeight="SemiBold" Margin="0,0,0,6" />
+      <ListBox ItemsSource="{Binding Main.EmpresasPermitidas}" SelectedItem="{Binding Main.EmpresaSelecionada}">
+        <ListBox.ItemTemplate>
+          <DataTemplate x:DataType="seg:EmpresaPermitida">
+            <StackPanel>
+              <TextBlock FontSize="12" TextWrapping="Wrap">
+                <Run Text="{Binding Codigo, Mode=OneWay}" FontWeight="SemiBold" Foreground="#1F3A5F" /><Run Text="  " /><Run Text="{Binding RazaoSocial, Mode=OneWay}" />
+              </TextBlock>
+              <TextBlock FontSize="11" Foreground="Gray" Text="{Binding CnpjFormatado, Mode=OneWay, StringFormat='CNPJ {0}'}" />
+            </StackPanel>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </DockPanel>
+  </Grid>
+    </TabItem>
+    <TabItem Header="Sócios" IsEnabled="{Binding TemEmpresaSelecionada}">
+      <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Classes="empresa-aba" Text="{Binding EmpresaSelecionadaRotulo}" />
+        <ContentControl Content="{Binding Main.Socios}" />
+      </DockPanel>
+    </TabItem>
+    <TabItem Header="Contadores" IsEnabled="{Binding TemEmpresaSelecionada}">
+      <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Classes="empresa-aba" Text="{Binding EmpresaSelecionadaRotulo}" />
+        <ContentControl Content="{Binding Main.Contabilidade}" />
+      </DockPanel>
+    </TabItem>
+    <TabItem Header="Contabilidade" IsEnabled="{Binding PodeAbaContabilidade}">
+      <Grid RowDefinitions="Auto,*" Margin="8,4,8,0">
+        <v:BarraCadastroView Margin="0,0,0,8" />
+        <ScrollViewer Grid.Row="1">
+          <StackPanel Spacing="6" MaxWidth="760" HorizontalAlignment="Left" Margin="0,0,12,8">
+            <TextBlock Classes="titulo" Text="Contabilidade da empresa" />
+            <TextBlock Text="{Binding EmpresaSelecionadaRotulo}" FontSize="12" Foreground="#44506A" IsVisible="{Binding !EmInclusao}" />
+
+            <TextBlock Classes="secao" Text="Plano de contas" />
+            <Grid ColumnDefinitions="170,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
+              <TextBlock Classes="rotulo" Text="Modelo do plano" />
+              <ComboBox Grid.Column="1" ItemsSource="{x:Static vm:CadastroEmpresaViewModel.ModelosPlano}" SelectedItem="{Binding ModeloSelecionado}"
+                        HorizontalAlignment="Stretch" IsEnabled="{Binding EmEdicao}" PlaceholderText="Plano próprio (sem modelo)">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate x:DataType="cad:ModeloPlano"><TextBlock Text="{Binding Nome}" /></DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+              <StackPanel Grid.Row="1" Grid.Column="1" Spacing="2">
+                <TextBlock Text="{Binding ModeloSelecionado.Descricao}" FontSize="11" Foreground="#44506A" TextWrapping="Wrap"
+                           IsVisible="{Binding ModeloSelecionado, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                <TextBlock Text="{Binding ModeloSelecionado.Base, StringFormat='Base normativa: {0}'}" FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                           IsVisible="{Binding ModeloSelecionado, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                <TextBlock Text="{Binding PlanoAtual}" FontSize="11" Foreground="#1B6E3A" TextWrapping="Wrap" IsVisible="{Binding !EmInclusao}" />
+              </StackPanel>
+              <CheckBox Grid.Row="2" Grid.Column="1" Content="Criar o plano de contas ao cadastrar a empresa" IsChecked="{Binding ImportarPlanoModelo}"
+                        IsVisible="{Binding EmInclusao}" />
+              <TextBlock Grid.Row="3" Classes="rotulo" Text="Máscara dos códigos" />
+              <Grid Grid.Row="3" Grid.Column="1" ColumnDefinitions="*,Auto" ColumnSpacing="6" IsEnabled="{Binding EmEdicao}">
+                <TextBox Text="{Binding Mascara}" Watermark="ex.: 9.9.99.999 (usada na conversão e importação do plano)" FontFamily="Consolas, Menlo, monospace" />
+                <ComboBox Grid.Column="1" ItemsSource="{x:Static vm:CadastroEmpresaViewModel.Mascaras}" SelectedItem="{Binding MascaraModelo}"
+                          PlaceholderText="Modelos" Width="150" />
+              </Grid>
+              <TextBlock Grid.Row="4" Grid.Column="1" FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                         Text="Em empresa já cadastrada, escolher outro modelo e salvar substitui o plano de contas, o que só é possível enquanto não houver lançamentos." />
+            </Grid>
+
+            <TextBlock Classes="secao" Text="Participantes e centros de custo" />
+            <StackPanel Spacing="2" IsEnabled="{Binding EmEdicao}">
+              <CheckBox Content="Usar participantes (clientes/fornecedores nas contas contábeis)" IsChecked="{Binding UsaParticipantes}" />
+              <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap" Margin="24,0,0,4"
+                         Text="Clientes e fornecedores ficam alocados dentro das contas contábeis: o lançamento informa o participante e o balancete mostra a soma na conta, com detalhamento opcional por participante. O grupo (conta sintética) onde cada conta aloca seus participantes é indicado no plano de contas." />
+              <CheckBox Content="Usar centros de custo" IsChecked="{Binding UsaCentroCusto}" />
+            </StackPanel>
+            <Grid ColumnDefinitions="170,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="6" IsEnabled="{Binding EmEdicao}"
+                  IsVisible="{Binding UsaCentroCusto}">
+              <TextBlock Classes="rotulo" Text="Máscara dos centros" />
+              <Grid Grid.Column="1" ColumnDefinitions="*,Auto" ColumnSpacing="6">
+                <TextBox Text="{Binding MascaraCentroCusto}" Watermark="ex.: 9.99.999 (vazio = códigos livres)" FontFamily="Consolas, Menlo, monospace" />
+                <ComboBox Grid.Column="1" ItemsSource="{x:Static vm:CadastroEmpresaViewModel.MascarasCentroCusto}" SelectedItem="{Binding MascaraCentroCustoModelo}"
+                          PlaceholderText="Modelos" Width="150" />
+              </Grid>
+              <CheckBox Grid.Row="1" Grid.Column="1" Content="Converter os códigos dos centros existentes para a nova máscara (1.1 → 1.01)"
+                        IsChecked="{Binding ConverterCentros}" IsVisible="{Binding !EmInclusao}" />
+              <TextBlock Grid.Row="2" Grid.Column="1" FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                         Text="Define os níveis do plano de centros de custo (Cadastros › Centros de custo), onde ficam os grupos e centros. Os centros já cadastrados precisam caber na máscara (ou ser convertidos)." />
+            </Grid>
+
+            <TextBlock Classes="secao" Text="Escrituração" />
+            <Grid ColumnDefinitions="170,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="6" IsEnabled="{Binding EmEdicao}">
+              <TextBlock Classes="rotulo" Text="Início da escrituração" />
+              <CalendarDatePicker Grid.Column="1" SelectedDate="{Binding InicioEscrituracao}" Width="180" HorizontalAlignment="Left" />
+              <TextBlock Grid.Row="1" Classes="rotulo" Text="Apuração do IRPJ" IsVisible="{Binding EhLucroReal}" />
+              <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{x:Static vm:CadastroEmpresaViewModel.FormasApuracao}" SelectedItem="{Binding ApuracaoIrpj}"
+                        Width="260" HorizontalAlignment="Left" IsVisible="{Binding EhLucroReal}" PlaceholderText="Não informada">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate x:DataType="vm:OpcaoApuracaoIrpj"><TextBlock Text="{Binding Nome}" /></DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+              <CheckBox Grid.Row="2" Grid.Column="1" Content="Regime de caixa (tributos pelo recebimento)" IsChecked="{Binding RegimeCaixa}"
+                        IsVisible="{Binding PermiteRegimeCaixa}" />
+              <CheckBox Grid.Row="3" Grid.Column="1" Content="Sociedade de grande porte (ECD 0000.IND_GRANDE_PORTE)" IsChecked="{Binding GrandePorte}"
+                        ToolTip.Tip="Lei 11.638/07, art. 3º: sociedade ou conjunto de sociedades sob controle comum com ativo total superior a R$ 240 milhões ou receita bruta anual superior a R$ 300 milhões." />
+            </Grid>
+            <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                       Text="O regime tributário é definido na aba Dados cadastrais (na inclusão). A forma de apuração do IRPJ vale para o Lucro Real e o regime de caixa para o Presumido e o Simples Nacional." />
+
+            <TextBlock Classes="secao" Text="Regras dos lançamentos" />
+            <Grid ColumnDefinitions="170,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="6" IsEnabled="{Binding EmEdicao}">
+              <CheckBox Grid.Column="1" Content="Exigir o nº do documento em todos os lançamentos" IsChecked="{Binding ExigeDocumento}"
+                        ToolTip.Tip="Cada partida precisa informar o documento/arquivo de suporte (ECD I250.NUM_ARQ). Saldos iniciais, encerramento e estornos ficam isentos." />
+              <TextBlock Grid.Row="1" Classes="rotulo" Text="Bloquear lançamentos até" />
+              <CalendarDatePicker Grid.Row="1" Grid.Column="1" SelectedDate="{Binding DataBloqueio}" Width="180" HorizontalAlignment="Left"
+                                  ToolTip.Tip="Lançamentos com data igual ou anterior são recusados (escrituração já conferida/entregue). Apague a data para liberar." />
+              <CheckBox Grid.Row="2" Grid.Column="1" Content="Usar estorno de lançamentos" IsChecked="{Binding UsaEstorno}"
+                        ToolTip.Tip="Ligado: lançamentos gravados são corrigidos por estorno (o histórico fica na lista). Desligado: não há estorno; Editar altera o próprio lançamento e Excluir o remove, sempre com registro na trilha de auditoria." />
+              <TextBlock Grid.Row="3" Grid.Column="1" FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                         Text="O histórico já é sempre obrigatório. Saldos iniciais e o lançamento de encerramento do exercício não são afetados pelo bloqueio." />
+            </Grid>
+
+            <TextBlock Classes="secao" Text="Contas do encerramento do exercício" />
+            <Grid ColumnDefinitions="170,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="6" IsEnabled="{Binding EmEdicao}">
+              <TextBlock Classes="rotulo" Text="Apuração do resultado" />
+              <TextBox Grid.Column="1" Text="{Binding ContaApuracao}" Width="180" HorizontalAlignment="Left" Watermark="ex.: 5.1.01.001" />
+              <TextBlock Grid.Row="1" Classes="rotulo" Text="Lucros / superávit acumulados" />
+              <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ContaLucros}" Width="180" HorizontalAlignment="Left" Watermark="ex.: 2.3.03.001" />
+              <TextBlock Grid.Row="2" Classes="rotulo" Text="Prejuízos / déficit acumulados" />
+              <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ContaPrejuizos}" Width="180" HorizontalAlignment="Left" Watermark="ex.: 2.3.03.002" />
+            </Grid>
+            <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                       Text="Códigos de contas analíticas do plano; são os padrões da tela Lançamentos › Encerramento do exercício. Acompanham o modelo escolhido." />
+            <v:MensagensView Margin="0,8,0,0" />
+          </StackPanel>
+        </ScrollViewer>
+      </Grid>
+    </TabItem>
+    <TabItem Header="Síndico" IsEnabled="{Binding TemEmpresaSelecionada}" IsVisible="{Binding MostraAbaSindico}">
+      <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Classes="empresa-aba" Text="{Binding EmpresaSelecionadaRotulo}" />
+        <ScrollViewer DataContext="{Binding Main.Sindico}">
+          <StackPanel x:DataType="vm:SindicoViewModel" Margin="8,4" Spacing="6" MaxWidth="640" HorizontalAlignment="Left">
+            <StackPanel Spacing="6" IsEnabled="{Binding PodeEditar}">
+              <TextBlock Text="Nome do síndico" FontSize="12" />
+              <TextBox Text="{Binding Nome}" />
+              <StackPanel Orientation="Horizontal" Spacing="10">
+                <StackPanel Spacing="2">
+                  <TextBlock Text="CPF" FontSize="12" />
+                  <TextBox Text="{Binding Cpf}" Width="160" v:Mascara.Tipo="Cpf" />
+                </StackPanel>
+                <StackPanel Spacing="2">
+                  <TextBlock Text="E-mail" FontSize="12" />
+                  <TextBox Text="{Binding Email}" Width="250" />
+                </StackPanel>
+                <StackPanel Spacing="2">
+                  <TextBlock Text="Telefone" FontSize="12" />
+                  <TextBox Text="{Binding Telefone}" Width="150" />
+                </StackPanel>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" Spacing="10">
+                <StackPanel Spacing="2">
+                  <TextBlock Text="Início do mandato" FontSize="12" />
+                  <CalendarDatePicker SelectedDate="{Binding MandatoInicio}" Width="150" />
+                </StackPanel>
+                <StackPanel Spacing="2">
+                  <TextBlock Text="Fim do mandato" FontSize="12" />
+                  <CalendarDatePicker SelectedDate="{Binding MandatoFim}" Width="150" />
+                </StackPanel>
+              </StackPanel>
+              <TextBlock Text="Assinatura dos livros contábeis e fiscais" FontWeight="SemiBold" Margin="0,8,0,0" />
+              <CheckBox Content="Assina os livros contábeis e fiscais (assinatura normal)" IsChecked="{Binding AssinaLivros}" />
+              <CheckBox Content="Assinatura digital (certificado ICP-Brasil)" IsChecked="{Binding AssinaturaDigital}" />
+              <TextBlock Text="Marcado para assinar, o síndico entra no lugar do sócio/responsável no bloco de assinaturas dos livros e relatórios."
+                         FontSize="11" Foreground="Gray" TextWrapping="Wrap" />
+              <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,6,0,0">
+                <Button Content="Gravar" Classes="accent" Command="{Binding GravarCommand}" />
+                <Button Content="Excluir" Command="{Binding ExcluirCommand}" IsEnabled="{Binding Cadastrado}" />
+              </StackPanel>
+            </StackPanel>
+            <v:MensagensView />
+          </StackPanel>
+        </ScrollViewer>
+      </DockPanel>
+    </TabItem>
+  </TabControl>
+</UserControl>

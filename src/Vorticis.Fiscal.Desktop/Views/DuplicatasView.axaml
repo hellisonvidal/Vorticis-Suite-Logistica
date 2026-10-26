@@ -1,0 +1,105 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:g="using:Vorticis.Fiscal.Desktop.Views"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Fiscal.Desktop.ViewModels"
+             x:Class="Vorticis.Fiscal.Desktop.Views.DuplicatasView"
+             x:DataType="vm:DuplicatasViewModel">
+  <UserControl.Styles>
+    <Style Selector="TextBlock.rot"><Setter Property="FontSize" Value="10.5" /><Setter Property="Foreground" Value="#5A6478" /><Setter Property="Margin" Value="2,0,0,1" /></Style>
+    <Style Selector="StackPanel.campo"><Setter Property="Margin" Value="0,0,6,4" /></Style>
+    <Style Selector="StackPanel.campo TextBox"><Setter Property="MinHeight" Value="26" /><Setter Property="Padding" Value="5,2" /><Setter Property="FontSize" Value="12" /></Style>
+    <Style Selector="StackPanel.campo ComboBox"><Setter Property="MinHeight" Value="26" /><Setter Property="Padding" Value="5,2" /><Setter Property="FontSize" Value="12" /></Style>
+    <Style Selector="StackPanel.campo CalendarDatePicker"><Setter Property="MinHeight" Value="26" /><Setter Property="FontSize" Value="12" /></Style>
+    <Style Selector="Button.mini"><Setter Property="Padding" Value="8,3" /><Setter Property="FontSize" Value="12" /></Style>
+    <Style Selector="Expander"><Setter Property="FontSize" Value="12" /></Style>
+    <Style Selector="DataGrid"><Setter Property="FontSize" Value="12" /><Setter Property="RowHeight" Value="24" /></Style>
+  </UserControl.Styles>
+  <!-- Lançamentos › Duplicatas (contas a pagar e a receber) -->
+  <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="8,4" Spacing="5">
+      <TextBlock Classes="titulo" Text="{Binding TituloTela}" />
+      <WrapPanel>
+        <StackPanel Classes="campo" IsVisible="{Binding EscolheTipo}"><TextBlock Classes="rot" Text="Mostrar" /><ComboBox ItemsSource="{x:Static vm:DuplicatasViewModel.Tipos}" SelectedIndex="{Binding TipoFiltro}" Width="170" /></StackPanel>
+        <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Vencimento de" /><CalendarDatePicker SelectedDate="{Binding VencimentoInicio}" Width="135" /></StackPanel>
+        <StackPanel Classes="campo"><TextBlock Classes="rot" Text="até" /><CalendarDatePicker SelectedDate="{Binding VencimentoFim}" Width="135" /></StackPanel>
+        <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Fornecedor / cliente" /><TextBox Text="{Binding ParticipanteFiltro}" Width="180" /></StackPanel>
+        <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Situação" /><ComboBox ItemsSource="{x:Static vm:DuplicatasViewModel.Situacoes}" SelectedIndex="{Binding SituacaoFiltro}" Width="210" /></StackPanel>
+        <CheckBox Content="Somente vencidas" IsChecked="{Binding SomenteVencidas}" VerticalAlignment="Bottom" Margin="0,0,10,4" />
+        <Button Classes="mini accent" Content="Consultar" Command="{Binding ConsultarCommand}" VerticalAlignment="Bottom" Margin="0,0,8,4" />
+        <Button Classes="mini" Content="Nova duplicata" Command="{Binding NovaCommand}" IsEnabled="{Binding PodeManter}" VerticalAlignment="Bottom" Margin="0,0,0,4" />
+      </WrapPanel>
+      <TextBlock Text="{Binding Resumo}" FontSize="12" FontWeight="SemiBold" TextWrapping="Wrap" />
+      <c:MensagensView />
+
+      <DataGrid g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionada}" AutoGenerateColumns="False" CanUserSortColumns="False" Height="230">
+        <DataGrid.Columns>
+          <DataGridCheckBoxColumn Header="" Binding="{ReflectionBinding Marcada}" Width="44" />
+          <DataGridTextColumn Header="Vencimento" Binding="{ReflectionBinding Vencimento}" Width="100" IsReadOnly="True" />
+          <DataGridTextColumn Header="Tipo" Binding="{ReflectionBinding Tipo}" Width="80" IsReadOnly="True" />
+          <DataGridTextColumn Header="Documento" Binding="{ReflectionBinding Documento}" Width="110" IsReadOnly="True" />
+          <DataGridTextColumn Header="Cliente / fornecedor" Binding="{ReflectionBinding Participante}" Width="*" MinWidth="160" IsReadOnly="True" />
+          <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="105" IsReadOnly="True" />
+          <DataGridTextColumn Header="Saldo" Binding="{ReflectionBinding Saldo}" Width="105" IsReadOnly="True" />
+          <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="90" IsReadOnly="True" />
+          <DataGridTextColumn Header="Atraso" Binding="{ReflectionBinding Atraso}" Width="90" IsReadOnly="True" />
+          <DataGridTextColumn Header="Origem" Binding="{ReflectionBinding Origem}" Width="75" IsReadOnly="True" />
+        </DataGrid.Columns>
+      </DataGrid>
+
+      <Expander Header="Duplicata selecionada ou nova" IsExpanded="True">
+        <StackPanel Spacing="4">
+          <TextBlock Text="{Binding Titulo}" FontWeight="SemiBold" Foreground="#7C2D12" />
+          <WrapPanel IsEnabled="{Binding PodeManter}">
+            <StackPanel Classes="campo" IsVisible="{Binding EscolheTipo}"><TextBlock Classes="rot" Text="Tipo" /><ComboBox ItemsSource="{x:Static vm:DuplicatasViewModel.TiposNova}" SelectedIndex="{Binding FormTipo}" Width="170" /></StackPanel>
+            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Fornecedor / cliente (código, nome ou CPF/CNPJ)" /><TextBox Text="{Binding FormParticipante}" Width="260" /></StackPanel>
+            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Nº do documento" /><TextBox Text="{Binding FormDocumento}" Width="120" /></StackPanel>
+            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Parcela" /><TextBox Text="{Binding FormParcela}" Width="70" /></StackPanel>
+            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Emissão" /><CalendarDatePicker SelectedDate="{Binding FormEmissao}" Width="135" /></StackPanel>
+            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Vencimento" /><CalendarDatePicker SelectedDate="{Binding FormVencimento}" Width="135" /></StackPanel>
+            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Valor" /><TextBox Text="{Binding FormValor}" Width="110" /></StackPanel>
+            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Observação" /><TextBox Text="{Binding FormObservacao}" Width="260" /></StackPanel>
+          </WrapPanel>
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <Button Classes="mini accent" Content="Gravar" Command="{Binding SalvarCommand}" IsEnabled="{Binding PodeManter}" />
+            <Button Classes="mini" Content="Cancelar duplicata" Command="{Binding CancelarDuplicataCommand}" IsEnabled="{Binding PodeManter}" />
+            <Button Classes="mini" Content="Excluir" Command="{Binding ExcluirCommand}" IsEnabled="{Binding PodeManter}" />
+          </StackPanel>
+        </StackPanel>
+      </Expander>
+
+      <Expander Header="Baixa (pagamento ou recebimento)" IsExpanded="True">
+        <StackPanel Spacing="4" IsEnabled="{Binding PodeBaixar}">
+          <TextBlock Text="Para uma duplicata: selecione-a na lista, ajuste os valores e use Baixar selecionada. Para várias: marque-as na primeira coluna e use Baixar marcadas (baixa o saldo total de cada uma)."
+                     FontSize="11" Foreground="#5A6478" TextWrapping="Wrap" />
+          <WrapPanel>
+            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Data" /><CalendarDatePicker SelectedDate="{Binding BaixaData}" Width="135" /></StackPanel>
+            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Valor principal" /><TextBox Text="{Binding BaixaPrincipal}" Width="110" /></StackPanel>
+            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Juros" /><TextBox Text="{Binding BaixaJuros}" Width="90" /></StackPanel>
+            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Multa" /><TextBox Text="{Binding BaixaMulta}" Width="90" /></StackPanel>
+            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Desconto" /><TextBox Text="{Binding BaixaDesconto}" Width="90" /></StackPanel>
+            <StackPanel Classes="campo"><TextBlock Classes="rot" Text="Conta do banco ou caixa (código)" /><TextBox Text="{Binding BaixaConta}" Width="170" /></StackPanel>
+          </WrapPanel>
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <Button Classes="mini accent" Content="Baixar selecionada" Command="{Binding BaixarCommand}" />
+            <Button Classes="mini" Content="Baixar marcadas" Command="{Binding BaixarMarcadasCommand}" />
+            <Button Classes="mini" Content="Estornar baixa selecionada" Command="{Binding EstornarBaixaCommand}" />
+          </StackPanel>
+          <TextBlock Text="Baixas da duplicata selecionada" FontWeight="SemiBold" Foreground="#1F3A5F" FontSize="11" />
+          <DataGrid g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Baixas}" SelectedItem="{Binding BaixaSelecionada}" IsReadOnly="True" AutoGenerateColumns="False" Height="120">
+            <DataGrid.Columns>
+              <DataGridTextColumn Header="Data" Binding="{ReflectionBinding Data}" Width="95" />
+              <DataGridTextColumn Header="Principal" Binding="{ReflectionBinding Principal}" Width="105" />
+              <DataGridTextColumn Header="Juros" Binding="{ReflectionBinding Juros}" Width="90" />
+              <DataGridTextColumn Header="Multa" Binding="{ReflectionBinding Multa}" Width="90" />
+              <DataGridTextColumn Header="Desconto" Binding="{ReflectionBinding Desconto}" Width="90" />
+              <DataGridTextColumn Header="Valor pago" Binding="{ReflectionBinding Liquido}" Width="105" />
+              <DataGridTextColumn Header="Conta" Binding="{ReflectionBinding Conta}" Width="*" />
+              <DataGridTextColumn Header="Extrato" Binding="{ReflectionBinding Extrato}" Width="100" />
+            </DataGrid.Columns>
+          </DataGrid>
+        </StackPanel>
+      </Expander>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

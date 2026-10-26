@@ -1,0 +1,32 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Fiscal.Desktop.ViewModels"
+             x:Class="Vorticis.Fiscal.Desktop.Views.RelatorioDuplicatasView"
+             x:DataType="vm:RelatorioDuplicatasViewModel">
+  <!-- Relatórios › Duplicatas a pagar / a receber / Posição por vencimento -->
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="{Binding TituloTela}" />
+      <WrapPanel>
+        <ComboBox ItemsSource="{x:Static vm:RelPosicaoDuplicatasViewModel.TiposPosicao}" SelectedIndex="{Binding TipoPosicao}" IsVisible="{Binding MostraTipo}" Width="170" Margin="0,0,8,6" />
+        <TextBlock Text="Data-base" VerticalAlignment="Center" Margin="0,0,6,6" />
+        <CalendarDatePicker SelectedDate="{Binding DataBase}" Width="140" Margin="0,0,10,6" />
+        <StackPanel Orientation="Horizontal" IsVisible="{Binding MostraVencimento}">
+          <TextBlock Text="Vencimento de" VerticalAlignment="Center" Margin="0,0,6,6" />
+          <CalendarDatePicker SelectedDate="{Binding VencimentoInicio}" Width="140" Margin="0,0,6,6" />
+          <TextBlock Text="até" VerticalAlignment="Center" Margin="0,0,6,6" />
+          <CalendarDatePicker SelectedDate="{Binding VencimentoFim}" Width="140" Margin="0,0,10,6" />
+        </StackPanel>
+        <TextBox Text="{Binding Participante}" Watermark="Fornecedor / cliente" Width="190" Margin="0,0,8,6" />
+        <ComboBox ItemsSource="{x:Static vm:RelatorioDuplicatasViewModel.Situacoes}" SelectedIndex="{Binding Situacao}" IsVisible="{Binding MostraSituacao}" Width="120" Margin="0,0,8,6" />
+        <Button Content="Gerar" Command="{Binding GerarCommand}" Classes="accent" Margin="0,0,8,6" />
+        <c:BarraExportacaoView />
+      </WrapPanel>
+      <c:MensagensView />
+    </StackPanel>
+    <ScrollViewer>
+      <ItemsControl ItemsSource="{Binding Exibidas}" />
+    </ScrollViewer>
+  </DockPanel>
+</UserControl>

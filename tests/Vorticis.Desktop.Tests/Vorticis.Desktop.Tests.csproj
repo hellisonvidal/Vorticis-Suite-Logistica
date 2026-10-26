@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Vorticis.Desktop\Vorticis.Desktop.csproj" />
+    <ProjectReference Include="..\..\src\Vorticis.Fiscal.Desktop\Vorticis.Fiscal.Desktop.csproj" />
+    <ProjectReference Include="..\..\src\Vorticis.Folha.Desktop\Vorticis.Folha.Desktop.csproj" />
+    <ProjectReference Include="..\..\src\Vorticis.Erp.Desktop\Vorticis.Erp.Desktop.csproj" />
+    <ProjectReference Include="..\..\src\Vorticis.Frota.Desktop\Vorticis.Frota.Desktop.csproj" />
+    <ProjectReference Include="..\..\src\Vorticis.Logistica.Desktop\Vorticis.Logistica.Desktop.csproj" />
+    <ProjectReference Include="..\Vorticis.Infra.Tests\Vorticis.Infra.Tests.csproj" />
+    <Compile Include="..\Vorticis.Fiscal.Tests\XmlsDeTeste.cs" Link="XmlsDeTeste.cs" />
+    <PackageReference Include="Avalonia.Headless" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+    <Using Include="Vorticis.Desktop.Comum" />
+    <Using Include="Vorticis.Desktop.Comum.ViewModels" />
+    <Using Include="Vorticis.Desktop.Comum.Views" />
+  </ItemGroup>
+</Project>

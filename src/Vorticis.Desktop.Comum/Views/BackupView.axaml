@@ -1,0 +1,44 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Comum.Views"
+             x:Class="Vorticis.Desktop.Comum.Views.BackupView"
+             x:DataType="vm:BackupViewModel">
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="8" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="Backup e restauração" />
+      <TextBlock FontSize="12" Foreground="#44506A" TextWrapping="Wrap"
+                 Text="O backup copia o banco inteiro (todas as empresas, usuários e trilha de auditoria) usando as ferramentas oficiais do PostgreSQL. Guarde cópias fora deste computador (pendrive, nuvem)." />
+      <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+        <TextBlock Text="Pasta" VerticalAlignment="Center" />
+        <TextBox Grid.Column="1" Text="{Binding Pasta}" IsReadOnly="True" />
+        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
+          <Button Content="Escolher pasta..." Click="EscolherPasta" />
+          <Button Content="Pasta padrão" Command="{Binding UsarPastaPadraoCommand}" ToolTip.Tip="Backups dentro do diretório de instalação do programa" />
+        </StackPanel>
+      </Grid>
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button Content="Fazer backup agora" Command="{Binding GerarCommand}" Classes="accent" />
+        <Button Content="Atualizar lista" Command="{Binding AtualizarListaCommand}" />
+        <Button Content="Excluir backup selecionado" Command="{Binding ExcluirCommand}" />
+      </StackPanel>
+    </StackPanel>
+    <Border DockPanel.Dock="Bottom" BorderBrush="#D0D5DD" BorderThickness="0,1,0,0" Padding="0,10,0,0" Margin="0,8,0,0">
+      <StackPanel Spacing="6">
+        <TextBlock Text="Restaurar o backup selecionado" FontWeight="SemiBold" Foreground="#B3261E" />
+        <TextBlock FontSize="12" TextWrapping="Wrap"
+                   Text="Substitui TODO o conteúdo atual do banco pelo do backup, depois de confirmar num alerta com a senha de administrador. Antes, o sistema gera automaticamente uma cópia de segurança do estado atual. Ao final, todos os usuários precisam entrar novamente." />
+        <Button Content="Restaurar backup selecionado..." Command="{Binding RestaurarCommand}"
+                ToolTip.Tip="Pede a confirmação com a senha de administrador" />
+        <v:MensagensView />
+      </StackPanel>
+    </Border>
+    <DataGrid ItemsSource="{Binding Arquivos}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Arquivo" Binding="{ReflectionBinding Nome}" Width="*" />
+        <DataGridTextColumn Header="Data" Binding="{ReflectionBinding Data}" Width="150" />
+        <DataGridTextColumn Header="Tamanho" Binding="{ReflectionBinding Tamanho}" Width="110" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>

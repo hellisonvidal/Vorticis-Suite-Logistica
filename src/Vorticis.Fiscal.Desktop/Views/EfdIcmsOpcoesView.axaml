@@ -1,0 +1,24 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Vorticis.Fiscal.Desktop.ViewModels"
+             x:Class="Vorticis.Fiscal.Desktop.Views.EfdIcmsOpcoesView"
+             x:DataType="vm:EfdIcmsAssistenteViewModel">
+  <StackPanel Spacing="6">
+    <Grid ColumnDefinitions="230,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
+      <TextBlock Text="Perfil (0000.IND_PERFIL)" VerticalAlignment="Center" />
+      <ComboBox Grid.Column="1" ItemsSource="{x:Static vm:EfdIcmsAssistenteViewModel.Perfis}" SelectedIndex="{Binding Perfil}" Width="420" />
+      <TextBlock Grid.Row="1" Text="Atividade (0000.IND_ATIV)" VerticalAlignment="Center" />
+      <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{x:Static vm:EfdIcmsAssistenteViewModel.Atividades}" SelectedIndex="{Binding Atividade}" Width="420" />
+      <TextBlock Grid.Row="2" Text="Código de receita do ICMS (E116)" VerticalAlignment="Center" />
+      <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding CodigoReceita}" Width="220" HorizontalAlignment="Left" Watermark="código da UF, ex.: 046-2" />
+      <TextBlock Grid.Row="3" Text="Código de receita do ICMS-ST (E250)" VerticalAlignment="Center" />
+      <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding CodigoReceitaSt}" Width="220" HorizontalAlignment="Left" Watermark="só se houver ICMS-ST" />
+      <TextBlock Grid.Row="4" Text="Dia de vencimento do ICMS" VerticalAlignment="Center" />
+      <NumericUpDown Grid.Row="4" Grid.Column="1" Value="{Binding DiaVencimento}" Minimum="1" Maximum="28" FormatString="0" Width="130" HorizontalAlignment="Left" />
+      <TextBlock Grid.Row="5" Text="Saldo credor do mês anterior" VerticalAlignment="Center" />
+      <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding SaldoCredorAnterior}" Width="160" HorizontalAlignment="Left" Watermark="0,00" />
+    </Grid>
+    <CheckBox IsChecked="{Binding InventarioZerado}" Content="Gerar o bloco H com inventário zerado (H005 com valor 0,00); senão o bloco H sai sem dados" />
+    <Button Content="Salvar estas opções como padrão da empresa" Command="{Binding SalvarConfiguracaoCommand}" HorizontalAlignment="Left" />
+  </StackPanel>
+</UserControl>

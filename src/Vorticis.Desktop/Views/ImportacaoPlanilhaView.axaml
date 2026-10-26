@@ -1,0 +1,125 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Views"
+             xmlns:app="using:Vorticis.Application.Contabil"
+             x:Class="Vorticis.Desktop.Views.ImportacaoPlanilhaView"
+             x:DataType="vm:ImportacaoPlanilhaViewModel">
+  <!-- Integrações › Importar › Planilhas (layouts do usuário) -->
+  <UserControl.Styles>
+    <Style Selector="TextBlock.secao">
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Foreground" Value="#1F3A5F" />
+      <Setter Property="Margin" Value="0,6,0,0" />
+    </Style>
+    <Style Selector="TextBlock.dica">
+      <Setter Property="FontSize" Value="11" />
+      <Setter Property="Foreground" Value="Gray" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+  </UserControl.Styles>
+  <Grid ColumnDefinitions="460,16,*" Margin="8">
+    <ScrollViewer>
+      <StackPanel Spacing="6" Margin="0,0,12,0">
+        <TextBlock Classes="dica" FontSize="12" Foreground="#44506A"
+                   Text="Importe lançamentos de qualquer planilha (Excel .xlsx ou CSV). Crie um layout dizendo qual coluna é a data, as contas, o valor e o histórico; salve-o para usar de novo nas próximas importações." />
+        <TextBlock Classes="secao" Text="1. Planilha" />
+        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6">
+          <TextBox Text="{Binding Arquivo}" Watermark="Arquivo .xlsx ou .csv" />
+          <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+            <Button Content="Procurar..." Click="ProcurarPlanilha" />
+            <Button Content="Carregar" Command="{Binding CarregarPlanilhaCommand}"
+                    ToolTip.Tip="Lê o arquivo e mostra a planilha ao lado, para você ver os dados antes de definir as colunas" />
+          </StackPanel>
+        </Grid>
+        <TextBlock Classes="dica" Text="{Binding Amostra}" />
+
+        <TextBlock Classes="secao" Text="2. Layout" />
+        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="6">
+          <ComboBox ItemsSource="{Binding Layouts}" SelectedItem="{Binding LayoutSelecionado}" PlaceholderText="Layouts salvos" HorizontalAlignment="Stretch">
+            <ComboBox.ItemTemplate><DataTemplate x:DataType="app:LayoutSalvo"><TextBlock Text="{Binding Nome}" /></DataTemplate></ComboBox.ItemTemplate>
+          </ComboBox>
+          <Button Grid.Column="1" Content="Novo" Command="{Binding NovoLayoutCommand}" />
+          <Button Grid.Column="2" Content="Excluir" Command="{Binding ExcluirLayoutCommand}" />
+        </Grid>
+        <Grid ColumnDefinitions="130,*" RowDefinitions="Auto,Auto" RowSpacing="6">
+          <TextBlock Classes="rotulo" Text="Nome do layout" />
+          <TextBox Grid.Column="1" Text="{Binding NomeLayout}" Watermark="ex.: Vendas do PDV" />
+          <TextBlock Grid.Row="1" Classes="rotulo" Text="Cada linha é" />
+          <StackPanel Grid.Row="1" Grid.Column="1" Spacing="2">
+            <RadioButton GroupName="modelo" Content="um lançamento (débito e crédito)" IsChecked="{Binding PorLancamento}" />
+            <RadioButton GroupName="modelo" Content="uma partida (conta e D/C)" IsChecked="{Binding PorPartida}" />
+          </StackPanel>
+        </Grid>
+
+        <TextBlock Classes="secao" Text="3. Colunas da planilha" />
+        <Grid ColumnDefinitions="130,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
+          <TextBlock Classes="rotulo" Text="Data" />
+          <ComboBox Grid.Column="1" ItemsSource="{Binding OpcoesColunas}" SelectedItem="{Binding ColunaData}" HorizontalAlignment="Stretch" />
+          <TextBlock Grid.Row="1" Classes="rotulo" Text="Histórico" />
+          <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding OpcoesColunas}" SelectedItem="{Binding ColunaHistorico}" HorizontalAlignment="Stretch" />
+          <TextBlock Grid.Row="2" Classes="rotulo" Text="Documento" />
+          <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding OpcoesColunas}" SelectedItem="{Binding ColunaDocumento}" HorizontalAlignment="Stretch" />
+          <TextBlock Grid.Row="3" Classes="rotulo" Text="Centro de custo" />
+          <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding OpcoesColunas}" SelectedItem="{Binding ColunaCentroCusto}" HorizontalAlignment="Stretch" />
+          <TextBlock Grid.Row="4" Classes="rotulo" Text="Valor" />
+          <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding OpcoesColunas}" SelectedItem="{Binding ColunaValor}" HorizontalAlignment="Stretch" />
+        </Grid>
+        <Grid ColumnDefinitions="130,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="6" IsVisible="{Binding PorLancamento}">
+          <TextBlock Classes="rotulo" Text="Conta débito" />
+          <ComboBox Grid.Column="1" ItemsSource="{Binding OpcoesColunas}" SelectedItem="{Binding ColunaContaDebito}" HorizontalAlignment="Stretch" />
+          <TextBlock Grid.Row="1" Classes="rotulo" Text="ou débito fixo" />
+          <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ContaDebitoPadrao}" Watermark="conta usada quando a coluna está vazia" />
+          <TextBlock Grid.Row="2" Classes="rotulo" Text="Conta crédito" />
+          <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding OpcoesColunas}" SelectedItem="{Binding ColunaContaCredito}" HorizontalAlignment="Stretch" />
+          <TextBlock Grid.Row="3" Classes="rotulo" Text="ou crédito fixo" />
+          <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding ContaCreditoPadrao}" Watermark="conta usada quando a coluna está vazia" />
+        </Grid>
+        <Grid ColumnDefinitions="130,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="6" IsVisible="{Binding PorPartida}">
+          <TextBlock Classes="rotulo" Text="Nº do lançamento" />
+          <ComboBox Grid.Column="1" ItemsSource="{Binding OpcoesColunas}" SelectedItem="{Binding ColunaAgrupador}" HorizontalAlignment="Stretch" />
+          <TextBlock Grid.Row="1" Classes="rotulo" Text="Conta" />
+          <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding OpcoesColunas}" SelectedItem="{Binding ColunaConta}" HorizontalAlignment="Stretch" />
+          <TextBlock Grid.Row="2" Classes="rotulo" Text="D/C" />
+          <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding OpcoesColunas}" SelectedItem="{Binding ColunaDC}" HorizontalAlignment="Stretch" />
+          <TextBlock Grid.Row="3" Classes="rotulo" Text="Valor a débito" />
+          <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding OpcoesColunas}" SelectedItem="{Binding ColunaValorDebito}" HorizontalAlignment="Stretch" />
+          <TextBlock Grid.Row="4" Classes="rotulo" Text="Valor a crédito" />
+          <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding OpcoesColunas}" SelectedItem="{Binding ColunaValorCredito}" HorizontalAlignment="Stretch" />
+        </Grid>
+        <TextBlock Classes="dica" IsVisible="{Binding PorPartida}"
+                   Text="Sem a coluna Nº do lançamento, as partidas são agrupadas até débitos = créditos. Use D/C + Valor, ou as colunas Valor a débito e Valor a crédito." />
+        <Grid ColumnDefinitions="130,*" RowDefinitions="Auto,Auto" RowSpacing="6">
+          <TextBlock Classes="rotulo" Text="Histórico fixo" />
+          <TextBox Grid.Column="1" Text="{Binding HistoricoPadrao}" Watermark="usado quando a coluna está vazia" />
+          <TextBlock Grid.Row="1" Classes="rotulo" Text="Máscara das contas" />
+          <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding MascaraContas}" Watermark="opcional, ex.: 9.9.99.999 (converte 11010001)" />
+        </Grid>
+        <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,4,0,0">
+          <Button Content="Salvar layout" Command="{Binding SalvarLayoutCommand}" />
+          <Button Content="Pré-visualizar" Command="{Binding PreVisualizarCommand}" />
+          <Button Content="Importar" Command="{Binding ImportarCommand}" Classes="accent" />
+        </StackPanel>
+        <c:MensagensView />
+      </StackPanel>
+    </ScrollViewer>
+    <!-- À direita: a planilha como está no arquivo (para definir as colunas) e a pré-visualização dos lançamentos -->
+    <Grid Grid.Column="2" RowDefinitions="Auto,*,10,*">
+      <StackPanel Spacing="2">
+        <TextBlock Text="Planilha carregada" FontWeight="SemiBold" Foreground="#1F3A5F" />
+        <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                   Text="Como está no arquivo (até 200 linhas). O cabeçalho de cada coluna mostra, entre colchetes, o papel definido no layout." />
+      </StackPanel>
+      <Border Grid.Row="1" BorderBrush="#D0D5DD" BorderThickness="1" Margin="0,4,0,0">
+        <Panel>
+          <DataGrid Name="GradePlanilha" ItemsSource="{Binding LinhasPlanilha}" IsReadOnly="True" AutoGenerateColumns="False"
+                    IsVisible="{Binding TemPlanilha}" FontSize="12" />
+          <TextBlock Text="Escolha o arquivo e clique em Carregar para ver a planilha aqui." Foreground="Gray" Margin="10"
+                     IsVisible="{Binding !TemPlanilha}" />
+        </Panel>
+      </Border>
+      <v:PreviaImportacaoView Grid.Row="3" />
+    </Grid>
+  </Grid>
+</UserControl>

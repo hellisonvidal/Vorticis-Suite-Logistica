@@ -1,0 +1,41 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:g="using:Vorticis.Fiscal.Desktop.Views"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Fiscal.Desktop.ViewModels"
+             x:Class="Vorticis.Fiscal.Desktop.Views.ConciliacaoDuplicatasView"
+             x:DataType="vm:ConciliacaoDuplicatasViewModel">
+  <!-- Lançamentos › Conciliação de duplicatas -->
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="Conciliação de duplicatas com o extrato bancário" />
+      <TextBlock Text="O extrato precisa estar importado em Lançamentos › Importação (aba Extratos). Informe a conta contábil do banco do extrato; o programa sugere as duplicatas em aberto que combinam com os movimentos por valor, data próxima do vencimento e número do documento."
+                 FontSize="11" Foreground="#5A6478" TextWrapping="Wrap" />
+      <WrapPanel>
+        <TextBox Text="{Binding ContaBanco}" Watermark="Conta do banco (código)" Width="190" Margin="0,0,8,6" />
+        <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="140" Margin="0,0,6,6" />
+        <TextBlock Text="a" VerticalAlignment="Center" Margin="0,0,6,6" />
+        <CalendarDatePicker SelectedDate="{Binding Fim}" Width="140" Margin="0,0,10,6" />
+        <TextBlock Text="Tolerância (dias)" VerticalAlignment="Center" Margin="0,0,6,6" />
+        <TextBox Text="{Binding Tolerancia}" Width="50" Margin="0,0,10,6" />
+        <Button Content="Sugerir" Command="{Binding SugerirCommand}" IsEnabled="{Binding PodeBaixar}" Classes="accent" Margin="0,0,8,6" />
+        <Button Content="Baixar marcadas" Command="{Binding BaixarMarcadasCommand}" IsEnabled="{Binding PodeBaixar}" Margin="0,0,8,6" />
+      </WrapPanel>
+      <TextBlock Text="{Binding Resumo}" FontWeight="SemiBold" TextWrapping="Wrap" />
+      <c:MensagensView />
+    </StackPanel>
+    <DataGrid g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Sugestoes}" AutoGenerateColumns="False" CanUserSortColumns="False">
+      <DataGrid.Columns>
+        <DataGridCheckBoxColumn Header="" Binding="{ReflectionBinding Marcada}" Width="44" />
+        <DataGridTextColumn Header="Tipo" Binding="{ReflectionBinding Tipo}" Width="80" IsReadOnly="True" />
+        <DataGridTextColumn Header="Documento" Binding="{ReflectionBinding Documento}" Width="110" IsReadOnly="True" />
+        <DataGridTextColumn Header="Cliente / fornecedor" Binding="{ReflectionBinding Participante}" Width="*" MinWidth="150" IsReadOnly="True" />
+        <DataGridTextColumn Header="Vencimento" Binding="{ReflectionBinding Vencimento}" Width="100" IsReadOnly="True" />
+        <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="105" IsReadOnly="True" />
+        <DataGridTextColumn Header="Data no extrato" Binding="{ReflectionBinding DataExtrato}" Width="125" IsReadOnly="True" />
+        <DataGridTextColumn Header="Extrato" Binding="{ReflectionBinding Extrato}" Width="*" MinWidth="150" IsReadOnly="True" />
+        <DataGridTextColumn Header="Por que combina" Binding="{ReflectionBinding Motivo}" Width="*" MinWidth="170" IsReadOnly="True" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>

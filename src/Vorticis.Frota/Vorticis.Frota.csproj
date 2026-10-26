@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Regras e serviços do módulo Frota (piloto): veículos, motoristas, abastecimentos, manutenção, viagens, documentos e relatórios. -->
+  <ItemGroup>
+    <!-- Municípios do IBGE com coordenadas (kelvins/municipios-brasileiros, licença MIT): base das distâncias das rotas. -->
+    <EmbeddedResource Include="municipios.csv" LogicalName="Vorticis.Frota.municipios.csv" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Vorticis.Domain\Vorticis.Domain.csproj" />
+    <ProjectReference Include="..\Vorticis.Application\Vorticis.Application.csproj" />
+    <ProjectReference Include="..\Vorticis.Infra\Vorticis.Infra.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,17 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             x:Class="Vorticis.Desktop.Views.ReorganizarLancamentosView"
+             x:DataType="vm:ReorganizarLancamentosViewModel">
+  <StackPanel Margin="8" Spacing="10">
+    <TextBlock Classes="titulo" Text="Reorganizar lançamentos" />
+    <StackPanel Orientation="Horizontal" Spacing="10">
+      <NumericUpDown Value="{Binding Ano}" Minimum="2000" Maximum="2100" FormatString="0" Width="130" />
+      <Button Content="Reorganizar numeração" Command="{Binding ReorganizarCommand}" Classes="accent" IsEnabled="{Binding PodeReorganizar}" />
+    </StackPanel>
+    <TextBlock TextWrapping="Wrap" Foreground="Gray" MaxWidth="640" HorizontalAlignment="Left"
+               Text="Renumera em sequência (1, 2, 3...) os lançamentos do exercício, em ordem de data e número atual, preenchendo lacunas. Bloqueado com exercício encerrado, período fechado com lançamentos ou ECD já gerada para o ano. Pede a senha de administrador e registra a operação na auditoria." />
+    <c:MensagensView />
+  </StackPanel>
+</UserControl>

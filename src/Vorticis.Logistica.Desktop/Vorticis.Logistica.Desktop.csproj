@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Vorticis Suite Logística: programa único da transportadora — frota, manutenção, financeiro, contábil e folha num só menu -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>VorticisLogistica</AssemblyName>
+    <Product>Vorticis Suite Logística</Product>
+    <Title>Vorticis Suite Logística</Title>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <ApplicationIcon>..\..\instalador\icone\VorticisLogistica.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Vorticis.Frota.Desktop\Vorticis.Frota.Desktop.csproj" />
+    <ProjectReference Include="..\Vorticis.Erp.Desktop\Vorticis.Erp.Desktop.csproj" />
+    <ProjectReference Include="..\Vorticis.Desktop\Vorticis.Desktop.csproj" />
+    <ProjectReference Include="..\Vorticis.Fiscal.Desktop\Vorticis.Fiscal.Desktop.csproj" />
+    <ProjectReference Include="..\Vorticis.Folha.Desktop\Vorticis.Folha.Desktop.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Vorticis.Desktop.Comum" />
+    <Using Include="Vorticis.Desktop.Comum.ViewModels" />
+    <Using Include="Vorticis.Desktop.Comum.Views" />
+  </ItemGroup>
+</Project>

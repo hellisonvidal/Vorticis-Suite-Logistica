@@ -1,0 +1,58 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:g="using:Vorticis.Fiscal.Desktop.Views"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Fiscal.Desktop.ViewModels"
+             x:Class="Vorticis.Fiscal.Desktop.Views.GuiasView"
+             x:DataType="vm:GuiasViewModel">
+  <!-- Obrigações › Guias de recolhimento -->
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="Guias de recolhimento a pagar" />
+      <WrapPanel>
+        <TextBlock Text="Competências" VerticalAlignment="Center" Margin="0,0,6,6" />
+        <CalendarDatePicker SelectedDate="{Binding CompetenciaInicio}" Width="140" Margin="0,0,6,6" />
+        <TextBlock Text="a" VerticalAlignment="Center" Margin="0,0,6,6" />
+        <CalendarDatePicker SelectedDate="{Binding CompetenciaFim}" Width="140" Margin="0,0,10,6" />
+        <ComboBox ItemsSource="{x:Static vm:GuiasViewModel.Situacoes}" SelectedIndex="{Binding Situacao}" Width="100" Margin="0,0,8,6" />
+        <Button Content="Consultar" Command="{Binding ConsultarCommand}" Classes="accent" Margin="0,0,8,6" />
+        <Button Content="Gerar guias" Command="{Binding GerarCommand}" IsEnabled="{Binding PodeManter}" Margin="0,0,8,6" />
+        <Rectangle Width="1" Fill="#D0D5DD" Margin="6,4" />
+        <CalendarDatePicker SelectedDate="{Binding DataPagamento}" Width="140" Margin="0,0,6,6" />
+        <Button Content="Marcar como paga" Command="{Binding MarcarPagaCommand}" IsEnabled="{Binding PodeManter}" Margin="0,0,6,6" />
+        <Button Content="Reabrir" Command="{Binding ReabrirCommand}" IsEnabled="{Binding PodeManter}" Margin="0,0,6,6" />
+        <Button Content="Excluir (manual)" Command="{Binding ExcluirCommand}" IsEnabled="{Binding PodeManter}" Margin="0,0,10,6" />
+        <c:BarraExportacaoView />
+      </WrapPanel>
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="Geradas do DAS (Simples), do IRPJ/CSLL (DARF 2089/2372 no Presumido; 0220/6012 no Real), do PIS/COFINS (8109/2172 cumulativo; 6912/5856 não cumulativo) e das retenções efetuadas (IRRF, CSRF 5952, INSS 11% informativo e ISS)." />
+      <c:MensagensView />
+    </StackPanel>
+    <Border DockPanel.Dock="Bottom" BorderBrush="#D0D5DD" BorderThickness="0,1,0,0" Padding="0,6,0,0" Margin="0,6,0,0">
+      <StackPanel Spacing="4">
+        <TextBlock Text="Nova guia (manual)" FontWeight="SemiBold" Foreground="#1F3A5F" />
+        <WrapPanel>
+          <ComboBox ItemsSource="{x:Static vm:GuiasViewModel.Documentos}" SelectedIndex="{Binding ManualDocumento}" Width="95" Margin="0,0,6,4" />
+          <TextBox Text="{Binding ManualTributo}" Watermark="Tributo" Width="100" Margin="0,0,6,4" />
+          <TextBox Text="{Binding ManualDescricao}" Watermark="Descrição" Width="260" Margin="0,0,6,4" />
+          <CalendarDatePicker SelectedDate="{Binding ManualVencimento}" Width="140" Margin="0,0,6,4" />
+          <TextBox Text="{Binding ManualValor}" Watermark="Valor" Width="110" Margin="0,0,6,4" />
+          <TextBox Text="{Binding ManualCodigo}" Watermark="Cód. receita" Width="95" Margin="0,0,6,4" />
+          <Button Content="Incluir" Command="{Binding IncluirManualCommand}" IsEnabled="{Binding PodeManter}" Margin="0,0,6,4" />
+        </WrapPanel>
+      </StackPanel>
+    </Border>
+    <DataGrid g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Linhas}" SelectedItem="{Binding Selecionada}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Vencimento" Binding="{ReflectionBinding Vencimento}" Width="100" />
+        <DataGridTextColumn Header="Compet." Binding="{ReflectionBinding Competencia}" Width="80" />
+        <DataGridTextColumn Header="Doc." Binding="{ReflectionBinding Documento}" Width="75" />
+        <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" MinWidth="200" />
+        <DataGridTextColumn Header="Cód. receita" Binding="{ReflectionBinding Codigo}" Width="95" />
+        <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="110" />
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="140" />
+        <DataGridTextColumn Header="Observação" Binding="{ReflectionBinding Observacao}" Width="280" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>

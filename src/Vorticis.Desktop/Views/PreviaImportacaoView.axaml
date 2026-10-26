@@ -1,0 +1,20 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             x:Class="Vorticis.Desktop.Views.PreviaImportacaoView"
+             x:DataType="vm:ImportacaoLancamentosBase">
+  <DockPanel>
+    <TextBlock DockPanel.Dock="Top" Text="Pré-visualização" FontWeight="SemiBold" Foreground="#1F3A5F" Margin="0,0,0,4" />
+    <TextBlock DockPanel.Dock="Top" Text="{Binding Resumo}" TextWrapping="Wrap" Margin="0,0,0,6" />
+    <DataGrid ItemsSource="{Binding Previa}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Linha" Binding="{ReflectionBinding Linha}" Width="74" />
+        <DataGridTextColumn Header="Data" Binding="{ReflectionBinding Data}" Width="104" />
+        <DataGridTextColumn Header="Partidas" Binding="{ReflectionBinding Partidas}" Width="200" />
+        <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="110" MinWidth="100" />
+        <DataGridTextColumn Header="Histórico" Binding="{ReflectionBinding Historico}" Width="*" MinWidth="140" />
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="2*" MinWidth="100" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>

@@ -1,0 +1,34 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Folha.Desktop.ViewModels"
+             x:Class="Vorticis.Folha.Desktop.Views.DepartamentosView"
+             x:DataType="vm:DepartamentosViewModel">
+  <Grid ColumnDefinitions="*,16,340" RowDefinitions="Auto,*" Margin="8">
+    <c:BarraCadastroView Grid.ColumnSpan="3" Margin="0,0,0,8" />
+    <DockPanel Grid.Row="1" IsEnabled="{Binding !EmEdicao}">
+      <TextBlock DockPanel.Dock="Top" Classes="titulo" Text="Departamentos (lotações)" Margin="0,0,0,8" />
+      <DataGrid ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Código" Binding="{ReflectionBinding Codigo}" Width="120" />
+          <DataGridTextColumn Header="Nome" Binding="{ReflectionBinding Nome}" Width="*" />
+          <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="100" />
+        </DataGrid.Columns>
+      </DataGrid>
+    </DockPanel>
+    <StackPanel Grid.Row="1" Grid.Column="2" Spacing="6">
+      <TextBlock Text="Seu perfil permite apenas consultar." Classes="erro" IsVisible="{Binding !PodeEditar}" />
+      <TextBlock Text="Departamento" FontWeight="SemiBold" Foreground="#1F3A5F" />
+      <Grid ColumnDefinitions="80,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="6">
+        <TextBlock Classes="rotulo" Text="Código" />
+        <TextBox Grid.Column="1" Text="{Binding Codigo}" IsEnabled="{Binding EmEdicao}" MaxLength="20" />
+        <TextBlock Grid.Row="1" Classes="rotulo" Text="Nome" />
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Nome}" IsEnabled="{Binding EmEdicao}" />
+        <CheckBox Grid.Row="2" Grid.Column="1" Content="Ativo" IsChecked="{Binding Ativo}" IsEnabled="{Binding EmEdicao}" />
+      </Grid>
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="O código vira a lotação tributária do eSocial (S-1020). Funcionários sem departamento usam a lotação GERAL." />
+      <c:MensagensView />
+    </StackPanel>
+  </Grid>
+</UserControl>

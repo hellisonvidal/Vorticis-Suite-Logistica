@@ -1,0 +1,72 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Views"
+             xmlns:dom="using:Vorticis.Domain.Contabil"
+             x:Class="Vorticis.Desktop.Views.MapeamentoReferencialView"
+             x:DataType="vm:MapeamentoReferencialViewModel">
+  <Grid ColumnDefinitions="*,12,380" Margin="8">
+    <DockPanel>
+      <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,6">
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <TextBlock Classes="titulo" Text="Vínculo ao plano referencial" VerticalAlignment="Center" />
+          <TextBlock Text="Exercício" VerticalAlignment="Center" />
+          <NumericUpDown Value="{Binding Ano}" Minimum="2000" Maximum="2100" FormatString="0" Width="120" />
+          <Button Content="Carregar" Command="{Binding RecarregarCommand}" />
+        </StackPanel>
+        <WrapPanel IsEnabled="{Binding PodeEditar}" ItemSpacing="8" LineSpacing="6">
+          <ComboBox ItemsSource="{Binding PlanosDisponiveis}" SelectedItem="{Binding Plano}" MinWidth="300">
+            <ComboBox.ItemTemplate>
+              <DataTemplate x:DataType="dom:TipoPlanoReferencial"><TextBlock Text="{Binding Descricao}" /></DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+          <Button Content="Usar este plano" Command="{Binding UsarPlanoCommand}" />
+          <Button Content="Sugerir vínculos" Command="{Binding SugerirCommand}" />
+          <Button Content="Aceitar sugestões" Command="{Binding AceitarSugestoesCommand}" />
+          <Button Content="Copiar do ano anterior" Command="{Binding CopiarAnoAnteriorCommand}" />
+        </WrapPanel>
+        <TextBlock Text="{Binding PlanoAtual}" FontSize="12" Foreground="#44506A" />
+        <CheckBox Content="Mostrar só pendências (contas com movimento sem vínculo)" IsChecked="{Binding SomentePendentes}" />
+      </StackPanel>
+      <TextBlock DockPanel.Dock="Bottom" Text="{Binding Resumo}" FontWeight="SemiBold" Margin="0,6,0,0" />
+      <DataGrid ItemsSource="{Binding Linhas}" SelectedItem="{Binding Selecionada}" IsReadOnly="True" AutoGenerateColumns="False">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Conta" Binding="{ReflectionBinding Codigo}" Width="110" />
+          <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" />
+          <DataGridTextColumn Header="Nat." Binding="{ReflectionBinding Natureza}" Width="78" />
+          <DataGridTextColumn Header="Mov." Binding="{ReflectionBinding Movimento}" Width="78" />
+          <DataGridTextColumn Header="Referencial" Binding="{ReflectionBinding Referencial}" Width="*" />
+          <DataGridTextColumn Header="Sugestão" Binding="{ReflectionBinding SugestaoTexto}" Width="*" />
+        </DataGrid.Columns>
+      </DataGrid>
+    </DockPanel>
+    <DockPanel Grid.Column="2" IsEnabled="{Binding PodeEditar}">
+      <StackPanel DockPanel.Dock="Top" Spacing="6">
+        <TextBlock Text="Seu perfil permite apenas consultar os vínculos." Classes="erro" IsVisible="{Binding !PodeEditar}" />
+        <TextBlock Text="{Binding Selecionada.Codigo, StringFormat='Conta selecionada: {0}'}" FontWeight="SemiBold" Foreground="#1F3A5F"
+                   IsVisible="{Binding TemSelecionada}" />
+        <TextBlock Text="{Binding Selecionada.Descricao}" TextWrapping="Wrap" IsVisible="{Binding TemSelecionada}" />
+        <TextBox Text="{Binding FiltroReferencial}" Watermark="Buscar referencial (código ou descrição)" />
+        <TextBlock Text="Mostrando só referenciais analíticas de mesma natureza." FontSize="11" Foreground="Gray" />
+      </StackPanel>
+      <StackPanel DockPanel.Dock="Bottom" Spacing="6" Margin="0,6,0,0">
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <Button Content="Vincular" Command="{Binding VincularCommand}" Classes="accent" />
+          <Button Content="Remover vínculo" Command="{Binding RemoverVinculoCommand}" />
+        </StackPanel>
+        <c:MensagensView />
+      </StackPanel>
+      <ListBox ItemsSource="{Binding Opcoes}" SelectedItem="{Binding ReferencialEscolhida}">
+        <ListBox.ItemTemplate>
+          <DataTemplate x:DataType="dom:ContaReferencial">
+            <StackPanel>
+              <TextBlock Text="{Binding Codigo}" FontWeight="SemiBold" FontSize="12" />
+              <TextBlock Text="{Binding Descricao}" FontSize="12" TextWrapping="Wrap" />
+            </StackPanel>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </DockPanel>
+  </Grid>
+</UserControl>

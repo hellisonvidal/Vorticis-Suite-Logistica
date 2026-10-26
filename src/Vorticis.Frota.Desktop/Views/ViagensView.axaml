@@ -1,0 +1,73 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Frota.Desktop.ViewModels"
+             x:Class="Vorticis.Frota.Desktop.Views.ViagensView" x:DataType="vm:ViagensViewModel">
+  <Grid ColumnDefinitions="*,12,400" RowDefinitions="Auto,Auto,*" Margin="8">
+    <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="8" Margin="0,0,0,6">
+      <TextBlock Classes="titulo" Text="Viagens" VerticalAlignment="Center" />
+      <TextBlock Text="Período" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="130" />
+      <TextBlock Text="a" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Fim}" Width="130" />
+    </StackPanel>
+    <TextBlock Grid.Row="1" Grid.ColumnSpan="3" Text="{Binding Totais}" FontSize="12" Margin="0,0,0,6" />
+    <DataGrid Grid.Row="2" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionada}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Nº" Binding="{ReflectionBinding Numero}" Width="60" />
+        <DataGridTextColumn Header="Saída" Binding="{ReflectionBinding Saida}" Width="95" />
+        <DataGridTextColumn Header="Placa" Binding="{ReflectionBinding Placa}" Width="95" />
+        <DataGridTextColumn Header="Motorista" Binding="{ReflectionBinding Motorista}" Width="140" />
+        <DataGridTextColumn Header="Trajeto" Binding="{ReflectionBinding Trajeto}" Width="*" />
+        <DataGridTextColumn Header="Km" Binding="{ReflectionBinding KmRodado}" Width="80" />
+        <DataGridTextColumn Header="Frete" Binding="{ReflectionBinding Frete}" Width="100" />
+        <DataGridTextColumn Header="Despesas" Binding="{ReflectionBinding Despesas}" Width="95" />
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="105" />
+      </DataGrid.Columns>
+    </DataGrid>
+    <ScrollViewer Grid.Row="2" Grid.Column="2">
+    <StackPanel Spacing="6" IsEnabled="{Binding PodeEditar}">
+      <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
+        <TextBlock Classes="rotulo" Text="Veículo" />
+        <ComboBox Grid.Column="1" ItemsSource="{Binding VeiculosOpcoes}" SelectedItem="{Binding Veiculo}" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="1" Classes="rotulo" Text="Motorista" />
+        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding MotoristasOpcoes}" SelectedItem="{Binding Motorista}" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="2" Classes="rotulo" Text="Cliente" />
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Cliente}" />
+        <TextBlock Grid.Row="3" Classes="rotulo" Text="Origem / destino" />
+        <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" Spacing="6">
+          <TextBox Text="{Binding Origem}" Width="125" Watermark="Origem" />
+          <TextBox Text="{Binding Destino}" Width="125" Watermark="Destino" />
+        </StackPanel>
+        <TextBlock Grid.Row="4" Classes="rotulo" Text="Saída / chegada" />
+        <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" Spacing="6">
+          <CalendarDatePicker SelectedDate="{Binding Saida}" Width="125" />
+          <CalendarDatePicker SelectedDate="{Binding Chegada}" Width="125" />
+        </StackPanel>
+        <TextBlock Grid.Row="5" Classes="rotulo" Text="Km saída / chegada" />
+        <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" Spacing="6">
+          <TextBox Text="{Binding KmSaida}" Width="125" />
+          <TextBox Text="{Binding KmChegada}" Width="125" />
+        </StackPanel>
+        <TextBlock Grid.Row="6" Classes="rotulo" Text="Valor do frete" />
+        <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Frete}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="7" Classes="rotulo" Text="Pedágio / diárias" />
+        <StackPanel Grid.Row="7" Grid.Column="1" Orientation="Horizontal" Spacing="6">
+          <TextBox Text="{Binding Pedagio}" Width="125" Watermark="Pedágio" />
+          <TextBox Text="{Binding Diarias}" Width="125" Watermark="Diárias" />
+        </StackPanel>
+        <TextBlock Grid.Row="8" Classes="rotulo" Text="Outras despesas" />
+        <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding Outras}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="9" Classes="rotulo" Text="Situação" />
+        <ComboBox Grid.Row="9" Grid.Column="1" ItemsSource="{x:Static vm:ViagensViewModel.Situacoes}" SelectedItem="{Binding Situacao}" Width="160" />
+      </Grid>
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <Button Content="Nova viagem" Command="{Binding NovaCommand}" />
+        <Button Content="Gravar" Classes="accent" Command="{Binding GravarCommand}" />
+        <Button Content="Excluir" Command="{Binding ExcluirCommand}" />
+      </StackPanel>
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="Para concluir, informe a chegada e o km de chegada. O combustível da viagem vem dos abastecimentos do veículo entre a saída e a chegada." />
+      <c:MensagensView />
+    </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

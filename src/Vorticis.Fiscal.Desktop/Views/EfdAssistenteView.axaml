@@ -1,0 +1,160 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Fiscal.Desktop.ViewModels"
+             xmlns:sis="using:Vorticis.Application.Sistema"
+             xmlns:local="using:Vorticis.Fiscal.Desktop.Views"
+             xmlns:g="using:Vorticis.Fiscal.Desktop.Views"
+             x:Class="Vorticis.Fiscal.Desktop.Views.EfdAssistenteView"
+             x:DataType="vm:EfdAssistenteViewModel">
+  <!-- Obrigações › SPED › EFD ICMS/IPI e EFD-Contribuições: assistente em cinco passos + histórico -->
+  <TabControl SelectedIndex="{Binding Aba}" Margin="8">
+    <TabItem Header="Assistente">
+      <ScrollViewer>
+        <StackPanel Spacing="8" MaxWidth="860" HorizontalAlignment="Left" Margin="4,8">
+          <TextBlock Classes="titulo" Text="{Binding TituloTela}" />
+          <TextBlock Text="{Binding IndicadorPasso}" FontSize="12" Foreground="#44506A" TextWrapping="Wrap" />
+          <TextBlock Text="{Binding TituloPasso}" FontWeight="SemiBold" FontSize="15" Foreground="#7C2D12" />
+          <TextBlock Text="{Binding ExplicacaoPasso}" TextWrapping="Wrap" FontSize="12" Foreground="#44506A" />
+
+          <!-- 1. Empresa e período -->
+          <StackPanel Spacing="6" IsVisible="{Binding NoPasso1}">
+            <Grid ColumnDefinitions="230,*" RowDefinitions="Auto,Auto" RowSpacing="6">
+              <TextBlock Text="Empresa" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="{Binding EmpresaNome}" FontWeight="SemiBold" VerticalAlignment="Center" />
+              <TextBlock Grid.Row="1" Text="Mês / ano" VerticalAlignment="Center" />
+              <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                <ComboBox ItemsSource="{x:Static vm:EfdAssistenteViewModel.Meses}" SelectedIndex="{Binding Mes}" Width="160" />
+                <NumericUpDown Value="{Binding Ano}" Minimum="2010" Maximum="2100" FormatString="0" Width="130" />
+              </StackPanel>
+            </Grid>
+            <CheckBox IsChecked="{Binding Retificadora}" Content="Escrituração retificadora (substituta)" />
+
+            <!-- opções específicas de cada arquivo -->
+            <ContentControl Content="{Binding}">
+              <ContentControl.DataTemplates>
+                <DataTemplate DataType="vm:EfdIcmsAssistenteViewModel"><local:EfdIcmsOpcoesView /></DataTemplate>
+                <DataTemplate DataType="vm:EfdContribuicoesAssistenteViewModel"><local:EfdContribuicoesOpcoesView /></DataTemplate>
+              </ContentControl.DataTemplates>
+            </ContentControl>
+          </StackPanel>
+
+          <!-- 2. Pré-requisitos -->
+          <StackPanel Spacing="6" IsVisible="{Binding NoPasso2}">
+            <ItemsControl ItemsSource="{Binding PreRequisitos}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:ItemPreRequisitoEfd">
+                  <Grid ColumnDefinitions="28,*,Auto" Margin="0,3">
+                    <TextBlock Text="{Binding Marca}" Foreground="{Binding Cor}" FontWeight="Bold" />
+                    <StackPanel Grid.Column="1">
+                      <TextBlock Text="{Binding Titulo}" />
+                      <TextBlock Text="{Binding Detalhe}" FontSize="12" Foreground="#667085" />
+                    </StackPanel>
+                    <Button Grid.Column="2" Content="{Binding TextoAtalho}" IsVisible="{Binding TemAtalho}"
+                            Command="{Binding $parent[ItemsControl].((vm:EfdAssistenteViewModel)DataContext).AbrirAtalhoCommand}"
+                            CommandParameter="{Binding Tela}" />
+                  </Grid>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Button Content="Verificar novamente" Command="{Binding ValidarCommand}" HorizontalAlignment="Left" />
+          </StackPanel>
+
+          <!-- 3. Validação prévia -->
+          <StackPanel Spacing="6" IsVisible="{Binding NoPasso3}">
+            <TextBlock Text="{Binding ResumoValidacao}" FontWeight="SemiBold" TextWrapping="Wrap" />
+            <ItemsControl ItemsSource="{Binding Resumo}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:LinhaResumoEfd">
+                  <Grid ColumnDefinitions="320,140" Margin="0,1">
+                    <TextBlock Text="{Binding Rotulo}" />
+                    <TextBlock Grid.Column="1" Text="{Binding Valor}" HorizontalAlignment="Right" />
+                  </Grid>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <ItemsControl ItemsSource="{Binding Pendencias}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:LinhaPendenciaEfd">
+                  <Grid ColumnDefinitions="90,*" Margin="0,2">
+                    <TextBlock Text="{Binding Marca}" Foreground="{Binding Cor}" FontWeight="SemiBold" />
+                    <TextBlock Grid.Column="1" Text="{Binding Mensagem}" TextWrapping="Wrap" />
+                  </Grid>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Button Content="Validar novamente" Command="{Binding ValidarCommand}" HorizontalAlignment="Left" />
+          </StackPanel>
+
+          <!-- 4. Assinatura -->
+          <StackPanel Spacing="6" IsVisible="{Binding NoPasso4}">
+            <TextBlock Classes="erro" Text="{Binding AvisoRepositorio}" TextWrapping="Wrap"
+                       IsVisible="{Binding AvisoRepositorio, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+            <ComboBox ItemsSource="{x:Static vm:EfdAssistenteViewModel.ModosAssinatura}" SelectedIndex="{Binding Modo}" Width="360" />
+            <StackPanel Orientation="Horizontal" Spacing="6" IsVisible="{Binding PedeArquivo}">
+              <TextBox Text="{Binding ArquivoPfx}" Width="420" Watermark="Arquivo .pfx ou .p12" />
+              <Button Content="Procurar..." Click="ProcurarPfx" />
+            </StackPanel>
+            <ComboBox IsVisible="{Binding PedeInstalado}" ItemsSource="{Binding Instalados}" SelectedItem="{Binding Instalado}" Width="560" PlaceholderText="Escolha o certificado do Windows">
+              <ComboBox.ItemTemplate>
+                <DataTemplate x:DataType="sis:DadosCertificado"><TextBlock Text="{Binding Titular}" /></DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+            <ComboBox IsVisible="{Binding PedeCadastrado}" ItemsSource="{Binding Cadastrados}" SelectedItem="{Binding Cadastrado}" Width="560" PlaceholderText="Escolha o certificado cadastrado">
+              <ComboBox.ItemTemplate>
+                <DataTemplate x:DataType="sis:CertificadoDigital"><TextBlock><Run Text="{Binding Tipo}" /><Run Text=" — " /><Run Text="{Binding Descricao}" /></TextBlock></DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBox IsVisible="{Binding PedeSenha}" Text="{Binding Senha}" PasswordChar="●" Width="260" HorizontalAlignment="Left" Watermark="Senha do certificado" />
+          </StackPanel>
+
+          <!-- 5. Gerar e salvar -->
+          <StackPanel Spacing="8" IsVisible="{Binding NoPasso5}">
+            <Button Content="Gerar arquivo" Command="{Binding GerarCommand}" Classes="accent" HorizontalAlignment="Left" />
+            <Border BorderBrush="#D0D5DD" BorderThickness="1" CornerRadius="4" Padding="12,8" IsVisible="{Binding Gerado}">
+              <TextBlock Text="{Binding ResumoArquivo}" TextWrapping="Wrap" FontFamily="Consolas, Menlo, monospace" FontSize="12" />
+            </Border>
+            <StackPanel Orientation="Horizontal" Spacing="6" IsVisible="{Binding Gerado}">
+              <TextBlock Text="Pasta" VerticalAlignment="Center" />
+              <TextBox Text="{Binding Pasta}" Width="460" />
+              <Button Content="Escolher..." Click="EscolherPasta" />
+              <Button Content="Salvar arquivo" Command="{Binding SalvarCommand}" Classes="accent" />
+            </StackPanel>
+            <Border Background="#EEF4FF" CornerRadius="4" Padding="12,8" IsVisible="{Binding Salvo}">
+              <StackPanel Spacing="4">
+                <TextBlock Text="Pronto! Último passo, no PVA da Receita Federal" FontWeight="SemiBold" />
+                <TextBlock Text="{Binding CaminhoSalvo, StringFormat='Arquivo: {0}'}" TextWrapping="Wrap" />
+                <TextBlock Text="{Binding InstrucoesPva}" TextWrapping="Wrap" />
+                <TextBlock Text="{x:Static vm:EfdAssistenteViewModel.ObservacaoPva}" TextWrapping="Wrap" FontSize="12" Foreground="#44506A" />
+              </StackPanel>
+            </Border>
+            <Button Content="Gerar outro arquivo" Command="{Binding ReiniciarCommand}" HorizontalAlignment="Left" IsVisible="{Binding Salvo}" />
+          </StackPanel>
+
+          <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,6,0,0">
+            <Button Content="‹ Voltar" Command="{Binding VoltarCommand}" IsEnabled="{Binding PodeVoltar}" />
+            <Button Content="Avançar ›" Command="{Binding AvancarCommand}" Classes="accent" IsVisible="{Binding !NoUltimoPasso}" />
+          </StackPanel>
+          <c:MensagensView />
+        </StackPanel>
+      </ScrollViewer>
+    </TabItem>
+    <TabItem Header="Arquivos gerados">
+      <StackPanel Spacing="8" Margin="4,8">
+        <Button Content="Atualizar" Command="{Binding CarregarGeradasCommand}" HorizontalAlignment="Left" />
+        <DataGrid g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Geradas}" AutoGenerateColumns="False" IsReadOnly="True" Height="360">
+          <DataGrid.Columns>
+            <DataGridTextColumn Header="Gerado em" Binding="{ReflectionBinding GeradoEm, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}" Width="150" />
+            <DataGridTextColumn Header="Início" Binding="{ReflectionBinding Inicio, StringFormat='{}{0:dd/MM/yyyy}'}" Width="110" />
+            <DataGridTextColumn Header="Fim" Binding="{ReflectionBinding Fim, StringFormat='{}{0:dd/MM/yyyy}'}" Width="110" />
+            <DataGridTextColumn Header="Perfil" Binding="{ReflectionBinding Perfil}" Width="80" />
+            <DataGridTextColumn Header="Finalidade" Binding="{ReflectionBinding Finalidade}" Width="120" />
+            <DataGridTextColumn Header="Linhas" Binding="{ReflectionBinding Linhas}" Width="90" />
+            <DataGridTextColumn Header="Assinaturas" Binding="{ReflectionBinding Assinaturas}" Width="130" />
+            <DataGridTextColumn Header="Hash SHA-1" Binding="{ReflectionBinding HashSha1}" Width="*" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </StackPanel>
+    </TabItem>
+  </TabControl>
+</UserControl>

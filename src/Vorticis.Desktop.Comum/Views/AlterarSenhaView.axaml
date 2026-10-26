@@ -1,0 +1,18 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Comum.Views"
+             x:Class="Vorticis.Desktop.Comum.Views.AlterarSenhaView"
+             x:DataType="vm:AlterarSenhaViewModel">
+  <StackPanel Spacing="10" Width="380" HorizontalAlignment="Left" Margin="8">
+    <TextBlock Classes="titulo" Text="Alterar minha senha" />
+    <TextBlock Text="Senha atual" FontSize="12" />
+    <TextBox Text="{Binding SenhaAtual}" PasswordChar="●" />
+    <TextBlock Text="Nova senha (mín. 8 caracteres, letras e números)" FontSize="12" />
+    <TextBox Text="{Binding NovaSenha}" PasswordChar="●" />
+    <TextBlock Text="Confirme a nova senha" FontSize="12" />
+    <TextBox Text="{Binding Confirmacao}" PasswordChar="●" />
+    <Button Content="Alterar senha" Command="{Binding AlterarCommand}" Classes="accent" IsDefault="True" />
+    <v:MensagensView />
+  </StackPanel>
+</UserControl>

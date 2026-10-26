@@ -1,0 +1,78 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels" xmlns:v="using:Vorticis.Desktop.Comum.Views"
+             x:Class="Vorticis.Desktop.Comum.Views.SuiteTopoView" x:DataType="vm:SuiteViewModel">
+  <!-- Suite: navegação no topo. A = uma aba por módulo; D = Início (painel) e seletor de módulo -->
+  <UserControl.Styles>
+    <Style Selector="Button.aba">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="CornerRadius" Value="10,10,0,0" />
+    </Style>
+    <Style Selector="Button.aba:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#F1F5F9" />
+    </Style>
+  </UserControl.Styles>
+  <Panel>
+    <!-- A: abas -->
+    <Border Name="BarraAbas" Background="#E2E8F0" Padding="8,6,8,0" IsVisible="{Binding EhAbas}">
+      <DockPanel>
+      <v:SuiteEscolhaLayoutView DockPanel.Dock="Right" VerticalAlignment="Center" Margin="0,0,4,6" />
+      <ItemsControl ItemsSource="{Binding Modulos}">
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="4" /></ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:ModuloSuite">
+            <Button Classes="aba" ToolTip.Tip="{Binding NomeCompleto}"
+                    Command="{Binding $parent[UserControl].((vm:SuiteViewModel)DataContext).TrocarCommand}" CommandParameter="{Binding}">
+              <Panel>
+                <Border CornerRadius="10,10,0,0" Background="White" IsVisible="{Binding Ativo}" />
+                <Border Height="3" VerticalAlignment="Top" CornerRadius="10,10,0,0" Background="{Binding Cor}" IsVisible="{Binding Ativo}" />
+                <StackPanel Orientation="Horizontal" Spacing="9" Margin="14,9,16,9">
+                  <Border Width="24" Height="24" CornerRadius="6" Background="{Binding Cor}">
+                    <TextBlock Text="{Binding Sigla}" FontSize="10" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                  </Border>
+                  <TextBlock Text="{Binding Nome}" FontSize="13.5" VerticalAlignment="Center" Foreground="#0F172A" />
+                  <Border MinWidth="18" Height="18" CornerRadius="9" Background="#EF4444" Padding="5,0" IsVisible="{Binding TemAbertas}"
+                          ToolTip.Tip="Funções abertas neste módulo">
+                    <TextBlock Text="{Binding Abertas}" FontSize="10" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                  </Border>
+                </StackPanel>
+              </Panel>
+            </Button>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+      </DockPanel>
+    </Border>
+
+    <!-- D: Início + seletor de módulo -->
+    <Border Name="BarraPainel" Background="White" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1" Padding="14,8" IsVisible="{Binding EhPainel}">
+      <DockPanel>
+      <v:SuiteEscolhaLayoutView DockPanel.Dock="Right" VerticalAlignment="Center" />
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <Border Width="32" Height="32" CornerRadius="9" Background="#0F172A">
+          <TextBlock Text="V" FontSize="16" FontWeight="Bold" Foreground="#38BDF8" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Border>
+        <TextBlock Text="{Binding Nome}" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,16,0" />
+        <Button Content="⌂  Início" Command="{Binding IrParaPainelCommand}" ToolTip.Tip="Painel com todos os módulos" />
+        <TextBlock Text="Módulo:" VerticalAlignment="Center" Foreground="#64748B" Margin="8,0,0,0" />
+        <ComboBox Name="SeletorModulo" ItemsSource="{Binding Modulos}" SelectedItem="{Binding ModuloNoSeletor}" MinWidth="200">
+          <ComboBox.ItemTemplate>
+            <DataTemplate x:DataType="vm:ModuloSuite">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <Border Width="18" Height="18" CornerRadius="5" Background="{Binding Cor}">
+                  <TextBlock Text="{Binding Sigla}" FontSize="8.5" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <TextBlock Text="{Binding NomeCompleto}" VerticalAlignment="Center" />
+              </StackPanel>
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+      </StackPanel>
+      </DockPanel>
+    </Border>
+  </Panel>
+</UserControl>

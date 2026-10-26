@@ -1,0 +1,23 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Frota.Desktop.ViewModels"
+             x:Class="Vorticis.Frota.Desktop.Views.PainelFrotaView" x:DataType="vm:PainelFrotaViewModel">
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="4" Margin="0,0,0,8">
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <TextBlock Classes="titulo" Text="Painel da frota" VerticalAlignment="Center" />
+        <Button Content="Atualizar" Command="{Binding AtualizarCommand}" />
+      </StackPanel>
+      <TextBlock Text="{Binding Resumo}" FontWeight="SemiBold" Foreground="#1E293B" />
+      <TextBlock Text="{Binding Numeros}" FontSize="12" />
+    </StackPanel>
+    <c:MensagensView DockPanel.Dock="Bottom" />
+    <DataGrid ItemsSource="{Binding Avisos}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="100" />
+        <DataGridTextColumn Header="Assunto" Binding="{ReflectionBinding Assunto}" Width="280" />
+        <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" />
+        <DataGridTextColumn Header="Data" Binding="{ReflectionBinding Data}" Width="100" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>

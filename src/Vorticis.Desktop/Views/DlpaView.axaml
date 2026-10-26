@@ -1,0 +1,31 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Views"
+             x:Class="Vorticis.Desktop.Views.DlpaView"
+             x:DataType="vm:DlpaViewModel">
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="DLPA — Lucros ou Prejuízos Acumulados" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="140" />
+      <TextBlock Text="a" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Fim}" Width="140" />
+      <Button Content="Gerar" Command="{Binding GerarCommand}" Classes="accent" />
+      <Rectangle Width="1" Fill="#D0D5DD" Margin="6,4" />
+      <c:BarraExportacaoView />
+    </StackPanel>
+    <StackPanel DockPanel.Dock="Bottom" Spacing="2" Margin="0,6,0,0">
+      <TextBlock Text="{Binding Resumo}" FontWeight="SemiBold" />
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="Lei 6.404/76, art. 186: saldo do início do período, ajustes de exercícios anteriores, reversões de reservas, lucro líquido do exercício, transferências para reservas, dividendos e saldo final. O lucro líquido é o da DRE e o saldo final confere com o Balanço." />
+      <c:MensagensView />
+    </StackPanel>
+    <DataGrid ItemsSource="{Binding Dlpa}" IsReadOnly="True" AutoGenerateColumns="False" MaxWidth="760" HorizontalAlignment="Left">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" />
+        <DataGridTextColumn Header="R$" Binding="{ReflectionBinding Valor}" Width="160" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>

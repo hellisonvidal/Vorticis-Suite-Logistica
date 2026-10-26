@@ -1,0 +1,35 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Views"
+             x:Class="Vorticis.Desktop.Views.BalanceteView"
+             x:DataType="vm:BalanceteViewModel">
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="Balancete de verificação" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="140" />
+      <TextBlock Text="a" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Fim}" Width="140" />
+      <CheckBox Content="Incluir contas zeradas" IsChecked="{Binding IncluirZeradas}" />
+      <CheckBox Content="Detalhar participantes" IsChecked="{Binding DetalharParticipantes}"
+                ToolTip.Tip="Plano com participantes: mostra, abaixo de cada conta, o saldo de cada cliente/fornecedor (a conta continua com a soma)" />
+      <Button Content="Gerar" Command="{Binding GerarCommand}" Classes="accent" />
+      <Rectangle Width="1" Fill="#D0D5DD" Margin="6,4" />
+      <c:BarraExportacaoView />
+    </StackPanel>
+    <TextBlock DockPanel.Dock="Bottom" Text="{Binding Totais}" FontWeight="SemiBold" Margin="0,6,0,0" />
+    <c:MensagensView DockPanel.Dock="Bottom" />
+    <DataGrid ItemsSource="{Binding Linhas}" IsReadOnly="True" AutoGenerateColumns="False" FontFamily="Consolas, Menlo, monospace">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Conta" Binding="{ReflectionBinding CodigoIndentado}" Width="150" />
+        <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" />
+        <DataGridTextColumn Header="Saldo anterior" Binding="{ReflectionBinding SaldoAnterior}" Width="150" />
+        <DataGridTextColumn Header="Débitos" Binding="{ReflectionBinding Debitos}" Width="130" />
+        <DataGridTextColumn Header="Créditos" Binding="{ReflectionBinding Creditos}" Width="130" />
+        <DataGridTextColumn Header="Saldo final" Binding="{ReflectionBinding SaldoFinal}" Width="150" />
+        <DataGridTextColumn Header="!" Binding="{ReflectionBinding Alerta}" Width="36" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>

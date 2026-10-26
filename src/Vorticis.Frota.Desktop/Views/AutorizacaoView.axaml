@@ -1,0 +1,52 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Frota.Desktop.ViewModels"
+             x:Class="Vorticis.Frota.Desktop.Views.AutorizacaoView" x:DataType="vm:AutorizacaoViewModel">
+  <Grid ColumnDefinitions="*,12,420" RowDefinitions="Auto,*,Auto,200" Margin="8">
+    <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="10" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="Autorização de serviços" VerticalAlignment="Center" />
+      <TextBlock Text="{Binding Resumo}" VerticalAlignment="Center" FontSize="12" />
+      <Button Content="Atualizar" Command="{Binding AtualizarCommand}" />
+    </StackPanel>
+    <DataGrid Grid.Row="1" ItemsSource="{Binding Pendentes}" SelectedItem="{Binding Selecionada}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Nº" Binding="{ReflectionBinding Numero}" Width="55" />
+        <DataGridTextColumn Header="Abertura" Binding="{ReflectionBinding Data}" Width="90" />
+        <DataGridTextColumn Header="Placa" Binding="{ReflectionBinding Placa}" Width="90" />
+        <DataGridTextColumn Header="Serviço" Binding="{ReflectionBinding Descricao}" Width="*" />
+        <DataGridTextColumn Header="Oficina" Binding="{ReflectionBinding Oficina}" Width="130" />
+        <DataGridTextColumn Header="Total" Binding="{ReflectionBinding Total}" Width="100" />
+      </DataGrid.Columns>
+    </DataGrid>
+    <StackPanel Grid.Row="1" Grid.Column="2" Spacing="6" IsEnabled="{Binding PodeEditar}">
+      <TextBlock Text="{Binding Detalhe}" TextWrapping="Wrap" FontWeight="SemiBold" />
+      <DataGrid ItemsSource="{Binding Itens}" IsReadOnly="True" AutoGenerateColumns="False" Height="180">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Tipo" Binding="{ReflectionBinding TipoTexto}" Width="70" />
+          <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" />
+          <DataGridTextColumn Header="Qtd." Binding="{ReflectionBinding QuantidadeTexto}" Width="55" />
+          <DataGridTextColumn Header="Total" Binding="{ReflectionBinding TotalTexto}" Width="95" />
+        </DataGrid.Columns>
+      </DataGrid>
+      <TextBox Text="{Binding Observacao}" Watermark="Observação (obrigatória para reprovar: o motivo)" TextWrapping="Wrap" Height="60" AcceptsReturn="True" />
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <Button Content="Autorizar" Classes="accent" Command="{Binding AprovarCommand}" />
+        <Button Content="Reprovar" Command="{Binding ReprovarCommand}" />
+      </StackPanel>
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="A ordem reprovada volta para quem a abriu refazer o orçamento. O limite de autorização automática fica em Cadastros › Parâmetros." />
+      <c:MensagensView />
+    </StackPanel>
+    <TextBlock Grid.Row="2" Grid.ColumnSpan="3" Text="Decisões dos últimos 30 dias" FontWeight="SemiBold" Margin="0,8,0,4" />
+    <DataGrid Grid.Row="3" Grid.ColumnSpan="3" ItemsSource="{Binding Historico}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Data e hora" Binding="{ReflectionBinding Momento}" Width="130" />
+        <DataGridTextColumn Header="OS nº" Binding="{ReflectionBinding Ordem}" Width="60" />
+        <DataGridTextColumn Header="Placa" Binding="{ReflectionBinding Placa}" Width="90" />
+        <DataGridTextColumn Header="Decisão" Binding="{ReflectionBinding Decisao}" Width="170" />
+        <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="100" />
+        <DataGridTextColumn Header="Usuário" Binding="{ReflectionBinding Usuario}" Width="140" />
+        <DataGridTextColumn Header="Observação / motivo" Binding="{ReflectionBinding Observacao}" Width="*" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </Grid>
+</UserControl>

@@ -1,0 +1,66 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Folha.Desktop.ViewModels"
+             x:Class="Vorticis.Folha.Desktop.Views.TransmissaoEsocialView"
+             x:DataType="vm:TransmissaoEsocialViewModel">
+  <Grid RowDefinitions="Auto,*,8,150" Margin="8">
+    <StackPanel Spacing="6" Margin="0,0,0,8">
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <TextBlock Classes="titulo" Text="eSocial › Transmissão" VerticalAlignment="Center" />
+        <TextBlock Text="Competência" VerticalAlignment="Center" />
+        <c:SeletorCompetencia Competencia="{Binding Competencia}" />
+        <TextBlock Text="Ambiente" VerticalAlignment="Center" />
+        <ComboBox ItemsSource="{x:Static vm:TransmissaoEsocialViewModel.Ambientes}" SelectedItem="{Binding Ambiente}" Width="220">
+          <ComboBox.ItemTemplate><DataTemplate x:DataType="vm:OpcaoAmbiente"><TextBlock Text="{Binding Texto}" /></DataTemplate></ComboBox.ItemTemplate>
+        </ComboBox>
+        <TextBlock Text="Transmitir com" VerticalAlignment="Center" />
+        <ComboBox ItemsSource="{x:Static vm:TransmissaoEsocialViewModel.Transmissores}" SelectedItem="{Binding Transmissor}" Width="320">
+          <ComboBox.ItemTemplate><DataTemplate x:DataType="vm:OpcaoTransmissor"><TextBlock Text="{Binding Texto}" /></DataTemplate></ComboBox.ItemTemplate>
+        </ComboBox>
+      </StackPanel>
+      <TextBlock Text="ATENÇÃO: ambiente de PRODUÇÃO — a transmissão vale perante a Receita Federal e o FGTS." Foreground="#B00020" FontWeight="Bold" IsVisible="{Binding EhProducao}" />
+      <TextBlock Text="Seu perfil não permite transmitir eventos do eSocial." Classes="erro" IsVisible="{Binding !PodeUsar}" />
+      <TextBlock Text="{Binding SituacaoTransmissor}" FontSize="11" Foreground="Gray" TextWrapping="Wrap" />
+      <StackPanel Orientation="Horizontal" Spacing="8" IsEnabled="{Binding PodeUsar}">
+        <Button Content="Assinar e enviar pendentes" Command="{Binding EnviarPendentesCommand}" Classes="accent" />
+        <Button Content="Assinar e enviar selecionado" Command="{Binding EnviarSelecionadoCommand}" />
+        <Button Content="Consultar retorno" Command="{Binding ConsultarRetornoCommand}" />
+        <Button Content="Atualizar" Command="{Binding AtualizarCommand}" />
+        <ToggleButton Content="Passo a passo" IsChecked="{Binding MostrarChecklist}" />
+      </StackPanel>
+      <Border IsVisible="{Binding MostrarChecklist}" Background="#F3F6FA" CornerRadius="4" Padding="8">
+        <TextBlock Text="{x:Static vm:TransmissaoEsocialViewModel.Checklist}" FontSize="11" TextWrapping="Wrap" />
+      </Border>
+      <c:MensagensView />
+    </StackPanel>
+    <Grid Grid.Row="1" ColumnDefinitions="*,12,*">
+      <DataGrid ItemsSource="{Binding Eventos}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Evento" Binding="{ReflectionBinding Tipo}" Width="70" />
+          <DataGridTextColumn Header="Referência" Binding="{ReflectionBinding Referencia}" Width="120" />
+          <DataGridTextColumn Header="Status" Binding="{ReflectionBinding Status}" Width="190" />
+          <DataGridTextColumn Header="Ambiente" Binding="{ReflectionBinding Ambiente}" Width="100" />
+          <DataGridTextColumn Header="Recibo" Binding="{ReflectionBinding Recibo}" Width="150" />
+          <DataGridTextColumn Header="Ocorrência" Binding="{ReflectionBinding Resumo}" Width="*" />
+        </DataGrid.Columns>
+      </DataGrid>
+      <Grid Grid.Column="2" RowDefinitions="*,6,110">
+        <TextBox Text="{Binding Xml}" IsReadOnly="True" AcceptsReturn="True" FontFamily="Consolas, Menlo, monospace" FontSize="11" Watermark="Selecione um evento para ver o XML (assinado, se já assinado)" />
+        <ListBox Grid.Row="2" ItemsSource="{Binding Ocorrencias}" />
+      </Grid>
+    </Grid>
+    <DataGrid Grid.Row="3" ItemsSource="{Binding Lotes}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Enviado em" Binding="{ReflectionBinding Enviado}" Width="120" />
+        <DataGridTextColumn Header="Grupo" Binding="{ReflectionBinding Grupo}" Width="110" />
+        <DataGridTextColumn Header="Ambiente" Binding="{ReflectionBinding Ambiente}" Width="100" />
+        <DataGridTextColumn Header="Transmissor" Binding="{ReflectionBinding Transmissor}" Width="230" />
+        <DataGridTextColumn Header="Eventos" Binding="{ReflectionBinding Eventos}" Width="70" />
+        <DataGridTextColumn Header="Protocolo" Binding="{ReflectionBinding Protocolo}" Width="200" />
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Status}" Width="140" />
+        <DataGridTextColumn Header="Resposta do eSocial" Binding="{ReflectionBinding Resposta}" Width="*" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </Grid>
+</UserControl>

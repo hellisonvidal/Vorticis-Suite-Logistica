@@ -1,0 +1,54 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:g="using:Vorticis.Fiscal.Desktop.Views"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Fiscal.Desktop.ViewModels"
+             x:Class="Vorticis.Fiscal.Desktop.Views.ContabilizarNotasView"
+             x:DataType="vm:ContabilizarNotasViewModel">
+  <!-- Documentos fiscais › Contabilizar notas fiscais -->
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="Contabilização das notas fiscais" />
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="140" />
+        <TextBlock Text="a" VerticalAlignment="Center" />
+        <CalendarDatePicker SelectedDate="{Binding Fim}" Width="140" />
+        <ComboBox ItemsSource="{x:Static vm:ContabilizarNotasViewModel.Operacoes}" SelectedIndex="{Binding Operacao}" Width="170" />
+        <Button Content="Pré-visualizar" Command="{Binding PreVisualizarCommand}" Classes="accent" />
+        <Button Content="Contabilizar marcadas" Command="{Binding ContabilizarCommand}" IsEnabled="{Binding PodeContabilizar}" />
+        <Button Content="Desfazer contabilização das marcadas" Command="{Binding DesfazerCommand}" IsEnabled="{Binding PodeContabilizar}" />
+      </StackPanel>
+      <TextBlock Text="{Binding Resumo}" FontWeight="SemiBold" TextWrapping="Wrap" />
+      <c:MensagensView />
+    </StackPanel>
+    <Grid RowDefinitions="*,6,*">
+      <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Text="Notas pendentes de contabilização" FontWeight="SemiBold" Foreground="#1F3A5F" />
+        <DataGrid g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Pendentes}" AutoGenerateColumns="False" CanUserSortColumns="False">
+          <DataGrid.Columns>
+            <DataGridCheckBoxColumn Header="" Binding="{ReflectionBinding Marcada}" Width="44" />
+            <DataGridTextColumn Header="Data" Binding="{ReflectionBinding Data}" Width="95" IsReadOnly="True" />
+            <DataGridTextColumn Header="Documento" Binding="{ReflectionBinding Documento}" Width="130" IsReadOnly="True" />
+            <DataGridTextColumn Header="Operação" Binding="{ReflectionBinding Operacao}" Width="80" IsReadOnly="True" />
+            <DataGridTextColumn Header="Cliente / fornecedor" Binding="{ReflectionBinding Participante}" Width="*" MinWidth="150" IsReadOnly="True" />
+            <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="110" IsReadOnly="True" />
+            <DataGridTextColumn Header="Lançamento" Binding="{ReflectionBinding Lancamento}" Width="230" IsReadOnly="True" />
+            <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="300" IsReadOnly="True" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </DockPanel>
+      <DockPanel Grid.Row="2">
+        <TextBlock DockPanel.Dock="Top" Text="Notas contabilizadas no período" FontWeight="SemiBold" Foreground="#1F3A5F" />
+        <DataGrid g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Contabilizadas}" AutoGenerateColumns="False" CanUserSortColumns="False">
+          <DataGrid.Columns>
+            <DataGridCheckBoxColumn Header="" Binding="{ReflectionBinding Marcada}" Width="44" />
+            <DataGridTextColumn Header="Data" Binding="{ReflectionBinding Data}" Width="95" IsReadOnly="True" />
+            <DataGridTextColumn Header="Documento" Binding="{ReflectionBinding Descricao}" Width="130" IsReadOnly="True" />
+            <DataGridTextColumn Header="Cliente / fornecedor" Binding="{ReflectionBinding Participante}" Width="*" IsReadOnly="True" />
+            <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="110" IsReadOnly="True" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </DockPanel>
+    </Grid>
+  </DockPanel>
+</UserControl>

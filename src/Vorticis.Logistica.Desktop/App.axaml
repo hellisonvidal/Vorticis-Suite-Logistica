@@ -1,0 +1,20 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Vorticis.Logistica.Desktop.App"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             RequestedThemeVariant="Light">
+  <!-- As telas de cada módulo entram em Application.DataTemplates ao iniciar (ModuloLogistica.Apps, em App.axaml.cs) -->
+  <Application.DataTemplates>
+    <c:TemplatesComuns />
+  </Application.DataTemplates>
+  <Application.Styles>
+    <StyleInclude Source="avares://Vorticis.Desktop.Comum/Estilos.axaml" />
+    <Style Selector="TextBlock.rotulo">
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="DataGridCell.numerica">
+      <Setter Property="HorizontalContentAlignment" Value="Right" />
+    </Style>
+  </Application.Styles>
+</Application>

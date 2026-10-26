@@ -1,0 +1,39 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Erp.Desktop.ViewModels"
+             x:Class="Vorticis.Erp.Desktop.Views.MonitorNotasView" x:DataType="vm:MonitorNotasViewModel">
+  <!-- Monitores › Monitor de notas fiscais -->
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="Monitor de notas fiscais" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="140" />
+      <TextBlock Text="a" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Fim}" Width="140" />
+      <ComboBox ItemsSource="{x:Static vm:MonitorNotasViewModel.Operacoes}" SelectedIndex="{Binding Operacao}" Width="170" />
+      <CheckBox Content="Só o que pede atenção" IsChecked="{Binding SomentePendencias}" />
+      <Button Content="Atualizar" Command="{Binding AtualizarCommand}" Classes="accent" />
+      <TextBlock Text="{Binding AtualizadoEm}" VerticalAlignment="Center" Foreground="Gray" FontSize="11" />
+    </StackPanel>
+    <c:MensagensView DockPanel.Dock="Bottom" />
+    <Grid ColumnDefinitions="300,12,*">
+      <DataGrid ItemsSource="{Binding Indicadores}" IsReadOnly="True" AutoGenerateColumns="False">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Indicador" Binding="{ReflectionBinding Descricao}" Width="*" />
+          <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="120" />
+        </DataGrid.Columns>
+      </DataGrid>
+      <DataGrid Grid.Column="2" ItemsSource="{Binding Linhas}" IsReadOnly="True" AutoGenerateColumns="False">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Data" Binding="{ReflectionBinding Data}" Width="90" />
+          <DataGridTextColumn Header="Operação" Binding="{ReflectionBinding Operacao}" Width="80" />
+          <DataGridTextColumn Header="Nota" Binding="{ReflectionBinding Nota}" Width="110" />
+          <DataGridTextColumn Header="Cliente / fornecedor" Binding="{ReflectionBinding Participante}" Width="*" />
+          <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="120" />
+          <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="90" />
+          <DataGridTextColumn Header="Contabilizada" Binding="{ReflectionBinding Contabilizada}" Width="100" />
+          <DataGridTextColumn Header="Cobrança" Binding="{ReflectionBinding Cobranca}" Width="190" />
+          <DataGridTextColumn Header="Atenção" Binding="{ReflectionBinding Alerta}" Width="150" />
+        </DataGrid.Columns>
+      </DataGrid>
+    </Grid>
+  </DockPanel>
+</UserControl>

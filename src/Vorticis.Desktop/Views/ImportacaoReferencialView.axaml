@@ -1,0 +1,41 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Views"
+             xmlns:dom="using:Vorticis.Domain.Contabil"
+             x:Class="Vorticis.Desktop.Views.ImportacaoReferencialView"
+             x:DataType="vm:ImportacaoReferencialViewModel">
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="8" MaxWidth="900" HorizontalAlignment="Left">
+      <TextBlock Classes="titulo" Text="Plano de contas referencial da RFB" />
+      <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="#44506A"
+                 Text="Importe a tabela oficial do plano referencial (a mesma usada pelo programa validador da ECD/ECF) para o tipo de plano e o ano. O arquivo deve ter cabeçalho com ao menos CODIGO e DESCRICAO; TIPO, COD_SUP, NIVEL e COD_NAT são aproveitados quando presentes. Reimportar atualiza a tabela sem perder os vínculos já feitos." />
+      <Grid ColumnDefinitions="160,*,Auto" RowDefinitions="Auto,Auto,Auto" RowSpacing="6" ColumnSpacing="8">
+        <TextBlock Text="Tipo de plano" VerticalAlignment="Center" />
+        <ComboBox Grid.Column="1" ItemsSource="{x:Static vm:ImportacaoReferencialViewModel.Tipos}" SelectedItem="{Binding Tipo}" MinWidth="360">
+          <ComboBox.ItemTemplate>
+            <DataTemplate x:DataType="dom:TipoPlanoReferencial"><TextBlock Text="{Binding Descricao}" /></DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+        <TextBlock Grid.Row="1" Text="Ano" VerticalAlignment="Center" />
+        <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding Ano}" Minimum="2000" Maximum="2100" FormatString="0" Width="130" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="2" Text="Arquivo" VerticalAlignment="Center" />
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Arquivo}" Watermark="Caminho do arquivo .txt ou .csv" />
+        <Button Grid.Row="2" Grid.Column="2" Content="Procurar..." Click="Procurar" />
+      </Grid>
+      <Button Content="Importar tabela" Command="{Binding ImportarCommand}" Classes="accent" />
+      <c:MensagensView />
+      <TextBlock Text="Tabelas importadas" FontWeight="SemiBold" Foreground="#1F3A5F" Margin="0,8,0,0" />
+    </StackPanel>
+    <DataGrid ItemsSource="{Binding Tabelas}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Plano" Binding="{ReflectionBinding Plano}" Width="*" />
+        <DataGridTextColumn Header="Ano" Binding="{ReflectionBinding Ano}" Width="80" />
+        <DataGridTextColumn Header="Contas" Binding="{ReflectionBinding Contas}" Width="90" />
+        <DataGridTextColumn Header="Arquivo" Binding="{ReflectionBinding Arquivo}" Width="220" />
+        <DataGridTextColumn Header="Importado em" Binding="{ReflectionBinding Importado}" Width="150" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>

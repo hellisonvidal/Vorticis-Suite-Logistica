@@ -1,0 +1,1094 @@
+[
+ {
+  "codigo": "1",
+  "descricao": "ATIVO",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.1",
+  "descricao": "ATIVO CIRCULANTE",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.1.01",
+  "descricao": "DISPONÍVEL",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.1.01.001",
+  "descricao": "Caixa Geral",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.1.01.002",
+  "descricao": "Bancos Conta Movimento",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.1.01.003",
+  "descricao": "Aplicações Financeiras de Liquidez Imediata",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.1.02",
+  "descricao": "CRÉDITOS",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.1.02.001",
+  "descricao": "Clientes",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.1.02.002",
+  "descricao": "Cartões de Crédito e Débito a Receber",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.1.02.003",
+  "descricao": "(-) Perdas Estimadas com Créditos de Liquidação Duvidosa",
+  "codNat": "01",
+  "natureza": "C"
+ },
+ {
+  "codigo": "1.1.02.004",
+  "descricao": "Adiantamentos a Fornecedores",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.1.02.005",
+  "descricao": "Adiantamentos a Empregados",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.1.02.006",
+  "descricao": "Outros Créditos",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.1.03",
+  "descricao": "TRIBUTOS A RECUPERAR",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.1.03.001",
+  "descricao": "IRRF a Compensar",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.1.03.002",
+  "descricao": "ICMS Substituição Tributária a Recuperar",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.1.03.003",
+  "descricao": "Outros Tributos a Recuperar",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.1.04",
+  "descricao": "ESTOQUES",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.1.04.001",
+  "descricao": "Mercadorias para Revenda",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.1.04.002",
+  "descricao": "Mercadorias em Trânsito",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.1.04.003",
+  "descricao": "Material de Uso e Consumo",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.1.04.004",
+  "descricao": "(-) Ajuste ao Valor Realizável Líquido",
+  "codNat": "01",
+  "natureza": "C"
+ },
+ {
+  "codigo": "1.1.05",
+  "descricao": "DESPESAS DO EXERCÍCIO SEGUINTE",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.1.05.001",
+  "descricao": "Seguros a Apropriar",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.1.05.002",
+  "descricao": "Assinaturas e Licenças a Apropriar",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.1.05.003",
+  "descricao": "Outras Despesas Antecipadas",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.2",
+  "descricao": "ATIVO NÃO CIRCULANTE",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.2.01",
+  "descricao": "REALIZÁVEL A LONGO PRAZO",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.2.01.001",
+  "descricao": "Depósitos Judiciais",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.2.01.002",
+  "descricao": "Créditos com Sócios",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.2.02",
+  "descricao": "INVESTIMENTOS",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.2.02.001",
+  "descricao": "Participações Societárias",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.2.03",
+  "descricao": "IMOBILIZADO",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.2.03.001",
+  "descricao": "Terrenos",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.2.03.002",
+  "descricao": "Edificações",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.2.03.003",
+  "descricao": "Instalações",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.2.03.004",
+  "descricao": "Máquinas e Equipamentos",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.2.03.005",
+  "descricao": "Móveis e Utensílios",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.2.03.006",
+  "descricao": "Veículos",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.2.03.007",
+  "descricao": "Equipamentos de Informática",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.2.03.008",
+  "descricao": "(-) Depreciação Acumulada",
+  "codNat": "01",
+  "natureza": "C"
+ },
+ {
+  "codigo": "1.2.04",
+  "descricao": "INTANGÍVEL",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.2.04.001",
+  "descricao": "Softwares",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.2.04.002",
+  "descricao": "Marcas e Patentes",
+  "codNat": "01",
+  "natureza": "D"
+ },
+ {
+  "codigo": "1.2.04.003",
+  "descricao": "(-) Amortização Acumulada",
+  "codNat": "01",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2",
+  "descricao": "PASSIVO E PATRIMÔNIO LÍQUIDO",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1",
+  "descricao": "PASSIVO CIRCULANTE",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.01",
+  "descricao": "FORNECEDORES",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.01.001",
+  "descricao": "Fornecedores Nacionais",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.02",
+  "descricao": "OBRIGAÇÕES TRABALHISTAS",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.02.001",
+  "descricao": "Salários a Pagar",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.02.002",
+  "descricao": "Pró-Labore a Pagar",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.02.003",
+  "descricao": "Férias a Pagar",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.02.004",
+  "descricao": "13º Salário a Pagar",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.02.005",
+  "descricao": "Rescisões a Pagar",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.03",
+  "descricao": "ENCARGOS SOCIAIS A RECOLHER",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.03.001",
+  "descricao": "INSS a Recolher",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.03.002",
+  "descricao": "FGTS a Recolher",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.03.003",
+  "descricao": "Contribuição Sindical a Recolher",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.03.004",
+  "descricao": "Provisão de Encargos sobre Férias",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.03.005",
+  "descricao": "Provisão de Encargos sobre 13º Salário",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.04",
+  "descricao": "OBRIGAÇÕES TRIBUTÁRIAS",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.04.001",
+  "descricao": "Simples Nacional (DAS) a Recolher",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.04.002",
+  "descricao": "ICMS Substituição Tributária a Recolher",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.04.003",
+  "descricao": "IRRF a Recolher",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.04.004",
+  "descricao": "PIS/COFINS/CSLL Retidos a Recolher",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.04.005",
+  "descricao": "INSS Retido a Recolher",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.04.006",
+  "descricao": "Parcelamentos de Tributos",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.05",
+  "descricao": "EMPRÉSTIMOS E FINANCIAMENTOS",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.05.001",
+  "descricao": "Empréstimos Bancários",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.05.002",
+  "descricao": "Financiamentos",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.05.003",
+  "descricao": "Cartões de Crédito Corporativos",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.06",
+  "descricao": "OUTRAS OBRIGAÇÕES",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.06.001",
+  "descricao": "Adiantamentos de Clientes",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.06.002",
+  "descricao": "Lucros a Distribuir",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.06.003",
+  "descricao": "Contas a Pagar",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.1.06.004",
+  "descricao": "Provisões Diversas",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.2",
+  "descricao": "PASSIVO NÃO CIRCULANTE",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.2.01",
+  "descricao": "EMPRÉSTIMOS E FINANCIAMENTOS A LONGO PRAZO",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.2.01.001",
+  "descricao": "Empréstimos Bancários de Longo Prazo",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.2.01.002",
+  "descricao": "Financiamentos de Longo Prazo",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.2.02",
+  "descricao": "OUTRAS OBRIGAÇÕES DE LONGO PRAZO",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.2.02.001",
+  "descricao": "Mútuo com Sócios",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.2.02.002",
+  "descricao": "Parcelamentos de Tributos a Longo Prazo",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.2.02.003",
+  "descricao": "Contas a Pagar a Longo Prazo",
+  "codNat": "02",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.3",
+  "descricao": "PATRIMÔNIO LÍQUIDO",
+  "codNat": "03",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.3.01",
+  "descricao": "CAPITAL SOCIAL",
+  "codNat": "03",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.3.01.001",
+  "descricao": "Capital Subscrito",
+  "codNat": "03",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.3.01.002",
+  "descricao": "(-) Capital a Integralizar",
+  "codNat": "03",
+  "natureza": "D"
+ },
+ {
+  "codigo": "2.3.02",
+  "descricao": "RESERVAS DE LUCROS",
+  "codNat": "03",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.3.02.001",
+  "descricao": "Reserva Legal",
+  "codNat": "03",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.3.02.002",
+  "descricao": "Reservas de Lucros",
+  "codNat": "03",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.3.03",
+  "descricao": "LUCROS OU PREJUÍZOS ACUMULADOS",
+  "codNat": "03",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.3.03.001",
+  "descricao": "Lucros Acumulados",
+  "codNat": "03",
+  "natureza": "C"
+ },
+ {
+  "codigo": "2.3.03.002",
+  "descricao": "(-) Prejuízos Acumulados",
+  "codNat": "03",
+  "natureza": "D"
+ },
+ {
+  "codigo": "3",
+  "descricao": "RECEITAS",
+  "codNat": "04",
+  "natureza": "C"
+ },
+ {
+  "codigo": "3.1",
+  "descricao": "RECEITA OPERACIONAL BRUTA",
+  "codNat": "04",
+  "natureza": "C"
+ },
+ {
+  "codigo": "3.1.01",
+  "descricao": "VENDAS E SERVIÇOS",
+  "codNat": "04",
+  "natureza": "C"
+ },
+ {
+  "codigo": "3.1.01.001",
+  "descricao": "Venda de Mercadorias - Tributação Normal",
+  "codNat": "04",
+  "natureza": "C"
+ },
+ {
+  "codigo": "3.1.01.002",
+  "descricao": "Venda de Mercadorias com ICMS Substituição Tributária",
+  "codNat": "04",
+  "natureza": "C"
+ },
+ {
+  "codigo": "3.1.01.003",
+  "descricao": "Venda de Mercadorias com Tributação Monofásica (PIS/COFINS)",
+  "codNat": "04",
+  "natureza": "C"
+ },
+ {
+  "codigo": "3.1.01.004",
+  "descricao": "Venda de Mercadorias para o Exterior",
+  "codNat": "04",
+  "natureza": "C"
+ },
+ {
+  "codigo": "3.2",
+  "descricao": "(-) DEDUÇÕES DA RECEITA BRUTA",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "3.2.01",
+  "descricao": "DEDUÇÕES",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "3.2.01.001",
+  "descricao": "Devoluções de Vendas",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "3.2.01.002",
+  "descricao": "Cancelamentos e Abatimentos",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "3.2.01.003",
+  "descricao": "Descontos Incondicionais Concedidos",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "3.2.01.004",
+  "descricao": "Simples Nacional (DAS) sobre Faturamento",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "3.3",
+  "descricao": "OUTRAS RECEITAS",
+  "codNat": "04",
+  "natureza": "C"
+ },
+ {
+  "codigo": "3.3.01",
+  "descricao": "RECEITAS FINANCEIRAS",
+  "codNat": "04",
+  "natureza": "C"
+ },
+ {
+  "codigo": "3.3.01.001",
+  "descricao": "Rendimentos de Aplicações Financeiras",
+  "codNat": "04",
+  "natureza": "C"
+ },
+ {
+  "codigo": "3.3.01.002",
+  "descricao": "Juros Recebidos",
+  "codNat": "04",
+  "natureza": "C"
+ },
+ {
+  "codigo": "3.3.01.003",
+  "descricao": "Descontos Obtidos",
+  "codNat": "04",
+  "natureza": "C"
+ },
+ {
+  "codigo": "3.3.02",
+  "descricao": "OUTRAS RECEITAS OPERACIONAIS",
+  "codNat": "04",
+  "natureza": "C"
+ },
+ {
+  "codigo": "3.3.02.001",
+  "descricao": "Ganho na Alienação de Imobilizado",
+  "codNat": "04",
+  "natureza": "C"
+ },
+ {
+  "codigo": "3.3.02.002",
+  "descricao": "Recuperação de Despesas",
+  "codNat": "04",
+  "natureza": "C"
+ },
+ {
+  "codigo": "3.3.02.003",
+  "descricao": "Reversão de Provisões",
+  "codNat": "04",
+  "natureza": "C"
+ },
+ {
+  "codigo": "4",
+  "descricao": "CUSTOS E DESPESAS",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.1",
+  "descricao": "CUSTOS",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.1.01",
+  "descricao": "CUSTO DAS MERCADORIAS VENDIDAS",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.1.01.001",
+  "descricao": "Custo das Mercadorias Vendidas",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.1.01.002",
+  "descricao": "Fretes e Seguros sobre Compras",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.1.01.003",
+  "descricao": "Perdas e Quebras de Estoque",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.1.02",
+  "descricao": "CUSTO DOS SERVIÇOS PRESTADOS",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.1.02.001",
+  "descricao": "Pessoal Diretamente Envolvido nos Serviços",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.1.02.002",
+  "descricao": "Encargos Sociais sobre Pessoal dos Serviços",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.1.02.003",
+  "descricao": "Materiais Aplicados nos Serviços",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2",
+  "descricao": "DESPESAS OPERACIONAIS",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.01",
+  "descricao": "DESPESAS COM PESSOAL",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.01.001",
+  "descricao": "Salários",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.01.002",
+  "descricao": "Pró-Labore",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.01.003",
+  "descricao": "Férias",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.01.004",
+  "descricao": "13º Salário",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.01.005",
+  "descricao": "INSS Patronal",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.01.006",
+  "descricao": "FGTS",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.01.007",
+  "descricao": "Vale-Transporte",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.01.008",
+  "descricao": "Vale-Refeição e Alimentação",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.01.009",
+  "descricao": "Plano de Saúde e Benefícios",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.01.010",
+  "descricao": "Treinamento e Capacitação",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.01.011",
+  "descricao": "Rescisões e Indenizações",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.02",
+  "descricao": "DESPESAS ADMINISTRATIVAS",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.02.001",
+  "descricao": "Aluguéis",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.02.002",
+  "descricao": "Energia Elétrica",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.02.003",
+  "descricao": "Água e Esgoto",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.02.004",
+  "descricao": "Telefone e Internet",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.02.005",
+  "descricao": "Material de Escritório",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.02.006",
+  "descricao": "Honorários Contábeis",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.02.007",
+  "descricao": "Honorários Advocatícios",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.02.008",
+  "descricao": "Depreciação e Amortização",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.02.009",
+  "descricao": "Serviços de Terceiros",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.02.010",
+  "descricao": "Seguros",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.02.011",
+  "descricao": "Manutenção e Conservação",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.02.012",
+  "descricao": "Viagens e Representações",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.02.013",
+  "descricao": "Combustíveis e Lubrificantes",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.02.014",
+  "descricao": "Software e Licenças",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.03",
+  "descricao": "DESPESAS COMERCIAIS",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.03.001",
+  "descricao": "Comissões sobre Vendas",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.03.002",
+  "descricao": "Propaganda e Publicidade",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.03.003",
+  "descricao": "Fretes sobre Vendas",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.03.004",
+  "descricao": "Taxas de Cartões e Marketplaces",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.03.005",
+  "descricao": "Perdas Estimadas com Créditos de Liquidação Duvidosa",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.04",
+  "descricao": "DESPESAS TRIBUTÁRIAS",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.04.001",
+  "descricao": "Impostos e Taxas Diversas",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.04.002",
+  "descricao": "IPTU",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.04.003",
+  "descricao": "IPVA",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.04.004",
+  "descricao": "Multas Fiscais",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.2.04.005",
+  "descricao": "Contribuições Sociais Diversas",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.3",
+  "descricao": "DESPESAS FINANCEIRAS",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.3.01",
+  "descricao": "DESPESAS FINANCEIRAS",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.3.01.001",
+  "descricao": "Juros Pagos",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.3.01.002",
+  "descricao": "Tarifas Bancárias",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.3.01.003",
+  "descricao": "IOF",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.3.01.004",
+  "descricao": "Descontos Concedidos",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.4",
+  "descricao": "OUTRAS DESPESAS",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.4.01",
+  "descricao": "OUTRAS DESPESAS OPERACIONAIS",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.4.01.001",
+  "descricao": "Perda na Alienação de Imobilizado",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.4.01.002",
+  "descricao": "Baixa de Bens e Direitos",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "4.4.01.003",
+  "descricao": "Doações e Contribuições",
+  "codNat": "04",
+  "natureza": "D"
+ },
+ {
+  "codigo": "5",
+  "descricao": "APURAÇÃO DO RESULTADO",
+  "codNat": "04",
+  "natureza": "C"
+ },
+ {
+  "codigo": "5.1",
+  "descricao": "APURAÇÃO DO RESULTADO DO EXERCÍCIO",
+  "codNat": "04",
+  "natureza": "C"
+ },
+ {
+  "codigo": "5.1.01",
+  "descricao": "APURAÇÃO",
+  "codNat": "04",
+  "natureza": "C"
+ },
+ {
+  "codigo": "5.1.01.001",
+  "descricao": "Apuração do Resultado do Exercício",
+  "codNat": "04",
+  "natureza": "C"
+ }
+]

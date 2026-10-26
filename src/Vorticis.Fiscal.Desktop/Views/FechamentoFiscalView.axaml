@@ -1,0 +1,29 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:g="using:Vorticis.Fiscal.Desktop.Views" xmlns:vm="using:Vorticis.Fiscal.Desktop.ViewModels"
+             x:Class="Vorticis.Fiscal.Desktop.Views.FechamentoFiscalView" x:DataType="vm:FechamentoFiscalViewModel">
+  <!-- Apuração › Fechamento do período fiscal -->
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <TextBlock Classes="titulo" Text="Fechamento do período fiscal" VerticalAlignment="Center" />
+        <TextBlock Text="Ano" VerticalAlignment="Center" />
+        <NumericUpDown Value="{Binding Ano}" Minimum="2000" Maximum="2100" Increment="1" FormatString="0" Width="120" />
+        <Button Content="Fechar mês" Classes="accent" Command="{Binding FecharCommand}" IsEnabled="{Binding PodeManter}" />
+        <Button Content="Reabrir mês" Command="{Binding ReabrirCommand}" IsEnabled="{Binding PodeManter}" />
+      </StackPanel>
+      <TextBlock Text="{Binding Regime}" FontWeight="SemiBold" />
+      <TextBlock FontSize="11" Foreground="#44506A" TextWrapping="Wrap"
+                 Text="Feche o mês depois de escriturar as notas e apurar os impostos. Com o mês fechado, as notas com data de entrada/saída no mês não podem ser incluídas, alteradas nem excluídas (inclusive por importação de XML); a contabilização continua permitida." />
+    </StackPanel>
+    <c:MensagensView DockPanel.Dock="Bottom" Margin="0,6,0,0" />
+    <DataGrid g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Meses}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Mês" Binding="{ReflectionBinding Mes}" Width="90" />
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="100" />
+        <DataGridTextColumn Header="Notas" Binding="{ReflectionBinding Notas}" Width="90" />
+        <DataGridTextColumn Header="Não contabilizadas" Binding="{ReflectionBinding NaoContabilizadas}" Width="150" />
+        <DataGridTextColumn Header="Fechado em / por" Binding="{ReflectionBinding Fechamento}" Width="*" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>

@@ -1,0 +1,53 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:g="using:Vorticis.Fiscal.Desktop.Views"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Fiscal.Desktop.ViewModels"
+             x:Class="Vorticis.Fiscal.Desktop.Views.RegrasContabilizacaoView"
+             x:DataType="vm:RegrasContabilizacaoViewModel">
+  <!-- Documentos fiscais › Regras de contabilização -->
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="Regras de contabilização das notas fiscais" />
+      <TextBlock FontSize="12" Foreground="#44506A" TextWrapping="Wrap"
+                 Text="Cada regra indica as contas de débito e de crédito para um CFOP (código completo, prefixo como 51 ou 6, ou NFSE para serviços), opcionalmente por sentido e por cliente/fornecedor. Vale a regra mais específica; no empate, a de menor prioridade. O valor lançado é o valor contábil dos itens (produtos − desconto + frete + IPI + ICMS-ST)." />
+      <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="8" RowSpacing="6">
+        <TextBlock Text="CFOP" VerticalAlignment="Center" />
+        <TextBox Grid.Column="1" Text="{Binding Cfop}" Watermark="5102, 51, NFSE ou vazio" Width="170" />
+        <TextBlock Grid.Column="2" Text="Sentido" VerticalAlignment="Center" />
+        <ComboBox Grid.Column="3" ItemsSource="{x:Static vm:RegrasContabilizacaoViewModel.Operacoes}" SelectedIndex="{Binding Operacao}" Width="120" />
+        <TextBlock Grid.Column="4" Text="Prioridade" VerticalAlignment="Center" />
+        <NumericUpDown Grid.Column="5" Value="{Binding Prioridade}" Minimum="1" Maximum="9999" FormatString="0" Width="110" />
+        <TextBlock Grid.Row="1" Text="Conta débito" VerticalAlignment="Center" />
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Debito}" Watermark="ex.: 1.1.02.001" Width="170" />
+        <TextBlock Grid.Row="1" Grid.Column="2" Text="Conta crédito" VerticalAlignment="Center" />
+        <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding Credito}" Watermark="ex.: 3.1.01.001" Width="120" />
+        <TextBlock Grid.Row="1" Grid.Column="4" Text="Participante" VerticalAlignment="Center" />
+        <TextBox Grid.Row="1" Grid.Column="5" Text="{Binding Participante}" Watermark="código, nome ou CNPJ (opcional)" Width="240" />
+        <TextBlock Grid.Row="2" Text="Histórico" VerticalAlignment="Center" />
+        <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Text="{Binding Historico}" />
+        <CheckBox Grid.Row="2" Grid.Column="5" Content="Regra ativa" IsChecked="{Binding Ativa}" />
+        <StackPanel Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="5" Orientation="Horizontal" Spacing="8">
+          <Button Content="Nova" Command="{Binding NovaCommand}" />
+          <Button Content="Salvar" Command="{Binding SalvarCommand}" IsEnabled="{Binding PodeManter}" Classes="accent" />
+          <Button Content="Excluir" Command="{Binding ExcluirCommand}" IsEnabled="{Binding PodeManter}" />
+          <TextBlock FontSize="11" Foreground="Gray" VerticalAlignment="Center"
+                     Text="Variáveis do histórico: {DOCUMENTO}, {PARTICIPANTE}, {DATA}, {MES}, {ANO}, {COMPETENCIA}, {VALOR}." />
+        </StackPanel>
+      </Grid>
+      <c:MensagensView />
+    </StackPanel>
+    <DataGrid g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Regras}" SelectedItem="{Binding Selecionada}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Prior." Binding="{ReflectionBinding Prioridade}" Width="60" />
+        <DataGridTextColumn Header="CFOP" Binding="{ReflectionBinding Cfop}" Width="85" />
+        <DataGridTextColumn Header="Sentido" Binding="{ReflectionBinding Operacao}" Width="80" />
+        <DataGridTextColumn Header="Participante" Binding="{ReflectionBinding Participante}" Width="170" />
+        <DataGridTextColumn Header="Débito" Binding="{ReflectionBinding Debito}" Width="110" />
+        <DataGridTextColumn Header="Crédito" Binding="{ReflectionBinding Credito}" Width="110" />
+        <DataGridTextColumn Header="Histórico" Binding="{ReflectionBinding Historico}" Width="*" />
+        <DataGridTextColumn Header="Ativa" Binding="{ReflectionBinding Ativa}" Width="60" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>

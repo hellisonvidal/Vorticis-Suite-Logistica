@@ -1,0 +1,46 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Frota.Desktop.ViewModels"
+             x:Class="Vorticis.Frota.Desktop.Views.MotoristasView" x:DataType="vm:MotoristasViewModel">
+  <Grid ColumnDefinitions="*,12,380" RowDefinitions="Auto,*" Margin="8">
+    <TextBlock Grid.ColumnSpan="3" Classes="titulo" Text="Motoristas" Margin="0,0,0,8" />
+    <DataGrid Grid.Row="1" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Código" Binding="{ReflectionBinding Codigo}" Width="70" />
+        <DataGridTextColumn Header="Nome" Binding="{ReflectionBinding Nome}" Width="*" />
+        <DataGridTextColumn Header="CPF" Binding="{ReflectionBinding Cpf}" Width="120" />
+        <DataGridTextColumn Header="CNH (categoria)" Binding="{ReflectionBinding Cnh}" Width="150" />
+        <DataGridTextColumn Header="Validade" Binding="{ReflectionBinding Validade}" Width="95" />
+        <DataGridTextColumn Header="Situação da CNH" Binding="{ReflectionBinding SituacaoCnh}" Width="150" />
+        <DataGridTextColumn Header="Telefone" Binding="{ReflectionBinding Telefone}" Width="120" />
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="75" />
+      </DataGrid.Columns>
+    </DataGrid>
+    <StackPanel Grid.Row="1" Grid.Column="2" Spacing="6" IsEnabled="{Binding PodeEditar}">
+      <Grid ColumnDefinitions="110,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
+        <TextBlock Classes="rotulo" Text="Código" />
+        <TextBox Grid.Column="1" Text="{Binding Codigo}" Width="90" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="1" Classes="rotulo" Text="Nome" />
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Nome}" />
+        <TextBlock Grid.Row="2" Classes="rotulo" Text="CPF" />
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Cpf}" Width="160" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="3" Classes="rotulo" Text="Nº da CNH" />
+        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Cnh}" Width="160" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="4" Classes="rotulo" Text="Categoria" />
+        <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{x:Static vm:MotoristasViewModel.Categorias}" SelectedItem="{Binding Categoria}" Width="90" />
+        <TextBlock Grid.Row="5" Classes="rotulo" Text="Validade da CNH" />
+        <CalendarDatePicker Grid.Row="5" Grid.Column="1" SelectedDate="{Binding Validade}" Width="140" />
+        <TextBlock Grid.Row="6" Classes="rotulo" Text="Telefone" />
+        <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Telefone}" Width="160" HorizontalAlignment="Left" />
+        <CheckBox Grid.Row="7" Grid.Column="1" Content="Motorista ativo" IsChecked="{Binding Ativo}" />
+      </Grid>
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <Button Content="Novo motorista" Command="{Binding NovoCommand}" />
+        <Button Content="Gravar" Classes="accent" Command="{Binding GravarCommand}" />
+        <Button Content="Excluir" Command="{Binding ExcluirCommand}" />
+      </StackPanel>
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="A validade da CNH entra no Painel da frota. Exame toxicológico e curso MOPP são lançados em Documentos e vencimentos." />
+      <c:MensagensView />
+    </StackPanel>
+  </Grid>
+</UserControl>

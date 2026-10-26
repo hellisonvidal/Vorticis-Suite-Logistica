@@ -1,0 +1,29 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
+             x:Class="Vorticis.Desktop.Comum.Views.ProcuracaoEletronicaView"
+             x:DataType="vm:ProcuracaoEditor">
+  <Border BorderBrush="#D0D5DD" BorderThickness="1" CornerRadius="4" Padding="10">
+    <StackPanel Spacing="6">
+      <TextBlock Text="Procuração eletrônica" FontWeight="SemiBold" Foreground="#1F3A5F" />
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="Marque se este contador é procurador da empresa: ele assina a ECD/ECF no lugar do responsável (qualificação 309) e pode transmitir o eSocial com o certificado dele. A procuração eletrônica em si precisa estar cadastrada no e-CAC." />
+      <CheckBox Content="É procurador da empresa" IsChecked="{Binding Procurador}" />
+      <Grid ColumnDefinitions="110,*,16,110,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="6" IsEnabled="{Binding Procurador}">
+        <TextBlock VerticalAlignment="Center" FontSize="12" Text="Vigência desde" />
+        <CalendarDatePicker Grid.Column="1" SelectedDate="{Binding Inicio}" />
+        <TextBlock Grid.Column="3" VerticalAlignment="Center" FontSize="12" Text="Vigência até" />
+        <CalendarDatePicker Grid.Column="4" SelectedDate="{Binding Fim}" />
+        <TextBlock Grid.Row="1" VerticalAlignment="Center" FontSize="12" Text="Abrangência" />
+        <WrapPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="4" ItemSpacing="12">
+          <CheckBox Content="ECD" IsChecked="{Binding Ecd}" />
+          <CheckBox Content="ECF" IsChecked="{Binding Ecf}" />
+          <CheckBox Content="EFD" IsChecked="{Binding Efd}" />
+          <CheckBox Content="eSocial" IsChecked="{Binding Esocial}" />
+        </WrapPanel>
+        <TextBlock Grid.Row="2" VerticalAlignment="Center" FontSize="12" Text="Observação" />
+        <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Text="{Binding Observacao}" Watermark="Ex.: identificação da procuração no e-CAC" />
+      </Grid>
+    </StackPanel>
+  </Border>
+</UserControl>

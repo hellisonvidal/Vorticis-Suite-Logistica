@@ -1,0 +1,67 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Views"
+             x:Class="Vorticis.Desktop.Views.ConsultasView"
+             x:DataType="vm:ConsultasViewModel">
+  <UserControl.Styles>
+    <Style Selector="TabControl#AbasConsultas > TabItem">
+      <Setter Property="FontSize" Value="15" />
+      <Setter Property="MinHeight" Value="34" />
+      <Setter Property="Padding" Value="10,0" />
+    </Style>
+  </UserControl.Styles>
+  <DockPanel>
+    <c:MensagensView DockPanel.Dock="Bottom" Margin="8,4" />
+    <TabControl Name="AbasConsultas" SelectedIndex="{Binding AbaSelecionada}" Padding="0">
+      <TabItem Header="Saldos de contas" IsEnabled="{Binding PodeSaldos}">
+        <DockPanel Margin="8">
+          <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="0,0,0,8">
+            <TextBlock Text="Saldos em" VerticalAlignment="Center" />
+            <CalendarDatePicker SelectedDate="{Binding DataSaldo}" Width="150" />
+            <Button Content="Consultar" Command="{Binding ConsultarSaldosCommand}" Classes="accent" IsDefault="True" />
+            <TextBox Text="{Binding FiltroConta}" Watermark="Filtrar: código ou nome da conta" Width="300" />
+            <CheckBox Content="Só contas com saldo ou movimento" IsChecked="{Binding SomenteComSaldo}" />
+          </StackPanel>
+          <TextBlock DockPanel.Dock="Bottom" Text="{Binding ResumoSaldos}" FontWeight="SemiBold" Margin="0,6,0,0" />
+          <DataGrid ItemsSource="{Binding Saldos}" IsReadOnly="True" AutoGenerateColumns="False" FontFamily="Consolas, Menlo, monospace">
+            <DataGrid.Columns>
+              <DataGridTextColumn Header="Conta" Binding="{ReflectionBinding Codigo}" Width="170" />
+              <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" />
+              <DataGridTextColumn Header="Saldo" Binding="{ReflectionBinding Saldo}" Width="170" />
+              <DataGridTextColumn Header="Movimento no ano" Binding="{ReflectionBinding MovimentoAno}" Width="300" />
+            </DataGrid.Columns>
+          </DataGrid>
+        </DockPanel>
+      </TabItem>
+      <TabItem Header="Lançamentos" IsEnabled="{Binding PodeLancamentos}">
+        <DockPanel Margin="8">
+          <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+            <TextBlock Text="Período" VerticalAlignment="Center" Margin="0,0,8,6" />
+            <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="150" Margin="0,0,6,6" />
+            <TextBlock Text="a" VerticalAlignment="Center" Margin="0,0,6,6" />
+            <CalendarDatePicker SelectedDate="{Binding Fim}" Width="150" Margin="0,0,10,6" />
+            <Button Content="Consultar" Command="{Binding ConsultarLancamentosCommand}" Classes="accent" Margin="0,0,16,6" />
+            <TextBox Text="{Binding ContaLancamento}" Watermark="Conta (código ou nome)" Width="200" Margin="0,0,6,6" />
+            <TextBox Text="{Binding TextoHistorico}" Watermark="Texto no histórico" Width="200" Margin="0,0,6,6" />
+            <TextBox Text="{Binding Valor}" Watermark="Valor (ex.: 1.500,00)" Width="150" Margin="0,0,6,6" />
+            <TextBox Text="{Binding Numero}" Watermark="Nº do lançamento" Width="140" Margin="0,0,6,6" />
+          </WrapPanel>
+          <TextBlock DockPanel.Dock="Bottom" Text="{Binding ResumoLancamentos}" FontWeight="SemiBold" Margin="0,6,0,0" />
+          <DataGrid ItemsSource="{Binding Lancamentos}" IsReadOnly="True" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+              <DataGridTextColumn Header="Nº" Binding="{ReflectionBinding Numero}" Width="70" />
+              <DataGridTextColumn Header="Data" Binding="{ReflectionBinding Data}" Width="115" />
+              <DataGridTextColumn Header="Conta" Binding="{ReflectionBinding Conta}" Width="300" />
+              <DataGridTextColumn Header="Débito" Binding="{ReflectionBinding Debito}" Width="120" />
+              <DataGridTextColumn Header="Crédito" Binding="{ReflectionBinding Credito}" Width="120" />
+              <DataGridTextColumn Header="Histórico" Binding="{ReflectionBinding Historico}" Width="*" />
+              <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="100" />
+            </DataGrid.Columns>
+          </DataGrid>
+        </DockPanel>
+      </TabItem>
+    </TabControl>
+  </DockPanel>
+</UserControl>

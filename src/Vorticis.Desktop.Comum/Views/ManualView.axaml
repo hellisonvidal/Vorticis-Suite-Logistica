@@ -1,0 +1,32 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
+             x:Class="Vorticis.Desktop.Comum.Views.ManualView"
+             x:DataType="vm:ManualViewModel">
+  <Grid ColumnDefinitions="320,Auto,*" RowDefinitions="Auto,*">
+    <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="8" Margin="0,0,0,8">
+      <Button Content="Abrir no navegador" Command="{Binding AbrirNoNavegadorCommand}" />
+      <TextBlock Text="{Binding Resumo}" VerticalAlignment="Center" Foreground="#44506A" />
+    </StackPanel>
+
+    <DockPanel Grid.Row="1">
+      <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,6">
+        <TextBox Text="{Binding Busca}" Watermark="Buscar no manual (palavra)" />
+        <CheckBox Content="Mostrar todos os módulos" IsChecked="{Binding TodosModulos}" />
+      </StackPanel>
+      <ListBox x:Name="Indice" ItemsSource="{Binding Itens}" SelectedItem="{Binding Selecionado}">
+        <ListBox.ItemTemplate>
+          <DataTemplate x:DataType="vm:ItemIndice">
+            <TextBlock Text="{Binding Rotulo}" Margin="{Binding Margem}" TextWrapping="Wrap" FontWeight="{Binding Peso}" />
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </DockPanel>
+
+    <GridSplitter Grid.Row="1" Grid.Column="1" Width="5" Background="#E4E9F1" />
+
+    <ScrollViewer Grid.Row="1" Grid.Column="2" Padding="16,0,8,0">
+      <ContentControl x:Name="Conteudo" MaxWidth="900" HorizontalAlignment="Left" />
+    </ScrollViewer>
+  </Grid>
+</UserControl>

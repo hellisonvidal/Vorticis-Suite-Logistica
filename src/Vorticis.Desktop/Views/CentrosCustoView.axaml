@@ -1,0 +1,48 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Views"
+             x:Class="Vorticis.Desktop.Views.CentrosCustoView"
+             x:DataType="vm:CentrosCustoViewModel">
+  <Grid ColumnDefinitions="*,16,340" RowDefinitions="Auto,*" Margin="8">
+    <c:BarraCadastroView Grid.ColumnSpan="3" Margin="0,0,0,8" />
+    <DockPanel Grid.Row="1" IsEnabled="{Binding !EmEdicao}">
+      <TextBlock DockPanel.Dock="Top" Classes="titulo" Text="Centros de custo" Margin="0,0,0,8" />
+      <DataGrid ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Nº" Binding="{ReflectionBinding Numero}" Width="70" />
+          <DataGridTextColumn Header="Código" Binding="{ReflectionBinding Estrutura}" Width="190" />
+          <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" />
+          <DataGridTextColumn Header="Tipo" Binding="{ReflectionBinding Tipo}" Width="90" />
+          <DataGridTextColumn Header="Superior" Binding="{ReflectionBinding Superior}" Width="120" />
+          <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="200" />
+        </DataGrid.Columns>
+      </DataGrid>
+    </DockPanel>
+    <StackPanel Grid.Row="1" Grid.Column="2" Spacing="6">
+      <TextBlock Text="Seu perfil permite apenas consultar." Classes="erro" IsVisible="{Binding !PodeEditar}" />
+      <TextBlock Text="Máscara do plano" FontWeight="SemiBold" Foreground="#1F3A5F" />
+      <TextBlock Text="{Binding ResumoMascara}" FontSize="11" Foreground="Gray" TextWrapping="Wrap" />
+      <TextBlock Text="A máscara e o uso de centros de custo são definidos no cadastro da empresa, aba Contabilidade." FontSize="11" Foreground="Gray" TextWrapping="Wrap" />
+      <TextBlock Text="Esta empresa ainda não ativou &quot;Usar centros de custo&quot; (aba Contabilidade): os lançamentos não pedem centro." Classes="erro" FontSize="11"
+                 IsVisible="{Binding AvisoNaoUsa}" />
+      <Button Content="Abrir o cadastro da empresa" Command="{Binding AbrirCadastroEmpresaCommand}" IsVisible="{Binding PodeAbrirEmpresa}" />
+      <Separator Margin="0,4" />
+      <TextBlock Text="Centro de custo" FontWeight="SemiBold" Foreground="#1F3A5F" />
+      <Grid ColumnDefinitions="90,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
+        <TextBlock Classes="rotulo" Text="Código" />
+        <TextBox Grid.Column="1" Text="{Binding Codigo}" Watermark="ex.: 1.01.001" IsEnabled="{Binding EmInclusao}" />
+        <TextBlock Grid.Row="1" Classes="rotulo" Text="Descrição" />
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Descricao}" IsEnabled="{Binding EmEdicao}" />
+        <TextBlock Grid.Row="2" Classes="rotulo" Text="Superior" />
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding CodigoPai}" Watermark="Obrigatório nos níveis 2+ (pela máscara)" IsEnabled="{Binding EmInclusao}" />
+        <CheckBox Grid.Row="3" Grid.Column="1" Content="Sintético (grupo, não recebe lançamentos)" IsChecked="{Binding Sintetico}" IsEnabled="{Binding EmEdicao}" />
+        <CheckBox Grid.Row="4" Grid.Column="1" Content="Ativo" IsChecked="{Binding Ativo}" IsEnabled="{Binding EmAlteracao}" />
+        <TextBlock Grid.Row="5" Classes="rotulo" Text="Frota" />
+        <ComboBox Grid.Row="5" Grid.Column="1" ItemsSource="{Binding FrotasOpcoes}" SelectedItem="{Binding Frota}" IsEnabled="{Binding EmEdicao}" HorizontalAlignment="Stretch" />
+      </Grid>
+      <c:MensagensView />
+    </StackPanel>
+  </Grid>
+</UserControl>

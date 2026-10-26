@@ -1,0 +1,18 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
+             x:Class="Vorticis.Desktop.Comum.Views.ParametrosAbasView"
+             x:DataType="vm:ParametrosAbasViewModel">
+  <Grid RowDefinitions="Auto,Auto,*" Margin="12,12,12,0">
+    <TextBlock Grid.Row="0" Classes="titulo" Text="{Binding Titulo}" />
+    <TextBlock Grid.Row="1" TextWrapping="Wrap" FontSize="12" Foreground="Gray" Margin="0,2,0,6" Text="{Binding Descricao}" />
+    <TabControl Grid.Row="2" ItemsSource="{Binding Abas}" SelectedItem="{Binding AbaSelecionada}">
+      <TabControl.ItemTemplate>
+        <DataTemplate x:DataType="vm:AbaParametros"><TextBlock Text="{Binding Titulo}" /></DataTemplate>
+      </TabControl.ItemTemplate>
+      <TabControl.ContentTemplate>
+        <DataTemplate x:DataType="vm:AbaParametros"><ContentControl Content="{Binding Conteudo}" /></DataTemplate>
+      </TabControl.ContentTemplate>
+    </TabControl>
+  </Grid>
+</UserControl>

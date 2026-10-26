@@ -1,0 +1,75 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:g="using:Vorticis.Fiscal.Desktop.Views"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Fiscal.Desktop.ViewModels"
+             x:Class="Vorticis.Fiscal.Desktop.Views.ApuracaoSimplesView"
+             x:DataType="vm:ApuracaoSimplesViewModel">
+  <!-- Apuração › Simples Nacional -->
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <TextBlock Classes="titulo" Text="Apuração do Simples Nacional" VerticalAlignment="Center" />
+        <TextBlock Text="Competência" VerticalAlignment="Center" />
+        <CalendarDatePicker SelectedDate="{Binding CompetenciaData}" Width="140" />
+        <TextBlock Text="Serviços:" VerticalAlignment="Center" />
+        <ComboBox ItemsSource="{x:Static vm:ApuracaoSimplesViewModel.RotulosAtividadesServicos}" SelectedIndex="{Binding AtividadeServicos}" Width="270" />
+        <Button Content="Sugerir pelas notas" Command="{Binding SugerirCommand}" Classes="accent" />
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <TextBlock Text="RBT12" VerticalAlignment="Center" />
+        <TextBox Text="{Binding Rbt12Texto}" Width="130" Watermark="automático" />
+        <TextBlock Text="Folha 12 meses" VerticalAlignment="Center" />
+        <TextBox Text="{Binding Folha12Texto}" Width="130" Watermark="automático" />
+        <Button Content="Calcular" Command="{Binding CalcularCommand}" IsEnabled="{Binding PodeApurar}" />
+        <Button Content="Salvar apuração" Command="{Binding SalvarCommand}" IsEnabled="{Binding PodeApurar}" />
+        <Button Content="Contabilizar provisão" Command="{Binding ContabilizarCommand}" IsEnabled="{Binding PodeContabilizar}" />
+        <Button Content="Desfazer provisão" Command="{Binding DesfazerCommand}" IsEnabled="{Binding PodeDesfazer}" />
+        <Rectangle Width="1" Fill="#D0D5DD" Margin="6,4" />
+        <c:BarraExportacaoView />
+      </StackPanel>
+      <TextBlock Text="{Binding Situacao}" FontSize="11" Foreground="Gray" />
+      <c:MensagensView />
+      <TextBlock Text="{Binding AvisosTexto}" Classes="erro" IsVisible="{Binding AvisosTexto, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+    </StackPanel>
+    <Grid ColumnDefinitions="520,12,*">
+      <DockPanel>
+        <!-- Inclusão manual da receita (sem notas no sistema, ou para completar o que veio das notas) -->
+        <Border DockPanel.Dock="Top" BorderBrush="#D0D5DD" BorderThickness="1" CornerRadius="4" Padding="6" Margin="0,0,0,8">
+          <StackPanel Spacing="4">
+            <TextBlock Text="Incluir receita manualmente" FontWeight="SemiBold" Foreground="#1F3A5F" />
+            <Grid ColumnDefinitions="*,8,130" RowDefinitions="Auto,Auto,Auto" RowSpacing="4">
+              <ComboBox ItemsSource="{x:Static vm:ApuracaoSimplesViewModel.RotulosAtividades}" SelectedIndex="{Binding NovaAtividade}" HorizontalAlignment="Stretch"
+                        ToolTip.Tip="Atividade (anexo) da receita" />
+              <TextBox Grid.Column="2" Text="{Binding NovoValor}" Watermark="Valor (R$)" />
+              <WrapPanel Grid.Row="1" Grid.ColumnSpan="3">
+                <CheckBox Content="ICMS-ST" IsChecked="{Binding NovaST}" Margin="0,0,10,0" />
+                <CheckBox Content="Monofásico" IsChecked="{Binding NovoMonofasico}" Margin="0,0,10,0" />
+                <CheckBox Content="ISS retido" IsChecked="{Binding NovoIssRetido}" Margin="0,0,10,0" />
+                <CheckBox Content="Exportação" IsChecked="{Binding NovaExportacao}" />
+              </WrapPanel>
+              <StackPanel Grid.Row="2" Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="8">
+                <Button Content="Incluir receita" Command="{Binding AdicionarReceitaCommand}" Classes="accent" IsEnabled="{Binding PodeApurar}" />
+                <Button Content="Remover selecionada" Command="{Binding RemoverReceitaCommand}" IsEnabled="{Binding PodeApurar}" />
+                <Button Content="Limpar receitas" Command="{Binding LimparReceitasCommand}" IsEnabled="{Binding PodeApurar}" />
+              </StackPanel>
+            </Grid>
+          </StackPanel>
+        </Border>
+        <DockPanel>
+          <TextBlock DockPanel.Dock="Top" Text="Receitas do mês por atividade (clique no valor para alterar)" FontWeight="SemiBold" Foreground="#1F3A5F" />
+          <DataGrid g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Receitas}" SelectedItem="{Binding ReceitaSelecionada}" AutoGenerateColumns="False" CanUserSortColumns="False">
+            <DataGrid.Columns>
+              <DataGridTextColumn Header="Atividade" Binding="{ReflectionBinding Descricao}" Width="*" IsReadOnly="True" />
+              <DataGridTextColumn Header="Tratamento" Binding="{ReflectionBinding TratamentoTexto}" Width="110" IsReadOnly="True" />
+              <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding ValorTexto}" Width="110" />
+            </DataGrid.Columns>
+          </DataGrid>
+        </DockPanel>
+      </DockPanel>
+      <ScrollViewer Grid.Column="2">
+        <ItemsControl ItemsSource="{Binding Exibidas}" />
+      </ScrollViewer>
+    </Grid>
+  </DockPanel>
+</UserControl>

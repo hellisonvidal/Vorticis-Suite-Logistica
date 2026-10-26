@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Executável do módulo Frota (piloto): usa o casco comum (login, empresas, usuários, backup...) e acrescenta as telas do módulo. -->
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <AssemblyName>VorticisFrota</AssemblyName>
+    <Product>Vorticis Frota</Product>
+    <Title>Vorticis Frota</Title>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <!-- Ícone do módulo (gerado por instalador/icone/gerar_icone.py) -->
+    <ApplicationIcon>..\..\instalador\icone\VorticisFrota.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Vorticis.Desktop.Comum\Vorticis.Desktop.Comum.csproj" />
+    <ProjectReference Include="..\Vorticis.Frota\Vorticis.Frota.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Vorticis.Desktop.Comum" />
+    <Using Include="Vorticis.Desktop.Comum.ViewModels" />
+    <Using Include="Vorticis.Desktop.Comum.Views" />
+  </ItemGroup>
+</Project>

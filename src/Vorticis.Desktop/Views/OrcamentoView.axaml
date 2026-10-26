@@ -1,0 +1,58 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             x:Class="Vorticis.Desktop.Views.OrcamentoView"
+             x:DataType="vm:OrcamentoViewModel">
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="Orçamento anual" />
+      <WrapPanel>
+        <WrapPanel.Styles><Style Selector="WrapPanel &gt; :is(Control)"><Setter Property="Margin" Value="0,0,10,6" /></Style></WrapPanel.Styles>
+        <TextBlock Text="Ano" VerticalAlignment="Center" />
+        <NumericUpDown Value="{Binding Ano}" Minimum="2000" Maximum="2100" FormatString="0" Width="110" />
+        <Button Content="Abrir orçamento do ano" Command="{Binding CarregarOrcamentoCommand}" />
+        <Rectangle Width="1" Fill="#D0D5DD" Margin="6,4" />
+        <TextBlock Text="Reajuste (%)" VerticalAlignment="Center" />
+        <NumericUpDown Value="{Binding Percentual}" Minimum="-100" Maximum="1000" FormatString="0.00" Width="120" IsEnabled="{Binding PodeManter}" />
+        <Button Content="Copiar orçamento do ano anterior" Command="{Binding CopiarOrcadoCommand}" IsEnabled="{Binding PodeManter}" />
+        <Button Content="Copiar realizado do ano anterior" Command="{Binding CopiarRealizadoCommand}" IsEnabled="{Binding PodeManter}" />
+      </WrapPanel>
+      <WrapPanel>
+        <WrapPanel.Styles><Style Selector="WrapPanel &gt; :is(Control)"><Setter Property="Margin" Value="0,0,10,6" /></Style></WrapPanel.Styles>
+        <TextBox Text="{Binding Arquivo}" Watermark="Planilha .xlsx ou .csv" Width="320" />
+        <Button Content="Procurar..." Click="Procurar" IsEnabled="{Binding PodeManter}" />
+        <Button Content="Importar planilha" Command="{Binding ImportarCommand}" IsEnabled="{Binding PodeManter}" />
+        <Rectangle Width="1" Fill="#D0D5DD" Margin="6,4" />
+        <Button Content="Adicionar linha" Command="{Binding AdicionarLinhaCommand}" IsEnabled="{Binding PodeManter}" />
+        <Button Content="Remover linha" Command="{Binding RemoverLinhaCommand}" IsEnabled="{Binding PodeManter}" />
+        <Button Content="Salvar orçamento" Command="{Binding SalvarCommand}" Classes="accent" IsEnabled="{Binding PodeManter}" />
+      </WrapPanel>
+    </StackPanel>
+    <StackPanel DockPanel.Dock="Bottom" Spacing="2" Margin="0,6,0,0">
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="Digite a conta de resultado (receita, custo ou despesa), o centro de custo (opcional) e o valor de cada mês. A planilha pode ter as colunas Conta, Centro de custo e Jan a Dez. Copiar e importar só preenchem a grade: confira e clique em Salvar orçamento." />
+      <c:MensagensView />
+    </StackPanel>
+    <DataGrid Name="Grade" ItemsSource="{Binding Linhas}" SelectedItem="{Binding Selecionada}" AutoGenerateColumns="False" CanUserSortColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Conta" Binding="{ReflectionBinding Conta}" Width="130" />
+        <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="220" IsReadOnly="True" />
+        <DataGridTextColumn Header="Centro de custo" Binding="{ReflectionBinding Centro}" Width="120" />
+        <DataGridTextColumn Header="Jan" Binding="{ReflectionBinding M1}" Width="88" />
+        <DataGridTextColumn Header="Fev" Binding="{ReflectionBinding M2}" Width="88" />
+        <DataGridTextColumn Header="Mar" Binding="{ReflectionBinding M3}" Width="88" />
+        <DataGridTextColumn Header="Abr" Binding="{ReflectionBinding M4}" Width="88" />
+        <DataGridTextColumn Header="Mai" Binding="{ReflectionBinding M5}" Width="88" />
+        <DataGridTextColumn Header="Jun" Binding="{ReflectionBinding M6}" Width="88" />
+        <DataGridTextColumn Header="Jul" Binding="{ReflectionBinding M7}" Width="88" />
+        <DataGridTextColumn Header="Ago" Binding="{ReflectionBinding M8}" Width="88" />
+        <DataGridTextColumn Header="Set" Binding="{ReflectionBinding M9}" Width="88" />
+        <DataGridTextColumn Header="Out" Binding="{ReflectionBinding M10}" Width="88" />
+        <DataGridTextColumn Header="Nov" Binding="{ReflectionBinding M11}" Width="88" />
+        <DataGridTextColumn Header="Dez" Binding="{ReflectionBinding M12}" Width="88" />
+        <DataGridTextColumn Header="Total" Binding="{ReflectionBinding Total}" Width="110" IsReadOnly="True" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>

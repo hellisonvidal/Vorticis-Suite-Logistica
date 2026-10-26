@@ -1,0 +1,108 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Views"
+             xmlns:app="using:Vorticis.Application.Imobilizado"
+             x:Class="Vorticis.Desktop.Views.BensView"
+             x:DataType="vm:BensViewModel">
+  <Grid ColumnDefinitions="*,16,430" RowDefinitions="Auto,*,Auto" Margin="8">
+    <c:BarraCadastroView Grid.ColumnSpan="3" Margin="0,0,0,8" />
+    <DockPanel Grid.Row="1" IsEnabled="{Binding !EmEdicao}">
+      <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="0,0,0,8">
+        <TextBlock Classes="titulo" Text="Bens do imobilizado" VerticalAlignment="Center" />
+        <TextBox Text="{Binding Filtro}" Watermark="Filtrar: código, descrição ou plaqueta" Width="260" />
+      </StackPanel>
+      <DataGrid ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Cód." Binding="{ReflectionBinding Codigo}" Width="56" />
+          <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="2*" MinWidth="150" />
+          <DataGridTextColumn Header="Grupo" Binding="{ReflectionBinding Grupo}" Width="*" MinWidth="100" />
+          <DataGridTextColumn Header="Aquisição" Binding="{ReflectionBinding Aquisicao}" Width="90" />
+          <DataGridTextColumn Header="Custo" Binding="{ReflectionBinding Valor}" Width="92" />
+          <DataGridTextColumn Header="Acumulada" Binding="{ReflectionBinding Acumulada}" Width="92" />
+          <DataGridTextColumn Header="Saldo" Binding="{ReflectionBinding ValorContabil}" Width="92" />
+          <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="*" MinWidth="80" />
+        </DataGrid.Columns>
+      </DataGrid>
+    </DockPanel>
+    <TextBlock Grid.Row="2" Text="{Binding Resumo}" FontWeight="SemiBold" Margin="0,6,0,0" />
+
+    <ScrollViewer Grid.Row="1" Grid.RowSpan="2" Grid.Column="2">
+      <StackPanel Spacing="6">
+        <TextBlock Text="Bem" FontWeight="SemiBold" Foreground="#1F3A5F" />
+        <Grid ColumnDefinitions="128,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6" IsEnabled="{Binding EmEdicao}">
+          <TextBlock Classes="rotulo" Text="Código" />
+          <TextBox Grid.Column="1" Text="{Binding Codigo}" Width="80" HorizontalAlignment="Left" />
+          <TextBlock Grid.Row="1" Classes="rotulo" Text="Descrição" />
+          <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Descricao}" />
+          <TextBlock Grid.Row="2" Classes="rotulo" Text="Grupo" />
+          <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Grupos}" SelectedItem="{Binding Grupo}" HorizontalAlignment="Stretch" PlaceholderText="Escolha o grupo">
+            <ComboBox.ItemTemplate><DataTemplate x:DataType="app:GrupoBem"><TextBlock Text="{Binding Descricao}" /></DataTemplate></ComboBox.ItemTemplate>
+          </ComboBox>
+          <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding RegraFiscal}" FontSize="11" Foreground="#44506A" TextWrapping="Wrap" />
+          <TextBlock Grid.Row="4" Classes="rotulo" Text="Plaqueta / local" />
+          <Grid Grid.Row="4" Grid.Column="1" ColumnDefinitions="*,6,*">
+            <TextBox Text="{Binding Plaqueta}" Watermark="nº patrimônio" />
+            <TextBox Grid.Column="2" Text="{Binding Localizacao}" Watermark="setor / local" />
+          </Grid>
+          <TextBlock Grid.Row="5" Classes="rotulo" Text="NF / fornecedor" />
+          <Grid Grid.Row="5" Grid.Column="1" ColumnDefinitions="*,6,*">
+            <TextBox Text="{Binding NotaFiscal}" Watermark="nota fiscal" />
+            <TextBox Grid.Column="2" Text="{Binding Fornecedor}" Watermark="código do fornecedor" />
+          </Grid>
+          <TextBlock Grid.Row="6" Classes="rotulo" Text="Aquisição / uso" />
+          <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal" Spacing="6">
+            <CalendarDatePicker SelectedDate="{Binding DataAquisicao}" Width="128" />
+            <TextBlock Text="em uso" VerticalAlignment="Center" />
+            <CalendarDatePicker SelectedDate="{Binding InicioUso}" Width="128" />
+          </StackPanel>
+          <TextBlock Grid.Row="7" Classes="rotulo" Text="Custo / residual" />
+          <Grid Grid.Row="7" Grid.Column="1" ColumnDefinitions="*,6,*">
+            <TextBox Text="{Binding Valor}" Watermark="valor de aquisição" TextAlignment="Right" />
+            <TextBox Grid.Column="2" Text="{Binding Residual}" Watermark="valor residual" TextAlignment="Right" />
+          </Grid>
+        </Grid>
+
+        <TextBlock Text="Depreciação contábil (CPC 27) e fiscal" FontWeight="SemiBold" Foreground="#1F3A5F" Margin="0,6,0,0" />
+        <Grid ColumnDefinitions="128,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="6" IsEnabled="{Binding EmEdicao}">
+          <TextBlock Classes="rotulo" Text="Vida útil (meses)" />
+          <TextBox Grid.Column="1" Text="{Binding VidaUtil}" Width="80" HorizontalAlignment="Left" />
+          <TextBlock Grid.Row="1" Classes="rotulo" Text="Método" />
+          <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{x:Static vm:OpcaoMetodo.Todos}" SelectedItem="{Binding Metodo}" HorizontalAlignment="Stretch">
+            <ComboBox.ItemTemplate><DataTemplate x:DataType="vm:OpcaoMetodo"><TextBlock Text="{Binding Nome}" /></DataTemplate></ComboBox.ItemTemplate>
+          </ComboBox>
+          <TextBlock Grid.Row="2" Classes="rotulo" Text="Turnos de uso" />
+          <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Spacing="8">
+            <ComboBox ItemsSource="{x:Static vm:BensViewModel.OpcoesTurnos}" SelectedItem="{Binding Turnos}" Width="70" />
+            <TextBlock Text="2 turnos: fiscal × 1,5 · 3 turnos: × 2,0" FontSize="11" Foreground="Gray" VerticalAlignment="Center" />
+          </StackPanel>
+          <CheckBox Grid.Row="4" Grid.ColumnSpan="2" Content="Depreciar a partir da data de aquisição, proporcional aos dias" IsChecked="{Binding ProRataDia}"
+                    ToolTip.Tip="O primeiro mês deprecia só os dias desde a aquisição (inclusive); a fração que falta é lançada no mês seguinte ao fim da vida útil. Na baixa, deprecia os dias até a véspera." />
+          <TextBlock Grid.Row="3" Classes="rotulo" Text="Já depreciado" />
+          <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding DepreciacaoAnterior}" Width="140" HorizontalAlignment="Left" TextAlignment="Right"
+                   ToolTip.Tip="Depreciação acumulada antes de usar o Vorticis (implantação)" />
+        </Grid>
+
+        <TextBlock Text="Contas contábeis" FontWeight="SemiBold" Foreground="#1F3A5F" Margin="0,6,0,0" />
+        <Grid ColumnDefinitions="128,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="6" IsEnabled="{Binding EmEdicao}">
+          <TextBlock Classes="rotulo" Text="Conta do bem" />
+          <TextBox Grid.Column="1" Text="{Binding ContaBem}" Watermark="código ou reduzido" />
+          <TextBlock Grid.Row="1" Classes="rotulo" Text="Deprec. acumulada" />
+          <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ContaAcumulada}" Watermark="código ou reduzido" />
+          <TextBlock Grid.Row="2" Classes="rotulo" Text="Despesa" />
+          <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ContaDespesa}" Watermark="código ou reduzido" />
+        </Grid>
+
+        <TextBlock Text="Baixa" FontWeight="SemiBold" Foreground="#1F3A5F" Margin="0,6,0,0" />
+        <Grid ColumnDefinitions="128,*" RowDefinitions="Auto,Auto" RowSpacing="6" IsEnabled="{Binding EmAlteracao}">
+          <TextBlock Classes="rotulo" Text="Data da baixa" />
+          <CalendarDatePicker Grid.Column="1" SelectedDate="{Binding DataBaixa}" Width="135" HorizontalAlignment="Left" />
+          <TextBlock Grid.Row="1" Classes="rotulo" Text="Motivo" />
+          <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding MotivoBaixa}" Watermark="venda, perda, doação..." />
+        </Grid>
+        <c:MensagensView />
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

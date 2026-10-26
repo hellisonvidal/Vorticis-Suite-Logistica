@@ -1,0 +1,40 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Frota.Desktop.ViewModels"
+             x:Class="Vorticis.Frota.Desktop.Views.ItensManutencaoView" x:DataType="vm:ItensManutencaoViewModel">
+  <Grid ColumnDefinitions="*,12,380" RowDefinitions="Auto,*" Margin="8">
+    <TextBlock Grid.ColumnSpan="3" Classes="titulo" Text="Peças e serviços" Margin="0,0,0,8" />
+    <DataGrid Grid.Row="1" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Código" Binding="{ReflectionBinding Codigo}" Width="70" />
+        <DataGridTextColumn Header="Tipo" Binding="{ReflectionBinding Tipo}" Width="80" />
+        <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" />
+        <DataGridTextColumn Header="Unidade" Binding="{ReflectionBinding Unidade}" Width="75" />
+        <DataGridTextColumn Header="Valor de referência" Binding="{ReflectionBinding Valor}" Width="130" />
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="75" />
+      </DataGrid.Columns>
+    </DataGrid>
+    <StackPanel Grid.Row="1" Grid.Column="2" Spacing="6" IsEnabled="{Binding PodeEditar}">
+      <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
+        <TextBlock Classes="rotulo" Text="Código" />
+        <TextBox Grid.Column="1" Text="{Binding Codigo}" Width="90" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="1" Classes="rotulo" Text="Tipo" />
+        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{x:Static vm:ItensManutencaoViewModel.Tipos}" SelectedItem="{Binding Tipo}" Width="120" />
+        <TextBlock Grid.Row="2" Classes="rotulo" Text="Descrição" />
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Descricao}" Watermark="Ex.: filtro de óleo, alinhamento" />
+        <TextBlock Grid.Row="3" Classes="rotulo" Text="Unidade" />
+        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Unidade}" Width="90" HorizontalAlignment="Left" Watermark="UN, L, H" />
+        <TextBlock Grid.Row="4" Classes="rotulo" Text="Valor de referência" />
+        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Valor}" Width="130" HorizontalAlignment="Left" />
+        <CheckBox Grid.Row="5" Grid.Column="1" Content="Item ativo" IsChecked="{Binding Ativo}" />
+      </Grid>
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <Button Content="Novo item" Command="{Binding NovoCommand}" />
+        <Button Content="Gravar" Classes="accent" Command="{Binding GravarCommand}" />
+        <Button Content="Excluir" Command="{Binding ExcluirCommand}" />
+      </StackPanel>
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="O valor de referência entra sozinho ao escolher o item na ordem de serviço, e pode ser alterado ali." />
+      <c:MensagensView />
+    </StackPanel>
+  </Grid>
+</UserControl>

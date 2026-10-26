@@ -1,0 +1,42 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Vorticis.Erp.Desktop.App"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Erp.Desktop.ViewModels"
+             xmlns:v="using:Vorticis.Erp.Desktop.Views"
+             xmlns:fvm="using:Vorticis.Fiscal.Desktop.ViewModels"
+             xmlns:fv="using:Vorticis.Fiscal.Desktop.Views"
+             RequestedThemeVariant="Light">
+  <Application.DataTemplates>
+    <c:TemplatesComuns />
+    <DataTemplate DataType="vm:PainelViewModel"><v:PainelView /></DataTemplate>
+    <DataTemplate DataType="vm:PedidosVendaViewModel"><v:PedidosView /></DataTemplate>
+    <DataTemplate DataType="vm:PedidosCompraViewModel"><v:PedidosView /></DataTemplate>
+    <DataTemplate DataType="vm:EstoqueViewModel"><v:EstoqueView /></DataTemplate>
+    <!-- Telas do Fiscal usadas pelo ERP -->
+    <DataTemplate DataType="vm:MonitorNotasViewModel"><v:MonitorNotasView /></DataTemplate>
+    <DataTemplate DataType="vm:MonitorCobrancasViewModel"><v:MonitorCobrancasView /></DataTemplate>
+    <DataTemplate DataType="fvm:TabelaExibida"><fv:TabelaExibidaView /></DataTemplate>
+    <DataTemplate DataType="fvm:ImportacaoXmlViewModel"><fv:ImportacaoXmlView /></DataTemplate>
+    <DataTemplate DataType="fvm:NotaEntradaViewModel"><fv:DigitacaoDocumentoView /></DataTemplate>
+    <DataTemplate DataType="fvm:NotaSaidaViewModel"><fv:DigitacaoDocumentoView /></DataTemplate>
+    <DataTemplate DataType="fvm:ProdutosViewModel"><fv:ProdutosView /></DataTemplate>
+    <DataTemplate DataType="fvm:DuplicatasViewModel"><fv:DuplicatasView /></DataTemplate>
+    <DataTemplate DataType="fvm:ConciliacaoDuplicatasViewModel"><fv:ConciliacaoDuplicatasView /></DataTemplate>
+    <DataTemplate DataType="fvm:RelDuplicatasPagarViewModel"><fv:RelatorioDuplicatasView /></DataTemplate>
+    <DataTemplate DataType="fvm:RelDuplicatasReceberViewModel"><fv:RelatorioDuplicatasView /></DataTemplate>
+    <DataTemplate DataType="fvm:RelPosicaoDuplicatasViewModel"><fv:RelatorioDuplicatasView /></DataTemplate>
+    <DataTemplate DataType="fvm:ResumoNotasViewModel"><fv:ResumoNotasView /></DataTemplate>
+    <DataTemplate DataType="fvm:RelatorioBaixasViewModel"><fv:RelatorioBaixasView /></DataTemplate>
+  </Application.DataTemplates>
+  <Application.Styles>
+    <StyleInclude Source="avares://Vorticis.Desktop.Comum/Estilos.axaml" />
+    <Style Selector="TextBlock.rotulo">
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="DataGridCell.numerica">
+      <Setter Property="HorizontalContentAlignment" Value="Right" />
+    </Style>
+  </Application.Styles>
+</Application>

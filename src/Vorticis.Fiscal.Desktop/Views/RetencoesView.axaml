@@ -1,0 +1,58 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:g="using:Vorticis.Fiscal.Desktop.Views"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Fiscal.Desktop.ViewModels"
+             x:Class="Vorticis.Fiscal.Desktop.Views.RetencoesView"
+             x:DataType="vm:RetencoesViewModel">
+  <!-- Obrigações › Retenções -->
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="Retenções: IRRF, CSRF (PIS/COFINS/CSLL), INSS e ISS" />
+      <WrapPanel>
+        <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="140" Margin="0,0,6,6" />
+        <TextBlock Text="a" VerticalAlignment="Center" Margin="0,0,6,6" />
+        <CalendarDatePicker SelectedDate="{Binding Fim}" Width="140" Margin="0,0,10,6" />
+        <ComboBox ItemsSource="{x:Static vm:RetencoesViewModel.Sentidos}" SelectedIndex="{Binding Sentido}" Width="240" Margin="0,0,8,6" />
+        <ComboBox ItemsSource="{x:Static vm:RetencoesViewModel.Tributos}" SelectedIndex="{Binding Tributo}" Width="100" Margin="0,0,8,6" />
+        <Button Content="Consultar" Command="{Binding ConsultarCommand}" Classes="accent" Margin="0,0,8,6" />
+        <Button Content="Gerar das notas" Command="{Binding GerarDasNotasCommand}" IsEnabled="{Binding PodeManter}" Margin="0,0,8,6" />
+        <Button Content="Excluir selecionada" Command="{Binding ExcluirCommand}" IsEnabled="{Binding PodeManter}" Margin="0,0,8,6" />
+        <c:BarraExportacaoView />
+      </WrapPanel>
+      <c:MensagensView />
+    </StackPanel>
+    <Border DockPanel.Dock="Bottom" BorderBrush="#D0D5DD" BorderThickness="0,1,0,0" Padding="0,6,0,0" Margin="0,6,0,0">
+      <StackPanel Spacing="4">
+        <TextBlock Text="Nova retenção (lançamento manual)" FontWeight="SemiBold" Foreground="#1F3A5F" />
+        <WrapPanel>
+          <CalendarDatePicker SelectedDate="{Binding NovaCompetencia}" Width="140" Margin="0,0,6,4" />
+          <ComboBox ItemsSource="{x:Static vm:RetencoesViewModel.SentidosNova}" SelectedIndex="{Binding NovoSentido}" Width="170" Margin="0,0,6,4" />
+          <ComboBox ItemsSource="{x:Static vm:RetencoesViewModel.TributosNova}" SelectedIndex="{Binding NovoTributo}" Width="100" Margin="0,0,6,4" />
+          <TextBox Text="{Binding NovaBase}" Watermark="Base de cálculo" Width="120" Margin="0,0,6,4" />
+          <TextBox Text="{Binding NovoValor}" Watermark="Valor retido" Width="110" Margin="0,0,6,4" />
+          <TextBox Text="{Binding NovoCodigo}" Watermark="Cód. receita" Width="95" Margin="0,0,6,4" />
+          <TextBox Text="{Binding NovaDescricao}" Watermark="Descrição" Width="220" Margin="0,0,6,4" />
+          <Button Content="Incluir" Command="{Binding IncluirManualCommand}" IsEnabled="{Binding PodeManter}" Margin="0,0,6,4" />
+        </WrapPanel>
+      </StackPanel>
+    </Border>
+    <Grid RowDefinitions="*,6,180">
+      <DataGrid g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Linhas}" SelectedItem="{Binding Selecionada}" IsReadOnly="True" AutoGenerateColumns="False">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Compet." Binding="{ReflectionBinding Competencia}" Width="80" />
+          <DataGridTextColumn Header="Sentido" Binding="{ReflectionBinding Sentido}" Width="80" />
+          <DataGridTextColumn Header="Tributo" Binding="{ReflectionBinding Tributo}" Width="75" />
+          <DataGridTextColumn Header="Nota" Binding="{ReflectionBinding Nota}" Width="120" />
+          <DataGridTextColumn Header="Cliente / fornecedor" Binding="{ReflectionBinding Participante}" Width="*" />
+          <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="110" />
+          <DataGridTextColumn Header="Cód. receita" Binding="{ReflectionBinding Codigo}" Width="90" />
+          <DataGridTextColumn Header="Origem" Binding="{ReflectionBinding Origem}" Width="75" />
+        </DataGrid.Columns>
+      </DataGrid>
+      <ScrollViewer Grid.Row="2">
+        <ItemsControl ItemsSource="{Binding Exibidas}" />
+      </ScrollViewer>
+    </Grid>
+  </DockPanel>
+</UserControl>

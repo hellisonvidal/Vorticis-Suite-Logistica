@@ -1,0 +1,50 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Erp.Desktop.ViewModels"
+             x:Class="Vorticis.Erp.Desktop.Views.EstoqueView" x:DataType="vm:EstoqueViewModel">
+  <Grid ColumnDefinitions="*,12,380" RowDefinitions="Auto,*,Auto,200" Margin="8">
+    <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="10" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="Estoque: posição e movimentos" VerticalAlignment="Center" />
+      <TextBlock Text="{Binding Totais}" VerticalAlignment="Center" FontSize="12" />
+    </StackPanel>
+    <DataGrid Grid.Row="1" ItemsSource="{Binding Posicao}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Código" Binding="{ReflectionBinding Codigo}" Width="70" />
+        <DataGridTextColumn Header="Produto" Binding="{ReflectionBinding Descricao}" Width="*" />
+        <DataGridTextColumn Header="Un." Binding="{ReflectionBinding Unidade}" Width="50" />
+        <DataGridTextColumn Header="Saldo" Binding="{ReflectionBinding Saldo}" Width="90" />
+        <DataGridTextColumn Header="Mínimo" Binding="{ReflectionBinding Minimo}" Width="80" />
+        <DataGridTextColumn Header="Custo médio" Binding="{ReflectionBinding CustoMedio}" Width="110" />
+        <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="110" />
+        <DataGridTextColumn Header="Preço de venda" Binding="{ReflectionBinding Preco}" Width="110" />
+        <DataGridTextColumn Header="" Binding="{ReflectionBinding Alerta}" Width="70" />
+      </DataGrid.Columns>
+    </DataGrid>
+    <StackPanel Grid.Row="1" Grid.Column="2" Spacing="6" IsEnabled="{Binding PodeEditar}">
+      <TextBlock Text="Preço e estoque mínimo do produto selecionado" FontWeight="SemiBold" />
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <TextBox Text="{Binding Preco}" Watermark="Preço de venda" Width="120" />
+        <TextBox Text="{Binding Minimo}" Watermark="Estoque mínimo" Width="110" />
+        <Button Content="Gravar" Command="{Binding GravarParametrosCommand}" />
+      </StackPanel>
+      <TextBlock Text="Ajuste de estoque (inventário)" FontWeight="SemiBold" Margin="0,8,0,0" />
+      <CalendarDatePicker SelectedDate="{Binding DataAjuste}" />
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <TextBox Text="{Binding QuantidadeAjuste}" Watermark="Qtde (+ entra, − sai)" Width="150" />
+        <TextBox Text="{Binding CustoAjuste}" Watermark="Custo unitário" Width="120" />
+      </StackPanel>
+      <TextBox Text="{Binding MotivoAjuste}" Watermark="Motivo (ex.: contagem física)" />
+      <Button Content="Registrar ajuste" Classes="accent" Command="{Binding AjustarCommand}" />
+      <c:MensagensView />
+    </StackPanel>
+    <TextBlock Grid.Row="2" Grid.ColumnSpan="3" Text="Movimentos do produto selecionado" FontWeight="SemiBold" Margin="0,8,0,4" />
+    <DataGrid Grid.Row="3" Grid.ColumnSpan="3" ItemsSource="{Binding Movimentos}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Data" Binding="{ReflectionBinding Data}" Width="100" />
+        <DataGridTextColumn Header="Tipo" Binding="{ReflectionBinding Tipo}" Width="90" />
+        <DataGridTextColumn Header="Quantidade" Binding="{ReflectionBinding Quantidade}" Width="110" />
+        <DataGridTextColumn Header="Custo" Binding="{ReflectionBinding Custo}" Width="110" />
+        <DataGridTextColumn Header="Origem" Binding="{ReflectionBinding Origem}" Width="*" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </Grid>
+</UserControl>

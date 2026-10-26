@@ -1,0 +1,36 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             x:Class="Vorticis.Desktop.Views.OrcadoRealizadoView"
+             x:DataType="vm:OrcadoRealizadoViewModel">
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+      <TextBlock Classes="titulo" Text="Orçado x Realizado" />
+      <WrapPanel>
+        <WrapPanel.Styles><Style Selector="WrapPanel &gt; :is(Control)"><Setter Property="Margin" Value="0,0,10,6" /></Style></WrapPanel.Styles>
+      <TextBlock Text="Ano" VerticalAlignment="Center" />
+      <NumericUpDown Value="{Binding Ano}" Minimum="2000" Maximum="2100" FormatString="0" Width="110" />
+      <TextBlock Text="Mês" VerticalAlignment="Center" />
+      <NumericUpDown Value="{Binding MesInicial}" Minimum="1" Maximum="12" FormatString="0" Width="90" />
+      <TextBlock Text="a" VerticalAlignment="Center" />
+      <NumericUpDown Value="{Binding MesFinal}" Minimum="1" Maximum="12" FormatString="0" Width="90" />
+      <ComboBox ItemsSource="{Binding Centros}" SelectedItem="{Binding Centro}" DisplayMemberBinding="{ReflectionBinding Texto}" MinWidth="220" />
+      <TextBox Text="{Binding ContaPrefixo}" Watermark="Conta ou grupo (ex.: 4.2)" Width="170" />
+      <CheckBox Content="Mês a mês" IsChecked="{Binding Mensal}" />
+      <CheckBox Content="Somar os centros" IsChecked="{Binding IgnorarCentro}" ToolTip.Tip="Mostra uma linha por conta, somando todos os centros de custo" />
+      </WrapPanel>
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <Button Content="Gerar" Command="{Binding GerarCommand}" Classes="accent" />
+        <Rectangle Width="1" Fill="#D0D5DD" Margin="6,4" />
+        <c:BarraExportacaoView />
+      </StackPanel>
+    </StackPanel>
+    <StackPanel DockPanel.Dock="Bottom" Spacing="2" Margin="0,6,0,0">
+      <TextBlock Text="{Binding Resumo}" FontWeight="SemiBold" />
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap" Text="Compara o orçamento (Relatórios › Gerenciais › Orçamento) com o que foi contabilizado. Diferença = realizado − orçado." />
+      <c:MensagensView />
+    </StackPanel>
+    <DataGrid Name="Grade" ItemsSource="{Binding Linhas}" IsReadOnly="True" AutoGenerateColumns="False" />
+  </DockPanel>
+</UserControl>

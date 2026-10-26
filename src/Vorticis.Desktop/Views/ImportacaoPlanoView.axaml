@@ -1,0 +1,86 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Desktop.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Views"
+             x:Class="Vorticis.Desktop.Views.ImportacaoPlanoView"
+             x:DataType="vm:ImportacaoPlanoViewModel">
+  <Grid ColumnDefinitions="420,16,*" Margin="8">
+    <ScrollViewer>
+      <StackPanel Spacing="8" IsEnabled="{Binding PodeEditar}">
+        <TextBlock Classes="titulo" Text="Importar plano de contas" />
+        <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="#44506A"
+                   Text="Use uma planilha do Excel (.xlsx) ou CSV com o plano modelo: uma linha por conta, com ao menos o código e a descrição. Natureza, tipo (S/A) e saldo (D/C) são lidos quando houver coluna; senão são deduzidos do grupo. A importação substitui o plano atual e só é permitida antes do primeiro lançamento." />
+        <TextBlock Text="Seu perfil não permite manter o plano de contas." Classes="erro" IsVisible="{Binding !PodeEditar}" />
+
+        <TextBlock Text="1. Planilha" FontWeight="SemiBold" Foreground="#1F3A5F" />
+        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6">
+          <TextBox Text="{Binding Arquivo}" Watermark="Arquivo .xlsx ou .csv" />
+          <Button Grid.Column="1" Content="Procurar..." Click="Procurar" />
+        </Grid>
+
+        <TextBlock Text="2. Colunas" FontWeight="SemiBold" Foreground="#1F3A5F" />
+        <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
+          <TextBlock Classes="rotulo" Text="Código" />
+          <ComboBox Grid.Column="1" ItemsSource="{Binding Colunas}" SelectedIndex="{Binding ColunaCodigo}" HorizontalAlignment="Stretch" />
+          <TextBlock Grid.Row="1" Classes="rotulo" Text="Descrição" />
+          <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Colunas}" SelectedIndex="{Binding ColunaDescricao}" HorizontalAlignment="Stretch" />
+          <TextBlock Grid.Row="2" Classes="rotulo" Text="Natureza" />
+          <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding ColunasOpcionais}" SelectedIndex="{Binding ColunaNatureza}" HorizontalAlignment="Stretch" />
+          <TextBlock Grid.Row="3" Classes="rotulo" Text="Tipo (S/A)" />
+          <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding ColunasOpcionais}" SelectedIndex="{Binding ColunaTipo}" HorizontalAlignment="Stretch" />
+          <TextBlock Grid.Row="4" Classes="rotulo" Text="Saldo (D/C)" />
+          <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding ColunasOpcionais}" SelectedIndex="{Binding ColunaSaldo}" HorizontalAlignment="Stretch" />
+        </Grid>
+
+        <TextBlock Text="3. Máscara" FontWeight="SemiBold" Foreground="#1F3A5F" />
+        <CheckBox Content="Converter os códigos para a máscara" IsChecked="{Binding ConverterParaMascara}" />
+        <Grid ColumnDefinitions="120,*" RowSpacing="6" IsEnabled="{Binding ConverterParaMascara}">
+          <TextBlock Classes="rotulo" Text="Máscara" />
+          <Grid Grid.Column="1" ColumnDefinitions="*,Auto" ColumnSpacing="6">
+            <TextBox Text="{Binding Mascara}" Watermark="ex.: 9.9.99.999" FontFamily="Consolas, Menlo, monospace" />
+            <ComboBox Grid.Column="1" ItemsSource="{x:Static vm:ImportacaoPlanoViewModel.Mascaras}" SelectedItem="{Binding MascaraModelo}"
+                      PlaceholderText="Modelos" Width="150" />
+          </Grid>
+        </Grid>
+        <TextBlock TextWrapping="Wrap" FontSize="11" Foreground="Gray"
+                   Text="Cada 9 é um dígito; o ponto separa os níveis. Códigos com separador têm cada nível completado com zeros (1.1.1.1 → 1.1.01.001); códigos só com números são divididos pela máscara (1101001 → 1.1.01.001)." />
+        <Button Content="Importar plano" Command="{Binding ImportarCommand}" Classes="accent" />
+
+        <Border BorderBrush="#D5DCE6" BorderThickness="0,1,0,0" Padding="0,8,0,0" Margin="0,8,0,0">
+          <StackPanel Spacing="6">
+            <TextBlock Text="Converter o plano atual" FontWeight="SemiBold" Foreground="#1F3A5F" />
+            <TextBlock FontSize="12" TextWrapping="Wrap">
+              <Run Text="Máscara atual:" /> <Run Text="{Binding MascaraAtual, Mode=OneWay}" FontWeight="SemiBold" />
+            </TextBlock>
+            <TextBlock TextWrapping="Wrap" FontSize="11" Foreground="Gray"
+                       Text="Converte os códigos das contas já cadastradas para a máscara acima, mantendo a hierarquia e os lançamentos." />
+            <Button Content="Converter plano atual para a máscara" Command="{Binding AplicarMascaraCommand}" />
+          </StackPanel>
+        </Border>
+        <c:MensagensView />
+      </StackPanel>
+    </ScrollViewer>
+
+    <DockPanel Grid.Column="2">
+      <TextBlock DockPanel.Dock="Top" Text="Pré-visualização" FontWeight="SemiBold" Foreground="#1F3A5F" Margin="0,0,0,6" />
+      <TextBlock DockPanel.Dock="Top" Text="{Binding ResumoPrevia}" Margin="0,0,0,6" TextWrapping="Wrap" />
+      <ItemsControl DockPanel.Dock="Top" ItemsSource="{Binding Problemas}" Margin="0,0,0,6" MaxHeight="160">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="x:String"><TextBlock Text="{Binding}" Classes="erro" TextWrapping="Wrap" /></DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+      <DataGrid ItemsSource="{Binding Previa}" IsReadOnly="True" AutoGenerateColumns="False" FontFamily="Consolas, Menlo, monospace">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Linha" Binding="{ReflectionBinding Linha}" Width="72" />
+          <DataGridTextColumn Header="Na planilha" Binding="{ReflectionBinding Original}" Width="120" />
+          <DataGridTextColumn Header="Código" Binding="{ReflectionBinding Codigo}" Width="160" />
+          <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" />
+          <DataGridTextColumn Header="Tipo" Binding="{ReflectionBinding Tipo}" Width="90" />
+          <DataGridTextColumn Header="Natureza" Binding="{ReflectionBinding Natureza}" Width="150" />
+          <DataGridTextColumn Header="Saldo" Binding="{ReflectionBinding Saldo}" Width="80" />
+        </DataGrid.Columns>
+      </DataGrid>
+    </DockPanel>
+  </Grid>
+</UserControl>

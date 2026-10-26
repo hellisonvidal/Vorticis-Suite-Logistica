@@ -1,0 +1,108 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Comum.Views"
+             x:Class="Vorticis.Desktop.Comum.Views.ObrigacoesView"
+             x:DataType="vm:ObrigacoesViewModel">
+  <UserControl.Styles>
+    <Style Selector="TextBlock.rotulo"><Setter Property="FontSize" Value="12" /><Setter Property="VerticalAlignment" Value="Center" /></Style>
+  </UserControl.Styles>
+  <Grid ColumnDefinitions="*,12,340" Margin="8">
+    <DockPanel>
+      <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <TextBlock Classes="titulo" Text="Calendário de obrigações" VerticalAlignment="Center" />
+          <ComboBox ItemsSource="{x:Static vm:ObrigacoesViewModel.Visoes}" SelectedIndex="{Binding Visao}" Width="260" />
+          <Button Content="◀" Command="{Binding MesAnteriorCommand}" IsVisible="{Binding VisaoMensal}" />
+          <TextBlock Text="{Binding TituloMes}" MinWidth="150" TextAlignment="Center" FontWeight="SemiBold" VerticalAlignment="Center" IsVisible="{Binding VisaoMensal}" />
+          <Button Content="▶" Command="{Binding MesSeguinteCommand}" IsVisible="{Binding VisaoMensal}" />
+          <Button Content="Mês atual" Command="{Binding MesAtualCommand}" IsVisible="{Binding VisaoMensal}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="14">
+          <CheckBox IsChecked="{Binding VerContabil}" Content="Contábil" />
+          <CheckBox IsChecked="{Binding VerFiscal}" Content="Fiscal" />
+          <CheckBox IsChecked="{Binding VerFolha}" Content="Folha" />
+          <CheckBox IsChecked="{Binding OcultarCumpridas}" Content="Ocultar cumpridas" />
+          <TextBlock Text="{Binding NomeModulo, StringFormat='Módulo atual: {0}'}" Classes="rotulo" Foreground="Gray" />
+        </StackPanel>
+        <v:BarraExportacaoView />
+        <v:MensagensView />
+      </StackPanel>
+      <TextBlock DockPanel.Dock="Bottom" Text="{Binding Resumo}" FontWeight="SemiBold" Margin="0,6,0,0" TextWrapping="Wrap" />
+      <DataGrid ItemsSource="{Binding Linhas}" SelectedItem="{Binding Selecionada}" IsReadOnly="True" AutoGenerateColumns="False">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Vencimento" Binding="{ReflectionBinding Vencimento}" Width="130" />
+          <DataGridTextColumn Header="Obrigação" Binding="{ReflectionBinding Nome}" Width="*" MinWidth="220" />
+          <DataGridTextColumn Header="Competência" Binding="{ReflectionBinding Competencia}" Width="100" />
+          <DataGridTextColumn Header="Módulo" Binding="{ReflectionBinding Modulo}" Width="130" />
+          <DataGridTemplateColumn Header="Situação" Width="170">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate x:DataType="vm:LinhaObrigacao">
+                <Border Background="{Binding Fundo}" Padding="6,2" Margin="2">
+                  <TextBlock Text="{Binding Situacao}" Foreground="{Binding Texto}" FontWeight="SemiBold" />
+                </Border>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+        </DataGrid.Columns>
+      </DataGrid>
+    </DockPanel>
+    <ScrollViewer Grid.Column="2">
+      <StackPanel Spacing="6">
+        <TextBlock Text="Obrigação selecionada" FontWeight="SemiBold" Foreground="#1F3A5F" />
+        <StackPanel IsVisible="{Binding Selecionada, Converter={x:Static ObjectConverters.IsNotNull}}" Spacing="4" DataContext="{Binding}">
+          <TextBlock Text="{Binding Selecionada.Nome}" TextWrapping="Wrap" FontWeight="SemiBold" />
+          <TextBlock Text="{Binding Selecionada.Orgao}" FontSize="11" Foreground="Gray" />
+          <TextBlock Text="{Binding Selecionada.Regra, StringFormat='Regra: {0}'}" FontSize="11" TextWrapping="Wrap" />
+          <TextBlock Text="{Binding Selecionada.Observacao}" FontSize="11" Foreground="Gray" TextWrapping="Wrap" />
+          <TextBlock Text="Seu perfil permite apenas consultar." Classes="erro" IsVisible="{Binding !PodeManter}" />
+          <StackPanel Spacing="4" IsVisible="{Binding PodeManter}">
+            <Grid ColumnDefinitions="110,*">
+              <TextBlock Classes="rotulo" Text="Cumprida em" />
+              <CalendarDatePicker Grid.Column="1" SelectedDate="{Binding DataCumprimento}" />
+            </Grid>
+            <TextBox Text="{Binding ObservacaoBaixa}" Watermark="Observação (ex.: protocolo, recibo)" />
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <Button Content="Marcar como cumprida" Command="{Binding MarcarCumpridaCommand}" Classes="accent" />
+              <Button Content="Desfazer" Command="{Binding DesfazerCommand}" />
+            </StackPanel>
+          </StackPanel>
+        </StackPanel>
+        <Separator Margin="0,6" />
+        <Expander Header="Obrigações personalizadas (municipais, estaduais...)">
+          <StackPanel Spacing="6">
+            <ComboBox ItemsSource="{Binding Personalizadas}" SelectedItem="{Binding PersonalizadaSelecionada}" HorizontalAlignment="Stretch" PlaceholderText="Selecione para editar">
+              <ComboBox.ItemTemplate>
+                <DataTemplate><TextBlock Text="{ReflectionBinding Nome}" /></DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+            <StackPanel Spacing="6" IsEnabled="{Binding PodeManter}">
+              <TextBox Text="{Binding PNome}" Watermark="Nome (ex.: ISS - Prefeitura)" />
+              <TextBox Text="{Binding POrgao}" Watermark="Órgão" />
+              <ComboBox ItemsSource="{x:Static vm:ObrigacoesViewModel.Esferas}" SelectedIndex="{Binding PEsfera}" HorizontalAlignment="Stretch" />
+              <ComboBox ItemsSource="{x:Static vm:ObrigacoesViewModel.Periodicidades}" SelectedIndex="{Binding PPeriodicidade}" HorizontalAlignment="Stretch" />
+              <ComboBox ItemsSource="{x:Static vm:ObrigacoesViewModel.Regras}" SelectedIndex="{Binding PRegra}" HorizontalAlignment="Stretch" />
+              <Grid ColumnDefinitions="170,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="4">
+                <TextBlock Classes="rotulo" Text="Dia (ou nº do dia útil)" IsVisible="{Binding PUsaDia}" />
+                <NumericUpDown Grid.Column="1" Value="{Binding PDia}" Minimum="1" Maximum="31" FormatString="0" IsVisible="{Binding PUsaDia}" />
+                <TextBlock Grid.Row="1" Classes="rotulo" Text="Meses após a competência" IsVisible="{Binding !PEhAnual}" />
+                <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding PMesesApos}" Minimum="0" Maximum="24" FormatString="0" IsVisible="{Binding !PEhAnual}" />
+                <TextBlock Grid.Row="2" Classes="rotulo" Text="Mês do vencimento (1-12)" IsVisible="{Binding PEhAnual}" />
+                <NumericUpDown Grid.Row="2" Grid.Column="1" Value="{Binding PMesVencimento}" Minimum="1" Maximum="12" FormatString="0" IsVisible="{Binding PEhAnual}" />
+                <TextBlock Grid.Row="3" Classes="rotulo" Text="Anos após o ano-calendário" IsVisible="{Binding PEhAnual}" />
+                <NumericUpDown Grid.Row="3" Grid.Column="1" Value="{Binding PAnosApos}" Minimum="0" Maximum="3" FormatString="0" IsVisible="{Binding PEhAnual}" />
+              </Grid>
+              <ComboBox ItemsSource="{x:Static vm:ObrigacoesViewModel.Ajustes}" SelectedIndex="{Binding PAjuste}" HorizontalAlignment="Stretch" IsVisible="{Binding PEhDiaFixo}" />
+              <TextBox Text="{Binding PObservacao}" Watermark="Observação" />
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <Button Content="Nova" Command="{Binding NovaPersonalizadaCommand}" />
+                <Button Content="Salvar" Command="{Binding SalvarPersonalizadaCommand}" Classes="accent" />
+                <Button Content="Excluir" Command="{Binding ExcluirPersonalizadaCommand}" />
+              </StackPanel>
+            </StackPanel>
+          </StackPanel>
+        </Expander>
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

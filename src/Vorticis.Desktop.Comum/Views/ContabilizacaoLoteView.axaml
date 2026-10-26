@@ -1,0 +1,58 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Comum.Views"
+             x:Class="Vorticis.Desktop.Comum.Views.ContabilizacaoLoteView"
+             x:DataType="vm:ContabilizacaoLoteViewModel">
+  <!-- Integrações › Exportar › Contabilização em lote -->
+  <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="12" Spacing="8">
+      <TextBlock Classes="titulo" Text="Contabilização em lote" />
+      <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="Gray" Text="{Binding ModoTexto}" />
+      <WrapPanel>
+        <WrapPanel.Styles><Style Selector="WrapPanel &gt; StackPanel"><Setter Property="Margin" Value="0,0,12,6" /></Style></WrapPanel.Styles>
+        <StackPanel Spacing="2"><TextBlock Text="Origem" FontSize="12" />
+          <ComboBox ItemsSource="{x:Static vm:ContabilizacaoLoteViewModel.Origens}" SelectedItem="{Binding OrigemSelecionada}" Width="260">
+            <ComboBox.ItemTemplate><DataTemplate x:DataType="vm:OpcaoOrigem"><TextBlock Text="{Binding Texto}" /></DataTemplate></ComboBox.ItemTemplate>
+          </ComboBox></StackPanel>
+        <StackPanel Spacing="2"><TextBlock Text="De (data)" FontSize="12" /><CalendarDatePicker SelectedDate="{Binding Inicio}" Width="150" /></StackPanel>
+        <StackPanel Spacing="2"><TextBlock Text="Até (data)" FontSize="12" /><CalendarDatePicker SelectedDate="{Binding Fim}" Width="150" /></StackPanel>
+        <Button Content="Consultar" Command="{Binding ConsultarCommand}" VerticalAlignment="Bottom" Margin="0,0,0,6" />
+      </WrapPanel>
+      <ItemsControl ItemsSource="{Binding Resumo}">
+        <ItemsControl.ItemTemplate><DataTemplate x:DataType="x:String"><TextBlock Text="{Binding}" FontSize="12" Foreground="#1F3A5F" /></DataTemplate></ItemsControl.ItemTemplate>
+      </ItemsControl>
+      <DataGrid ItemsSource="{Binding Pendencias}" AutoGenerateColumns="False" Height="260" CanUserSortColumns="False">
+        <DataGrid.Columns>
+          <DataGridCheckBoxColumn Header="" Binding="{ReflectionBinding Marcada}" Width="40" />
+          <DataGridTextColumn Header="Data" Binding="{ReflectionBinding Data}" Width="100" IsReadOnly="True" />
+          <DataGridTextColumn Header="Origem" Binding="{ReflectionBinding Origem}" Width="200" IsReadOnly="True" />
+          <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" MinWidth="240" IsReadOnly="True" />
+          <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="120" IsReadOnly="True" />
+          <DataGridTextColumn Header="Último aviso" Binding="{ReflectionBinding Observacao}" Width="220" IsReadOnly="True" />
+        </DataGrid.Columns>
+      </DataGrid>
+      <TextBlock Text="{Binding Totais}" FontWeight="SemiBold" />
+      <WrapPanel>
+        <WrapPanel.Styles><Style Selector="WrapPanel &gt; Button"><Setter Property="Margin" Value="0,0,8,6" /></Style></WrapPanel.Styles>
+        <Button Content="Marcar todas" Command="{Binding MarcarTodasCommand}" />
+        <Button Content="Desmarcar todas" Command="{Binding DesmarcarTodasCommand}" />
+        <Button Content="Ver prévia" Command="{Binding VerPreviaCommand}" />
+        <Button Content="Contabilizar selecionadas" Classes="accent" Command="{Binding ContabilizarCommand}" />
+      </WrapPanel>
+      <ItemsControl ItemsSource="{Binding Previa}">
+        <ItemsControl.ItemTemplate><DataTemplate x:DataType="x:String"><TextBlock Text="{Binding}" FontFamily="Consolas, Menlo, monospace" FontSize="12" /></DataTemplate></ItemsControl.ItemTemplate>
+      </ItemsControl>
+      <Border BorderBrush="#D0D7E2" BorderThickness="1" CornerRadius="4" Padding="10">
+        <StackPanel Spacing="6">
+          <TextBlock Text="Lotes já contabilizados" FontWeight="SemiBold" Foreground="#1F3A5F" />
+          <ListBox ItemsSource="{Binding Lotes}" SelectedItem="{Binding LoteSelecionado}" MaxHeight="150">
+            <ListBox.ItemTemplate><DataTemplate x:DataType="vm:LinhaLote"><TextBlock Text="{Binding Texto}" /></DataTemplate></ListBox.ItemTemplate>
+          </ListBox>
+          <Button Content="Desfazer lote" Command="{Binding DesfazerLoteCommand}" HorizontalAlignment="Left" />
+        </StackPanel>
+      </Border>
+      <v:MensagensView />
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

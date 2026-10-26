@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Regras e serviços do módulo Fiscal (domínio, aplicação e repositórios); a interface fica em Vorticis.Fiscal.Desktop. -->
+  <ItemGroup>
+    <ProjectReference Include="..\Vorticis.Domain\Vorticis.Domain.csproj" />
+    <ProjectReference Include="..\Vorticis.Application\Vorticis.Application.csproj" />
+    <ProjectReference Include="..\Vorticis.Infra\Vorticis.Infra.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Security.Cryptography.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Tabelas legais por vigência (semente de core.parametro_legal): Simples Nacional, Lucro Presumido/Real... -->
+    <EmbeddedResource Include="Parametros\*.json" />
+  </ItemGroup>
+</Project>

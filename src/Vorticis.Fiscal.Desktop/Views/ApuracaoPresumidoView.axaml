@@ -1,0 +1,53 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:g="using:Vorticis.Fiscal.Desktop.Views"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Fiscal.Desktop.ViewModels"
+             x:Class="Vorticis.Fiscal.Desktop.Views.ApuracaoPresumidoView"
+             x:DataType="vm:ApuracaoPresumidoViewModel">
+  <!-- Apuração › Lucro Presumido -->
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <TextBlock Classes="titulo" Text="Lucro Presumido · IRPJ e CSLL" VerticalAlignment="Center" />
+        <NumericUpDown Value="{Binding Ano}" Minimum="2000" Maximum="2100" FormatString="0" Width="120" />
+        <ComboBox ItemsSource="{x:Static vm:ApuracaoTrimestralViewModel.Trimestres}" SelectedIndex="{Binding Trimestre}" Width="190" />
+        <Button Content="Sugerir pelas notas" Command="{Binding SugerirCommand}" Classes="accent" />
+        <Button Content="Calcular" Command="{Binding CalcularCommand}" IsEnabled="{Binding PodeApurar}" />
+        <Button Content="Salvar apuração" Command="{Binding SalvarCommand}" IsEnabled="{Binding PodeApurar}" />
+        <Button Content="Contabilizar provisão" Command="{Binding ContabilizarCommand}" IsEnabled="{Binding PodeContabilizar}" />
+        <Button Content="Desfazer provisão" Command="{Binding DesfazerCommand}" IsEnabled="{Binding PodeDesfazer}" />
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <TextBlock Text="Outras receitas" VerticalAlignment="Center" />
+        <TextBox Text="{Binding OutrasReceitasTexto}" Width="110" />
+        <TextBlock Text="IRRF a compensar" VerticalAlignment="Center" />
+        <TextBox Text="{Binding IrrfTexto}" Width="110" />
+        <TextBlock Text="CSLL retida" VerticalAlignment="Center" />
+        <TextBox Text="{Binding CsllRetidaTexto}" Width="110" />
+        <TextBlock Text="Outras deduções do IRPJ" VerticalAlignment="Center" />
+        <TextBox Text="{Binding OutrasDeducoesTexto}" Width="110" />
+        <Rectangle Width="1" Fill="#D0D5DD" Margin="6,4" />
+        <c:BarraExportacaoView />
+      </StackPanel>
+      <TextBlock Text="{Binding Situacao}" FontSize="11" Foreground="Gray" />
+      <c:MensagensView />
+      <TextBlock Text="{Binding AvisosTexto}" Classes="erro" IsVisible="{Binding AvisosTexto, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+    </StackPanel>
+    <Grid ColumnDefinitions="560,12,*">
+      <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Text="Receita bruta do trimestre por atividade (edite o valor)" FontWeight="SemiBold" Foreground="#1F3A5F" />
+        <DataGrid g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Receitas}" AutoGenerateColumns="False" CanUserSortColumns="False">
+          <DataGrid.Columns>
+            <DataGridTextColumn Header="Atividade" Binding="{ReflectionBinding Descricao}" Width="*" IsReadOnly="True" />
+            <DataGridTextColumn Header="Presunção" Binding="{ReflectionBinding Presuncao}" Width="160" IsReadOnly="True" />
+            <DataGridTextColumn Header="Receita" Binding="{ReflectionBinding ValorTexto}" Width="120" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </DockPanel>
+      <ScrollViewer Grid.Column="2">
+        <ItemsControl ItemsSource="{Binding Exibidas}" />
+      </ScrollViewer>
+    </Grid>
+  </DockPanel>
+</UserControl>

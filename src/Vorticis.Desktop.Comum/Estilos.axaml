@@ -1,0 +1,72 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:v="using:Vorticis.Desktop.Comum.Views">
+  <!-- Tema e estilos comuns a todos os executáveis da suíte (incluídos em App.axaml de cada módulo) -->
+  <Styles.Resources>
+    <!-- Fonte um pouco menor que o padrão (14) para caber mais informação na tela -->
+    <x:Double x:Key="ControlContentThemeFontSize">12.5</x:Double>
+    <x:Double x:Key="DataGridFontSize">12.5</x:Double>
+  </Styles.Resources>
+  <FluentTheme />
+  <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
+  <Style Selector="TextBlock.titulo">
+    <Setter Property="FontSize" Value="16" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
+  <Style Selector="TextBlock.erro">
+    <Setter Property="Foreground" Value="#B3261E" />
+    <Setter Property="TextWrapping" Value="Wrap" />
+  </Style>
+  <Style Selector="TextBlock.ok">
+    <Setter Property="Foreground" Value="#1B6E3A" />
+    <Setter Property="TextWrapping" Value="Wrap" />
+  </Style>
+  <Style Selector="Window">
+    <Setter Property="FontSize" Value="12.5" />
+  </Style>
+  <Style Selector="DataGrid">
+    <Setter Property="FontSize" Value="12.5" />
+    <Setter Property="RowHeight" Value="26" />
+    <Setter Property="GridLinesVisibility" Value="Horizontal" />
+    <Setter Property="CanUserResizeColumns" Value="True" />
+    <!-- Ctrl+C copia só a célula atual (não a linha); Ctrl+V cola na célula editável -->
+    <Setter Property="v:CopiaCelula.Ativa" Value="True" />
+  </Style>
+  <!-- Calendário sem destaque do dia atual: só o calendário -->
+  <Style Selector="Calendar">
+    <Setter Property="IsTodayHighlighted" Value="False" />
+  </Style>
+  <!-- Datas sempre dd/mm/aaaa, com máscara na digitação -->
+  <Style Selector="CalendarDatePicker">
+    <Setter Property="IsTodayHighlighted" Value="False" />
+    <Setter Property="SelectedDateFormat" Value="Custom" />
+    <Setter Property="CustomDateFormatString" Value="dd/MM/yyyy" />
+    <Setter Property="Watermark" Value="dd/mm/aaaa" />
+    <Setter Property="v:Mascara.Tipo" Value="Data" />
+  </Style>
+  <!-- Botão do calendário só com o ícone (o padrão mostra o dia de hoje) -->
+  <Style Selector="CalendarDatePicker /template/ Button#PART_Button">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="Transparent" Padding="6,0" Cursor="Hand">
+          <Path Width="14" Height="14" Stretch="Uniform" Fill="#44506A" VerticalAlignment="Center"
+                Data="M3,4 L21,4 L21,22 L3,22 Z M5,9 L5,20 L19,20 L19,9 Z M7,2 L9,2 L9,6 L7,6 Z M15,2 L17,2 L17,6 L15,6 Z" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+  <Style Selector="DataGridCell, DataGridColumnHeader">
+    <Setter Property="FontSize" Value="12.5" />
+  </Style>
+  <!-- Cabeçalho com dica (nome completo da coluna); colunas numéricas (classe "num") alinhadas à direita -->
+  <Style Selector="DataGridColumnHeader">
+    <Setter Property="ToolTip.Tip" Value="{Binding $self.Content}" />
+  </Style>
+  <Style Selector="DataGridColumnHeader TextBlock">
+    <Setter Property="ToolTip.Tip" Value="{Binding $self.Text}" />
+  </Style>
+  <Style Selector="DataGridCell.num TextBlock">
+    <Setter Property="HorizontalAlignment" Value="Right" />
+    <Setter Property="TextAlignment" Value="Right" />
+  </Style>
+</Styles>

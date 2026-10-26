@@ -1,0 +1,33 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:g="using:Vorticis.Fiscal.Desktop.Views"
+             xmlns:vm="using:Vorticis.Fiscal.Desktop.ViewModels"
+             x:Class="Vorticis.Fiscal.Desktop.Views.PainelImportacaoView"
+             x:DataType="vm:ImportacaoXmlViewModel">
+  <!-- Andamento, cancelamento e resumo final da importação de XML (usado na tela de importação e nos lançamentos) -->
+  <StackPanel Spacing="4">
+    <CheckBox Content="Completar o cadastro de fornecedores e clientes novos pela consulta do CNPJ (Receita)" IsChecked="{Binding CompletarPeloCnpj}"
+              ToolTip.Tip="Como o botão Buscar dados na Receita do cadastro: preenche endereço, fantasia, contato e inscrição estadual que faltarem no XML" />
+    <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding Importando}">
+      <StackPanel Spacing="2">
+        <ProgressBar Minimum="0" Maximum="100" Value="{Binding Percentual}" IsIndeterminate="{Binding Indeterminado}" Height="14" />
+        <TextBlock Text="{Binding Andamento}" FontSize="12" TextTrimming="CharacterEllipsis" />
+      </StackPanel>
+      <Button Grid.Column="1" Content="Cancelar importação" Command="{Binding CancelarCommand}" Margin="10,0,0,0" VerticalAlignment="Top" />
+    </Grid>
+    <StackPanel Spacing="4" IsVisible="{Binding TemResumo}">
+      <TextBlock Text="{Binding Resumo}" FontWeight="SemiBold" TextWrapping="Wrap" />
+      <Button Content="Exportar resumo (CSV)..." Click="ExportarResumo" HorizontalAlignment="Left" />
+      <DataGrid g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Resultados}" IsReadOnly="True" AutoGenerateColumns="False" MaxHeight="260" MinHeight="90">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Arquivo" Binding="{ReflectionBinding Arquivo}" Width="220" />
+          <DataGridTextColumn Header="Resultado" Binding="{ReflectionBinding Situacao}" Width="110" />
+          <DataGridTextColumn Header="Nº" Binding="{ReflectionBinding Numero}" Width="80" />
+          <DataGridTextColumn Header="Operação" Binding="{ReflectionBinding Operacao}" Width="90" />
+          <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="110" />
+          <DataGridTextColumn Header="Motivo / mensagem" Binding="{ReflectionBinding Mensagem}" Width="*" MinWidth="300" />
+        </DataGrid.Columns>
+      </DataGrid>
+    </StackPanel>
+  </StackPanel>
+</UserControl>

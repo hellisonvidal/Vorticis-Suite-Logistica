@@ -1,0 +1,30 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:g="using:Vorticis.Fiscal.Desktop.Views"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views"
+             xmlns:vm="using:Vorticis.Fiscal.Desktop.ViewModels"
+             x:Class="Vorticis.Fiscal.Desktop.Views.BaseMensalView"
+             x:DataType="vm:BaseMensalViewModel">
+  <!-- Apuração › Histórico de receita e folha -->
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <TextBlock Classes="titulo" Text="Histórico de receita e folha" VerticalAlignment="Center" />
+        <NumericUpDown Value="{Binding Ano}" Minimum="2000" Maximum="2100" FormatString="0" Width="130" />
+        <Button Content="Carregar" Command="{Binding CarregarCommand}" Classes="accent" />
+        <Button Content="Salvar alterações" Command="{Binding SalvarCommand}" IsEnabled="{Binding PodeManter}" />
+      </StackPanel>
+      <TextBlock FontSize="12" Foreground="#44506A" TextWrapping="Wrap"
+                 Text="Receita bruta e folha de pagamento (salários, pró-labore e encargos) de cada mês: base do RBT12 e do Fator R do Simples Nacional. Informe os meses anteriores ao uso do sistema; as receitas apuradas aqui entram sozinhas (origem Apuração)." />
+      <c:MensagensView />
+    </StackPanel>
+    <DataGrid g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Linhas}" AutoGenerateColumns="False" CanUserSortColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Mês" Binding="{ReflectionBinding Mes}" Width="100" IsReadOnly="True" />
+        <DataGridTextColumn Header="Receita bruta" Binding="{ReflectionBinding ReceitaTexto}" Width="160" />
+        <DataGridTextColumn Header="Folha" Binding="{ReflectionBinding FolhaTexto}" Width="160" />
+        <DataGridTextColumn Header="Origem da receita" Binding="{ReflectionBinding Origem}" Width="140" IsReadOnly="True" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>

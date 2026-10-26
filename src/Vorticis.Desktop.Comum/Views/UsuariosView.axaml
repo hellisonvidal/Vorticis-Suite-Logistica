@@ -1,0 +1,84 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Comum.Views"
+             x:Class="Vorticis.Desktop.Comum.Views.UsuariosView"
+             x:DataType="vm:UsuariosViewModel">
+  <UserControl.DataTemplates>
+    <DataTemplate DataType="vm:OpcaoPerfil">
+      <TextBlock Text="{Binding Nome}" />
+    </DataTemplate>
+  </UserControl.DataTemplates>
+  <Grid ColumnDefinitions="*,16,420" RowDefinitions="Auto,*" Margin="8">
+    <v:BarraCadastroView Grid.ColumnSpan="3" Margin="0,0,0,8" />
+
+    <DockPanel Grid.Row="1" IsEnabled="{Binding !EmEdicao}">
+      <TextBlock DockPanel.Dock="Top" Classes="titulo" Text="Usuários" Margin="0,0,0,8" />
+      <DataGrid ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Nº" Binding="{ReflectionBinding Numero}" Width="70" />
+          <DataGridTextColumn Header="Login" Binding="{ReflectionBinding Login}" Width="140" />
+          <DataGridTextColumn Header="Nome" Binding="{ReflectionBinding Nome}" Width="*" />
+          <DataGridTextColumn Header="Perfil" Binding="{ReflectionBinding Perfil}" Width="150" />
+          <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="90" />
+          <DataGridTextColumn Header="Último acesso" Binding="{ReflectionBinding UltimoAcesso}" Width="140" />
+        </DataGrid.Columns>
+      </DataGrid>
+    </DockPanel>
+
+    <ScrollViewer Grid.Row="1" Grid.Column="2">
+      <StackPanel Spacing="8">
+        <TextBlock Text="Usuário" FontWeight="SemiBold" Foreground="#1F3A5F" />
+        <Grid ColumnDefinitions="110,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
+          <TextBlock Classes="rotulo" Text="Login" />
+          <TextBox Grid.Column="1" Text="{Binding Login}" IsEnabled="{Binding EmInclusao}" />
+          <TextBlock Grid.Row="1" Classes="rotulo" Text="Nome" />
+          <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding NomeEdicao}" IsEnabled="{Binding EmEdicao}" />
+          <TextBlock Grid.Row="2" Classes="rotulo" Text="Senha inicial" IsVisible="{Binding EmInclusao}" />
+          <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding NovaSenha}" PasswordChar="●" IsVisible="{Binding EmInclusao}"
+                   Watermark="O usuário troca no primeiro acesso" />
+          <TextBlock Grid.Row="3" Classes="rotulo" Text="Perfil" />
+          <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding PerfisDisponiveis}" SelectedItem="{Binding PerfilEdicao}"
+                    PlaceholderText="Escolha o perfil" HorizontalAlignment="Stretch" IsEnabled="{Binding EmEdicao}" />
+          <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding DescricaoPerfil}" FontSize="11" Foreground="Gray" TextWrapping="Wrap" />
+          <CheckBox Grid.Row="5" Grid.Column="1" Content="Ativo" IsChecked="{Binding AtivoEdicao}" IsEnabled="{Binding EmAlteracao}" />
+        </Grid>
+
+        <StackPanel Spacing="6" IsVisible="{Binding MostrarAcessos}">
+          <TextBlock Text="Empresas que o usuário pode acessar" FontWeight="SemiBold" Margin="0,8,0,0" />
+          <TextBlock Text="Marque as empresas liberadas; o usuário só vê e seleciona essas. O perfil ao lado vale em cada empresa. Empresas cadastradas depois só são liberadas automaticamente a quem tem todas marcadas."
+                     FontSize="11" Foreground="Gray" TextWrapping="Wrap" />
+          <TextBox Text="{Binding FiltroEmpresas}" Watermark="Buscar empresa (nome, código ou CNPJ)" />
+          <StackPanel Orientation="Horizontal" Spacing="8" IsEnabled="{Binding EmEdicao}">
+            <Button Content="Marcar todas" Command="{Binding MarcarTodasCommand}" />
+            <Button Content="Desmarcar todas" Command="{Binding DesmarcarTodasCommand}" />
+          </StackPanel>
+          <TextBlock Text="{Binding ResumoEmpresas}" FontSize="11" Foreground="#44506A" />
+          <ScrollViewer MaxHeight="320">
+            <ItemsControl ItemsSource="{Binding AcessosFiltrados}" IsEnabled="{Binding EmEdicao}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:AcessoLinha">
+                  <Grid ColumnDefinitions="*,150" Margin="0,2">
+                    <CheckBox IsChecked="{Binding Marcada}" Content="{Binding Rotulo}" FontSize="12" />
+                    <ComboBox Grid.Column="1" ItemsSource="{Binding Opcoes}" SelectedItem="{Binding Perfil}" IsEnabled="{Binding Marcada}"
+                              HorizontalAlignment="Stretch" FontSize="12" />
+                  </Grid>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </ScrollViewer>
+        </StackPanel>
+
+        <StackPanel Spacing="6" IsVisible="{Binding TemSelecionado}" Margin="0,8,0,0">
+          <TextBlock Text="Redefinir senha" FontWeight="SemiBold" />
+          <StackPanel Orientation="Horizontal" Spacing="8" IsEnabled="{Binding EmConsulta}">
+            <TextBox Text="{Binding SenhaTemporaria}" Watermark="Senha temporária" PasswordChar="●" Width="200" />
+            <Button Content="Redefinir" Command="{Binding RedefinirSenhaCommand}" />
+          </StackPanel>
+          <TextBlock Text="Também desbloqueia o usuário. Ele deverá trocar a senha no próximo acesso." FontSize="11" Foreground="Gray" TextWrapping="Wrap" />
+        </StackPanel>
+        <v:MensagensView />
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>
