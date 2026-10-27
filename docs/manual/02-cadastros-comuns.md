@@ -87,10 +87,10 @@ Se o seu perfil não permite alterar, a tela só mostra os valores. Se você ape
 
 **Para que serve:** trazer de uma vez os cadastros que você já tem numa planilha (de outro sistema ou feita à mão), sem digitar um por um.
 
-**Onde fica:** no próprio grupo do cadastro, no menu *Cadastros*: cada grupo tem o item **Importar de planilha (Excel)** só com os cadastros dele. No Vorticis Suite Logística, cada módulo tem o seu, com os cadastros dele: clientes e fornecedores em todos; veículos, motoristas, frotas e rotas no **Frotas**; tabelas de frete no **Transporte**; produtos e regras fiscais no **Gerencial**; centros de custo e históricos padrão na **Contabilidade**. O plano de contas tem importação própria (*Integrações › Importar › Plano de contas*).
+**Onde fica:** dentro do próprio cadastro: abra o cadastro (por exemplo, *Cadastros › Clientes*) e clique no botão **Importar de planilha (Excel)**, na barra azul do alto da janela, ao lado de *Fechar*. O botão só aparece nos cadastros que aceitam importação. No Vorticis Suite Logística: clientes e fornecedores em todos os módulos; veículos, motoristas, frotas e rotas no **Frotas**; tabelas de frete no **Transporte**; produtos e regras fiscais no **Gerencial**; centros de custo e históricos padrão na **Contabilidade**. O plano de contas tem importação própria (*Integrações › Importar › Plano de contas*).
 
 **Como usar:**
-1. Escolha o cadastro no menu. Se ainda não tem planilha, clique em **Gerar planilha modelo**: o sistema cria um .xlsx com as colunas do cadastro e uma linha de exemplo.
+1. Abra o cadastro e clique em **Importar de planilha (Excel)**. Se ainda não tem planilha, clique em **Gerar planilha modelo**: o sistema cria um .xlsx com as colunas do cadastro e uma linha de exemplo.
 2. Clique em **Escolher planilha...** e selecione o arquivo (Excel **.xlsx** ou **.csv**). A primeira linha precisa ser o cabeçalho, com o nome de cada coluna.
 3. **Adapte o layout à sua planilha:** à esquerda aparece cada campo do cadastro e a coluna da planilha ligada a ele. O sistema já liga as colunas de nome parecido (por exemplo, *CNPJ*, *CPF/CNPJ* ou *Documento* para o CPF/CNPJ). Troque o que for preciso; *(não importar)* deixa o campo em branco. Os campos com **\*** são obrigatórios.
 4. Confira a **prévia** (as primeiras linhas como vão entrar) e clique em **Importar**.

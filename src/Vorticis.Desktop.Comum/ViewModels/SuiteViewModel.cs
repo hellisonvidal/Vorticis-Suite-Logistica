@@ -352,8 +352,12 @@ public sealed partial class SuiteViewModel : ObservableObject
         NoPainel = value == LayoutSuite.Painel;
     }
 
+    /// <summary>Troca o layout (tema da Suite); só com o usuário já conectado.</summary>
     [RelayCommand]
-    private void EscolherLayout(LayoutSuite layout) => Layout = layout;
+    private void EscolherLayout(LayoutSuite layout)
+    {
+        if (Logado) Layout = layout;
+    }
 
     /// <summary>Vai para o módulo; a empresa escolhida continua a mesma quando ela também está liberada no módulo.</summary>
     [RelayCommand]

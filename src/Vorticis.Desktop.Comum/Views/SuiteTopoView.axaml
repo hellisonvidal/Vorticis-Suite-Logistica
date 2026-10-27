@@ -86,7 +86,8 @@
     </Style>
   </UserControl.Styles>
 
-  <Panel Name="NavegacaoTopo" Background="Transparent">
+  <!-- só depois do login: antes dele não há módulos para navegar nem troca de layout -->
+  <Panel Name="NavegacaoTopo" Background="Transparent" IsVisible="{Binding Logado}">
     <!-- Recolhida: faixa fina com as cores dos módulos; o mouse sobre ela abre a navegação (SuiteTopoView.axaml.cs) -->
     <Border Name="FaixaTopo" Height="7" IsVisible="{Binding MostraTopoRecolhido}" ToolTip.Tip="Módulos (aproxime o mouse do alto da janela)">
       <ItemsControl ItemsSource="{Binding Modulos}">

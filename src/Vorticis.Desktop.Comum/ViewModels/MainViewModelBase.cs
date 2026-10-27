@@ -294,17 +294,10 @@ public abstract partial class MainViewModelBase : ObservableObject, IContexto, I
     }
 
     /// <summary>
-    /// Em cada grupo de Cadastros (a lista principal e cada submenu), o item "Importar de planilha (Excel)" com os cadastros daquele grupo
-    /// que aceitam importação; grupo sem cadastro importável fica como está.
+    /// Importação de planilha do cadastro aberto na tela (botão "Importar de planilha (Excel)" na barra da janela do cadastro); null quando o
+    /// cadastro não aceita importação.
     /// </summary>
-    private List<ItemMenu> ComImportacao(IEnumerable<ItemMenu> itens)
-    {
-        var lista = itens.Select(i => i.Filhos is { } f ? i with { Filhos = ComImportacao(f) } : i).ToList();
-        var chaves = lista.Where(i => i.Chave is not null).Select(i => i.Chave!).ToHashSet();
-        var defs = Importacoes.Where(d => d.TelaCadastro is { } t && chaves.Contains(t)).ToList();
-        if (defs.Count > 0) lista.AddRange([ItemMenu.Separador, ItemMenu.Submenu("Importar de _planilha (Excel)", [.. defs.Select(d => ItemMenu.Tela(d.Titulo, d.Tela))])]);
-        return lista;
-    }
+    public DefinicaoImportacao? ImportacaoDaTela(string? tela) => tela is null ? null : Importacoes.FirstOrDefault(d => d.TelaCadastro == tela);
 
     /// <summary>Menus do casco em volta dos do módulo.</summary>
     private IReadOnlyList<ItemMenu> MontarMenus()
@@ -315,7 +308,6 @@ public abstract partial class MainViewModelBase : ObservableObject, IContexto, I
         if (Modulo.UsaCadastrosComuns && Modulo.UsaClientesFornecedores)
             cadastros.AddRange([ItemMenu.Tela("Clientes", TelasComuns.Clientes), ItemMenu.Tela("Fornecedores", TelasComuns.Fornecedores)]);
         if (Modulo.ItensCadastros.Count > 0) cadastros.AddRange(Modulo.ItensCadastros.Prepend(ItemMenu.Separador));
-        cadastros = ComImportacao(cadastros);
         while (cadastros.Count > 0 && cadastros[0].EhSeparador) cadastros.RemoveAt(0);   // sem o cadastro de empresas, não começa com separador
         cadastros.AddRange([ItemMenu.Separador, ItemMenu.Tela("Parâmetros", TelasComuns.Parametros)]);
         // O calendário de obrigações fica em "Obrigações", se o módulo tem esse menu; senão, em "Consultas";

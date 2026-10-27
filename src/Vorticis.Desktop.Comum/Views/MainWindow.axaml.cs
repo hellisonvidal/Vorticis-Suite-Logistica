@@ -203,13 +203,27 @@ public partial class MainWindow : Window
             Background = Brushes.Transparent, Foreground = Brushes.White, BorderThickness = new Thickness(0),
             [ToolTip.TipProperty] = "Fechar esta função",
         };
+        // cadastro que aceita planilha: o botão de importar fica na própria janela do cadastro
+        var importar = new Button
+        {
+            Content = "⇪  Importar de planilha (Excel)", FontSize = 12, Padding = new Thickness(10, 2), Margin = new Thickness(4, 2),
+            Background = new SolidColorBrush(Colors.White, 0.18), Foreground = Brushes.White, BorderThickness = new Thickness(0), CornerRadius = new CornerRadius(4),
+            [ToolTip.TipProperty] = "Trazer os registros deste cadastro de uma planilha do Excel (ou CSV), escolhendo a coluna de cada campo",
+        };
+        void AtualizarImportar() => importar.IsVisible = dono.ImportacaoDaTela(f.Tela) is not null;
+        AtualizarImportar();
+        importar.Click += (_, _) =>
+        {
+            if (dono.ImportacaoDaTela(f.Tela) is { } def && dono.AbrirCommand.CanExecute(def.Tela)) dono.AbrirCommand.Execute(def.Tela);
+        };
         var cabecalho = new Border
         {
             Background = dono.PincelDestaque ?? new SolidColorBrush(Color.Parse("#3A5F8F")), Height = 30,
-            Child = new DockPanel { Children = { fechar, titulo } },
+            Child = new DockPanel { Children = { fechar, importar, titulo } },
         };
         DockPanel.SetDock(cabecalho, Dock.Top);
         DockPanel.SetDock(fechar, Dock.Right);
+        DockPanel.SetDock(importar, Dock.Right);
         var w = new Window
         {
             Title = $"{f.Titulo} — {dono.Modulo.Nome}",
@@ -229,6 +243,7 @@ public partial class MainWindow : Window
         fechar.Click += (_, _) => dono.FecharFuncao(f);
         f.PropertyChanged += (_, e) =>
         {
+            if (e.PropertyName == nameof(FuncaoAberta.Tela)) AtualizarImportar();
             if (e.PropertyName != nameof(FuncaoAberta.Titulo)) return;
             w.Title = $"{f.Titulo} — {dono.Modulo.Nome}";
             titulo.Text = f.Titulo;

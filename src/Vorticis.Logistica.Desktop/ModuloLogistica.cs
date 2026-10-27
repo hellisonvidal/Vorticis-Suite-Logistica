@@ -175,14 +175,17 @@ public sealed class ModuloTransporte() : ModuloLogistica(Frota, Gerencial, Fisca
             ItemMenu.Submenu("_Operação",
                 ItemMenu.Tela("Cotações de frete", T.Cotacoes),
                 ItemMenu.Tela("Ordens de coleta", T.Coletas),
-                ItemMenu.Tela("Entregas e ocorrências", T.Entregas)),
-            ItemMenu.Submenu("_Documentos",
+                ItemMenu.Tela("Entregas e ocorrências", T.Entregas))),
+        // todo o faturamento da transportadora: os documentos do transporte (CT-e e MDF-e), as faturas de frete, os pedidos de venda e as notas de saída
+        ItemMenu.Submenu("_Faturamento",
+        [
+            .. De(Frota,
                 ItemMenu.Tela("Conhecimentos de transporte (CT-e)", T.Ctes),
                 ItemMenu.Tela("Manifestos de carga (MDF-e)", T.Manifestos),
-                ItemMenu.Separador,
-                ItemMenu.EmBreve("Transmissão de CT-e e MDF-e à SEFAZ"))),
-        // todo o faturamento da transportadora: faturas de frete, pedidos de venda e notas fiscais de saída
-        ItemMenu.Submenu("_Faturamento", [.. FuncoesFaturamento()]),
+                ItemMenu.EmBreve("Transmissão de CT-e e MDF-e à SEFAZ")),
+            ItemMenu.Separador,
+            .. FuncoesFaturamento(),
+        ]),
         Relatorios(De(Frota,
             ItemMenu.Tela(TabelasTms.TituloFretesCliente, T.RelFretesCliente),
             ItemMenu.Tela(TabelasTms.TituloFretesTrecho, T.RelFretesTrecho),

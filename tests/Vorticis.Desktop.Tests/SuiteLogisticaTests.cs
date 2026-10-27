@@ -89,7 +89,7 @@ public class SuiteLogisticaTests(BancoDeTeste db, SessaoHeadless headless) : ICl
             s.TopoAberto = false;
             s.AlternarNavegacaoFixaCommand.Execute(null);        // fixar
             Assert.True(s.TopoFixo && s.MostraFaixaComando && s.NavegacaoFixa);
-            s.EscolherLayoutCommand.Execute(LayoutSuite.Lateral);
+            s.Layout = LayoutSuite.Lateral;
             Assert.True(s.MostraFaixaLateral);                   // a lateral tem o seu próprio "fixar"
             Assert.False(s.NavegacaoFixa);
             Assert.True(NovaSuite(LayoutSuite.Abas).TopoFixo);   // a preferência fica gravada
@@ -106,6 +106,29 @@ public class SuiteLogisticaTests(BancoDeTeste db, SessaoHeadless headless) : ICl
         Dispatcher.UIThread.RunJobs();
         if (janela.DataContext is MainViewModelBase vm && vm.Confirmacao is not null) vm.ResponderConfirmacaoCommand.Execute(true);
         Dispatcher.UIThread.RunJobs();
+    }
+
+    /// <summary>Banco de teste com o administrador pronto e uma transportadora ativa nos módulos da Suite.</summary>
+    private async Task PrepararBancoAsync()
+    {
+        var adm = await db.AdminAsync();
+        await db.App.Perfis.ConcluirConfiguracaoInicialAsync(new Vorticis.Domain.Seguranca.SessaoUsuario(adm, "admin_teste", "Admin", true, false), TestContext.Current.CancellationToken);
+        var empresa = await db.EscalarAsync<long>("SELECT COALESCE((SELECT id FROM core.empresa WHERE cnpj = '11444777000161'), 0)");
+        if (empresa == 0) empresa = await db.CriarEmpresaAsync("11444777000161");
+        await db.EscalarAsync<int>("UPDATE core.empresa SET modulo_frota = TRUE, modulo_erp = TRUE, modulo_fiscal = TRUE, modulo_contabil = TRUE WHERE id = @e RETURNING 1", ("e", empresa));
+    }
+
+    /// <summary>Entra na Suite pelo módulo principal; o login vale para todos os módulos.</summary>
+    private async Task EntrarAsync(SuiteViewModel suite)
+    {
+        var http = ConsultaCnpjTests.HttpCnpjEInscricoes();
+        var principal = suite.Principal;
+        await principal.InicializarAsync(db.ConnectionString, new ConsultaCnpjPublica(new HttpClient(http)), new ConsultaInscricaoEstadualPublica(new HttpClient(http)));
+        (principal.Login.Usuario, principal.Login.Senha) = ("admin_teste", "Senha1234");
+        await principal.Login.EntrarCommand.ExecuteAsync(null);
+        var relogio = System.Diagnostics.Stopwatch.StartNew();
+        for (var i = 0; i < 3000 && suite.Modulos.Any(m => !m.Vm.Logado); i++) { await Task.Delay(20); Dispatcher.UIThread.RunJobs(); }
+        Assert.All(suite.Modulos, m => Assert.True(m.Vm.Logado, $"{m.Nome}: {m.Vm.Status} ({relogio.ElapsedMilliseconds} ms)"));   // um login vale para todos
     }
 
     /// <summary>Clica no centro do controle com o mouse (no pop-up ou na janela em que ele está).</summary>
@@ -125,17 +148,20 @@ public class SuiteLogisticaTests(BancoDeTeste db, SessaoHeadless headless) : ICl
     [Fact]
     public async Task Botao_Layout_troca_o_layout_pelo_cartao_e_fixa_a_navegacao()
     {
+        BancoDeTeste.ExigirBanco();
+        await PrepararBancoAsync();
         var anterior = SuiteViewModel.ArquivoLayout;
         SuiteViewModel.ArquivoLayout = Path.Combine(Path.GetTempPath(), $"suite-{Guid.NewGuid():N}.txt");
         try
         {
-            var r = await ForaDaSessao(headless.Sessao.Dispatch(() =>
+            var r = await ForaDaSessao(headless.Sessao.Dispatch(async () =>
             {
                 var suite = NovaSuite(LayoutSuite.Lateral);
                 suite.LateralFixa = true;
                 var janela = new MainWindow { Width = 1400, Height = 860 };
                 janela.UsarSuite(suite);
                 janela.Show();
+                await EntrarAsync(suite);
                 Dispatcher.UIThread.RunJobs();
                 foreach (var destino in new[] { LayoutSuite.Faixa, LayoutSuite.Abas, LayoutSuite.Arvore, LayoutSuite.Painel, LayoutSuite.Lateral })
                 {
@@ -166,7 +192,7 @@ public class SuiteLogisticaTests(BancoDeTeste db, SessaoHeadless headless) : ICl
                 b2.Flyout!.Hide();                                        // pop-up aberto prende o encerramento da sessão headless
                 Dispatcher.UIThread.RunJobs();
                 Fechar(janela);
-                return Task.FromResult(true);
+                return true;
             }, TestContext.Current.CancellationToken));
             Assert.True(r);
         }
@@ -177,10 +203,7 @@ public class SuiteLogisticaTests(BancoDeTeste db, SessaoHeadless headless) : ICl
     public async Task Fotos_dos_cinco_layouts_com_login_unico()
     {
         BancoDeTeste.ExigirBanco();
-        var adm = await db.AdminAsync();
-        await db.App.Perfis.ConcluirConfiguracaoInicialAsync(new Vorticis.Domain.Seguranca.SessaoUsuario(adm, "admin_teste", "Admin", true, false), TestContext.Current.CancellationToken);
-        var empresa = await db.CriarEmpresaAsync("11444777000161");
-        await db.EscalarAsync<int>("UPDATE core.empresa SET modulo_frota = TRUE, modulo_erp = TRUE, modulo_fiscal = TRUE, modulo_contabil = TRUE WHERE id = @e RETURNING 1", ("e", empresa));
+        await PrepararBancoAsync();
         var anterior = SuiteViewModel.ArquivoLayout;
         SuiteViewModel.ArquivoLayout = Path.Combine(Path.GetTempPath(), $"suite-{Guid.NewGuid():N}.txt");
         try
@@ -191,14 +214,12 @@ public class SuiteLogisticaTests(BancoDeTeste db, SessaoHeadless headless) : ICl
                 var janela = new MainWindow { Width = 1500, Height = 900 };
                 janela.UsarSuite(suite);
                 janela.Show();
-                var http = ConsultaCnpjTests.HttpCnpjEInscricoes();
-                var principal = suite.Principal;
-                await principal.InicializarAsync(db.ConnectionString, new ConsultaCnpjPublica(new HttpClient(http)), new ConsultaInscricaoEstadualPublica(new HttpClient(http)));
-                (principal.Login.Usuario, principal.Login.Senha) = ("admin_teste", "Senha1234");
-                await principal.Login.EntrarCommand.ExecuteAsync(null);
-                var relogio = System.Diagnostics.Stopwatch.StartNew();
-                for (var i = 0; i < 3000 && suite.Modulos.Any(m => !m.Vm.Logado); i++) { await Task.Delay(20); Dispatcher.UIThread.RunJobs(); }
-                Assert.All(suite.Modulos, m => Assert.True(m.Vm.Logado, $"{m.Nome}: {m.Vm.Status} ({relogio.ElapsedMilliseconds} ms)"));   // um login vale para os sete
+                Dispatcher.UIThread.RunJobs();
+                // antes do login não há navegação nem troca de layout
+                Assert.DoesNotContain(janela.GetVisualDescendants().OfType<SuiteEscolhaLayoutView>(), v => v.IsEffectivelyVisible);
+                suite.EscolherLayoutCommand.Execute(LayoutSuite.Faixa);
+                Assert.Equal(LayoutSuite.Painel, suite.Layout);
+                await EntrarAsync(suite);
                 suite.TopoFixo = true;
                 Foto(janela, "suite_D_painel");
                 suite.Trocar(suite.Modulos[0]);
@@ -220,6 +241,24 @@ public class SuiteLogisticaTests(BancoDeTeste db, SessaoHeadless headless) : ICl
                 suite.Busca = "viag";
                 Assert.Contains(suite.Resultados, n => n.Titulo == "Viagens" && n.Modulo.Nome == "Frotas");
                 suite.Busca = "";
+
+                // importação de planilha dentro do cadastro: botão na barra da janela do cadastro (não há mais submenu em Cadastros)
+                suite.Trocar(suite.Modulos[0]);
+                var frotas = suite.Modulos[0].Vm;
+                Button? BotaoImportar() => janela.JanelaAtiva?.GetVisualDescendants().OfType<Button>()
+                                                 .FirstOrDefault(b => (b.Content as string)?.Contains("Importar de planilha") == true);
+                frotas.AbrirCommand.Execute(Vorticis.Frota.Desktop.ViewModels.FrotaTelas.Veiculos);
+                Dispatcher.UIThread.RunJobs();
+                Assert.True(BotaoImportar()?.IsVisible, "Veículos tem o botão de importar");
+                Foto(janela.JanelaAtiva!, "suite_cadastro_importar");
+                BotaoImportar()!.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
+                Dispatcher.UIThread.RunJobs();
+                Assert.IsType<ImportacaoCadastrosViewModel>(frotas.Conteudo);
+                frotas.AbrirCommand.Execute(Vorticis.Frota.Desktop.ViewModels.FrotaTelas.Abastecimentos);
+                Dispatcher.UIThread.RunJobs();
+                Assert.False(BotaoImportar()?.IsVisible == true, "Abastecimentos não é cadastro importável");
+                foreach (var f in frotas.JanelasAbertas.ToList()) frotas.FecharFuncaoCommand.Execute(f);
+                Dispatcher.UIThread.RunJobs();
 
                 // seletor de layouts: os cinco cartões com prévia
                 var seletor = janela.GetVisualDescendants().OfType<SuiteEscolhaLayoutView>().First();

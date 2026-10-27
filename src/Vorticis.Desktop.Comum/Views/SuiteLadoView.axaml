@@ -58,7 +58,8 @@
       <Setter Property="BorderBrush" Value="#E2E8F0" />
     </Style>
   </UserControl.Styles>
-  <Panel Name="Navegacao" Background="Transparent">
+  <!-- só depois do login: antes dele não há módulos para navegar nem troca de layout -->
+  <Panel Name="Navegacao" Background="Transparent" IsVisible="{Binding Logado}">
     <!-- Recolhida: faixa fina à esquerda; o mouse sobre ela abre a navegação (SuiteLadoView.axaml.cs) -->
     <Border Name="FaixaLateral" Width="10" IsVisible="{Binding MostraFaixaLateral}" ToolTip.Tip="Módulos (aproxime o mouse)">
       <Border.Background>

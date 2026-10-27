@@ -56,7 +56,7 @@ Só cotações abertas podem ser alteradas. Cotações abertas ou recusadas pode
 
 **Para que serve:** registrar o documento de cada carga transportada, com as partes, a carga e o valor do frete, e acompanhar a situação dele até a entrega e a fatura.
 
-**Onde fica:** módulo **Transporte**, *Documentos › Conhecimentos de transporte (CT-e)*.
+**Onde fica:** módulo **Transporte**, *Faturamento › Conhecimentos de transporte (CT-e)*.
 
 **Situações do CT-e:** **Digitado** (ainda pode ser alterado) › **Emitido** (com a chave de acesso) › **Em trânsito** (num manifesto ou com ocorrência de saída) › **Entregue**. Ou **Cancelado**.
 
@@ -86,7 +86,7 @@ Só cotações abertas podem ser alteradas. Cotações abertas ou recusadas pode
 
 **Para que serve:** reunir os CT-e que seguem no mesmo veículo, com o motorista e o percurso, e controlar a abertura e o encerramento da viagem.
 
-**Onde fica:** módulo **Transporte**, *Documentos › Manifestos de carga (MDF-e)*.
+**Onde fica:** módulo **Transporte**, *Faturamento › Manifestos de carga (MDF-e)*.
 
 **Como usar:**
 1. Clique em **Novo manifesto**. Confira a **Série** e a **Emissão** e escolha a **UF de início**, a **UF de fim** e, se passar por outros estados, as **UFs do percurso** (por exemplo, "MG, BA").

@@ -48,10 +48,11 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
         }
         static string[] Menus(MainViewModel vm) => [.. vm.Menus.Skip(1).SkipLast(2).Select(Sem)];
         Assert.Equal(["Operação", "Relatórios"], Menus(todos[0]));
-        Assert.Equal(["Operação", "Documentos", "Faturamento", "Relatórios"], Menus(todos[1]));
+        Assert.Equal(["Operação", "Faturamento", "Relatórios"], Menus(todos[1]));
         Assert.Equal(["Serviços", "Relatórios"], Menus(todos[2]));
-        // o Transporte tem todo o faturamento (não há mais o módulo Faturamento), com os relatórios de faturas, vendas e recebimentos
-        Assert.Equal(["Faturas de frete", "-", "Pedidos de venda", "Notas fiscais de saída", "-", "Emissão de NF-e na SEFAZ (em breve)",
+        // o Transporte tem todo o faturamento, com o CT-e e o MDF-e (não há mais o menu Documentos nem o módulo Faturamento), com os relatórios de faturas, vendas e recebimentos
+        Assert.Equal(["Conhecimentos de transporte (CT-e)", "Manifestos de carga (MDF-e)", "Transmissão de CT-e e MDF-e à SEFAZ (em breve)", "-",
+                      "Faturas de frete", "-", "Pedidos de venda", "Notas fiscais de saída", "-", "Emissão de NF-e na SEFAZ (em breve)",
                       "NFS-e – Nota fiscal de serviço (Padrão Nacional) (em breve)"],
                      todos[1].Menus.Single(m => Sem(m) == "Faturamento").Filhos!.Select(i => i.Titulo));
         Assert.Contains(Folhas(todos[1].Menus), i => i.Chave == Fiscal.Desktop.ViewModels.Telas.ResumoVendas);
@@ -82,12 +83,15 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
         // a emissão de CT-e/MDF-e e a NFS-e continuam "em breve"
         Assert.Contains(Folhas(todos[1].Menus), i => !i.Habilitado && i.Titulo.StartsWith("Transmissão de CT-e"));
         Assert.Contains(Folhas(todos[1].Menus), i => !i.Habilitado && i.Titulo.StartsWith("NFS-e"));
-        // importação de planilha no grupo de Cadastros de cada módulo
-        string[] Importaveis(MainViewModel vm) => [.. vm.Menus[0].Filhos!.SingleOrDefault(i => i.Titulo == "Importar de _planilha (Excel)")?.Filhos?.Select(i => i.Titulo) ?? []];
+        // importação de planilha dentro de cada cadastro (botão na janela do cadastro); não há mais o submenu em Cadastros
+        Assert.All(todos, vm => Assert.DoesNotContain(vm.Menus[0].Filhos!, i => i.Titulo.Contains("planilha")));
+        string[] Importaveis(MainViewModel vm) => [.. Folhas(vm.Menus[0].Filhos!).Where(i => vm.ImportacaoDaTela(i.Chave) is not null).Select(i => i.Titulo)];
         Assert.Equal(["Clientes", "Fornecedores", "Veículos", "Motoristas", "Frotas", "Rotas"], Importaveis(todos[0]));
         Assert.Contains("Tabelas de frete", Importaveis(todos[1]));
         Assert.Equal(["Clientes", "Fornecedores", "Produtos", "Regras fiscais"], Importaveis(todos[4]));
         Assert.Contains("Centros de custo", Importaveis(todos[5]));
+        Assert.All(todos.SelectMany(vm => Importaveis(vm).Select(t => (vm, t))), x => Assert.True(x.vm.ConheceTela(x.vm.ImportacaoDaTela(
+            Folhas(x.vm.Menus[0].Filhos!).First(i => i.Titulo == x.t).Chave)!.Tela)));
     }
 
     [Fact]

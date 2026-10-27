@@ -28,7 +28,7 @@ Menus do módulo Vorticis Fiscal. As escriturações usam os cadastros de client
    - Desmarque **Ativa** para parar de usar uma regra sem excluí-la.
 3. Em **Testar um CFOP do XML**, escolha a operação e digite um CFOP para ver como ele será escriturado.
 
-As regras também podem vir de uma planilha: *Cadastros › Importar de planilha (Excel) › Regras fiscais* (no Vorticis Suite Logística, no módulo Gerencial) (coluna *Operação* com E ou S; vazia = entrada).
+As regras também podem vir de uma planilha: abra *Cadastros › Regras fiscais* e clique em **Importar de planilha (Excel)**, no alto da janela (coluna *Operação* com E ou S; vazia = entrada).
 
 **Quando a troca acontece:**
 - Na **importação de XML** (arquivo, pasta ou pela chave): cada item recebe o CFOP (e os CSTs preenchidos) da regra da operação da nota; o CFOP do XML fica guardado e aparece na coluna *CFOP (XML)*. Item sem regra fica com o CFOP que veio, para você ajustar.
