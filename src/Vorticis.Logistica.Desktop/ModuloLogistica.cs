@@ -11,7 +11,7 @@ using T = Vorticis.Frota.Desktop.ViewModels.FrotaTelas;
 namespace Vorticis.Logistica.Desktop;
 
 /// <summary>
-/// Módulo do Vorticis Suite Logística. A Suite tem sete módulos na mesma janela (Frotas, Transporte, Manutenção, Faturamento, Financeiro, Gerencial
+/// Módulo do Vorticis Suite Logística. A Suite tem seis módulos na mesma janela (Frotas, Transporte, Manutenção, Financeiro, Gerencial
 /// e Contabilidade), cada um com os seus menus, a sua cor e o seu ícone; o login é um só. As telas são as dos módulos de origem (Frota, Gerencial,
 /// Fiscal e Contábil: mesmas regras, permissões e banco); a empresa ativa é a transportadora, cadastrada já com todos esses módulos.
 /// </summary>
@@ -25,9 +25,9 @@ public abstract class ModuloLogistica(params IModuloDesktop[] partes) : ModuloCo
     /// <summary>Telas (DataTemplates) dos módulos de origem, do App.axaml de cada um.</summary>
     public static IEnumerable<Avalonia.Application> Apps() => [new Fr.App(), new C.App(), new F.App(), new E.App()];
 
-    /// <summary>Os sete módulos, na ordem do trabalho da transportadora (é a ordem da navegação e de Ctrl+1, Ctrl+2...).</summary>
+    /// <summary>Os seis módulos, na ordem do trabalho da transportadora (é a ordem da navegação e de Ctrl+1, Ctrl+2...).</summary>
     public static IReadOnlyList<ModuloLogistica> Todos() =>
-        [new ModuloFrotaLogistica(), new ModuloTransporte(), new ModuloManutencao(), new ModuloFaturamento(), new ModuloFinanceiro(), new ModuloGerencial(), new ModuloContabilidade()];
+        [new ModuloFrotaLogistica(), new ModuloTransporte(), new ModuloManutencao(), new ModuloFinanceiro(), new ModuloGerencial(), new ModuloContabilidade()];
 
     public const string NomeSuite = "Vorticis Suite Logística";
 
@@ -79,7 +79,7 @@ public abstract class ModuloLogistica(params IModuloDesktop[] partes) : ModuloCo
     /// <summary>Cadastros › Transportadoras só no módulo Frotas (nos demais, a transportadora é só escolhida no alto da tela).</summary>
     public virtual bool EmpresasNoMenuCadastros => false;
 
-    /// <summary>Todas as funções de faturamento (módulo Faturamento e menu Faturamento do Transporte); o módulo precisa das partes Frota e Gerencial.</summary>
+    /// <summary>Todas as funções de faturamento (menu Faturamento do Transporte); o módulo precisa das partes Frota e Gerencial.</summary>
     protected IReadOnlyList<ItemMenu> FuncoesFaturamento() =>
     [
         .. De(Frota, ItemMenu.Tela("Faturas de frete", T.Faturas)), ItemMenu.Separador,
@@ -181,7 +181,7 @@ public sealed class ModuloTransporte() : ModuloLogistica(Frota, Gerencial, Fisca
                 ItemMenu.Tela("Manifestos de carga (MDF-e)", T.Manifestos),
                 ItemMenu.Separador,
                 ItemMenu.EmBreve("Transmissão de CT-e e MDF-e à SEFAZ"))),
-        // todas as funções de faturamento também aqui (as mesmas do módulo Faturamento)
+        // todo o faturamento da transportadora: faturas de frete, pedidos de venda e notas fiscais de saída
         ItemMenu.Submenu("_Faturamento", [.. FuncoesFaturamento()]),
         Relatorios(De(Frota,
             ItemMenu.Tela(TabelasTms.TituloFretesCliente, T.RelFretesCliente),
@@ -220,25 +220,6 @@ public sealed class ModuloManutencao() : ModuloLogistica(Frota)
             ItemMenu.Tela("Notas fiscais de compra", T.RelNotas),
             ItemMenu.Tela("Manutenções preventivas", T.RelPreventivas),
             ItemMenu.Tela("Histórico de manutenção por veículo", T.RelHistoricoManutencao))),
-    ];
-}
-
-/// <summary>Faturamento: faturas de frete, pedidos de venda e notas fiscais de saída.</summary>
-public sealed class ModuloFaturamento() : ModuloLogistica(Gerencial, Fiscal, Frota)
-{
-    protected override IReadOnlyList<(string Titulo, IModuloDesktop Parte)> AbasParametros => [("Gerencial", Gerencial), ("Frota e transporte", Frota)];
-    public override string NomeCurto => "Faturamento";
-    public override string Subtitulo => "Faturas de frete, pedidos de venda e notas fiscais de saída";
-    public override string CorDestaque => "#7C3AED";
-    public override string CorBarra => "#4C1D95";
-    public override string Icone => IconesModulos.Faturamento;
-
-    public override IReadOnlyList<ItemMenu> ItensCadastros => De(Gerencial, ItemMenu.Tela("Formas de pagamento", TelasComuns.FormasPagamento));
-
-    public override IReadOnlyList<ItemMenu> Menus =>
-    [
-        ItemMenu.Submenu("_Faturamento", [.. FuncoesFaturamento()]),
-        Relatorios(RelatoriosFaturamento()),
     ];
 }
 
@@ -320,5 +301,5 @@ public sealed class ModuloContabilidade() : ModuloLogistica(Contabil)
             : m)];
 }
 
-/// <summary>Uma janela do Vorticis Suite Logística por módulo (a Suite reúne as sete).</summary>
+/// <summary>Uma janela do Vorticis Suite Logística por módulo (a Suite reúne as seis).</summary>
 public sealed class MainViewModel(ModuloLogistica modulo) : MainViewModelBase(modulo);

@@ -6,8 +6,8 @@
   (C, F, FP, E, G, CD, FR, VL), para não confundir os sistemas na barra de tarefas.
   VorticisInstalador.ico — o ícone do instalador (e da Vorticis Suite), diferente de todos: a espiral branca sobre um quadrado
   azul-marinho arredondado, com uma faixa nas cores dos módulos e uma seta de instalação.
-  VorticisLogisticaInstalador.ico — o instalador do Vorticis Suite Logística: caminhão branco sobre uma estrada em faixas com as cores dos
-  sete módulos (CORES_LOGISTICA), fundo azul-noite e selo dourado de instalação.
+  VorticisLogistica.ico (programa) e VorticisLogisticaInstalador.ico (instalador) do Vorticis Suite Logística: caminhão branco sobre uma estrada em faixas com as cores dos
+  módulos (CORES_LOGISTICA) e fundo azul-noite; o do instalador tem ainda o selo dourado de instalação.
 
 Usa só o símbolo (a espiral à esquerda da logo): o nome VORTICIS fica ilegível nos tamanhos de ícone.
 O fundo branco da logo vira transparente. As cores devem ser as mesmas de IModuloDesktop.CorDestaque e
@@ -159,14 +159,17 @@ def instalador(base: Image.Image, fundo: str, modulos: list[str]) -> Image.Image
 CORES_LOGISTICA = ["#0284C7", "#0D9488", "#EA580C", "#7C3AED", "#16A34A", "#DB2777", "#4F46E5"]
 
 
-def instalador_logistica() -> Image.Image:
+def instalador_logistica(selo_instalacao: bool = True) -> Image.Image:
     """
-    Ícone do instalador do Vorticis Suite Logística: fundo azul-noite, uma estrada em faixas com as cores dos sete módulos,
-    um caminhão branco (com a mesma faixa colorida no baú) e o selo dourado de instalação. Desenhado em 2048 e reduzido.
+    Ícone do Vorticis Suite Logística: fundo azul-noite, uma estrada em faixas com as cores dos módulos e um caminhão branco (com a mesma
+    faixa colorida no baú). No instalador, com o selo dourado de instalação; no programa, sem o selo e com o caminhão maior e centralizado.
+    Desenhado em 2048 e reduzido.
     """
     S = 2048
     k = S / 1024                                   # coordenadas abaixo na grade de 1024
-    def P(x, y): return (x * k, y * k)
+    # programa: caminhão 12% maior e um pouco mais à direita e para cima (o espaço do selo fica livre)
+    esc, dx, dy = (1.0, 0, 0) if selo_instalacao else (1.12, -10, -30)
+    def P(x, y): return ((512 + (x - 512) * esc + dx) * k, (512 + (y - 512) * esc + dy) * k)
     img = Image.new("RGBA", (S, S), (0, 0, 0, 0))
     # fundo: degradê vertical azul-noite com um brilho azul no alto à esquerda
     yy, xx = np.mgrid[0:S, 0:S].astype(np.float32) / S
@@ -219,7 +222,11 @@ def instalador_logistica() -> Image.Image:
         d.ellipse((*P(cx - 58, 646 - 58), *P(cx + 58, 646 + 58)), fill=branco)
         d.ellipse((*P(cx - 32, 646 - 32), *P(cx + 32, 646 + 32)), fill="#CBD5E1")
         d.ellipse((*P(cx - 12, 646 - 12), *P(cx + 12, 646 + 12)), fill=noite)
+    if not selo_instalacao:
+        img.alpha_composite(Image.composite(desenho, Image.new("RGBA", (S, S), (0, 0, 0, 0)), mascara))
+        return img.resize((512, 512), Image.LANCZOS)
     # selo de instalação: círculo dourado com seta para baixo, contornado na cor do fundo
+    def P(x, y): return (x * k, y * k)              # o selo fica no canto, sem a escala do caminhão
     cx, cy, r = 826, 214, 132
     d.ellipse((*P(cx - r - 18, cy - r - 18), *P(cx + r + 18, cy + r + 18)), fill="#0E1B33")
     d.ellipse((*P(cx - r, cy - r), *P(cx + r, cy + r)), fill="#F59E0B")
@@ -245,6 +252,7 @@ def main() -> None:
     for nome, (fundo, modulos) in INSTALADORES.items():
         salvar(nome, instalador(base, fundo, modulos))
     salvar("VorticisLogisticaInstalador", instalador_logistica())
+    salvar("VorticisLogistica", instalador_logistica(selo_instalacao=False))
 
 
 if __name__ == "__main__":
@@ -252,5 +260,6 @@ if __name__ == "__main__":
     # "python3 -I gerar_icone.py VorticisLogisticaInstalador" refaz só o ícone do instalador da Suite Logística
     if sys.argv[1:] == ["VorticisLogisticaInstalador"]:
         salvar("VorticisLogisticaInstalador", instalador_logistica())
+        salvar("VorticisLogistica", instalador_logistica(selo_instalacao=False))
     else:
         main()

@@ -14,7 +14,7 @@ using Vorticis.Logistica.Desktop;
 namespace Vorticis.Desktop.Tests;
 
 /// <summary>
-/// Vorticis Suite Logística: sete módulos na mesma janela (login único), cinco layouts de navegação e o seletor de layouts.
+/// Vorticis Suite Logística: seis módulos na mesma janela (login único), cinco layouts de navegação e o seletor de layouts.
 /// Com VORTICIS_SCREENSHOTS, salva uma foto de cada layout.
 /// </summary>
 public class SuiteLogisticaTests(BancoDeTeste db, SessaoHeadless headless) : IClassFixture<BancoDeTeste>
@@ -47,12 +47,12 @@ public class SuiteLogisticaTests(BancoDeTeste db, SessaoHeadless headless) : ICl
         new([.. ModuloLogistica.Todos().Select(m => new MainViewModel(m))], layout, ModuloLogistica.NomeSuite, new ModuloFrotaLogistica().NomeExecutavel, ordemAlfabetica: false);
 
     [Fact]
-    public async Task Sete_modulos_na_ordem_do_trabalho_com_icone_e_cor() => Assert.True(await ForaDaSessao(headless.Sessao.Dispatch(() =>
+    public async Task Seis_modulos_na_ordem_do_trabalho_com_icone_e_cor() => Assert.True(await ForaDaSessao(headless.Sessao.Dispatch(() =>
     {
         var suite = NovaSuite(LayoutSuite.Lateral);
-        Assert.Equal(["Frotas", "Transporte", "Manutenção", "Faturamento", "Financeiro", "Gerencial", "Contabilidade"], suite.Modulos.Select(m => m.Nome));
+        Assert.Equal(["Frotas", "Transporte", "Manutenção", "Financeiro", "Gerencial", "Contabilidade"], suite.Modulos.Select(m => m.Nome));
         Assert.All(suite.Modulos, m => Assert.NotNull(m.Icone));
-        Assert.Equal(7, suite.Modulos.Select(m => m.Vm.Modulo.CorDestaque).Distinct().Count());
+        Assert.Equal(6, suite.Modulos.Select(m => m.Vm.Modulo.CorDestaque).Distinct().Count());
         Assert.Equal("Frotas", suite.Principal.Modulo.NomeCurto);   // o login é feito no módulo Frotas e vale para todos
         Assert.Equal(5, suite.OpcoesLayout.Count);
         Assert.Single(suite.OpcoesLayout, o => o.Selecionado);
@@ -204,7 +204,7 @@ public class SuiteLogisticaTests(BancoDeTeste db, SessaoHeadless headless) : ICl
                 suite.Trocar(suite.Modulos[0]);
                 Foto(janela, "suite_D_modulo");
                 foreach (var (layout, nome, modulo) in new[] { (LayoutSuite.Abas, "suite_A_abas", 1), (LayoutSuite.Lateral, "suite_B_lateral", 2),
-                                                              (LayoutSuite.Arvore, "suite_C_arvore", 6), (LayoutSuite.Faixa, "suite_E_faixa", 4) })
+                                                              (LayoutSuite.Arvore, "suite_C_arvore", 5), (LayoutSuite.Faixa, "suite_E_faixa", 3) })
                 {
                     suite.Layout = layout;
                     (suite.TopoFixo, suite.LateralFixa) = (true, true);

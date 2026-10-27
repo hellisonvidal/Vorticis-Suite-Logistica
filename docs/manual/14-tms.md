@@ -116,7 +116,7 @@ A ocorrência não pode ser antes da emissão do CT-e nem no futuro. CT-e entreg
 
 **Para que serve:** cobrar do cliente vários fretes de uma vez, numa fatura com vencimento, e lançar a conta a receber no Financeiro.
 
-**Onde fica:** *Faturamento › Faturas de frete*, no módulo **Transporte** ou no módulo **Faturamento**.
+**Onde fica:** módulo **Transporte**, *Faturamento › Faturas de frete*.
 
 **Como usar:**
 1. Em **Nova fatura**, escolha o **Cliente (tomador)**. Aparecem os CT-e emitidos dele que ainda não foram faturados, todos marcados. Desmarque os que ficam para depois; o total é mostrado embaixo.
@@ -129,7 +129,7 @@ A lista mostra o **saldo a receber** de cada fatura, vindo da conta a receber, e
 
 ## Relatórios do TMS
 
-**Onde fica:** *Relatórios* do módulo **Transporte** (o relatório de faturas fica em *Relatórios* do módulo **Faturamento**).
+**Onde fica:** *Relatórios* do módulo **Transporte** (junto com os relatórios de faturas, vendas e recebimentos).
 
 | Relatório | O que mostra |
 |---|---|

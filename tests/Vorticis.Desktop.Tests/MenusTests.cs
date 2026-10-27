@@ -60,11 +60,11 @@ public class MenusTests
         Assert.Contains(@"SetupIconFile=icone\VorticisLogisticaInstalador.ico", File.ReadAllText(Path.Combine(pasta.FullName, "instalador", "VorticisLogistica.iss")));
         var gerador = File.ReadAllText(Path.Combine(pasta.FullName, "instalador", "icone", "gerar_icone.py"));
         Assert.All(modulos, m => Assert.Contains($"\"{m.Modulo.NomeExecutavel}\": (\"{m.Modulo.CorDestaque}\", \"{m.Modulo.CorBarra}\"", gerador));
-        // Suite Logística: os sete módulos usam o ícone do programa (VorticisLogistica.ico); cada um tem a sua cor e o seu desenho na navegação
+        // Suite Logística: os seis módulos usam o ícone do programa (VorticisLogistica.ico); cada um tem a sua cor e o seu desenho na navegação
         Assert.True(File.Exists(Path.Combine(pasta.FullName, "instalador", "icone", "VorticisLogistica.ico")));
         Assert.Contains("\"VorticisLogistica\": (", gerador);
         var logistica = Vorticis.Logistica.Desktop.ModuloLogistica.Todos();
-        Assert.Equal(7, logistica.Select(m => m.CorDestaque).Distinct().Count());
+        Assert.Equal(6, logistica.Select(m => m.CorDestaque).Distinct().Count());
     }
 
     [Fact]

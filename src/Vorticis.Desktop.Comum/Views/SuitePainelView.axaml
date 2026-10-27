@@ -45,7 +45,7 @@
       <TextBlock Text="{Binding Hoje}" FontSize="13.5" Foreground="#64748B" Margin="0,0,0,18" />
       <ItemsControl Name="CartoesModulos" ItemsSource="{Binding Modulos}">
         <ItemsControl.ItemsPanel>
-          <ItemsPanelTemplate><UniformGrid Columns="4" /></ItemsPanelTemplate>
+          <ItemsPanelTemplate><UniformGrid Columns="3" /></ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
         <ItemsControl.ItemTemplate>
           <DataTemplate x:DataType="vm:ModuloSuite">

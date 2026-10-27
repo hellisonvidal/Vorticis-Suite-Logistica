@@ -37,7 +37,7 @@ As regras também podem vir de uma planilha: *Cadastros › Importar de planilha
 ## Documentos de entrada e de saída (digitação)
 
 **Para que serve:** consultar as notas fiscais lançadas e importadas e lançar à mão as que não têm XML.
-**Onde fica:** *Lançamentos › Documentos fiscais › Entrada* e *Saída* (no Vorticis Suite Logística: módulo **Gerencial**, *Compras › Notas fiscais de entrada*, e módulo **Faturamento**, *Faturamento › Notas fiscais de saída*).
+**Onde fica:** *Lançamentos › Documentos fiscais › Entrada* e *Saída* (no Vorticis Suite Logística: módulo **Gerencial**, *Compras › Notas fiscais de entrada*, e módulo **Transporte**, *Faturamento › Notas fiscais de saída*).
 
 A tela abre como **consulta**: escolha o **Período** e clique em **Consultar**. A lista mostra data, modelo, série, número, cliente ou fornecedor, valor, origem (digitada ou XML) e se já foi contabilizada. Os botões da consulta:
 

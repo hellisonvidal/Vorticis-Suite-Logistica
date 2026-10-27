@@ -3,7 +3,7 @@ using Avalonia.Markup.Xaml;
 namespace Vorticis.Logistica.Desktop;
 
 /// <summary>
-/// Vorticis Suite Logística: os módulos da transportadora (Frota, Transporte, Manutenção, Faturamento, Financeiro, Gerencial e Contabilidade)
+/// Vorticis Suite Logística: os módulos da transportadora (Frotas, Transporte com o faturamento, Manutenção, Financeiro, Gerencial e Contabilidade)
 /// na mesma janela, com um login só e a navegação entre módulos no layout escolhido pelo usuário.
 /// </summary>
 public partial class App : AppSuiteBase
