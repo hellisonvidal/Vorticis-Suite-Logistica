@@ -1,61 +1,92 @@
 <UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
+             xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels" xmlns:v="using:Vorticis.Desktop.Comum.Views"
              x:Class="Vorticis.Desktop.Comum.Views.SuitePainelView" x:DataType="vm:SuiteViewModel">
-  <!-- Suite, layout D: painel inicial com um cartão por módulo (atalhos e botão para abrir o módulo) -->
+  <!-- Suite, layout D: painel inicial com um cartão por módulo (ícone, funções principais e botão para abrir o módulo) -->
   <UserControl.Styles>
     <Style Selector="Button.atalho">
       <Setter Property="Background" Value="Transparent" />
       <Setter Property="BorderThickness" Value="0" />
-      <Setter Property="Padding" Value="0,3" />
+      <Setter Property="Padding" Value="8,5" />
+      <Setter Property="CornerRadius" Value="8" />
       <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
     </Style>
     <Style Selector="Button.atalho:pointerover /template/ ContentPresenter">
-      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Background" Value="#F1F5F9" />
     </Style>
-    <Style Selector="Button.atalho:pointerover TextBlock">
-      <Setter Property="TextDecorations" Value="Underline" />
+    <Style Selector="Button.abrir">
+      <Setter Property="Foreground" Value="White" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Padding" Value="16,8" />
+      <Setter Property="CornerRadius" Value="10" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="BorderThickness" Value="0" />
+    </Style>
+    <Style Selector="Button.abrir:pointerover /template/ ContentPresenter">
+      <Setter Property="Opacity" Value="0.9" />
+    </Style>
+    <Style Selector="Border.cartao">
+      <Setter Property="BoxShadow" Value="0 4 14 0 #1494A3B8" />
+    </Style>
+    <Style Selector="Border.cartao:pointerover">
+      <Setter Property="BoxShadow" Value="0 12 28 0 #2A64748B" />
     </Style>
   </UserControl.Styles>
-  <ScrollViewer Background="#EEF1F5">
-    <StackPanel Margin="28,22" Spacing="6">
-      <TextBlock Text="{Binding Saudacao}" FontSize="26" FontWeight="Bold" Foreground="#0F172A" />
-      <TextBlock Text="{Binding Hoje}" FontSize="13.5" Foreground="#64748B" Margin="0,0,0,14" />
+  <ScrollViewer>
+    <ScrollViewer.Background>
+      <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Color="#F4F7FB" Offset="0" />
+        <GradientStop Color="#E9EEF6" Offset="1" />
+      </LinearGradientBrush>
+    </ScrollViewer.Background>
+    <StackPanel Margin="32,26" Spacing="6">
+      <TextBlock Text="{Binding Saudacao}" FontSize="28" FontWeight="Bold" Foreground="#0F172A" />
+      <TextBlock Text="{Binding Hoje}" FontSize="13.5" Foreground="#64748B" Margin="0,0,0,18" />
       <ItemsControl Name="CartoesModulos" ItemsSource="{Binding Modulos}">
         <ItemsControl.ItemsPanel>
-          <ItemsPanelTemplate><UniformGrid Columns="3" /></ItemsPanelTemplate>
+          <ItemsPanelTemplate><UniformGrid Columns="4" /></ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
         <ItemsControl.ItemTemplate>
           <DataTemplate x:DataType="vm:ModuloSuite">
-            <Border Margin="0,0,18,18" CornerRadius="16" Background="White" BorderBrush="#E2E8F0" BorderThickness="1" BoxShadow="0 4 14 0 #1F94A3B8"
-                    ClipToBounds="True">
+            <Border Classes="cartao" Margin="0,0,18,18" CornerRadius="18" Background="White" BorderBrush="#E2E8F0" BorderThickness="1" ClipToBounds="True">
               <DockPanel>
-                <Border DockPanel.Dock="Top" Background="{Binding Cor}" Padding="18,16">
-                  <StackPanel Orientation="Horizontal" Spacing="14">
-                    <Border Width="48" Height="48" CornerRadius="12" Background="White">
-                      <TextBlock Text="{Binding Sigla}" FontSize="16" FontWeight="Bold" Foreground="{Binding Cor}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
-                    <StackPanel VerticalAlignment="Center">
-                      <TextBlock Text="{Binding Nome}" FontSize="21" FontWeight="Bold" Foreground="White" />
-                      <TextBlock Text="{Binding NomeCompleto}" FontSize="12" Foreground="#E2E8F0" />
+                <Border DockPanel.Dock="Top" Background="{Binding Gradiente}" Padding="18,18" ClipToBounds="True">
+                  <Panel>
+                    <!-- ícone grande e translúcido ao fundo, como marca d'água -->
+                    <v:IconeVetorial Width="96" Height="96" Margin="0,-26,-22,-30" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                     Geometria="{Binding Icone}" Preenchimento="#26FFFFFF" />
+                    <StackPanel Orientation="Horizontal" Spacing="14">
+                      <Border Width="50" Height="50" CornerRadius="14" Background="#33FFFFFF" BorderBrush="#55FFFFFF" BorderThickness="1">
+                        <v:IconeVetorial Width="28" Height="28" Geometria="{Binding Icone}" Preenchimento="White" />
+                      </Border>
+                      <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Nome}" FontSize="20" FontWeight="Bold" Foreground="White" />
+                        <TextBlock Text="{Binding Abertas, StringFormat='{}{0} função(ões) aberta(s)'}" IsVisible="{Binding TemAbertas}"
+                                   Foreground="#E0FFFFFF" FontSize="11.5" />
+                      </StackPanel>
                     </StackPanel>
-                  </StackPanel>
+                  </Panel>
                 </Border>
-                <Grid DockPanel.Dock="Bottom" ColumnDefinitions="Auto,*" Margin="18,6,18,16">
-                  <Button Content="Abrir módulo  →" Background="{Binding Cor}" Foreground="White" FontWeight="SemiBold" Padding="16,8" CornerRadius="10"
-                          Command="{Binding $parent[UserControl].((vm:SuiteViewModel)DataContext).TrocarCommand}" CommandParameter="{Binding}" />
-                  <TextBlock Grid.Column="1" Text="{Binding Abertas, StringFormat='{}{0} função(ões) aberta(s)'}" IsVisible="{Binding TemAbertas}"
-                             Foreground="#64748B" FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                </Grid>
-                <StackPanel Margin="18,14,18,6" Spacing="2">
-                  <TextBlock Text="{Binding Subtitulo}" Foreground="#334155" FontSize="13.5" TextWrapping="Wrap" Margin="0,0,0,6" />
+                <Button DockPanel.Dock="Bottom" Classes="abrir" Background="{Binding Gradiente}" Margin="18,4,18,18" HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        Command="{Binding $parent[UserControl].((vm:SuiteViewModel)DataContext).TrocarCommand}" CommandParameter="{Binding}">
+                  <TextBlock Text="Abrir módulo  →" Foreground="White" />
+                </Button>
+                <StackPanel Margin="14,14,14,6" Spacing="2">
+                  <TextBlock Text="{Binding Subtitulo}" Foreground="#334155" FontSize="12.5" TextWrapping="Wrap" Margin="4,0,4,8" MinHeight="34" />
+                  <TextBlock Text="FUNÇÕES PRINCIPAIS" FontSize="10" FontWeight="Bold" Foreground="#94A3B8" LetterSpacing="1.2" Margin="4,0,0,2" />
                   <ItemsControl ItemsSource="{Binding Atalhos}">
                     <ItemsControl.ItemTemplate>
                       <DataTemplate x:DataType="vm:NoSuite">
                         <Button Classes="atalho" Command="{Binding $parent[UserControl].((vm:SuiteViewModel)DataContext).AbrirFuncaoCommand}" CommandParameter="{Binding}">
-                          <StackPanel Orientation="Horizontal" Spacing="8">
-                            <Ellipse Width="7" Height="7" Fill="{Binding Modulo.Cor}" VerticalAlignment="Center" />
-                            <TextBlock Text="{Binding Titulo}" Foreground="#0F172A" />
-                          </StackPanel>
+                          <DockPanel>
+                            <TextBlock DockPanel.Dock="Right" Text="›" Foreground="#94A3B8" FontSize="15" VerticalAlignment="Center" />
+                            <StackPanel Orientation="Horizontal" Spacing="9">
+                              <Ellipse Width="8" Height="8" Fill="{Binding Modulo.Cor}" VerticalAlignment="Center" />
+                              <TextBlock Text="{Binding Titulo}" Foreground="#0F172A" TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+                          </DockPanel>
                         </Button>
                       </DataTemplate>
                     </ItemsControl.ItemTemplate>

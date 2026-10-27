@@ -41,7 +41,7 @@ Uma tabela já usada em cotações não pode ser excluída: desmarque **Ativa** 
 
 **Para que serve:** passar o preço do frete ao cliente antes do transporte e guardar o que foi aprovado.
 
-**Onde fica:** *Emissão › Cotações de frete*.
+**Onde fica:** módulo **Transporte**, *Operação › Cotações de frete*.
 
 **Como usar:**
 1. Clique em **Nova cotação**. Informe a **Data**, a **Validade**, o **Cliente** e a **Tabela de frete**.
@@ -56,7 +56,7 @@ Só cotações abertas podem ser alteradas. Cotações abertas ou recusadas pode
 
 **Para que serve:** registrar o documento de cada carga transportada, com as partes, a carga e o valor do frete, e acompanhar a situação dele até a entrega e a fatura.
 
-**Onde fica:** *Emissão › Conhecimentos de transporte (CT-e)*.
+**Onde fica:** módulo **Transporte**, *Documentos › Conhecimentos de transporte (CT-e)*.
 
 **Situações do CT-e:** **Digitado** (ainda pode ser alterado) › **Emitido** (com a chave de acesso) › **Em trânsito** (num manifesto ou com ocorrência de saída) › **Entregue**. Ou **Cancelado**.
 
@@ -86,7 +86,7 @@ Só cotações abertas podem ser alteradas. Cotações abertas ou recusadas pode
 
 **Para que serve:** reunir os CT-e que seguem no mesmo veículo, com o motorista e o percurso, e controlar a abertura e o encerramento da viagem.
 
-**Onde fica:** *Emissão › Manifestos de carga (MDF-e)*.
+**Onde fica:** módulo **Transporte**, *Documentos › Manifestos de carga (MDF-e)*.
 
 **Como usar:**
 1. Clique em **Novo manifesto**. Confira a **Série** e a **Emissão** e escolha a **UF de início**, a **UF de fim** e, se passar por outros estados, as **UFs do percurso** (por exemplo, "MG, BA").
@@ -100,7 +100,7 @@ Só cotações abertas podem ser alteradas. Cotações abertas ou recusadas pode
 
 **Para que serve:** acompanhar cada CT-e até a entrega e guardar o comprovante (quem recebeu, quando).
 
-**Onde fica:** *Operações › Entregas e ocorrências*.
+**Onde fica:** módulo **Transporte**, *Operação › Entregas e ocorrências*.
 
 **Como usar:**
 1. A lista mostra os CT-e emitidos e em trânsito, com a **previsão** e o **prazo**. Os atrasados aparecem primeiro.
@@ -116,7 +116,7 @@ A ocorrência não pode ser antes da emissão do CT-e nem no futuro. CT-e entreg
 
 **Para que serve:** cobrar do cliente vários fretes de uma vez, numa fatura com vencimento, e lançar a conta a receber no Financeiro.
 
-**Onde fica:** *Emissão › Faturas de frete*.
+**Onde fica:** módulo **Faturamento**, *Faturamento › Faturas de frete*.
 
 **Como usar:**
 1. Em **Nova fatura**, escolha o **Cliente (tomador)**. Aparecem os CT-e emitidos dele que ainda não foram faturados, todos marcados. Desmarque os que ficam para depois; o total é mostrado embaixo.
@@ -129,7 +129,7 @@ A lista mostra o **saldo a receber** de cada fatura, vindo da conta a receber, e
 
 ## Relatórios do TMS
 
-**Onde fica:** *Relatórios › Transporte (TMS)*.
+**Onde fica:** *Relatórios* do módulo **Transporte** (o relatório de faturas fica em *Relatórios* do módulo **Faturamento**).
 
 | Relatório | O que mostra |
 |---|---|

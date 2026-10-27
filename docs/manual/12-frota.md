@@ -4,7 +4,7 @@ Módulo **Vorticis Frota** (ícone grafite): coordenação da frota e manutenç�
 
 ## Onde o Frota está
 
-O Frota é a base do **[Vorticis Suite Logística](13-logistica.md)**, o programa único da transportadora: ali, o menu **Operação** deste capítulo vira **Operações** (com a **Manutenção** como submenu, logo abaixo de *Compras*), e os relatórios da frota ficam no menu **Relatórios** (submenus *Frota e operação* e *Manutenção*), ao lado do financeiro e do contábil. O Vorticis Frota também pode ser aberto sozinho.
+O Frota é a base do **[Vorticis Suite Logística](13-logistica.md)**, o programa único da transportadora: ali, as funções deste capítulo ficam nos módulos **Frota** (cadastros, abastecimentos, viagens, diárias, pedágio e relatórios da frota), **Transporte** (coletas e o TMS) e **Manutenção** (planos, peças e serviços, ordens de serviço, autorizações e relatórios da manutenção). O Vorticis Frota também pode ser aberto sozinho.
 
 ## Ordem dos cadastros
 
@@ -114,7 +114,7 @@ Embaixo ficam as decisões dos últimos 30 dias (quem decidiu, quando e o valor)
 
 ## Notas de compra
 
-**Onde fica:** no programa Frota, *Manutenção › Notas de compra*. No Vorticis Suite Logística esta tela não fica no menu (lá a manutenção fica em *Operações › Manutenção*): as notas das oficinas e das peças são lançadas como notas fiscais de entrada, em *Operações › Compras › Notas fiscais de entrada*.
+**Onde fica:** no programa Frota, *Manutenção › Notas de compra*. No Vorticis Suite Logística esta tela não fica no menu: as notas das oficinas e das peças são lançadas como notas fiscais de entrada, no módulo **Gerencial**, *Compras › Notas fiscais de entrada*.
 
 1. **Nova nota**: escolha a **Ordem de serviço** atendida. A oficina da ordem vem como fornecedor, e embaixo aparece o valor da ordem para conferir com a nota.
 2. Informe o **Fornecedor**, o **CNPJ/CPF**, o **Número** e a **série**, a **Emissão** e, se tiver, a **Chave de acesso** de 44 dígitos (o sistema confere o dígito e se a chave é do CNPJ informado).
@@ -189,7 +189,7 @@ O valor lançado é o do pagamento (o adiantamento ou, sem adiantamento, o total
 
 **Para que serve:** agendar e acompanhar as coletas de mercadoria nos clientes.
 
-**Onde fica:** *Operação › Coletas › Ordens de coleta*.
+**Onde fica:** *Operação › Coletas › Ordens de coleta* (no Vorticis Suite Logística: módulo **Transporte**, *Operação › Ordens de coleta*).
 
 1. **Nova ordem**: informe a **data e hora** agendadas, o **remetente** e o **destinatário** (clientes ou fornecedores já cadastrados), o **endereço de coleta**, a **mercadoria**, os **volumes**, o **peso** e o **valor**. Escolha o veículo, o motorista e a rota, se já souber. O número é sequencial.
 2. **Gravar**. A coleta fica **Agendada**.
@@ -203,13 +203,13 @@ As coletas também alimentam o TMS: no conhecimento de transporte, escolha a ord
 
 **Para que serve:** trazer as passagens de pedágio do arquivo da operadora (Sem Parar, ConectCar, Veloe e outras), ver o gasto por veículo e lançar a **nota fiscal de entrada** da operadora sem digitar item por item.
 
-**Onde fica:** *Operações › Pedágio* (*Passagens e notas* e *Layouts de arquivo*).
+**Onde fica:** *Operação › Pedágio* (*Passagens e notas* e *Layouts de arquivo*); no Vorticis Suite Logística, no módulo **Frota**.
 
 ### Layouts de arquivo
 
 Cada operadora manda um arquivo diferente (planilha Excel ou CSV). O layout diz ao sistema em que coluna está cada informação. Faça uma vez por operadora:
 
-1. Abra *Operações › Pedágio › Layouts de arquivo* e clique em **Novo layout**.
+1. Abra *Operação › Pedágio › Layouts de arquivo* e clique em **Novo layout**.
 2. Dê um **Nome** (ex.: *Sem Parar*) e escolha a **Operadora**: o fornecedor que emite a nota de pedágio (cadastre antes em *Cadastros › Fornecedores*, se não existir).
 3. Clique em **Carregar arquivo de exemplo...** e escolha um arquivo dessa operadora. O sistema lê o cabeçalho e sugere as colunas.
 4. Confira as colunas da **data**, da **hora** (se vier separada; se a data já traz a hora, deixe *(nenhuma)*), da **placa**, da **praça** (opcional) e do **valor**.
@@ -217,7 +217,7 @@ Cada operadora manda um arquivo diferente (planilha Excel ou CSV). O layout diz 
 
 ### Passagens e notas
 
-1. Abra *Operações › Pedágio › Passagens e notas*, escolha a **Operadora** e clique em **Importar arquivo...**.
+1. Abra *Operação › Pedágio › Passagens e notas*, escolha a **Operadora** e clique em **Importar arquivo...**.
 2. O sistema importa cada passagem com data e hora, placa, praça e valor:
    - a placa é ligada ao veículo de *Cadastros › Veículos*; placa não cadastrada aparece como *(placa não cadastrada)*;
    - o mesmo arquivo (ou passagens repetidas) não entra duas vezes;
@@ -225,7 +225,7 @@ Cada operadora manda um arquivo diferente (planilha Excel ou CSV). O layout diz 
 3. Filtre pelo **Período** e por **Só sem nota** para conferir com a fatura da operadora. O topo mostra o total, os veículos e as passagens sem nota.
 4. Para lançar a nota da operadora: deixe a operadora e o período da fatura escolhidos, informe o **Número da nota**, a **Série**, a **Emissão** e, se tiver, a **Chave de acesso**, e clique em **Gerar nota fiscal de entrada**.
    - A nota (NF-e de entrada) tem um item por veículo, com a quantidade de passagens e o período na descrição, e o CFOP do layout.
-   - Ela é gravada como as notas digitadas: aparece em *Operações › Compras › Notas fiscais de entrada*, gera a duplicata a pagar e é contabilizada on-line, se houver regra.
+   - Ela é gravada como as notas digitadas: aparece em *Compras › Notas fiscais de entrada* (módulo Gerencial), gera a duplicata a pagar e é contabilizada on-line, se houver regra.
    - As passagens ficam ligadas à nota (coluna *Nota*). Se a nota for excluída, elas voltam a ficar sem nota.
 5. Passagens importadas por engano (sem nota) podem ser marcadas e excluídas em **Excluir marcadas**.
 
@@ -243,7 +243,7 @@ Embaixo do título, os números da frota: veículos ativos, motoristas e viagens
 
 ## Relatórios da frota
 
-**Onde fica:** *Relatórios › Frota e operação* (no Vorticis Suite Logística) ou *Relatórios* (no Frota).
+**Onde fica:** *Relatórios* (no Vorticis Suite Logística, nos módulos **Frota**, **Transporte** e **Manutenção**, cada um com os seus).
 
 Escolha o **Período** e, nos relatórios que têm, o **Veículo** e o **Motorista** (**(todos)** mostra tudo) e clique em **Gerar**; o relatório aparece na tela e pode ser exportado em PDF, Excel ou CSV.
 
@@ -261,7 +261,7 @@ Escolha o **Período** e, nos relatórios que têm, o **Veículo** e o **Motoris
 
 ## Relatórios da manutenção
 
-**Onde fica:** *Relatórios › Manutenção*: *Acompanhamento das ordens de serviço*, *Aprovações de serviços*, *Notas fiscais de compra*, *Manutenções preventivas* e *Histórico de manutenção por veículo*.
+**Onde fica:** *Relatórios* do módulo **Manutenção** (no Frota, no mesmo menu Relatórios): *Acompanhamento das ordens de serviço*, *Aprovações de serviços*, *Notas fiscais de compra*, *Manutenções preventivas* e *Histórico de manutenção por veículo*.
 
 Em cada um, informe as datas desejadas em **Período** (de/até) e clique em **Gerar**. Todos saem na tela e podem ser exportados em PDF, Excel ou CSV.
 

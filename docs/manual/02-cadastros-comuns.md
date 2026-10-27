@@ -60,7 +60,7 @@ Só o administrador troca ou remove o logo.
 2. Altere os campos desejados. Os botões de cada grupo (por exemplo, *Abrir Encerramento do exercício*) levam à tela completa daquela configuração.
 3. Clique em **Salvar**. *Descartar alterações* volta aos valores gravados.
 
-No Vorticis Suite Logística a tela tem uma aba para cada área e a aba *Menus*; veja [Parâmetros do programa](13-logistica.md#parametros).
+No Vorticis Suite Logística a tela tem uma aba para cada área do módulo e a aba *Menus*; veja [Parâmetros do programa](13-logistica.md#parametros).
 
 Se o seu perfil não permite alterar, a tela só mostra os valores. Se você apertar Esc com alterações não salvas, o sistema pergunta antes de fechar.
 
@@ -87,7 +87,7 @@ Se o seu perfil não permite alterar, a tela só mostra os valores. Se você ape
 
 **Para que serve:** trazer de uma vez os cadastros que você já tem numa planilha (de outro sistema ou feita à mão), sem digitar um por um.
 
-**Onde fica:** no próprio grupo do cadastro, no menu *Cadastros*: cada grupo tem o item **Importar de planilha (Excel)** só com os cadastros dele. No Vorticis Suite Logística: *Cadastros › Importar de planilha (Excel)* para clientes, fornecedores, veículos, motoristas, frotas, rotas e tabelas de frete; *Cadastros › Gerencial › Importar de planilha (Excel)* para produtos e regras fiscais; *Cadastros › Contábil › Importar de planilha (Excel)* para centros de custo e históricos padrão. O plano de contas tem importação própria (*Integrações › Importar › Plano de contas*).
+**Onde fica:** no próprio grupo do cadastro, no menu *Cadastros*: cada grupo tem o item **Importar de planilha (Excel)** só com os cadastros dele. No Vorticis Suite Logística, cada módulo tem o seu, com os cadastros dele: clientes e fornecedores em todos; veículos, motoristas, frotas e rotas no **Frota**; tabelas de frete no **Transporte**; produtos e regras fiscais no **Gerencial**; centros de custo e históricos padrão na **Contabilidade**. O plano de contas tem importação própria (*Integrações › Importar › Plano de contas*).
 
 **Como usar:**
 1. Escolha o cadastro no menu. Se ainda não tem planilha, clique em **Gerar planilha modelo**: o sistema cria um .xlsx com as colunas do cadastro e uma linha de exemplo.

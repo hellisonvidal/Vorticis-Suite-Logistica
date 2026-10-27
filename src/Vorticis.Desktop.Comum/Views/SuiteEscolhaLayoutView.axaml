@@ -1,20 +1,204 @@
 <UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
+             xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels" xmlns:v="using:Vorticis.Desktop.Comum.Views"
+             xmlns:m="using:Vorticis.Desktop.Comum.Modulos"
              x:Class="Vorticis.Desktop.Comum.Views.SuiteEscolhaLayoutView" x:DataType="vm:SuiteViewModel">
-  <!-- Botão "Layout" da Suite, presente em todos os layouts (também em Exibir e em Configurações) -->
-  <Button Name="BotaoLayout" Padding="10,4" Background="Transparent" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="8"
-          ToolTip.Tip="Mudar o layout da Suite (abas, barra lateral, árvore ou painel)">
-    <StackPanel Orientation="Horizontal" Spacing="6">
-      <TextBlock Text="⚙" FontSize="14" VerticalAlignment="Center" />
-      <TextBlock Text="Layout" VerticalAlignment="Center" />
+  <!-- Seletor de layouts da Suite: botão "Layout" (claro ou escuro, conforme o fundo) que abre os cinco cartões com a prévia de cada layout -->
+  <UserControl.Styles>
+    <Style Selector="Button.gatilho">
+      <Setter Property="Padding" Value="10,5" />
+      <Setter Property="CornerRadius" Value="9" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="Cursor" Value="Hand" />
+    </Style>
+    <Style Selector="Button.gatilho.claro">
+      <Setter Property="Background" Value="White" />
+      <Setter Property="BorderBrush" Value="#CBD5E1" />
+      <Setter Property="Foreground" Value="#0F172A" />
+    </Style>
+    <Style Selector="Button.gatilho.escuro">
+      <Setter Property="Background" Value="#1A2540" />
+      <Setter Property="BorderBrush" Value="#334155" />
+      <Setter Property="Foreground" Value="#E2E8F0" />
+    </Style>
+    <Style Selector="Button.gatilho.escuro:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#24324F" />
+      <Setter Property="Foreground" Value="White" />
+    </Style>
+  </UserControl.Styles>
+
+  <Button Name="BotaoLayout" Classes="gatilho" Classes.claro="{Binding !$parent[v:SuiteEscolhaLayoutView].Escuro}"
+          Classes.escuro="{Binding $parent[v:SuiteEscolhaLayoutView].Escuro}"
+          ToolTip.Tip="Escolher o layout da Suite (também em Exibir e em Configurações)">
+    <StackPanel Orientation="Horizontal" Spacing="7">
+      <v:IconeVetorial Width="15" Height="15" Dados="{x:Static m:IconesModulos.Layout}"
+                       Preenchimento="{Binding $parent[Button].Foreground}" VerticalAlignment="Center" />
+      <TextBlock Text="Layout" VerticalAlignment="Center" IsVisible="{Binding !$parent[v:SuiteEscolhaLayoutView].SoIcone}" />
     </StackPanel>
     <Button.Flyout>
-      <MenuFlyout>
-        <MenuItem Header="A – Abas no topo" Command="{Binding EscolherLayoutCommand}" CommandParameter="{x:Static vm:LayoutSuite.Abas}" />
-        <MenuItem Header="B – Barra lateral (padrão)" Command="{Binding EscolherLayoutCommand}" CommandParameter="{x:Static vm:LayoutSuite.Lateral}" />
-        <MenuItem Header="C – Árvore com busca" Command="{Binding EscolherLayoutCommand}" CommandParameter="{x:Static vm:LayoutSuite.Arvore}" />
-        <MenuItem Header="D – Painel inicial" Command="{Binding EscolherLayoutCommand}" CommandParameter="{x:Static vm:LayoutSuite.Painel}" />
-      </MenuFlyout>
+      <Flyout Placement="BottomEdgeAlignedRight" ShowMode="Transient">
+        <Border Background="White" CornerRadius="16" Padding="20,18" Width="930" BoxShadow="0 18 50 0 #330F172A">
+          <!-- estilos aqui dentro: o conteúdo do pop-up não herda os estilos do controle -->
+          <Border.Styles>
+            <Style Selector="Button.cartao">
+              <Setter Property="Background" Value="Transparent" />
+              <Setter Property="BorderThickness" Value="0" />
+              <Setter Property="Padding" Value="0" />
+              <Setter Property="Cursor" Value="Hand" />
+              <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            </Style>
+            <Style Selector="Button.cartao:pointerover /template/ ContentPresenter">
+              <Setter Property="Background" Value="Transparent" />
+            </Style>
+            <Style Selector="Border.moldura">
+              <Setter Property="BorderBrush" Value="#E2E8F0" />
+              <Setter Property="BorderThickness" Value="1.5" />
+              <Setter Property="Background" Value="White" />
+            </Style>
+            <Style Selector="Button.cartao:pointerover Border.moldura">
+              <Setter Property="BorderBrush" Value="#93C5FD" />
+              <Setter Property="Background" Value="#F8FBFF" />
+            </Style>
+            <Style Selector="Border.moldura.selecionado">
+              <Setter Property="BorderBrush" Value="#2563EB" />
+              <Setter Property="BorderThickness" Value="2.5" />
+              <Setter Property="Background" Value="#EFF6FF" />
+            </Style>
+            <!-- peças das miniaturas -->
+            <Style Selector="Border.linha"><Setter Property="Background" Value="#CBD5E1" /><Setter Property="Height" Value="3" /><Setter Property="CornerRadius" Value="1.5" /></Style>
+          </Border.Styles>
+          <StackPanel Spacing="14">
+            <DockPanel>
+              <v:IconeVetorial DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,12,0" Dados="{x:Static m:IconesModulos.Layout}" Preenchimento="#2563EB" />
+              <StackPanel>
+                <TextBlock Text="Layout da Suite" FontSize="18" FontWeight="Bold" Foreground="#0F172A" />
+                <TextBlock Text="Escolha como navegar entre os módulos. A escolha fica gravada neste computador." FontSize="12.5" Foreground="#64748B" />
+              </StackPanel>
+            </DockPanel>
+            <ItemsControl ItemsSource="{Binding OpcoesLayout}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate><UniformGrid Columns="5" /></ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:OpcaoLayout">
+                  <Button Classes="cartao" Margin="0,0,10,0" Command="{Binding $parent[v:SuiteEscolhaLayoutView].((vm:SuiteViewModel)DataContext).EscolherLayoutCommand}"
+                          CommandParameter="{Binding Layout}" Click="Escolhido">
+                    <Border Classes="moldura" Classes.selecionado="{Binding Selecionado}" CornerRadius="12" Padding="9">
+                      <StackPanel Spacing="8">
+                        <!-- miniatura do layout: janela com a navegação desenhada -->
+                        <Border Height="84" CornerRadius="7" Background="#F1F5F9" BorderBrush="#CBD5E1" BorderThickness="1" ClipToBounds="True">
+                          <Panel>
+                            <!-- A: abas no topo -->
+                            <DockPanel IsVisible="{Binding EhAbas}">
+                              <Border DockPanel.Dock="Top" Background="#E2E8F0" Padding="4,4,4,0">
+                                <StackPanel Orientation="Horizontal" Spacing="2">
+                                  <Border Width="26" Height="10" CornerRadius="3,3,0,0" Background="White"><Border Height="2" VerticalAlignment="Top" Background="#0284C7" CornerRadius="3,3,0,0" /></Border>
+                                  <Border Width="22" Height="10" CornerRadius="3,3,0,0" Background="#CBD5E1" />
+                                  <Border Width="22" Height="10" CornerRadius="3,3,0,0" Background="#CBD5E1" />
+                                  <Border Width="22" Height="10" CornerRadius="3,3,0,0" Background="#CBD5E1" />
+                                </StackPanel>
+                              </Border>
+                              <Border DockPanel.Dock="Top" Height="7" Background="#0C4A6E" />
+                              <StackPanel Margin="8,8" Spacing="5">
+                                <Border Classes="linha" Width="70" HorizontalAlignment="Left" />
+                                <Border Classes="linha" Width="96" HorizontalAlignment="Left" />
+                                <Border Classes="linha" Width="54" HorizontalAlignment="Left" />
+                              </StackPanel>
+                            </DockPanel>
+                            <!-- B: barra lateral -->
+                            <DockPanel IsVisible="{Binding EhLateral}">
+                              <Border DockPanel.Dock="Left" Width="20" Background="#0F172A">
+                                <StackPanel Spacing="4" Margin="0,6" HorizontalAlignment="Center">
+                                  <Border Width="11" Height="11" CornerRadius="3" Background="#0284C7" />
+                                  <Border Width="11" Height="11" CornerRadius="3" Background="#0D9488" />
+                                  <Border Width="11" Height="11" CornerRadius="3" Background="#EA580C" />
+                                  <Border Width="11" Height="11" CornerRadius="3" Background="#7C3AED" />
+                                  <Border Width="11" Height="11" CornerRadius="3" Background="#16A34A" />
+                                </StackPanel>
+                              </Border>
+                              <Border DockPanel.Dock="Top" Height="7" Background="#0C4A6E" />
+                              <StackPanel Margin="8,8" Spacing="5">
+                                <Border Classes="linha" Width="60" HorizontalAlignment="Left" />
+                                <Border Classes="linha" Width="80" HorizontalAlignment="Left" />
+                                <Border Classes="linha" Width="44" HorizontalAlignment="Left" />
+                              </StackPanel>
+                            </DockPanel>
+                            <!-- C: árvore com busca -->
+                            <DockPanel IsVisible="{Binding EhArvore}">
+                              <Border DockPanel.Dock="Left" Width="46" Background="White" BorderBrush="#CBD5E1" BorderThickness="0,0,1,0" Padding="4,5">
+                                <StackPanel Spacing="4">
+                                  <Border Height="7" CornerRadius="3" BorderBrush="#94A3B8" BorderThickness="1" />
+                                  <StackPanel Orientation="Horizontal" Spacing="3"><Border Width="6" Height="6" CornerRadius="2" Background="#0284C7" /><Border Classes="linha" Width="24" /></StackPanel>
+                                  <Border Classes="linha" Width="22" Margin="9,0,0,0" HorizontalAlignment="Left" />
+                                  <Border Classes="linha" Width="18" Margin="9,0,0,0" HorizontalAlignment="Left" />
+                                  <StackPanel Orientation="Horizontal" Spacing="3"><Border Width="6" Height="6" CornerRadius="2" Background="#EA580C" /><Border Classes="linha" Width="22" /></StackPanel>
+                                  <StackPanel Orientation="Horizontal" Spacing="3"><Border Width="6" Height="6" CornerRadius="2" Background="#16A34A" /><Border Classes="linha" Width="20" /></StackPanel>
+                                </StackPanel>
+                              </Border>
+                              <Border DockPanel.Dock="Top" Height="7" Background="#0C4A6E" />
+                              <StackPanel Margin="7,8" Spacing="5">
+                                <Border Classes="linha" Width="50" HorizontalAlignment="Left" />
+                                <Border Classes="linha" Width="64" HorizontalAlignment="Left" />
+                              </StackPanel>
+                            </DockPanel>
+                            <!-- D: painel inicial -->
+                            <DockPanel IsVisible="{Binding EhPainel}">
+                              <Border DockPanel.Dock="Top" Height="10" Background="White" BorderBrush="#CBD5E1" BorderThickness="0,0,0,1" />
+                              <UniformGrid Columns="3" Margin="5,6,1,1">
+                                <Border Margin="0,0,4,4" CornerRadius="4" Background="White"><Border Height="8" VerticalAlignment="Top" CornerRadius="4,4,0,0" Background="#0284C7" /></Border>
+                                <Border Margin="0,0,4,4" CornerRadius="4" Background="White"><Border Height="8" VerticalAlignment="Top" CornerRadius="4,4,0,0" Background="#0D9488" /></Border>
+                                <Border Margin="0,0,4,4" CornerRadius="4" Background="White"><Border Height="8" VerticalAlignment="Top" CornerRadius="4,4,0,0" Background="#EA580C" /></Border>
+                                <Border Margin="0,0,4,4" CornerRadius="4" Background="White"><Border Height="8" VerticalAlignment="Top" CornerRadius="4,4,0,0" Background="#7C3AED" /></Border>
+                                <Border Margin="0,0,4,4" CornerRadius="4" Background="White"><Border Height="8" VerticalAlignment="Top" CornerRadius="4,4,0,0" Background="#16A34A" /></Border>
+                                <Border Margin="0,0,4,4" CornerRadius="4" Background="White"><Border Height="8" VerticalAlignment="Top" CornerRadius="4,4,0,0" Background="#DB2777" /></Border>
+                              </UniformGrid>
+                            </DockPanel>
+                            <!-- E: faixa de comando -->
+                            <DockPanel IsVisible="{Binding EhFaixa}">
+                              <Border DockPanel.Dock="Top" Height="18" Background="#0B1220" Padding="4,0">
+                                <DockPanel>
+                                  <Border DockPanel.Dock="Right" Width="26" Height="7" CornerRadius="3.5" Background="#1E293B" VerticalAlignment="Center" />
+                                  <StackPanel Orientation="Horizontal" Spacing="2" VerticalAlignment="Center">
+                                    <Border Width="18" Height="8" CornerRadius="4" Background="#0284C7" />
+                                    <Border Width="8" Height="8" CornerRadius="4" Background="#0D9488" />
+                                    <Border Width="8" Height="8" CornerRadius="4" Background="#EA580C" />
+                                    <Border Width="8" Height="8" CornerRadius="4" Background="#7C3AED" />
+                                    <Border Width="8" Height="8" CornerRadius="4" Background="#16A34A" />
+                                  </StackPanel>
+                                </DockPanel>
+                              </Border>
+                              <Border DockPanel.Dock="Top" Height="7" Background="#0C4A6E" />
+                              <StackPanel Margin="8,8" Spacing="5">
+                                <Border Classes="linha" Width="70" HorizontalAlignment="Left" />
+                                <Border Classes="linha" Width="90" HorizontalAlignment="Left" />
+                              </StackPanel>
+                            </DockPanel>
+                          </Panel>
+                        </Border>
+                        <StackPanel Orientation="Horizontal" Spacing="7">
+                          <Border Width="20" Height="20" CornerRadius="10" Background="#0F172A">
+                            <TextBlock Text="{Binding Letra}" FontSize="11" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                          </Border>
+                          <TextBlock Text="{Binding Nome}" FontSize="13" FontWeight="SemiBold" Foreground="#0F172A" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                        <TextBlock Text="{Binding Descricao}" FontSize="11.5" Foreground="#64748B" TextWrapping="Wrap" MinHeight="48" />
+                      </StackPanel>
+                    </Border>
+                  </Button>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Border Background="#F8FAFC" CornerRadius="10" Padding="12,10" BorderBrush="#E2E8F0" BorderThickness="1">
+              <DockPanel>
+                <v:IconeVetorial DockPanel.Dock="Left" Width="20" Height="20" Margin="0,0,10,0" Dados="{x:Static m:IconesModulos.Fixar}" Preenchimento="#475569" />
+                <CheckBox IsChecked="{Binding NavegacaoFixa, Mode=OneWay}" Command="{Binding AlternarNavegacaoFixaCommand}" VerticalAlignment="Center">
+                  <TextBlock TextWrapping="Wrap" FontSize="12.5" Foreground="#334155"
+                             Text="Fixar a navegação deste layout. Desmarcado, ela fica recolhida numa faixa fina (à esquerda ou no alto) e abre quando o mouse se aproxima." />
+                </CheckBox>
+              </DockPanel>
+            </Border>
+          </StackPanel>
+        </Border>
+      </Flyout>
     </Button.Flyout>
   </Button>
 </UserControl>

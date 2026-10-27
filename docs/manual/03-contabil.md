@@ -178,7 +178,7 @@ Escolha o período, marque (ou não) *Incluir estornados e estornos*, clique em 
 
 **Para que serve:** ligar as filiais à matriz quando cada estabelecimento tem a sua própria escrituração (cada um é cadastrado como empresa, com o seu CNPJ). Assim os relatórios contábeis podem ser tirados de cada um ou do grupo todo.
 
-**Onde fica:** *Cadastros › Filiais* (no Vorticis Suite Logística: *Cadastros › Contábil › Filiais*).
+**Onde fica:** *Cadastros › Filiais* (no Vorticis Suite Logística: módulo **Contabilidade**, *Cadastros › Filiais*).
 
 **Como usar:**
 1. Cadastre a filial como empresa (*Cadastros › Empresas* ou *Transportadoras*), com o CNPJ dela.

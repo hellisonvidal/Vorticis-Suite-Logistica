@@ -19,6 +19,15 @@ public abstract class AppSuiteBase : Avalonia.Application
     /// <summary>Executável do módulo que conecta e faz o login (null = o que administra a suíte, senão o primeiro em ordem alfabética).</summary>
     protected virtual string? Principal => null;
 
+    /// <summary>
+    /// Só os módulos cujo executável está na pasta (Suite Empresarial: o cliente instala os que comprou). Falso quando todos os módulos estão
+    /// no mesmo executável (Suite Logística).
+    /// </summary>
+    protected virtual bool SoInstalados => true;
+
+    /// <summary>Módulos em ordem alfabética na navegação; falso = na ordem de <see cref="Modulos"/>.</summary>
+    protected virtual bool OrdemAlfabetica => true;
+
     /// <summary>Módulos hospedados: executável (sem extensão) e como criar o módulo.</summary>
     protected abstract IReadOnlyList<(string Executavel, Func<MainViewModelBase> Criar)> Modulos { get; }
 
@@ -35,7 +44,8 @@ public abstract class AppSuiteBase : Avalonia.Application
     protected abstract void CarregarXaml();
 
     public SuiteViewModel CriarSuite(string? pasta = null) =>
-        new(HospedeiroSuite.Criar(Modulos, pasta), nome: NomeSuite, principal: Principal);
+        new(SoInstalados ? HospedeiroSuite.Criar(Modulos, pasta) : [.. Modulos.Select(m => m.Criar())], nome: NomeSuite, principal: Principal,
+            ordemAlfabetica: OrdemAlfabetica);
 
     public override void OnFrameworkInitializationCompleted()
     {

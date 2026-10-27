@@ -14,7 +14,8 @@ public class ManualTests(SessaoHeadless headless)
         itens.SelectMany(i => i.Filhos is null ? [i] : Folhas(i.Filhos));
 
     private static MainViewModelBase[] Modulos() =>
-        [new Vorticis.Desktop.ViewModels.MainViewModel(), new Vorticis.Fiscal.Desktop.MainViewModel(), new Vorticis.Erp.Desktop.MainViewModel(), new Vorticis.Frota.Desktop.MainViewModel(), new Vorticis.Logistica.Desktop.MainViewModel()];
+        [new Vorticis.Desktop.ViewModels.MainViewModel(), new Vorticis.Fiscal.Desktop.MainViewModel(), new Vorticis.Erp.Desktop.MainViewModel(), new Vorticis.Frota.Desktop.MainViewModel(),
+         .. Vorticis.Logistica.Desktop.ModuloLogistica.Todos().Select(m => new Vorticis.Logistica.Desktop.MainViewModel(m))];
 
     [Fact]
     public void Indice_carrega_todos_os_arquivos_embutidos_e_os_links_internos_existem()

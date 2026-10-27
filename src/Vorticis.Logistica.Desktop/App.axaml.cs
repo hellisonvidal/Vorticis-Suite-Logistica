@@ -2,14 +2,26 @@ using Avalonia.Markup.Xaml;
 
 namespace Vorticis.Logistica.Desktop;
 
-/// <summary>Vorticis Suite Logística: um programa só, com as telas de Frota, Gerencial e Contábil num menu único.</summary>
-public partial class App : AppBase
+/// <summary>
+/// Vorticis Suite Logística: os módulos da transportadora (Frota, Transporte, Manutenção, Faturamento, Financeiro, Gerencial e Contabilidade)
+/// na mesma janela, com um login só e a navegação entre módulos no layout escolhido pelo usuário.
+/// </summary>
+public partial class App : AppSuiteBase
 {
-    public override void Initialize()
-    {
-        AvaloniaXamlLoader.Load(this);
-        HospedeiroSuite.IncluirTelas(this, ModuloLogistica.Apps());
-    }
+    protected override string NomeSuite => ModuloLogistica.NomeSuite;
 
-    protected override MainViewModelBase CriarPrincipal() => new MainViewModel();
+    protected override string? Principal => "VorticisLogistica.Frota";
+
+    /// <summary>Todos os módulos estão no mesmo executável (não há um .exe por módulo para conferir).</summary>
+    protected override bool SoInstalados => false;
+
+    /// <summary>Na ordem do trabalho da transportadora, não em ordem alfabética.</summary>
+    protected override bool OrdemAlfabetica => false;
+
+    protected override IReadOnlyList<(string Executavel, Func<MainViewModelBase> Criar)> Modulos =>
+        [.. ModuloLogistica.Todos().Select(m => (m.NomeExecutavel, (Func<MainViewModelBase>)(() => new MainViewModel(m))))];
+
+    protected override IEnumerable<Avalonia.Application> AppsDosModulos() => ModuloLogistica.Apps();
+
+    protected override void CarregarXaml() => AvaloniaXamlLoader.Load(this);
 }

@@ -3,6 +3,7 @@
         xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
         xmlns:v="using:Vorticis.Desktop.Comum.Views"
         xmlns:seg="using:Vorticis.Application.Seguranca"
+        xmlns:m="using:Vorticis.Desktop.Comum.Modulos"
         x:Class="Vorticis.Desktop.Comum.Views.MainWindow"
         x:DataType="vm:MainViewModelBase"
         Title="Vorticis"
@@ -46,6 +47,16 @@
     <Border DockPanel.Dock="Top" BorderBrush="{Binding PincelDestaque}" BorderThickness="0,0,0,4" IsVisible="{Binding Logado}">
     <Border Background="{Binding PincelBarra}" Padding="4,0,8,0">
       <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto">
+        <!-- Suite: selo do módulo ativo (ícone e nome) antes dos menus -->
+        <Border Grid.Column="0" IsVisible="{Binding TemIconeModulo}" Background="#22FFFFFF" CornerRadius="8" Padding="6,3,10,3" Margin="2,4,6,4"
+                VerticalAlignment="Center">
+          <StackPanel Orientation="Horizontal" Spacing="7">
+            <Border Width="22" Height="22" CornerRadius="6" Background="{Binding PincelDestaque}">
+              <v:IconeVetorial Width="14" Height="14" Dados="{Binding IconeModulo}" Preenchimento="White" />
+            </Border>
+            <TextBlock Text="{Binding Modulo.NomeCurto}" Foreground="White" FontWeight="SemiBold" FontSize="13" VerticalAlignment="Center" />
+          </StackPanel>
+        </Border>
         <!-- Os itens vêm do módulo (IModuloDesktop.Menus) e são montados em MainWindow.axaml.cs -->
         <Menu Name="MenuPrincipal" Grid.Column="1" />
         <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">

@@ -24,11 +24,17 @@ public class GraficosTelasTests(SessaoHeadless headless, BancoDeTeste db) : ICla
     [Fact]
     public void Menu_de_graficos_por_area_com_telas_conhecidas()
     {
-        var vm = new Logistica.Desktop.MainViewModel();
-        var graficos = vm.Menus.Single(m => m.Titulo == "_Relatórios").Filhos!.Single(m => m.Titulo == "Grá_ficos");
-        Assert.Equal(["Frota", "Transporte", "Contábil", "Financeiro"], graficos.Filhos!.Select(a => a.Titulo));
-        Assert.Equal(9, graficos.Filhos!.SelectMany(a => a.Filhos!).Count());
-        Assert.All(graficos.Filhos!.SelectMany(a => a.Filhos!), i => Assert.True(vm.ConheceTela(i.Chave!), i.Chave));
+        // cada módulo da Suite Logística tem, em Relatórios › Gráficos, os gráficos da sua área
+        var porModulo = new Dictionary<string, int>();
+        foreach (var m in Logistica.Desktop.ModuloLogistica.Todos())
+        {
+            var vm = new Logistica.Desktop.MainViewModel(m);
+            var graficos = vm.Menus.Single(x => x.Titulo == "_Relatórios").Filhos!.SingleOrDefault(x => x.Titulo == "Grá_ficos");
+            if (graficos is null) continue;
+            porModulo[m.NomeCurto] = graficos.Filhos!.Count;
+            Assert.All(graficos.Filhos!, i => Assert.True(vm.ConheceTela(i.Chave!), i.Chave));
+        }
+        Assert.Equal(new Dictionary<string, int> { ["Frota"] = 3, ["Transporte"] = 3, ["Financeiro"] = 2, ["Contabilidade"] = 1 }, porModulo);
     }
 
     [Fact]
@@ -58,7 +64,7 @@ public class GraficosTelasTests(SessaoHeadless headless, BancoDeTeste db) : ICla
         var pasta = Environment.GetEnvironmentVariable("VORTICIS_FOTOS_GRAFICOS");
         var ok = await ForaDaSessao(headless.Sessao.Dispatch(() =>
         {
-            var m = new Logistica.Desktop.MainViewModel();
+            var m = new Logistica.Desktop.MainViewModel(new Logistica.Desktop.ModuloFrotaLogistica());
             var def = new DefinicaoGrafico("teste", "Custos da frota por mês", "Frota", _ => Task.FromResult<DadosGrafico>(null!));
             DadosGrafico[] exemplos =
             [

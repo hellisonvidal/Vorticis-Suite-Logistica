@@ -11,7 +11,7 @@ Escolha o **Mês de referência**. O painel mostra: vendas e compras do mês (no
 
 ## Pedidos de venda e de compra
 
-**Onde fica:** *Faturamento › Pedidos de venda* (atalho **Ctrl+V**) e *Compras › Pedidos de compra*. No Vorticis Suite Logística, os pedidos de venda e as notas fiscais de saída ficam no menu **Emissão**.
+**Onde fica:** *Faturamento › Pedidos de venda* (atalho **Ctrl+V**) e *Compras › Pedidos de compra*. No Vorticis Suite Logística, os pedidos de venda e as notas fiscais de saída ficam no módulo **Faturamento**, e os pedidos de compra, no módulo **Gerencial**.
 
 1. **Novo pedido**. Escolha o **Cliente** (venda) ou o **Fornecedor** (compra), a **Data** e as **Parcelas** (quantidade, intervalo em dias e, se quiser, o **1º vencimento**).
 2. Em **Itens**, escolha o **Produto** (o saldo em estoque aparece ao lado do nome), informe **Qtde**, **Unitário** (na venda, vem o preço de venda; na compra, o custo médio) e **Desconto**, e clique em **Incluir item**. **Remover** tira o item selecionado.
@@ -25,7 +25,7 @@ Escolha o **Mês de referência**. O painel mostra: vendas e compras do mês (no
 
 ## Estoque
 
-**Onde fica:** *Estoque › Posição e movimentos* (no Vorticis Suite Logística: *Operações › Estoque › Posição e movimentos*).
+**Onde fica:** *Estoque › Posição e movimentos* (no Vorticis Suite Logística: módulo **Gerencial**).
 
 - A lista mostra, por produto, o **saldo**, o **mínimo**, o **custo médio** (média das entradas), o **valor** em estoque e o **preço de venda**. **REPOR** aparece quando o saldo está abaixo do mínimo.
 - Selecione o produto para ver os **movimentos** (entradas das compras, saídas das vendas e ajustes).

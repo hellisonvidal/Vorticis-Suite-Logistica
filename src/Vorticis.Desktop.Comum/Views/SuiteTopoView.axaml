@@ -1,78 +1,304 @@
 <UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels" xmlns:v="using:Vorticis.Desktop.Comum.Views"
+             xmlns:m="using:Vorticis.Desktop.Comum.Modulos"
              x:Class="Vorticis.Desktop.Comum.Views.SuiteTopoView" x:DataType="vm:SuiteViewModel">
-  <!-- Suite: navegação no topo. A = uma aba por módulo; D = Início (painel) e seletor de módulo -->
+  <!-- Suite: navegação no topo. A = abas; D = Início e seletor de módulo; E = faixa de comando. Soltas, recolhem numa faixa fina colorida -->
   <UserControl.Styles>
     <Style Selector="Button.aba">
       <Setter Property="Background" Value="Transparent" />
       <Setter Property="BorderThickness" Value="0" />
       <Setter Property="Padding" Value="0" />
       <Setter Property="Cursor" Value="Hand" />
-      <Setter Property="CornerRadius" Value="10,10,0,0" />
+      <Setter Property="CornerRadius" Value="11,11,0,0" />
     </Style>
     <Style Selector="Button.aba:pointerover /template/ ContentPresenter">
-      <Setter Property="Background" Value="#F1F5F9" />
+      <Setter Property="Background" Value="#F8FAFC" />
+    </Style>
+    <Style Selector="Button.pilula">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="CornerRadius" Value="19" />
+    </Style>
+    <Style Selector="Button.pilula:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#1C2942" />
+    </Style>
+    <Style Selector="Button.fixar">
+      <Setter Property="Padding" Value="9,5" />
+      <Setter Property="CornerRadius" Value="9" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Background" Value="White" />
+      <Setter Property="BorderBrush" Value="#CBD5E1" />
+      <Setter Property="Foreground" Value="#334155" />
+    </Style>
+    <Style Selector="Button.fixar.escuro">
+      <Setter Property="Background" Value="#1A2540" />
+      <Setter Property="BorderBrush" Value="#334155" />
+      <Setter Property="Foreground" Value="#E2E8F0" />
+    </Style>
+    <Style Selector="Button.fixar.escuro:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#24324F" />
+      <Setter Property="Foreground" Value="White" />
+    </Style>
+    <Style Selector="Button.fixar.ligado">
+      <Setter Property="Background" Value="#DBEAFE" />
+      <Setter Property="BorderBrush" Value="#93C5FD" />
+      <Setter Property="Foreground" Value="#1D4ED8" />
+    </Style>
+    <Style Selector="Button.fixar.escuro.ligado">
+      <Setter Property="Background" Value="#1E3A8A" />
+      <Setter Property="BorderBrush" Value="#3B82F6" />
+      <Setter Property="Foreground" Value="White" />
+    </Style>
+    <Style Selector="Button.resultado">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Padding" Value="10,6" />
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="CornerRadius" Value="8" />
+    </Style>
+    <Style Selector="Button.resultado:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#EFF6FF" />
+    </Style>
+    <Style Selector="TextBox.busca-escura">
+      <Setter Property="Background" Value="#16213A" />
+      <Setter Property="Foreground" Value="#E2E8F0" />
+      <Setter Property="BorderBrush" Value="#2A3A5C" />
+      <Setter Property="CornerRadius" Value="10" />
+      <Setter Property="Padding" Value="34,6,10,6" />
+      <Setter Property="MinHeight" Value="34" />
+      <Setter Property="CaretBrush" Value="White" />
+    </Style>
+    <Style Selector="TextBox.busca-escura:focus /template/ Border#PART_BorderElement">
+      <Setter Property="Background" Value="#1C2A48" />
+      <Setter Property="BorderBrush" Value="#3B82F6" />
+    </Style>
+    <Style Selector="TextBox.busca-escura:pointerover /template/ Border#PART_BorderElement">
+      <Setter Property="Background" Value="#1C2A48" />
+      <Setter Property="BorderBrush" Value="#3B5B8F" />
+    </Style>
+    <Style Selector="TextBox.busca-escura /template/ TextBlock#PART_Watermark">
+      <Setter Property="Foreground" Value="#7C8BA5" />
     </Style>
   </UserControl.Styles>
-  <Panel>
-    <!-- A: abas -->
-    <Border Name="BarraAbas" Background="#E2E8F0" Padding="8,6,8,0" IsVisible="{Binding EhAbas}">
-      <DockPanel>
-      <v:SuiteEscolhaLayoutView DockPanel.Dock="Right" VerticalAlignment="Center" Margin="0,0,4,6" />
+
+  <Panel Name="NavegacaoTopo" Background="Transparent">
+    <!-- Recolhida: faixa fina com as cores dos módulos; o mouse sobre ela abre a navegação (SuiteTopoView.axaml.cs) -->
+    <Border Name="FaixaTopo" Height="7" IsVisible="{Binding MostraTopoRecolhido}" ToolTip.Tip="Módulos (aproxime o mouse do alto da janela)">
       <ItemsControl ItemsSource="{Binding Modulos}">
         <ItemsControl.ItemsPanel>
-          <ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="4" /></ItemsPanelTemplate>
+          <ItemsPanelTemplate><UniformGrid Rows="1" /></ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
         <ItemsControl.ItemTemplate>
           <DataTemplate x:DataType="vm:ModuloSuite">
-            <Button Classes="aba" ToolTip.Tip="{Binding NomeCompleto}"
-                    Command="{Binding $parent[UserControl].((vm:SuiteViewModel)DataContext).TrocarCommand}" CommandParameter="{Binding}">
-              <Panel>
-                <Border CornerRadius="10,10,0,0" Background="White" IsVisible="{Binding Ativo}" />
-                <Border Height="3" VerticalAlignment="Top" CornerRadius="10,10,0,0" Background="{Binding Cor}" IsVisible="{Binding Ativo}" />
-                <StackPanel Orientation="Horizontal" Spacing="9" Margin="14,9,16,9">
-                  <Border Width="24" Height="24" CornerRadius="6" Background="{Binding Cor}">
-                    <TextBlock Text="{Binding Sigla}" FontSize="10" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                  </Border>
-                  <TextBlock Text="{Binding Nome}" FontSize="13.5" VerticalAlignment="Center" Foreground="#0F172A" />
-                  <Border MinWidth="18" Height="18" CornerRadius="9" Background="#EF4444" Padding="5,0" IsVisible="{Binding TemAbertas}"
-                          ToolTip.Tip="Funções abertas neste módulo">
-                    <TextBlock Text="{Binding Abertas}" FontSize="10" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                  </Border>
-                </StackPanel>
-              </Panel>
-            </Button>
+            <Border Background="{Binding Cor}" Opacity="0.85" Height="7" />
           </DataTemplate>
         </ItemsControl.ItemTemplate>
       </ItemsControl>
+    </Border>
+
+    <!-- A: abas -->
+    <Border Name="BarraAbas" Padding="10,8,10,0" IsVisible="{Binding MostraAbas}">
+      <Border.Background>
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+          <GradientStop Color="#EEF2F7" Offset="0" />
+          <GradientStop Color="#E2E8F0" Offset="1" />
+        </LinearGradientBrush>
+      </Border.Background>
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="0,0,0,8">
+          <Button Classes="fixar" Classes.ligado="{Binding TopoFixo}" Command="{Binding AlternarTopoFixoCommand}"
+                  ToolTip.Tip="Fixar: as abas ficam sempre à mostra. Soltar: elas se recolhem e abrem ao aproximar o mouse do alto">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <v:IconeVetorial Width="14" Height="14" Dados="{x:Static m:IconesModulos.Fixar}" Preenchimento="{Binding $parent[Button].Foreground}" />
+              <TextBlock Text="{Binding TextoFixarTopo}" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+          <v:SuiteEscolhaLayoutView />
+        </StackPanel>
+        <Border DockPanel.Dock="Left" Width="34" Height="34" CornerRadius="10" Margin="0,0,12,8" VerticalAlignment="Center">
+          <Border.Background>
+            <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+              <GradientStop Color="#38BDF8" Offset="0" />
+              <GradientStop Color="#6366F1" Offset="1" />
+            </LinearGradientBrush>
+          </Border.Background>
+          <v:IconeVetorial Width="20" Height="20" Dados="{x:Static m:IconesModulos.Marca}" Preenchimento="White" ToolTip.Tip="{Binding Nome}" />
+        </Border>
+        <ItemsControl ItemsSource="{Binding Modulos}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="3" /></ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:ModuloSuite">
+              <Button Classes="aba" ToolTip.Tip="{Binding Subtitulo}"
+                      Command="{Binding $parent[UserControl].((vm:SuiteViewModel)DataContext).TrocarCommand}" CommandParameter="{Binding}">
+                <Panel>
+                  <Border CornerRadius="11,11,0,0" Background="White" IsVisible="{Binding Ativo}" BoxShadow="0 -2 10 0 #140F172A" />
+                  <Border Height="3" VerticalAlignment="Top" CornerRadius="11,11,0,0" Background="{Binding Gradiente}" IsVisible="{Binding Ativo}" />
+                  <StackPanel Orientation="Horizontal" Spacing="9" Margin="12,9,16,10">
+                    <Panel Width="26" Height="26">
+                      <Border CornerRadius="8" Background="{Binding Gradiente}" IsVisible="{Binding Ativo}" />
+                      <Border CornerRadius="8" Background="{Binding CorSuave}" IsVisible="{Binding !Ativo}" />
+                      <v:IconeVetorial Width="16" Height="16" Geometria="{Binding Icone}" Preenchimento="White" IsVisible="{Binding Ativo}" />
+                      <v:IconeVetorial Width="16" Height="16" Geometria="{Binding Icone}" Preenchimento="{Binding Cor}" IsVisible="{Binding !Ativo}" />
+                    </Panel>
+                    <TextBlock Text="{Binding Nome}" FontSize="13.5" VerticalAlignment="Center" Foreground="#0F172A" FontWeight="SemiBold" />
+                    <Border MinWidth="18" Height="18" CornerRadius="9" Background="#EF4444" Padding="5,0" IsVisible="{Binding TemAbertas}"
+                            ToolTip.Tip="Funções abertas neste módulo">
+                      <TextBlock Text="{Binding Abertas}" FontSize="10" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                  </StackPanel>
+                </Panel>
+              </Button>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
       </DockPanel>
     </Border>
 
     <!-- D: Início + seletor de módulo -->
-    <Border Name="BarraPainel" Background="White" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1" Padding="14,8" IsVisible="{Binding EhPainel}">
+    <Border Name="BarraPainel" Background="White" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1" Padding="14,9" IsVisible="{Binding MostraBarraPainel}">
       <DockPanel>
-      <v:SuiteEscolhaLayoutView DockPanel.Dock="Right" VerticalAlignment="Center" />
-      <StackPanel Orientation="Horizontal" Spacing="10">
-        <Border Width="32" Height="32" CornerRadius="9" Background="#0F172A">
-          <TextBlock Text="V" FontSize="16" FontWeight="Bold" Foreground="#38BDF8" HorizontalAlignment="Center" VerticalAlignment="Center" />
-        </Border>
-        <TextBlock Text="{Binding Nome}" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,16,0" />
-        <Button Content="⌂  Início" Command="{Binding IrParaPainelCommand}" ToolTip.Tip="Painel com todos os módulos" />
-        <TextBlock Text="Módulo:" VerticalAlignment="Center" Foreground="#64748B" Margin="8,0,0,0" />
-        <ComboBox Name="SeletorModulo" ItemsSource="{Binding Modulos}" SelectedItem="{Binding ModuloNoSeletor}" MinWidth="200">
-          <ComboBox.ItemTemplate>
-            <DataTemplate x:DataType="vm:ModuloSuite">
-              <StackPanel Orientation="Horizontal" Spacing="8">
-                <Border Width="18" Height="18" CornerRadius="5" Background="{Binding Cor}">
-                  <TextBlock Text="{Binding Sigla}" FontSize="8.5" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                </Border>
-                <TextBlock Text="{Binding NomeCompleto}" VerticalAlignment="Center" />
-              </StackPanel>
-            </DataTemplate>
-          </ComboBox.ItemTemplate>
-        </ComboBox>
-      </StackPanel>
+        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+          <Button Classes="fixar" Classes.ligado="{Binding TopoFixo}" Command="{Binding AlternarTopoFixoCommand}"
+                  ToolTip.Tip="Fixar: a barra fica sempre à mostra. Soltar: ela se recolhe e abre ao aproximar o mouse do alto">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <v:IconeVetorial Width="14" Height="14" Dados="{x:Static m:IconesModulos.Fixar}" Preenchimento="{Binding $parent[Button].Foreground}" />
+              <TextBlock Text="{Binding TextoFixarTopo}" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+          <v:SuiteEscolhaLayoutView />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="10">
+          <Border Width="34" Height="34" CornerRadius="10">
+            <Border.Background>
+              <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                <GradientStop Color="#38BDF8" Offset="0" />
+                <GradientStop Color="#6366F1" Offset="1" />
+              </LinearGradientBrush>
+            </Border.Background>
+            <v:IconeVetorial Width="20" Height="20" Dados="{x:Static m:IconesModulos.Marca}" Preenchimento="White" />
+          </Border>
+          <TextBlock Text="{Binding Nome}" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" Foreground="#0F172A" Margin="0,0,14,0" />
+          <Button Command="{Binding IrParaPainelCommand}" ToolTip.Tip="Painel com todos os módulos" Padding="12,6" CornerRadius="9">
+            <StackPanel Orientation="Horizontal" Spacing="7">
+              <v:IconeVetorial Width="15" Height="15" Dados="{x:Static m:IconesModulos.Inicio}" Preenchimento="#334155" />
+              <TextBlock Text="Início" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+          <TextBlock Text="Módulo" VerticalAlignment="Center" Foreground="#64748B" Margin="8,0,0,0" />
+          <ComboBox Name="SeletorModulo" ItemsSource="{Binding Modulos}" SelectedItem="{Binding ModuloNoSeletor}" MinWidth="230" CornerRadius="9">
+            <ComboBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:ModuloSuite">
+                <StackPanel Orientation="Horizontal" Spacing="9">
+                  <Border Width="22" Height="22" CornerRadius="6" Background="{Binding Gradiente}">
+                    <v:IconeVetorial Width="14" Height="14" Geometria="{Binding Icone}" Preenchimento="White" />
+                  </Border>
+                  <TextBlock Text="{Binding Nome}" VerticalAlignment="Center" FontWeight="SemiBold" />
+                </StackPanel>
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+        </StackPanel>
       </DockPanel>
+    </Border>
+
+    <!-- E: faixa de comando escura, com os módulos em pílulas e a busca no meio -->
+    <Border Name="FaixaComando" Padding="12,8" IsVisible="{Binding MostraFaixaComando}">
+      <Border.Background>
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
+          <GradientStop Color="#0A1020" Offset="0" />
+          <GradientStop Color="#111B33" Offset="0.55" />
+          <GradientStop Color="#0A1020" Offset="1" />
+        </LinearGradientBrush>
+      </Border.Background>
+      <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center" Margin="0,0,16,0">
+          <Border Width="34" Height="34" CornerRadius="10" BoxShadow="0 0 14 0 #556366F1">
+            <Border.Background>
+              <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                <GradientStop Color="#38BDF8" Offset="0" />
+                <GradientStop Color="#6366F1" Offset="1" />
+              </LinearGradientBrush>
+            </Border.Background>
+            <v:IconeVetorial Width="20" Height="20" Dados="{x:Static m:IconesModulos.Marca}" Preenchimento="White" />
+          </Border>
+          <StackPanel VerticalAlignment="Center">
+            <TextBlock Text="VORTICIS" FontSize="10.5" FontWeight="Bold" Foreground="#7DD3FC" LetterSpacing="2" />
+            <TextBlock Text="Suite Logística" FontSize="13.5" FontWeight="SemiBold" Foreground="White" />
+          </StackPanel>
+        </StackPanel>
+        <ItemsControl Grid.Column="1" ItemsSource="{Binding Modulos}" VerticalAlignment="Center" ClipToBounds="True">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="4" /></ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:ModuloSuite">
+                <Button Classes="pilula" ToolTip.Tip="{Binding Subtitulo}"
+                        Command="{Binding $parent[UserControl].((vm:SuiteViewModel)DataContext).TrocarCommand}" CommandParameter="{Binding}">
+                  <Panel>
+                    <Border CornerRadius="19" Background="{Binding Gradiente}" IsVisible="{Binding Ativo}" BoxShadow="0 4 16 0 #66000000" />
+                    <StackPanel Orientation="Horizontal" Spacing="7" Margin="10,7,12,7">
+                      <v:IconeVetorial Width="18" Height="18" Geometria="{Binding Icone}" Preenchimento="White" IsVisible="{Binding Ativo}" />
+                      <v:IconeVetorial Width="18" Height="18" Geometria="{Binding Icone}" Preenchimento="{Binding Cor}" IsVisible="{Binding !Ativo}" />
+                      <TextBlock Text="{Binding Nome}" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center"
+                                 Foreground="White" IsVisible="{Binding Ativo}" />
+                      <TextBlock Text="{Binding Nome}" FontSize="13" VerticalAlignment="Center" Foreground="#AEB9CC" IsVisible="{Binding !Ativo}" />
+                      <Border MinWidth="17" Height="17" CornerRadius="8.5" Background="#EF4444" Padding="4,0" IsVisible="{Binding TemAbertas}">
+                        <TextBlock Text="{Binding Abertas}" FontSize="9.5" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                      </Border>
+                    </StackPanel>
+                  </Panel>
+                </Button>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        <Panel Grid.Column="2" Width="250" Margin="10,0" VerticalAlignment="Center">
+          <TextBox Name="BuscaFaixa" Classes="busca-escura" Text="{Binding Busca}" Watermark="Ir para… (Ctrl+K)" VerticalContentAlignment="Center" />
+          <v:IconeVetorial Width="15" Height="15" Margin="11,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" IsHitTestVisible="False"
+                           Dados="{x:Static m:IconesModulos.Busca}" Preenchimento="#7C8BA5" />
+          <Popup Name="ResultadosFaixa" IsOpen="{Binding BuscandoNaFaixa}" Placement="BottomEdgeAlignedLeft" PlacementTarget="{Binding #BuscaFaixa}"
+                 IsLightDismissEnabled="False" VerticalOffset="6">
+            <Border Background="White" CornerRadius="12" Padding="6" Width="380" MaxHeight="420" BoxShadow="0 16 40 0 #400F172A" BorderBrush="#E2E8F0" BorderThickness="1">
+              <ScrollViewer>
+                <ItemsControl ItemsSource="{Binding Resultados}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:NoSuite">
+                      <Button Classes="resultado" Command="{Binding $parent[v:SuiteTopoView].((vm:SuiteViewModel)DataContext).AbrirFuncaoCommand}" CommandParameter="{Binding}"
+                              Click="ResultadoEscolhido">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                          <Border Width="26" Height="26" CornerRadius="7" Background="{Binding Modulo.Gradiente}">
+                            <v:IconeVetorial Width="15" Height="15" Geometria="{Binding Modulo.Icone}" Preenchimento="White" />
+                          </Border>
+                          <StackPanel>
+                            <TextBlock Text="{Binding Titulo}" FontWeight="SemiBold" Foreground="#0F172A" />
+                            <TextBlock Text="{Binding Caminho}" FontSize="11" Foreground="#64748B" TextTrimming="CharacterEllipsis" MaxWidth="300" />
+                          </StackPanel>
+                        </StackPanel>
+                      </Button>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </ScrollViewer>
+            </Border>
+          </Popup>
+        </Panel>
+        <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+          <Button Classes="fixar escuro" Classes.ligado="{Binding TopoFixo}" Command="{Binding AlternarTopoFixoCommand}"
+                  ToolTip.Tip="Fixar: a faixa fica sempre à mostra. Soltar: ela se recolhe e abre ao aproximar o mouse do alto">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <v:IconeVetorial Width="14" Height="14" Dados="{x:Static m:IconesModulos.Fixar}" Preenchimento="{Binding $parent[Button].Foreground}" />
+              <TextBlock Text="{Binding TextoFixarTopo}" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+          <v:SuiteEscolhaLayoutView Escuro="True" />
+        </StackPanel>
+      </Grid>
     </Border>
   </Panel>
 </UserControl>

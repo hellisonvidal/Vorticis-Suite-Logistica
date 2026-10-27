@@ -31,7 +31,7 @@ public abstract class ModuloCombinado(params IModuloDesktop[] partes) : IModuloD
     public virtual IReadOnlyList<AtalhoTela> Atalhos =>
         [.. partes.SelectMany(p => p.Atalhos.Select(a => a with { Chave = a.Chave is null ? null : Chave(p, a.Chave) })).DistinctBy(a => a.Gesto)];
 
-    public Vorticis.Application.Cadastros.ModulosEmpresa ModulosAoCadastrar =>
+    public virtual Vorticis.Application.Cadastros.ModulosEmpresa ModulosAoCadastrar =>
         partes.Aggregate(Vorticis.Application.Cadastros.ModulosEmpresa.Nenhum, (acc, p) => acc | p.ModuloEmpresa);
 
     /// <summary>Importações de planilha das partes (o mesmo cadastro em duas partes aparece uma vez).</summary>

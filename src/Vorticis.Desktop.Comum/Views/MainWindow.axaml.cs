@@ -83,7 +83,11 @@ public partial class MainWindow : Window
         suite.PropertyChanged += (_, e) =>
         {
             if (e.PropertyName == nameof(SuiteViewModel.MostraPainel)) AtualizarPainel();
-            if (e.PropertyName is nameof(SuiteViewModel.Layout) or nameof(SuiteViewModel.LateralFixa) && _vm is { } vm) { MontarMenu(vm); MontarAtalhos(vm); }
+            if (e.PropertyName is nameof(SuiteViewModel.Layout) or nameof(SuiteViewModel.LateralFixa) or nameof(SuiteViewModel.TopoFixo) && _vm is { } vm)
+            {
+                MontarMenu(vm);
+                MontarAtalhos(vm);
+            }
         };
         DataContext = suite.Ativo.Vm;
         AtualizarPainel();
@@ -127,7 +131,8 @@ public partial class MainWindow : Window
         Resources["CorDestaqueModulo"] = vm.PincelDestaque;
         try
         {
-            using var stream = Avalonia.Platform.AssetLoader.Open(new Uri($"avares://Vorticis.Desktop.Comum/Assets/{vm.Modulo.NomeExecutavel}.ico"));
+            // módulos da mesma Suite (VorticisLogistica.Frota...) usam o ícone do programa (VorticisLogistica)
+            using var stream = Avalonia.Platform.AssetLoader.Open(new Uri($"avares://Vorticis.Desktop.Comum/Assets/{vm.Modulo.NomeExecutavel.Split('.')[0]}.ico"));
             Icon = new WindowIcon(stream);
         }
         catch (Exception)
@@ -414,7 +419,11 @@ public partial class MainWindow : Window
         layout.Items.Add(new Separator());
         layout.Items.Add(new MenuItem
         {
-            Header = (suite.LateralFixa ? "●  " : "     ") + "Navegação à esquerda sempre aberta (B e C)", Command = suite.AlternarFixaCommand,
+            Header = (suite.LateralFixa ? "●  " : "     ") + "Fixar a navegação à esquerda (B e C)", Command = suite.AlternarFixaCommand,
+        });
+        layout.Items.Add(new MenuItem
+        {
+            Header = (suite.TopoFixo ? "●  " : "     ") + "Fixar a navegação no topo (A, D e E)", Command = suite.AlternarTopoFixoCommand,
         });
         return layout;
     }
@@ -428,7 +437,7 @@ public partial class MainWindow : Window
         for (var i = 0; i < suite.Modulos.Count; i++)
             exibir.Items.Add(new MenuItem
             {
-                Header = $"Ir para o {suite.Modulos[i].NomeCompleto}", Command = suite.TrocarCommand, CommandParameter = suite.Modulos[i],
+                Header = $"Ir para o módulo {suite.Modulos[i].Nome}", Command = suite.TrocarCommand, CommandParameter = suite.Modulos[i],
                 InputGesture = i < 9 ? KeyGesture.Parse($"Ctrl+{i + 1}") : null,
             });
         if (suite.EhPainel) exibir.Items.Add(new MenuItem { Header = "Início (painel dos módulos)", Command = suite.IrParaPainelCommand });
@@ -475,7 +484,10 @@ public partial class MainWindow : Window
                 Gesture = KeyGesture.Parse("Ctrl+K"),
                 Command = new CommunityToolkit.Mvvm.Input.RelayCommand(() =>
                 {
+                    // E: busca da faixa de comando; nos demais, a da árvore (C)
+                    if (suite.EhFaixa) { this.FindDescendantOfType<SuiteTopoView>()?.FocarBusca(); return; }
                     if (!suite.EhArvore) suite.Layout = LayoutSuite.Arvore;
+                    suite.LateralAberta = true;
                     Avalonia.Threading.Dispatcher.UIThread.Post(() => this.FindDescendantOfType<SuiteLadoView>()?.FindControl<TextBox>("CampoBusca")?.Focus());
                 }),
             });

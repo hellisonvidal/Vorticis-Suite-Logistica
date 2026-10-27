@@ -6,10 +6,11 @@ using Vorticis.Desktop.Comum.Ajuda;
 using Vorticis.Desktop.Comum.Modulos;
 using Vorticis.Domain.Seguranca;
 using Vorticis.Logistica.Desktop;
+using FT = Vorticis.Frota.Desktop.ViewModels.FrotaTelas;
 
 namespace Vorticis.Desktop.Tests;
 
-/// <summary>Vorticis Suite Logística: um programa só, com as telas de Frota, Gerencial, Contábil e Fiscal num menu único (sem a Folha).</summary>
+/// <summary>Vorticis Suite Logística: sete módulos na mesma janela (Frota, Transporte, Manutenção, Faturamento, Financeiro, Gerencial e Contabilidade), sem a Folha.</summary>
 public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoDeTeste db) : IClassFixture<Vorticis.Infra.Tests.BancoDeTeste>
 {
     private static readonly IReadOnlyList<string> TabelasTmsTitulos = Vorticis.Frota.TabelasTms.Titulos;
@@ -22,104 +23,80 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
         return await tcs.Task;
     }
 
+    private static MainViewModel Modulo<T>() where T : ModuloLogistica, new() => new(new T());
+    private static string Sem(ItemMenu m) => m.Titulo.Replace("_", "");
+    private static IReadOnlyList<string> Chaves(MainViewModelBase vm) => [.. Folhas(vm.Menus).Where(i => i.Chave is not null).Select(i => i.Chave!)];
+
     [Fact]
-    public void Um_menu_so_com_frota_manutencao_emissao_financeiro_gerencial_e_relatorios()
+    public void Sete_modulos_com_as_funcoes_reorganizadas()
     {
-        var vm = new MainViewModel();
-        Assert.Equal("Vorticis Suite Logística", vm.Modulo.Nome);
-        Assert.Equal(["_Cadastros", "_Operações", "_Emissão", "_Financeiro", "_Contábil", "_Relatórios", "Con_figurações", "_Ajuda"],
-                     vm.Menus.Select(m => m.Titulo));
-        // toda função habilitada abre uma tela conhecida; o que ainda falta (emissão de CT-e, MDF-e e NFS-e) fica "em breve"
-        var itens = Folhas(vm.Menus).Where(i => !i.EhSeparador).ToList();
-        Assert.All(itens.Where(i => i.Habilitado && i.Chave is not null && i.Chave != TelasComuns.Sair), i => Assert.True(vm.ConheceTela(i.Chave!), $"{i.Titulo}: {i.Chave}"));
-        // Emissão: as funções do antigo submenu Faturamento (pedidos de venda e notas de saída) direto no menu; o Financeiro não tem mais Faturamento
-        var emissao = vm.Menus.Single(m => m.Titulo == "_Emissão");
-        Assert.Equal(["Emissão de NF-e na SEFAZ (em breve)", "Transmissão de CT-e e MDF-e à SEFAZ (em breve)", "NFS-e – Nota fiscal de serviço (Padrão Nacional) (em breve)"],
-                     Folhas(emissao.Filhos!).Where(i => !i.Habilitado && !i.EhSeparador).Select(i => i.Titulo));
-        // TMS: cotações, CT-e, manifestos e faturas de frete no Emissão; entregas na Operação; tabelas de frete nos Cadastros; relatórios em Relatórios › Transporte (TMS)
-        foreach (var chave in new[] { Frota.Desktop.ViewModels.FrotaTelas.Cotacoes, Frota.Desktop.ViewModels.FrotaTelas.Ctes, Frota.Desktop.ViewModels.FrotaTelas.Manifestos,
-                                      Frota.Desktop.ViewModels.FrotaTelas.Faturas })
-            Assert.Contains(emissao.Filhos!, i => i.Chave == chave && i.Habilitado);
-        Assert.Contains(vm.Menus.Single(m => m.Titulo == "_Operações").Filhos!, i => i.Chave == Frota.Desktop.ViewModels.FrotaTelas.Entregas);
-        Assert.Contains(Folhas(vm.Menus[0].Filhos!), i => i.Chave == Frota.Desktop.ViewModels.FrotaTelas.TabelasFrete);
-        foreach (var chave in new[] { Erp.Desktop.ViewModels.ErpTelas.PedidosVenda, Fiscal.Desktop.ViewModels.Telas.NotaSaida })
+        var todos = ModuloLogistica.Todos().Select(m => new MainViewModel(m)).ToList();
+        Assert.Equal(["Frota", "Transporte", "Manutenção", "Faturamento", "Financeiro", "Gerencial", "Contabilidade"], todos.Select(m => m.Modulo.NomeCurto));
+        foreach (var vm in todos)
         {
-            Assert.Contains(emissao.Filhos!, i => i.Chave == chave && i.Habilitado);
-            Assert.Single(Folhas(vm.Menus), i => i.Chave == chave);
+            // menus do casco em volta dos do módulo; toda função habilitada abre uma tela conhecida; Folha fora
+            Assert.Equal("_Cadastros", vm.Menus[0].Titulo);
+            Assert.Equal(["Con_figurações", "_Ajuda"], vm.Menus.TakeLast(2).Select(m => m.Titulo));
+            Assert.Equal("_Relatórios", vm.Menus[^3].Titulo);
+            var itens = Folhas(vm.Menus).Where(i => !i.EhSeparador).ToList();
+            Assert.All(itens.Where(i => i.Habilitado && i.Chave is not null && i.Chave != TelasComuns.Sair), i => Assert.True(vm.ConheceTela(i.Chave!), $"{vm.Modulo.NomeCurto}: {i.Titulo}"));
+            Assert.DoesNotContain(vm.ChavesDeTelas, c => c.StartsWith("folha.") || c.StartsWith("VorticisFolha:"));
+            Assert.False(vm.Modulo.UsaCalendarioObrigacoes);
+            Assert.DoesNotContain(vm.Menus[0].Filhos!, i => i.Chave == TelasComuns.Contabilidade);   // contadores só no cadastro da transportadora
+            Assert.Equal(vm.Atalhos.Count, vm.Atalhos.Select(a => a.Gesto).Distinct().Count());
+            Assert.All(vm.Atalhos.Where(a => a.Chave is not null), a => Assert.Contains(a.Chave!, Chaves(vm).Append(TelasComuns.ManualContextual)));
         }
-        Assert.DoesNotContain(Folhas(vm.Menus.Single(m => m.Titulo == "_Financeiro").Filhos!), i => i.Titulo.Replace("_", "") == "Faturamento");
-        Assert.DoesNotContain(vm.Menus.Single(m => m.Titulo == "_Financeiro").Filhos!, i => i.Titulo.Replace("_", "") == "Faturamento");
-        // Contábil: os menus da contabilidade direto (sem os relatórios, que vão para Relatórios); a Folha saiu do programa
-        var contabil = vm.Menus.Single(m => m.Titulo == "_Contábil");
-        Assert.DoesNotContain(contabil.Filhos!, m => m.Titulo.Replace("_", "") is "Contábil" or "Relatórios");
-        Assert.Contains(Folhas(contabil.Filhos!), i => i.Chave == ViewModels.Telas.Lancamento);
-        Assert.DoesNotContain(Folhas(contabil.Filhos!), i => i.Chave == ViewModels.Telas.Balancete);
-        Assert.DoesNotContain(vm.ChavesDeTelas, c => c.StartsWith("folha.") || c.StartsWith("VorticisFolha:"));
-        // Operações: a operação da frota e as compras, o estoque e os monitores do Gerencial (que saíram do Financeiro)
-        var operacoes = vm.Menus.Single(m => m.Titulo == "_Operações");
-        Assert.Equal(["Compras", "Manutenção", "Estoque", "Monitores"], operacoes.Filhos!.Where(i => i.Filhos is not null && i.Titulo is not ("_Coletas" or "_Pedágio")).Select(i => i.Titulo));
-        Assert.Equal(["Contas a pagar", "Contas a receber", "Conciliação bancária"], vm.Menus.Single(m => m.Titulo == "_Financeiro").Filhos!.Where(i => !i.EhSeparador).Select(i => i.Titulo));
-        // Manutenção sem Notas de compra; Cadastros sem Contadores (ficam na aba do cadastro da transportadora)
-        Assert.DoesNotContain(Folhas(vm.Menus), i => i.Chave == Frota.Desktop.ViewModels.FrotaTelas.Notas);
-        Assert.DoesNotContain(vm.Menus[0].Filhos!, i => i.Chave == TelasComuns.Contabilidade);
-        Assert.Contains(vm.Menus[0].Filhos!, i => i.Titulo == "_Gerencial" && i.Filhos is not null);
-        Assert.True(vm.ConheceTela(TelasComuns.Contabilidade));
-        // Cadastros: cada grupo (a lista principal, Gerencial e Contábil) tem o seu "Importar de planilha (Excel)", só com os cadastros dele
-        const string Importar = "Importar de _planilha (Excel)";
-        string[] ImportaveisDe(IReadOnlyList<ItemMenu> grupo) => [.. grupo.Single(i => i.Titulo == Importar).Filhos!.Select(i => i.Titulo)];
-        var cadastros = vm.Menus[0].Filhos!;
-        Assert.Equal(["Clientes", "Fornecedores", "Veículos", "Motoristas", "Frotas", "Rotas", "Tabelas de frete"], ImportaveisDe(cadastros));
-        Assert.Equal(["Produtos", "Regras fiscais"], ImportaveisDe(cadastros.Single(i => i.Titulo == "_Gerencial").Filhos!));
-        Assert.Equal(["Centros de custo", "Históricos padrão"], ImportaveisDe(cadastros.Single(i => i.Titulo == "_Contábil").Filhos!));
-        Assert.All(Folhas(cadastros).Where(i => i.Chave?.StartsWith("importar.") == true), i => Assert.True(vm.ConheceTela(i.Chave!), i.Chave));
-        Assert.Equal(11, Folhas(cadastros).Count(i => i.Chave?.StartsWith("importar.") == true));
-        // Operações tem Diárias e o submenu Coletas com as ordens de coleta
-        var coletas = vm.Menus.Single(m => m.Titulo == "_Operações").Filhos!.Single(m => m.Titulo == "_Coletas");
-        Assert.Equal(["Ordens de coleta"], coletas.Filhos!.Select(i => i.Titulo));
-        Assert.True(coletas.Filhos![0].Habilitado);
-        Assert.Equal(Frota.Desktop.ViewModels.FrotaTelas.Coletas, coletas.Filhos![0].Chave);
-        Assert.Contains(vm.Menus.Single(m => m.Titulo == "_Operações").Filhos!, i => i.Titulo == "Diárias");
-        // Relatórios por submenus; todos os relatórios saíram dos menus de origem
-        var relatorios = vm.Menus.Single(m => m.Titulo == "_Relatórios");
-        Assert.Equal(["_Frota e operação", "_Manutenção", "_Transporte (TMS)", "_Gerencial", "_Contábil", "-", "Grá_ficos"], relatorios.Filhos!.Select(m => m.Titulo));
-        Assert.Equal(TabelasTmsTitulos, relatorios.Filhos!.Single(m => m.Titulo == "_Transporte (TMS)").Filhos!.Select(i => i.Titulo));
-        Assert.DoesNotContain(vm.Menus, m => m.Titulo == "_Emissão" && m.Filhos!.Any(i => i.Titulo.Contains("Relat")));
-        foreach (var chave in new[] { Frota.Desktop.ViewModels.FrotaTelas.Painel, Frota.Desktop.ViewModels.FrotaTelas.RelNotas, ViewModels.Telas.Balancete, Fiscal.Desktop.ViewModels.Telas.RelDuplicatasPagar })
-            Assert.Single(Folhas(vm.Menus), i => i.Chave == chave);
-        Assert.Contains(Folhas(relatorios.Filhos!), i => i.Chave == ViewModels.Telas.Balancete);
-        // ausentes: Fiscal, Calendário de obrigações, Painel do empresário e relatórios fiscais
-        Assert.DoesNotContain(vm.Menus, m => m.Titulo.Replace("_", "") is "Fiscal" or "Obrigações");
-        Assert.DoesNotContain(itens, i => i.Chave is TelasComuns.Obrigacoes or Erp.Desktop.ViewModels.ErpTelas.Painel
-            || i.Chave == Fiscal.Desktop.ViewModels.Telas.LivroEntradas || i.Chave == Fiscal.Desktop.ViewModels.Telas.Documentos || i.Chave == Fiscal.Desktop.ViewModels.Telas.RegrasContabilizacao);
-        Assert.DoesNotContain(vm.Menus[0].Filhos!, i => i.Titulo == "_Fiscal");
-        Assert.DoesNotContain(vm.Atalhos, a => a.Chave == Fiscal.Desktop.ViewModels.Telas.Documentos);
-        Assert.False(vm.Modulo.UsaCalendarioObrigacoes);
-        // funções de cada área no mesmo programa
-        foreach (var chave in new[] { Frota.Desktop.ViewModels.FrotaTelas.Ordens, Frota.Desktop.ViewModels.FrotaTelas.Autorizacao, Fiscal.Desktop.ViewModels.Telas.ContasPagar,
-                                      Fiscal.Desktop.ViewModels.Telas.ContasReceber, Fiscal.Desktop.ViewModels.Telas.RelDuplicatasReceber, ViewModels.Telas.Lancamento, ViewModels.Telas.Balancete, Fiscal.Desktop.ViewModels.Telas.ImportacaoXml })
-            Assert.Contains(itens, i => i.Chave == chave);
-        // Parâmetros é uma janela só, com abas (a de cada módulo mantém a sua tela com chave própria); não há mais o submenu por módulo
-        Assert.DoesNotContain(vm.Menus[0].Filhos!, i => i.Titulo.Contains("Parâmetros dos"));
-        Assert.Contains(vm.Menus[0].Filhos!, i => i.Titulo == "Parâmetros" && i.Chave == TelasComuns.Parametros);
-        Assert.Equal(5, vm.ChavesDeTelas.Count(c => c == TelasComuns.Parametros || c.EndsWith(":" + TelasComuns.Parametros)));
-        // atalhos sem tecla repetida, todos para telas conhecidas
-        Assert.Equal(vm.Atalhos.Count, vm.Atalhos.Select(a => a.Gesto).Distinct().Count());
-        Assert.All(vm.Atalhos.Where(a => a.Chave is not null), a => Assert.True(vm.ConheceTela(a.Chave!), a.Chave));
+        static string[] Menus(MainViewModel vm) => [.. vm.Menus.Skip(1).SkipLast(2).Select(Sem)];
+        Assert.Equal(["Operação", "Relatórios"], Menus(todos[0]));
+        Assert.Equal(["Operação", "Documentos", "Relatórios"], Menus(todos[1]));
+        Assert.Equal(["Serviços", "Relatórios"], Menus(todos[2]));
+        Assert.Equal(["Faturamento", "Emissão eletrônica", "Relatórios"], Menus(todos[3]));
+        Assert.Equal(["Contas", "Monitores", "Relatórios"], Menus(todos[4]));
+        Assert.Equal(["Compras", "Estoque", "Monitores", "Relatórios"], Menus(todos[5]));
+        Assert.Contains("Lançamentos", Menus(todos[6]));
+
+        // cada função num módulo só (sem repetir), com as funções da transportadora espalhadas pelos módulos certos
+        void Em(int modulo, params string[] chaves) => Assert.All(chaves, c => Assert.Contains(c, Chaves(todos[modulo])));
+        Em(0, FT.Abastecimentos, FT.Viagens, FT.Diarias, FT.Pedagio, FT.Veiculos, FT.Motoristas, FT.Painel);
+        Em(1, FT.Cotacoes, FT.Coletas, FT.Entregas, FT.Ctes, FT.Manifestos, FT.TabelasFrete);
+        Em(2, FT.Planos, FT.Itens, FT.Ordens, FT.Autorizacao, FT.RelHistoricoManutencao);
+        Em(3, FT.Faturas, Erp.Desktop.ViewModels.ErpTelas.PedidosVenda, Fiscal.Desktop.ViewModels.Telas.NotaSaida);
+        Em(4, Fiscal.Desktop.ViewModels.Telas.ContasPagar, Fiscal.Desktop.ViewModels.Telas.ContasReceber, Fiscal.Desktop.ViewModels.Telas.ConciliacaoDuplicatas,
+           TelasComuns.ContasBancarias);
+        Em(5, Erp.Desktop.ViewModels.ErpTelas.PedidosCompra, Fiscal.Desktop.ViewModels.Telas.NotaEntrada, Erp.Desktop.ViewModels.ErpTelas.Estoque,
+           Erp.Desktop.ViewModels.ErpTelas.Painel, Fiscal.Desktop.ViewModels.Telas.Produtos, Fiscal.Desktop.ViewModels.Telas.RegrasFiscais);
+        Em(6, ViewModels.Telas.Lancamento, ViewModels.Telas.Balancete, ViewModels.Telas.Filiais, ViewModels.Telas.RelatorioGrupo);
+        var doModulo = todos.SelectMany(vm => Folhas([.. vm.Modulo.ItensCadastros, .. vm.Modulo.Menus]).Where(x => x.Chave is { } c && !c.StartsWith("grafico.")
+                                                                                                         && c is not (TelasComuns.FormasPagamento or TelasComuns.ContasBancarias))
+                                                  .Select(x => (Modulo: vm.Modulo.NomeCurto, Chave: x.Chave!)).Distinct()).ToList();
+        Assert.Empty(doModulo.GroupBy(x => x.Chave).Where(g => g.Count() > 1).Select(g => $"{g.Key}: {string.Join(", ", g.Select(x => x.Modulo))}"));
+        // a emissão de CT-e/MDF-e e a NFS-e continuam "em breve"
+        Assert.Contains(Folhas(todos[1].Menus), i => !i.Habilitado && i.Titulo.StartsWith("Transmissão de CT-e"));
+        Assert.Contains(Folhas(todos[3].Menus), i => !i.Habilitado && i.Titulo.StartsWith("NFS-e"));
+        // importação de planilha no grupo de Cadastros de cada módulo
+        string[] Importaveis(MainViewModel vm) => [.. vm.Menus[0].Filhos!.SingleOrDefault(i => i.Titulo == "Importar de _planilha (Excel)")?.Filhos?.Select(i => i.Titulo) ?? []];
+        Assert.Equal(["Clientes", "Fornecedores", "Veículos", "Motoristas", "Frotas", "Rotas"], Importaveis(todos[0]));
+        Assert.Contains("Tabelas de frete", Importaveis(todos[1]));
+        Assert.Equal(["Clientes", "Fornecedores", "Produtos", "Regras fiscais"], Importaveis(todos[5]));
+        Assert.Contains("Centros de custo", Importaveis(todos[6]));
     }
 
     [Fact]
     public void Transportadora_e_cadastrada_em_todos_os_modulos_reunidos_e_o_manual_mostra_as_areas_deles()
     {
-        var m = new ModuloLogistica();
-        Assert.Equal(ModulosEmpresa.Frota, m.ModuloEmpresa);
-        Assert.Equal(ModulosEmpresa.Frota | ModulosEmpresa.Contabil | ModulosEmpresa.Fiscal | ModulosEmpresa.Erp,
-                     ((IModuloDesktop)m).ModulosAoCadastrar);
-        Assert.Equal("Transportadora", ((IModuloDesktop)m).RotuloEmpresaAtiva);
-        var areas = ((IModuloDesktop)m).AreasDoManual;
+        foreach (IModuloDesktop m in ModuloLogistica.Todos())
+        {
+            Assert.Equal(ModulosEmpresa.Frota, m.ModuloEmpresa);
+            Assert.Equal(ModulosEmpresa.Frota | ModulosEmpresa.Contabil | ModulosEmpresa.Fiscal | ModulosEmpresa.Erp, m.ModulosAoCadastrar);
+            Assert.Equal("Transportadora", m.RotuloEmpresaAtiva);
+            Assert.NotNull(m.Icone);
+            Assert.StartsWith("VorticisLogistica.", m.NomeExecutavel);
+        }
+        var areas = ((IModuloDesktop)new ModuloContabilidade()).AreasDoManual;
         Assert.Contains("Contábil", areas);
         Assert.DoesNotContain("Folha", areas);
         Assert.Contains(ManualUsuario.Visiveis(areas, false), a => a.Nome == "03-contabil.md");
-        Assert.NotNull(ManualUsuario.TopicoDaTela("VorticisContabil:" + TelasComuns.Parametros));   // F1 nos parâmetros de cada módulo
+        Assert.NotNull(ManualUsuario.TopicoDaTela("VorticisContabil:" + TelasComuns.Parametros));   // F1 nos parâmetros de cada área
     }
 
     [Fact]
@@ -128,7 +105,7 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
         var ok = await ForaDaSessao(headless.Sessao.Dispatch(() =>
         {
             HospedeiroSuite.IncluirTelas(Avalonia.Application.Current!, ModuloLogistica.Apps());
-            var vm = new MainViewModel();
+            var vm = Modulo<ModuloFrotaLogistica>();
             var janela = new Window { Width = 1400, Height = 860 };
             object[] telas =
             [
@@ -163,7 +140,10 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
         var ok = await ForaDaSessao(headless.Sessao.Dispatch(async () =>
         {
             HospedeiroSuite.IncluirTelas(Avalonia.Application.Current!, ModuloLogistica.Apps());
-            var vm = new MainViewModel();
+            var total = 0;
+            foreach (var modulo in ModuloLogistica.Todos())
+            {
+            var vm = new MainViewModel(modulo);
             await vm.InicializarAsync(db.ConnectionString);
             var login = Assert.IsType<LoginViewModel>(vm.Conteudo);
             (login.Usuario, login.Senha) = ("admin_teste", "Senha1234");
@@ -173,15 +153,18 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
             vm.EmpresaSelecionada = vm.EmpresasPermitidas.Single(e => e.Id == empresa);
             for (var i = 0; i < 50; i++) { await Task.Delay(20, ct); Dispatcher.UIThread.RunJobs(); }
             var chaves = Folhas(vm.Menus).Where(i => i.Habilitado && i.Chave is not null && i.Chave != TelasComuns.Sair).Select(i => i.Chave!).Distinct().ToList();
-            Assert.True(chaves.Count > 100, $"{chaves.Count} telas");
+            total += chaves.Count;
             foreach (var chave in chaves)
             {
-                Assert.True(vm.AbrirCommand.CanExecute(chave), chave);
+                Assert.True(vm.AbrirCommand.CanExecute(chave), $"{modulo.NomeCurto}: {chave}");
                 vm.AbrirCommand.Execute(chave);
                 for (var i = 0; i < 5; i++) { await Task.Delay(10, ct); Dispatcher.UIThread.RunJobs(); }
                 Assert.NotNull(vm.Conteudo);
-                Assert.True(vm.Confirmacao is null, $"{chave}: {vm.Status}");     // nenhum erro inesperado ao abrir
+                Assert.True(vm.Confirmacao is null, $"{modulo.NomeCurto} › {chave}: {vm.Status}");     // nenhum erro inesperado ao abrir
             }
+            await vm.DisposeAsync();
+            }
+            Assert.True(total > 100, $"{total} telas");
             return true;
         }, ct));
         Assert.True(ok);

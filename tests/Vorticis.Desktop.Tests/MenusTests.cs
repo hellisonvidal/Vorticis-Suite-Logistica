@@ -38,13 +38,12 @@ public class MenusTests
     [Fact]
     public void Cada_modulo_tem_cor_e_icone_proprios_para_nao_confundir_os_sistemas()
     {
-        MainViewModelBase[] modulos = [new MainViewModel(), new Vorticis.Fiscal.Desktop.MainViewModel(), new Vorticis.Erp.Desktop.MainViewModel(), new Vorticis.Frota.Desktop.MainViewModel(), new Vorticis.Logistica.Desktop.MainViewModel()];
-        Assert.Equal(["#1B7F5A", "#D97706", "#0891B2", "#475569", "#0F766E"], modulos.Select(m => m.Modulo.CorDestaque));
+        MainViewModelBase[] modulos = [new MainViewModel(), new Vorticis.Fiscal.Desktop.MainViewModel(), new Vorticis.Erp.Desktop.MainViewModel(), new Vorticis.Frota.Desktop.MainViewModel()];
+        Assert.Equal(["#1B7F5A", "#D97706", "#0891B2", "#475569"], modulos.Select(m => m.Modulo.CorDestaque));
         Assert.Equal(modulos.Length, modulos.Select(m => m.Modulo.CorBarra).Distinct().Count());
         Assert.Equal("#14532D", modulos[0].Modulo.CorBarra);                      // verde-escuro: não confunde com o azul do Escritório
         // a cor chega ao casco como pincel (faixa sob os menus, login e tela inicial)
         Assert.Equal(Avalonia.Media.Color.Parse("#D97706"), ((Avalonia.Media.ISolidColorBrush)modulos[1].PincelDestaque).Color);
-        Assert.Equal(Avalonia.Media.Color.Parse("#0F766E"), ((Avalonia.Media.ISolidColorBrush)modulos[^1].PincelDestaque).Color);
         Assert.Same(modulos[1].PincelDestaque, modulos[1].Login.PincelDestaque);
         Assert.Same(modulos[2].PincelDestaque, modulos[2].Inicio.PincelDestaque);
         // um ícone por executável (fonte em instalador/icone, embutido no casco e usado pelo exe e pelo instalador)
@@ -61,6 +60,11 @@ public class MenusTests
         Assert.Contains(@"SetupIconFile=icone\VorticisLogisticaInstalador.ico", File.ReadAllText(Path.Combine(pasta.FullName, "instalador", "VorticisLogistica.iss")));
         var gerador = File.ReadAllText(Path.Combine(pasta.FullName, "instalador", "icone", "gerar_icone.py"));
         Assert.All(modulos, m => Assert.Contains($"\"{m.Modulo.NomeExecutavel}\": (\"{m.Modulo.CorDestaque}\", \"{m.Modulo.CorBarra}\"", gerador));
+        // Suite Logística: os sete módulos usam o ícone do programa (VorticisLogistica.ico); cada um tem a sua cor e o seu desenho na navegação
+        Assert.True(File.Exists(Path.Combine(pasta.FullName, "instalador", "icone", "VorticisLogistica.ico")));
+        Assert.Contains("\"VorticisLogistica\": (", gerador);
+        var logistica = Vorticis.Logistica.Desktop.ModuloLogistica.Todos();
+        Assert.Equal(7, logistica.Select(m => m.CorDestaque).Distinct().Count());
     }
 
     [Fact]
@@ -142,7 +146,8 @@ public class MenusTests
     [Fact]
     public void Todos_os_modulos_tem_Parametros_no_menu_Cadastros()
     {
-        MainViewModelBase[] modulos = [new MainViewModel(), new Vorticis.Fiscal.Desktop.MainViewModel(), new Vorticis.Erp.Desktop.MainViewModel(), new Vorticis.Frota.Desktop.MainViewModel(), new Vorticis.Logistica.Desktop.MainViewModel()];
+        MainViewModelBase[] modulos = [new MainViewModel(), new Vorticis.Fiscal.Desktop.MainViewModel(), new Vorticis.Erp.Desktop.MainViewModel(), new Vorticis.Frota.Desktop.MainViewModel(),
+                                 .. Vorticis.Logistica.Desktop.ModuloLogistica.Todos().Select(m => new Vorticis.Logistica.Desktop.MainViewModel(m))];
         foreach (var vm in modulos)
         {
             var cadastros = vm.Menus[0];

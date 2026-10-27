@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using Vorticis.Desktop.Comum.ViewModels;
 
 namespace Vorticis.Desktop.Comum.Views;
@@ -25,6 +26,6 @@ public partial class SuiteLadoView : UserControl
         Navegacao.PointerExited += (_, _) => _recolher.Start();
     }
 
-    /// <summary>Com o menu de layout aberto, a navegação não recolhe.</summary>
-    private bool MenuAberto() => this.FindControl<Button>("BotaoLayoutLateral")?.Flyout?.IsOpen == true;
+    /// <summary>Com o seletor de layout aberto, a navegação não recolhe.</summary>
+    private bool MenuAberto() => this.GetVisualDescendants().OfType<SuiteEscolhaLayoutView>().Any(v => v.Aberto);
 }

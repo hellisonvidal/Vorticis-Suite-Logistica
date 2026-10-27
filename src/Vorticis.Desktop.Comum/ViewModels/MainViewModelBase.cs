@@ -819,6 +819,10 @@ public abstract partial class MainViewModelBase : ObservableObject, IContexto, I
     public ModulosEmpresa ModuloAtual => Modulo.ModuloEmpresa;
     public string RotuloEmpresaAtiva => Modulo.RotuloEmpresaAtiva + ":";
 
+    /// <summary>Ícone do módulo (Suite: selo antes dos menus); null nos módulos sem desenho próprio.</summary>
+    public string? IconeModulo => Modulo.Icone;
+    public bool TemIconeModulo => Modulo.Icone is not null;
+
     public async Task<ModulosEmpresa?> EscolherModulosAsync(ModulosEmpresa inicial)
     {
         Confirmacao?.Responder(false);

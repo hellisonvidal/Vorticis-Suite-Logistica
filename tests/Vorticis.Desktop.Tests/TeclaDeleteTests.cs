@@ -32,7 +32,7 @@ public class TeclaDeleteTests
     [Fact]
     public async Task Delete_confirma_uma_vez_e_exclui()
     {
-        var main = new Logistica.Desktop.MainViewModel();
+        var main = new Logistica.Desktop.MainViewModel(new Logistica.Desktop.ModuloFrotaLogistica());
         var tela = new TelaFalsa(main, avisoExtra: false);
         var titulos = new List<string>();
         var exclusao = main.ExcluirPelaTeclaAsync(tela);
@@ -57,7 +57,7 @@ public class TeclaDeleteTests
     [Fact]
     public async Task Aviso_de_outra_consequencia_continua_aparecendo_e_tela_sem_excluir_ignora()
     {
-        var main = new Logistica.Desktop.MainViewModel();
+        var main = new Logistica.Desktop.MainViewModel(new Logistica.Desktop.ModuloFrotaLogistica());
         var tela = new TelaFalsa(main, avisoExtra: true);
         var titulos = new List<string>();
         var exclusao = main.ExcluirPelaTeclaAsync(tela);

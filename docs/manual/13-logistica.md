@@ -1,36 +1,66 @@
 # Vorticis Suite Logística
 
-O **Vorticis Suite Logística** (ícone verde-petróleo) é o programa da transportadora: **um programa só, com um menu só**, que reúne o controle da frota e da manutenção, o **TMS** (cotações, conhecimentos, manifestos, entregas e faturas de frete), o financeiro e a contabilidade (esta no menu **Contábil**). As telas são as mesmas dos módulos do Vorticis (mesmas regras e o mesmo banco de dados), organizadas para o dia a dia da transportadora. Não é preciso trocar de módulo.
+O **Vorticis Suite Logística** é o programa da transportadora. Ele reúne **sete módulos na mesma janela**, cada um com os seus menus, a sua cor e o seu ícone. Você entra uma vez só (o login vale para todos os módulos) e passa de um módulo para o outro com um clique. As telas são as mesmas dos módulos do Vorticis, com as mesmas regras e o mesmo banco de dados.
+
+| Módulo | Ícone e cor | O que tem | Detalhes no manual |
+|---|---|---|---|
+| **Frota** | caminhão, azul | Cadastros de veículos, motoristas, frotas, rotas, documentos e vencimentos; *Operação*: abastecimentos, viagens, diárias e pedágio; relatórios e gráficos da frota | [Frota](12-frota.md) |
+| **Transporte** | rota com marcador, verde-água | O TMS: tabelas de frete; *Operação*: cotações de frete, ordens de coleta e entregas e ocorrências; *Documentos*: CT-e e MDF-e (transmissão à SEFAZ em breve); relatórios e gráficos do transporte | [TMS](14-tms.md) |
+| **Manutenção** | chave de boca, laranja | Planos de manutenção e peças e serviços; *Serviços*: ordens de serviço e autorização de serviços; relatórios da manutenção | [Frota](12-frota.md#ordens-de-servico) |
+| **Faturamento** | nota fiscal, roxo | *Faturamento*: faturas de frete, pedidos de venda e notas fiscais de saída; *Emissão eletrônica*: NF-e e NFS-e (em breve); relatórios de faturas, vendas e recebimentos | [TMS](14-tms.md#faturas-de-frete), [Gerencial](10-gerencial.md) |
+| **Financeiro** | carteira, verde | Contas bancárias e formas de pagamento; *Contas*: contas a pagar, contas a receber e conciliação bancária; *Monitores*: monitor de cobranças; relatórios e gráficos do financeiro | [Gerencial](10-gerencial.md) |
+| **Gerencial** | gráfico de barras, rosa | Produtos e [regras fiscais](05-fiscal.md#regras-fiscais); *Compras*: pedidos de compra, notas fiscais de entrada e importação de XML; *Estoque*; *Monitores*: monitor de notas fiscais; *Painel do empresário* e relatório de compras | [Gerencial](10-gerencial.md) |
+| **Contabilidade** | calculadora, índigo | Plano de contas, históricos, centros de custo e filiais; lançamentos, fechamentos, imobilizado, consultas, integrações (SPED) e os relatórios e gráficos contábeis | [Contábil](03-contabil.md) |
+
+Todos os módulos têm, em volta dos seus menus, os menus comuns: **Cadastros** (com *Transportadoras*, clientes, fornecedores, os cadastros do módulo, o item **Importar de planilha (Excel)** com os cadastros que aceitam importação e os **Parâmetros**), **Configurações** e **Ajuda**. A transportadora escolhida no alto continua a mesma ao trocar de módulo.
 
 ## Instalação e primeiro acesso
 
 1. Rode o instalador **Setup-VorticisSuiteLogistica**. Ele instala o programa e configura o banco de dados sozinho.
-2. Abra o atalho **Vorticis Suite Logística** (menu Iniciar ou área de trabalho) e entre com o seu usuário.
-3. Cadastre a transportadora em *Cadastros › Transportadoras*. Ela já fica ativa em todas as áreas do programa (frota, financeiro e contábil). Envie também o **logo** da transportadora (aba *Dados cadastrais*, [Logo da empresa](02-cadastros-comuns.md#logo-da-empresa-sai-em-todos-os-relatorios)): ele sai em todos os relatórios em PDF.
-4. Escolha a transportadora no topo da tela e siga a ordem dos cadastros do capítulo [Frota](12-frota.md#ordem-dos-cadastros).
+2. Abra o atalho **Vorticis Suite Logística** (menu Iniciar ou área de trabalho) e entre com o seu usuário. Os sete módulos entram juntos.
+3. Cadastre a transportadora em *Cadastros › Transportadoras* (em qualquer módulo). Ela já fica ativa em todos os módulos. Envie também o **logo** da transportadora (aba *Dados cadastrais*, [Logo da empresa](02-cadastros-comuns.md#logo-da-empresa-sai-em-todos-os-relatorios)): ele sai em todos os relatórios em PDF.
+4. Escolha a transportadora no alto da tela e siga a ordem dos cadastros do capítulo [Frota](12-frota.md#ordem-dos-cadastros).
 
-O Vorticis Suite Logística é instalado numa pasta própria (*Vorticis Logistica*) e usa o mesmo banco de dados do Vorticis no computador. Quem já tinha o programa com o nome antigo (Vorticis Logística) só precisa rodar o instalador novo: ele atualiza a instalação, troca os atalhos para o nome **Vorticis Suite Logística** e mantém os dados.
+O Vorticis Suite Logística é instalado numa pasta própria (*Vorticis Logistica*) e usa o mesmo banco de dados do Vorticis no computador. Quem já tinha o programa com o nome antigo só precisa rodar o instalador novo: ele atualiza a instalação, troca os atalhos e mantém os dados.
 
-## Menus do programa
+## Trocar de módulo
 
-| Menu | O que tem | Detalhes no manual |
-|---|---|---|
-| **Cadastros** | Transportadoras (com a aba **Contadores**: o contador e o escritório contábil ficam só ali), clientes, fornecedores, veículos, motoristas, **frotas**, **rotas**, **tabelas de frete**, documentos e vencimentos; os cadastros do Gerencial (produtos, **regras fiscais** (de/para de CFOP de entrada e saída), formas de pagamento, contas bancárias) e do contábil (plano de contas, históricos...) em submenus; em cada grupo (a lista principal e os submenus *Gerencial* e *Contábil*), o item **Importar de planilha (Excel)** com os cadastros daquele grupo; os **Parâmetros** | [Frota](12-frota.md), [Contábil](03-contabil.md) |
-| **Operações** | Abastecimentos e viagens; **Diárias**, submenu **Coletas** (*Ordens de coleta*) e **Entregas e ocorrências**; submenu **Pedágio** (importação das passagens e nota fiscal da operadora); submenus **Compras** (pedidos de compra, notas fiscais de entrada e importação de XML), **Manutenção** (planos de manutenção, peças e serviços, ordens de serviço e autorização de serviços; as notas das oficinas e das peças são lançadas em *Operações › Compras › Notas fiscais de entrada*), **Estoque** e **Monitores** | [Frota](12-frota.md#abastecimentos), [Manutenção](12-frota.md#ordens-de-servico), [Diárias](12-frota.md#diarias), [Coletas](12-frota.md#ordens-de-coleta), [Entregas](14-tms.md#entregas-e-ocorrencias), [Pedágio](12-frota.md#pedagio) |
-| **Emissão** | As funções de faturamento: **Pedidos de venda** e **Notas fiscais de saída** (a emissão de NF-e na SEFAZ, em breve); o TMS: **Cotações de frete**, **Conhecimentos de transporte (CT-e)**, **Manifestos de carga (MDF-e)** e **Faturas de frete**; a transmissão de CT-e e MDF-e à SEFAZ e a NFS-e (em breve) | [Gerencial](10-gerencial.md), [TMS](14-tms.md) |
-| **Financeiro** | Contas a pagar, contas a receber e conciliação bancária | [Gerencial](10-gerencial.md) |
-| **Contábil** | Lançamentos, fechamentos, imobilizado, consultas e integrações da contabilidade (os relatórios ficam em *Relatórios › Contábil*) | [Contábil](03-contabil.md) |
-| **Relatórios** | Todos os relatórios do programa, em submenus: **Frota e operação**, **Manutenção**, **Transporte (TMS)**, **Gerencial**, **Contábil** e **Gráficos** | [Frota](12-frota.md#relatorios-da-frota) |
+- Clique no ícone ou no nome do módulo na navegação (à esquerda ou no alto, conforme o layout escolhido).
+- Ou use o teclado: **Ctrl+1** (Frota), **Ctrl+2** (Transporte), **Ctrl+3** (Manutenção), **Ctrl+4** (Faturamento), **Ctrl+5** (Financeiro), **Ctrl+6** (Gerencial) e **Ctrl+7** (Contabilidade). Os mesmos atalhos estão no menu *Exibir*.
+- **Ctrl+K** abre a busca de funções: digite parte do nome (sem acento, ex.: *viagens*, *balancete*) e clique no resultado para ir direto à tela, em qualquer módulo.
+- O selo colorido antes dos menus mostra em que módulo você está. As funções abertas de cada módulo continuam abertas quando você vai para outro; um número vermelho no ícone mostra quantas estão abertas.
 
-Neste programa **não** há o menu Fiscal, o calendário de obrigações nem o *Painel do empresário*: use o menu **Financeiro** para as contas a pagar e a receber. A tela inicial também não mostra o quadro de próximas obrigações.
+Os atalhos de teclado de cada módulo continuam valendo dentro dele (ex.: **Ctrl+B** abastecimentos e **Ctrl+P** painel da frota, no Frota; **Ctrl+O** ordens de serviço, na Manutenção; **Ctrl+L** lançamento contábil, na Contabilidade). A lista completa fica em *Ajuda › Sobre*.
 
-Os atalhos de teclado do Frota valem aqui (**Ctrl+B** abastecimentos, **Ctrl+P** painel da frota, **Ctrl+O** ordens de serviço), além dos do Contábil e do Gerencial que não repetem tecla (ex.: **Ctrl+L** lançamento contábil, **Ctrl+I** importação de XML). A lista completa fica em *Ajuda › Sobre*.
+## Layouts da Suite
+
+**Para que serve:** escolher como a navegação entre os módulos aparece na tela.
+
+**Onde fica:** no botão **Layout** (ícone de quatro quadros), presente em todos os layouts, e em *Exibir › Layout da Suite* ou *Configurações › Layout da Suite*. A escolha fica gravada neste computador.
+
+| Layout | Como é |
+|---|---|
+| **A – Abas no topo** | Uma aba por módulo no alto da janela, como num navegador; a aba do módulo ativo fica branca, com a cor dele. |
+| **B – Barra lateral** (padrão) | Coluna escura à esquerda com o ícone de cada módulo; o módulo ativo fica com o ícone colorido e uma marca ao lado. |
+| **C – Árvore com busca** | Painel branco à esquerda com todos os módulos e as suas funções em árvore, e a busca de funções no alto. |
+| **D – Painel inicial** | Tela inicial com um cartão por módulo (ícone, descrição, as funções principais e o botão **Abrir módulo**); no alto, **Início** volta ao painel e a lista **Módulo** troca de módulo. |
+| **E – Faixa de comando** | Barra escura no alto com os módulos em "pílulas" coloridas e a busca de funções no meio. |
+
+**Como escolher:** clique em **Layout** e escolha um dos cinco cartões (cada um mostra uma prévia do layout). A tela muda na hora.
+
+### Fixar ou ocultar a navegação
+
+A navegação de cada layout pode ficar **recolhida** para deixar mais espaço para as telas:
+
+- **À esquerda (B e C):** recolhida, vira uma faixa fina com as cores dos módulos na beirada esquerda da janela; ela abre quando o mouse se aproxima e recolhe sozinha quando ele sai.
+- **No alto (A, D e E):** recolhida, vira uma faixa fina colorida no alto da janela; ela abre quando o mouse chega ao alto e recolhe quando ele sai.
+- Para deixá-la **sempre à mostra**, clique em **Fixar** (ícone de alfinete) na própria navegação; para voltar a recolher, clique em **Soltar**. A opção também está no cartão de layouts (*Fixar a navegação deste layout*) e em *Exibir › Layout da Suite*. A navegação à esquerda e a do alto guardam cada uma a sua escolha.
 
 ## Gráficos
 
 **Para que serve:** ver de relance como andam a frota, o transporte, o financeiro e o resultado, mês a mês.
 
-**Onde fica:** *Relatórios › Gráficos*, em submenus por área:
+**Onde fica:** *Relatórios › Gráficos* de cada módulo (Frota, Transporte, Financeiro e Contabilidade):
 
 | Área | Gráfico | O que mostra |
 |---|---|---|
@@ -42,22 +72,23 @@ Os atalhos de teclado do Frota valem aqui (**Ctrl+B** abastecimentos, **Ctrl+P**
 | | Frete por cliente | Os clientes (tomadores) que mais geram frete; os demais somados em *Outros* |
 | **Financeiro** | Contas a pagar e a receber por mês | Valor das duplicatas pelo mês de vencimento |
 | | Saldo em aberto por mês de vencimento | O que ainda falta receber e pagar |
-| **Contábil** | Resultado contábil por mês | Lucro (barra para cima) ou prejuízo (barra para baixo) da DRE de cada mês |
+| **Contabilidade** | Resultado contábil por mês | Lucro (barra para cima) ou prejuízo (barra para baixo) da DRE de cada mês |
 
 **Como usar:** escolha o **Período** (o padrão são os últimos 12 meses) e clique em **Gerar**. Passe o mouse sobre o gráfico para ver os valores de cada mês ou item; ao lado fica a **tabela** com os mesmos números (e o total). Cada cor é sempre a mesma série (a legenda fica em cima); os dados respeitam as permissões do seu perfil.
 
 ## Parâmetros
 
-**Para que serve:** reunir, numa janela só, os parâmetros de todas as áreas do programa e as suas preferências de menu.
+**Para que serve:** reunir, numa janela só, os parâmetros das áreas do módulo e as suas preferências de menu.
 
-**Onde fica:** *Cadastros › Parâmetros*. A janela tem uma **aba** para cada área:
+**Onde fica:** *Cadastros › Parâmetros* de cada módulo. A janela tem uma **aba** para cada área do módulo e a aba **Menus**:
 
-| Aba | O que tem |
+| Módulo | Abas |
 |---|---|
-| **Frota** | Avisos de vencimento, alerta de consumo, limite de autorização das ordens de serviço, fator rodoviário das rotas e valores das diárias e contas da contabilização das diárias. |
-| **Gerencial** | Os parâmetros do financeiro e do fiscal usados nas contas a pagar e a receber (contas de fornecedores e clientes, juros, multa, descontos e históricos das baixas). |
-| **Contábil** | Regras de lançamento, centros de custo, encerramento e o **Tipo de contabilização** (On-line ou Em lote, veja [Contabilização em lote](03-contabil.md#contabilizacao-em-lote)). |
-| **Menus** | Escolha dos itens de menu que você quer ver (veja abaixo). |
+| **Frota**, **Transporte** e **Manutenção** | Frota: avisos de vencimento, alerta de consumo, limite de autorização das ordens de serviço, fator rodoviário das rotas, valores das diárias e contas da contabilização das diárias. |
+| **Faturamento** | Gerencial (contas de clientes e fornecedores, juros, multa, descontos e históricos das baixas) e Frota e transporte. |
+| **Financeiro** e **Gerencial** | Os parâmetros do financeiro e do fiscal usados nas contas a pagar e a receber. |
+| **Contabilidade** | Regras de lançamento, centros de custo, encerramento e o **Tipo de contabilização** (On-line ou Em lote, veja [Contabilização em lote](03-contabil.md#contabilizacao-em-lote)). |
+| Todos | **Menus**: escolha dos itens de menu do módulo que você quer ver (veja abaixo). |
 
 **Como usar:** clique na aba, altere os campos e clique em **Salvar** (cada aba salva os seus próprios campos; *Descartar alterações* volta aos valores gravados). Os campos e a gravação são os mesmos de cada módulo, como descrito em [Parâmetros](02-cadastros-comuns.md#parametros).
 
@@ -78,7 +109,7 @@ Os atalhos de teclado do Frota valem aqui (**Ctrl+B** abastecimentos, **Ctrl+P**
 
 ## Quem pode usar cada área
 
-As permissões são as dos perfis de acesso (*Configurações › Usuários*, aba *Perfis de acesso*): cada tela continua exigindo a função da sua área (ex.: Frota › Manutenção, Financeiro › Contas a pagar, Contábil › Lançamentos). Assim, o motorista-chefe pode ver só a frota e o financeiro só o seu menu, no mesmo programa.
+As permissões são as dos perfis de acesso (*Configurações › Usuários*, aba *Perfis de acesso*): cada tela continua exigindo a função da sua área (ex.: Frota › Manutenção, Financeiro › Contas a pagar, Contábil › Lançamentos). Assim, o motorista-chefe pode trabalhar só nos módulos Frota e Manutenção e o financeiro só no módulo Financeiro, no mesmo programa; os módulos sem nenhuma função liberada mostram as telas bloqueadas.
 
 ## O que vem a seguir
 

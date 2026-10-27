@@ -18,7 +18,7 @@ Menus do módulo Vorticis Fiscal. As escriturações usam os cadastros de client
 - **Saída:** se a sua empresa escritura uma nota de saída com CFOP diferente do que saiu no XML, a regra de saída faz a troca (por exemplo, 5102 → 5405).
 - Se quiser, a regra também define os **CSTs** do ICMS, do PIS e da COFINS; em branco, ficam os do XML.
 
-**Onde fica:** *Cadastros › Regras fiscais* (no Vorticis Suite Logística: *Cadastros › Gerencial › Regras fiscais*). As antigas *Naturezas de entrada* viraram regras de entrada, com os mesmos códigos.
+**Onde fica:** *Cadastros › Regras fiscais* (no Vorticis Suite Logística: módulo **Gerencial**, *Cadastros › Regras fiscais*). As antigas *Naturezas de entrada* viraram regras de entrada, com os mesmos códigos.
 
 **Como usar:**
 1. Clique em **Incluir regras sugeridas** para começar com as trocas de entrada mais comuns (5101 → 1101, 5102 → 1102, 6102 → 2102, 5405 → 1403, 5353 → 1353, 5949 → 1949...). Confira se valem para a operação da sua empresa (pergunte ao contador em caso de dúvida).
@@ -28,7 +28,7 @@ Menus do módulo Vorticis Fiscal. As escriturações usam os cadastros de client
    - Desmarque **Ativa** para parar de usar uma regra sem excluí-la.
 3. Em **Testar um CFOP do XML**, escolha a operação e digite um CFOP para ver como ele será escriturado.
 
-As regras também podem vir de uma planilha: *Cadastros › Gerencial › Importar de planilha (Excel) › Regras fiscais* (coluna *Operação* com E ou S; vazia = entrada).
+As regras também podem vir de uma planilha: *Cadastros › Importar de planilha (Excel) › Regras fiscais* (no Vorticis Suite Logística, no módulo Gerencial) (coluna *Operação* com E ou S; vazia = entrada).
 
 **Quando a troca acontece:**
 - Na **importação de XML** (arquivo, pasta ou pela chave): cada item recebe o CFOP (e os CSTs preenchidos) da regra da operação da nota; o CFOP do XML fica guardado e aparece na coluna *CFOP (XML)*. Item sem regra fica com o CFOP que veio, para você ajustar.
@@ -37,7 +37,7 @@ As regras também podem vir de uma planilha: *Cadastros › Gerencial › Import
 ## Documentos de entrada e de saída (digitação)
 
 **Para que serve:** consultar as notas fiscais lançadas e importadas e lançar à mão as que não têm XML.
-**Onde fica:** *Lançamentos › Documentos fiscais › Entrada* e *Saída* (no Vorticis Suite Logística: *Operações › Compras › Notas fiscais de entrada* e *Emissão › Notas fiscais de saída*).
+**Onde fica:** *Lançamentos › Documentos fiscais › Entrada* e *Saída* (no Vorticis Suite Logística: módulo **Gerencial**, *Compras › Notas fiscais de entrada*, e módulo **Faturamento**, *Faturamento › Notas fiscais de saída*).
 
 A tela abre como **consulta**: escolha o **Período** e clique em **Consultar**. A lista mostra data, modelo, série, número, cliente ou fornecedor, valor, origem (digitada ou XML) e se já foi contabilizada. Os botões da consulta:
 

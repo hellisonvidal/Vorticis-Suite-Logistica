@@ -38,19 +38,31 @@ public class ParametrosMenusLoteTests(SessaoHeadless headless, Vorticis.Infra.Te
     [Fact]
     public void Cadastros_tem_um_Parametros_com_abas_por_modulo_e_nao_tem_mais_o_submenu_por_modulo()
     {
-        var vm = new MainViewModel();
-        var cadastros = vm.Menus[0].Filhos!;
-        Assert.DoesNotContain(cadastros, i => i.Titulo.Contains("Parâmetros dos"));
-        Assert.Single(cadastros, i => i.Titulo == "Parâmetros" && i.Chave == TelasComuns.Parametros);
+        // cada módulo da Suite: Cadastros › Parâmetros com as abas das suas áreas e a aba Menus
+        var esperado = new Dictionary<string, string[]>
+        {
+            ["Frota"] = ["Frota", "Menus"], ["Transporte"] = ["Frota e transporte", "Menus"], ["Manutenção"] = ["Frota e manutenção", "Menus"],
+            ["Faturamento"] = ["Gerencial", "Frota e transporte", "Menus"], ["Financeiro"] = ["Financeiro", "Menus"], ["Gerencial"] = ["Gerencial", "Menus"],
+            ["Contabilidade"] = ["Contábil", "Menus"],
+        };
+        foreach (var m in ModuloLogistica.Todos())
+        {
+            var modulo = new MainViewModel(m);
+            var cadastros = modulo.Menus[0].Filhos!;
+            Assert.Single(cadastros, i => i.Titulo == "Parâmetros" && i.Chave == TelasComuns.Parametros);
+            var abasModulo = Assert.IsType<ParametrosAbasViewModel>(modulo.ViewModelDaTela(TelasComuns.Parametros));
+            Assert.Equal(esperado[m.NomeCurto], abasModulo.Abas.Select(a => a.Titulo));
+            Assert.IsType<PreferenciasMenuViewModel>(abasModulo.Abas[^1].Conteudo);
+        }
+        var vm = new MainViewModel(new ModuloFaturamento());
         var abas = Assert.IsType<ParametrosAbasViewModel>(vm.ViewModelDaTela(TelasComuns.Parametros));
-        Assert.Equal(["Frota", "Gerencial", "Contábil", "Menus"], abas.Abas.Select(a => a.Titulo));
-        Assert.IsType<Vorticis.Frota.Desktop.ViewModels.ParametrosFrotaViewModel>(abas.Abas[0].Conteudo);
-        Assert.IsType<Vorticis.Fiscal.Desktop.ViewModels.ParametrosFiscalViewModel>(abas.Abas[1].Conteudo);
-        Assert.IsType<Vorticis.Desktop.ViewModels.ParametrosContabilViewModel>(abas.Abas[2].Conteudo);
-        Assert.IsType<PreferenciasMenuViewModel>(abas.Abas[3].Conteudo);
-        // cada módulo mantém a sua tela de parâmetros com chave própria (F1 e ManualTests)
-        Assert.Equal(5, vm.ChavesDeTelas.Count(c => c == TelasComuns.Parametros || c.EndsWith(":" + TelasComuns.Parametros)));
-        // Contabilização em lote: item do Exportar do Contábil, só com a empresa em lote
+        Assert.IsType<Vorticis.Fiscal.Desktop.ViewModels.ParametrosFiscalViewModel>(abas.Abas[0].Conteudo);
+        Assert.IsType<Vorticis.Frota.Desktop.ViewModels.ParametrosFrotaViewModel>(abas.Abas[1].Conteudo);
+        // cada área mantém a sua tela de parâmetros com chave própria (F1 e ManualTests)
+        Assert.Equal(4, vm.ChavesDeTelas.Count(c => c == TelasComuns.Parametros || c.EndsWith(":" + TelasComuns.Parametros)));
+        // Contabilização em lote: item do Exportar da Contabilidade, só com a empresa em lote
+        vm = new MainViewModel(new ModuloContabilidade());
+        Assert.IsType<Vorticis.Desktop.ViewModels.ParametrosContabilViewModel>(((ParametrosAbasViewModel)vm.ViewModelDaTela(TelasComuns.Parametros)!).Abas[0].Conteudo);
         var item = Folhas(vm.Menus).Single(i => i.Chave == TelasComuns.ContabilizacaoLote);
         Assert.Equal(MainViewModelBase.RecursoContabilizacaoLote, item.Recurso);
         Assert.True(vm.ConheceTela(TelasComuns.ContabilizacaoLote));
@@ -59,7 +71,7 @@ public class ParametrosMenusLoteTests(SessaoHeadless headless, Vorticis.Infra.Te
     [Fact]
     public void Itens_ocultos_somem_do_menu_bloqueiam_a_tela_e_os_essenciais_nao_saem()
     {
-        var vm = new MainViewModel();
+        var vm = new MainViewModel(new ModuloFrotaLogistica());
         var tudo = vm.ArvoreDeMenus();
         Assert.Equal(vm.Menus.Count, tudo.Count);
         var relatorios = tudo.Single(n => n.Titulo == "Relatórios");
@@ -90,9 +102,9 @@ public class ParametrosMenusLoteTests(SessaoHeadless headless, Vorticis.Infra.Te
         Assert.False(vm.TelaBloqueadaPorMenu(TelasComuns.Manual));
 
         // submenu que ficou sem nenhum item visível some; voltar tudo restaura o menu
-        var operacao = vm.Menus.Single(m => Sem(m) == "Operações");
-        vm.AplicarPreferenciasMenu(new PreferenciasMenu(operacao.Filhos!.Where(f => !f.EhSeparador).Select(f => "Operações › " + Sem(f)).ToHashSet(), new HashSet<string>()));
-        Assert.DoesNotContain(vm.MenusVisiveis, m => Sem(m) == "Operações");
+        var operacao = vm.Menus.Single(m => Sem(m) == "Operação");
+        vm.AplicarPreferenciasMenu(new PreferenciasMenu(operacao.Filhos!.Where(f => !f.EhSeparador).Select(f => "Operação › " + Sem(f)).ToHashSet(), new HashSet<string>()));
+        Assert.DoesNotContain(vm.MenusVisiveis, m => Sem(m) == "Operação");
         vm.AplicarPreferenciasMenu(PreferenciasMenu.Vazia);
         Assert.Same(vm.Menus, vm.MenusVisiveis);
         Assert.False(vm.TelaBloqueadaPorMenu(bloqueadas[0]));
@@ -111,7 +123,7 @@ public class ParametrosMenusLoteTests(SessaoHeadless headless, Vorticis.Infra.Te
         var ok = await ForaDaSessao(headless.Sessao.Dispatch(async () =>
         {
             HospedeiroSuite.IncluirTelas(Avalonia.Application.Current!, ModuloLogistica.Apps());
-            var vm = new MainViewModel();
+            var vm = new MainViewModel(new ModuloFaturamento());
             await vm.InicializarAsync(db.ConnectionString);
             var login = Assert.IsType<LoginViewModel>(vm.Conteudo);
             (login.Usuario, login.Senha) = ("admin_teste", "Senha1234");
@@ -129,35 +141,26 @@ public class ParametrosMenusLoteTests(SessaoHeadless headless, Vorticis.Infra.Te
                 var abas = Assert.IsType<ParametrosAbasViewModel>(vm.Conteudo);
                 static CampoParametro Campo(ParametrosViewModel p, string chave) => p.Grupos.SelectMany(g => g.Campos).Single(c => c.Chave == chave);
                 static Task Salvar(ParametrosViewModel p) => ((IAsyncRelayCommand)p.SalvarCommand).ExecuteAsync(null);
-                var frota = (ParametrosViewModel)abas.Abas[0].Conteudo;
-                var gerencial = (ParametrosViewModel)abas.Abas[1].Conteudo;
-                var contabil = (ParametrosViewModel)abas.Abas[2].Conteudo;
-                Assert.All(new[] { frota, gerencial, contabil }, p => Assert.True(p.PodeGravar));
+                var gerencial = (ParametrosViewModel)abas.Abas[0].Conteudo;
+                var frota = (ParametrosViewModel)abas.Abas[1].Conteudo;
+                Assert.All(new[] { frota, gerencial }, p => Assert.True(p.PodeGravar));
                 Assert.False(string.IsNullOrEmpty(Campo(frota, "dias").Texto));   // as abas já vieram carregadas
 
                 Campo(frota, "dias").Texto = "21";
                 await Salvar(frota);
                 Assert.Empty(frota.Erros);
                 Campo(gerencial, "contaFornecedores").Texto = "2.1.01.001";
+                Assert.True(abas.TemAlteracoesPendentes);
                 await Salvar(gerencial);
                 Assert.Empty(gerencial.Erros);
-                Assert.Equal("ONLINE", Campo(contabil, "tipoContabilizacao").ValorEscolha);   // padrão: on-line
-                Campo(contabil, "tipoContabilizacao").DefinirEscolha("LOTE");
-                Assert.True(abas.TemAlteracoesPendentes);
-                await Salvar(contabil);
-                Assert.Empty(contabil.Erros);
                 Assert.False(abas.TemAlteracoesPendentes);
 
                 Assert.Equal(21, (await Vorticis.Frota.ServicosFrota.De(db.App).ConfiguracaoAsync(empresa)).DiasAviso);
-                Assert.Equal(ModoContabilizacao.Lote, (await db.App.Pendencias.ModoAsync(empresa, adm, ct)).Valor);
                 await abas.CarregarAsync();                                         // recarrega do banco: o que foi gravado volta
-                Assert.Equal(("21", "2.1.01.001", "LOTE"), (Campo(frota, "dias").Texto, Campo(gerencial, "contaFornecedores").Texto,
-                                                             Campo(contabil, "tipoContabilizacao").ValorEscolha));
-                Assert.Contains(MainViewModelBase.RecursoContabilizacaoLote, vm.RecursosAtivos);   // o item Exportar › Contabilização em lote aparece
-                Assert.True(vm.AbrirCommand.CanExecute(TelasComuns.ContabilizacaoLote));
+                Assert.Equal(("21", "2.1.01.001"), (Campo(frota, "dias").Texto, Campo(gerencial, "contaFornecedores").Texto));
 
                 // ---- aba Menus: árvore, essenciais e gravação por usuário
-                var menus = Assert.IsType<PreferenciasMenuViewModel>(abas.Abas[3].Conteudo);
+                var menus = Assert.IsType<PreferenciasMenuViewModel>(abas.Abas[^1].Conteudo);
                 Assert.NotEmpty(menus.Raiz);
                 var ajuda = menus.Raiz.Single(n => n.Titulo == "Ajuda");
                 Assert.True(ajuda.Essencial && !ajuda.Editavel && ajuda.Marcado);
@@ -198,14 +201,14 @@ public class ParametrosMenusLoteTests(SessaoHeadless headless, Vorticis.Infra.Te
 
                 // administrador aplica para todos; quem não é administrador não consegue
                 var essenciais = new HashSet<string>();
-                var negado = await db.App.PreferenciasMenu.GravarAsync(new SessaoUsuario(outro, "outro_menu", "Outro", false, false), vm.Modulo.NomeExecutavel, ["Emissão"], essenciais, true);
+                var negado = await db.App.PreferenciasMenu.GravarAsync(new SessaoUsuario(outro, "outro_menu", "Outro", false, false), vm.Modulo.NomeExecutavel, ["Emissão eletrônica"], essenciais, true);
                 Assert.Contains("administradores", negado.Erros[0]);
-                Assert.True((await vm.SalvarPreferenciasMenuAsync(["Emissão"], true)).Sucesso);
+                Assert.True((await vm.SalvarPreferenciasMenuAsync(["Emissão eletrônica"], true)).Sucesso);
                 var deTodos = await db.App.PreferenciasMenu.ObterAsync(vm.Modulo.NomeExecutavel, outro, ct);
-                Assert.Contains("Emissão", deTodos.DeTodos);
-                Assert.Contains("Emissão", deTodos.Ocultos);
+                Assert.Contains("Emissão eletrônica", deTodos.DeTodos);
+                Assert.Contains("Emissão eletrônica", deTodos.Ocultos);
                 Assert.Contains("Relatórios", vm.PreferenciasDeMenu.DoUsuario);       // a escolha pessoal do administrador continua
-                Assert.DoesNotContain(vm.MenusVisiveis, m => m.Titulo.Replace("_", "") == "Emissão");
+                Assert.DoesNotContain(vm.MenusVisiveis, m => m.Titulo.Replace("_", "") == "Emissão eletrônica");
                 return true;
             }
             finally
@@ -222,7 +225,7 @@ public class ParametrosMenusLoteTests(SessaoHeadless headless, Vorticis.Infra.Te
         var ok = await ForaDaSessao(headless.Sessao.Dispatch(() =>
         {
             HospedeiroSuite.IncluirTelas(Avalonia.Application.Current!, ModuloLogistica.Apps());
-            var vm = new MainViewModel();
+            var vm = new MainViewModel(new ModuloContabilidade());
             var abas = Assert.IsType<ParametrosAbasViewModel>(vm.ViewModelDaTela(TelasComuns.Parametros));
             var menus = (PreferenciasMenuViewModel)abas.Abas[^1].Conteudo;
             menus.Carregar();
@@ -254,7 +257,7 @@ public class ParametrosMenusLoteTests(SessaoHeadless headless, Vorticis.Infra.Te
         var ok = await ForaDaSessao(headless.Sessao.Dispatch(async () =>
         {
             HospedeiroSuite.IncluirTelas(Avalonia.Application.Current!, ModuloLogistica.Apps());
-            var vm = new MainViewModel();
+            var vm = new MainViewModel(new ModuloContabilidade());
             await vm.InicializarAsync(db.ConnectionString);
             var login = Assert.IsType<LoginViewModel>(vm.Conteudo);
             (login.Usuario, login.Senha) = ("admin_teste", "Senha1234");
