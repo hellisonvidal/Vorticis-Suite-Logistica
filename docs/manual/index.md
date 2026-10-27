@@ -17,6 +17,7 @@ Cada função segue o mesmo roteiro: **para que serve**, **onde fica no menu**, 
 | [Gerencial](10-gerencial.md) | Painel do empresário, pedidos de venda e compra, estoque e transporte |
 | [Frota](12-frota.md) | Veículos, motoristas, abastecimentos, viagens, vencimentos e manutenção (ordens de serviço, autorização e notas de compra) |
 | [TMS – gestão do transporte](14-tms.md) | Tabelas de frete, cotações, CT-e, manifestos (MDF-e), entregas e faturas de frete |
+| [Financiamentos, consórcios e imobilizado](15-financiamentos.md) | Financiamentos (Price e SAC) e consórcios: parcelas, pagamentos, rateio por placa, curto e longo prazo, contabilização e o bem no imobilizado |
 | [Vorticis Suite Logística](13-logistica.md) | O programa da transportadora: seis módulos na mesma janela (Frotas, Transporte com o faturamento, Manutenção, Financeiro, Gerencial e Contabilidade), cinco layouts de navegação e login único |
 | [Configurações](08-configuracoes.md) | Backup, configurações gerais, conexão e solução de problemas |
 

@@ -226,12 +226,12 @@ public sealed class ModuloManutencao() : ModuloLogistica(Frota)
     ];
 }
 
-/// <summary>Financeiro: contas a pagar e a receber, conciliação bancária e cobranças.</summary>
-public sealed class ModuloFinanceiro() : ModuloLogistica(Gerencial, Fiscal)
+/// <summary>Financeiro: contas a pagar e a receber, consórcios e financiamentos, conciliação bancária, bens financiados (imobilizado) e cobranças.</summary>
+public sealed class ModuloFinanceiro() : ModuloLogistica(Gerencial, Fiscal, Frota, Contabil)
 {
     protected override IReadOnlyList<(string Titulo, IModuloDesktop Parte)> AbasParametros => [("Financeiro", Gerencial)];
     public override string NomeCurto => "Financeiro";
-    public override string Subtitulo => "Contas a pagar e a receber, conciliação bancária e cobranças";
+    public override string Subtitulo => "Contas a pagar e a receber, consórcios, financiamentos, imobilizado e cobranças";
     public override string CorDestaque => "#16A34A";
     public override string CorBarra => "#14532D";
     public override string Icone => IconesModulos.Financeiro;
@@ -242,13 +242,22 @@ public sealed class ModuloFinanceiro() : ModuloLogistica(Gerencial, Fiscal)
 
     public override IReadOnlyList<ItemMenu> Menus =>
     [
-        .. De(Gerencial,
-            ItemMenu.Submenu("_Contas",
-                ItemMenu.Tela("Contas a pagar", Ft.ContasPagar),
-                ItemMenu.Tela("Contas a receber", Ft.ContasReceber),
-                ItemMenu.Separador,
-                ItemMenu.Tela("Conciliação bancária", Ft.ConciliacaoDuplicatas)),
-            ItemMenu.Submenu("_Monitores", ItemMenu.Tela("Monitor de cobranças", E.ViewModels.ErpTelas.MonitorCobrancas))),
+        ItemMenu.Submenu("_Contas",
+        [
+            .. De(Gerencial, ItemMenu.Tela("Contas a pagar", Ft.ContasPagar), ItemMenu.Tela("Contas a receber", Ft.ContasReceber)),
+            ItemMenu.Separador,
+            .. De(Frota, ItemMenu.Tela("Consórcios", T.Consorcios), ItemMenu.Tela("Financiamentos", T.Financiamentos)),
+            ItemMenu.Separador,
+            .. De(Gerencial, ItemMenu.Tela("Conciliação bancária", Ft.ConciliacaoDuplicatas)),
+        ]),
+        ItemMenu.Submenu("_Imobilizado",
+        [
+            .. De(Frota, ItemMenu.Tela("Bens financiados e consorciados", T.BensContratos)),
+            ItemMenu.Separador,
+            .. De(Contabil, ItemMenu.Tela("Cadastro de bens", C.ViewModels.Telas.Bens),
+                  ItemMenu.Tela("Cálculo e lançamento da depreciação", C.ViewModels.Telas.Depreciacao)),
+        ]),
+        .. De(Gerencial, ItemMenu.Submenu("_Monitores", ItemMenu.Tela("Monitor de cobranças", E.ViewModels.ErpTelas.MonitorCobrancas))),
         Relatorios(De(Gerencial,
             ItemMenu.Tela("Relatório de contas a pagar", Ft.RelDuplicatasPagar),
             ItemMenu.Tela("Relatório de contas a receber", Ft.RelDuplicatasReceber),

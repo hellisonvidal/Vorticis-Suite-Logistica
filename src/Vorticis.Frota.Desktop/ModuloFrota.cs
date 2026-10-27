@@ -58,6 +58,11 @@ public sealed class ModuloFrota : IModuloDesktop
             ItemMenu.Tela("Peças e serviços", FrotaTelas.Itens),
             ItemMenu.Tela("Ordens de serviço", FrotaTelas.Ordens),
             ItemMenu.Tela("Autorização de serviços", FrotaTelas.Autorizacao)),
+        ItemMenu.Submenu("Con_tratos",
+            ItemMenu.Tela("Financiamentos", FrotaTelas.Financiamentos),
+            ItemMenu.Tela("Consórcios", FrotaTelas.Consorcios),
+            ItemMenu.Separador,
+            ItemMenu.Tela("Bens financiados e consorciados", FrotaTelas.BensContratos)),
         ItemMenu.Submenu("_Relatórios",
             ItemMenu.Tela("Painel da frota", FrotaTelas.Painel),
             ItemMenu.Tela("Monitor de multas de trânsito", FrotaTelas.Multas),
@@ -106,6 +111,7 @@ public sealed class ModuloFrota : IModuloDesktop
     private static bool Pode(MainViewModelBase m, params Permissao[] p) => m.TemAcessoNaEmpresa && p.Any(m.Pode);
     private static readonly Permissao[] Todas = [Permissao.FrotaCadastros, Permissao.FrotaOperacao, Permissao.FrotaRelatorios, Permissao.FrotaManutencao, Permissao.FrotaAprovar, Permissao.FrotaTms];
     private static readonly Permissao[] PermissoesTms = [Permissao.FrotaTms, Permissao.FrotaOperacao, Permissao.FrotaRelatorios];
+    private static readonly Permissao[] Contratos = [Permissao.FiscalDuplicatasManter, Permissao.FiscalDuplicatasBaixar, Permissao.LancamentoIncluir, Permissao.FrotaRelatorios];
     private static readonly Permissao[] Manutencao = [Permissao.FrotaManutencao, Permissao.FrotaAprovar, Permissao.FrotaRelatorios];
 
     public void RegistrarTelas(CatalogoTelas c)
@@ -124,6 +130,14 @@ public sealed class ModuloFrota : IModuloDesktop
         c.Instancia("DocumentosFrota", m => new DocumentosViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
                     aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
             .Tela(FrotaTelas.Documentos, "Cadastros › Documentos e vencimentos", m => Pode(m, Todas), v => v.CarregarAsync());
+        c.Instancia("Financiamentos", m => new ContratosViewModel(m, RegrasContratos.Financiamento), atualizarPermissoes: v => v.AtualizarPermissoes(),
+                    aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
+            .Tela(FrotaTelas.Financiamentos, "Contas › Financiamentos", m => Pode(m, Contratos), v => v.CarregarAsync());
+        c.Instancia("Consorcios", m => new ContratosViewModel(m, RegrasContratos.Consorcio), atualizarPermissoes: v => v.AtualizarPermissoes(),
+                    aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
+            .Tela(FrotaTelas.Consorcios, "Contas › Consórcios", m => Pode(m, Contratos), v => v.CarregarAsync());
+        c.Instancia("BensContratos", m => new BensContratosViewModel(m), aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
+            .Tela(FrotaTelas.BensContratos, "Imobilizado › Bens financiados e consorciados", m => Pode(m, Contratos), v => v.CarregarAsync());
         c.Instancia("MultasTransito", m => new MultasViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
                     aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
             .Tela(FrotaTelas.Multas, "Monitores › Monitor de multas de trânsito", m => Pode(m, Todas), v => v.CarregarAsync());

@@ -13,6 +13,8 @@
     <DataTemplate DataType="vm:PlanosViewModel"><v:PlanosView /></DataTemplate>
     <DataTemplate DataType="vm:DocumentosViewModel"><v:DocumentosView /></DataTemplate>
     <DataTemplate DataType="vm:MultasViewModel"><v:MultasView /></DataTemplate>
+    <DataTemplate DataType="vm:ContratosViewModel"><v:ContratosView /></DataTemplate>
+    <DataTemplate DataType="vm:BensContratosViewModel"><v:BensContratosView /></DataTemplate>
     <DataTemplate DataType="vm:AbastecimentosViewModel"><v:AbastecimentosView /></DataTemplate>
     <DataTemplate DataType="vm:OrdensViewModel"><v:OrdensView /></DataTemplate>
     <DataTemplate DataType="vm:ItensManutencaoViewModel"><v:ItensManutencaoView /></DataTemplate>

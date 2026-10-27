@@ -1,0 +1,29 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Vorticis.Frota.Desktop.ViewModels"
+             x:Class="Vorticis.Frota.Desktop.Views.BensContratosView" x:DataType="vm:BensContratosViewModel">
+  <Grid RowDefinitions="Auto,Auto,*" Margin="8">
+    <TextBlock Classes="titulo" Text="Bens financiados e consorciados" Margin="0,0,0,8" />
+    <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8" Margin="0,0,0,6">
+      <TextBlock Classes="rotulo" Text="Data-base" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding DataBase}" Width="140" />
+      <Button Content="Atualizar" Classes="accent" Command="{Binding CarregarCommand}" />
+      <TextBlock Text="{Binding Totais}" VerticalAlignment="Center" FontWeight="SemiBold" TextWrapping="Wrap" />
+    </StackPanel>
+    <DataGrid Grid.Row="2" ItemsSource="{Binding Lista}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Tipo" Binding="{ReflectionBinding Tipo}" Width="110" />
+        <DataGridTextColumn Header="Número" Binding="{ReflectionBinding Numero}" Width="100" />
+        <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" />
+        <DataGridTextColumn Header="Credor" Binding="{ReflectionBinding Credor}" Width="140" />
+        <DataGridTextColumn Header="Bem no imobilizado" Binding="{ReflectionBinding Bem}" Width="200" />
+        <DataGridTextColumn Header="Placas" Binding="{ReflectionBinding Placas}" Width="130" />
+        <DataGridTextColumn Header="Valor do bem" Binding="{ReflectionBinding Valor}" Width="120" />
+        <DataGridTextColumn Header="Pagas" Binding="{ReflectionBinding Parcelas}" Width="70" />
+        <DataGridTextColumn Header="Saldo a pagar" Binding="{ReflectionBinding Saldo}" Width="120" />
+        <DataGridTextColumn Header="Curto prazo" Binding="{ReflectionBinding Curto}" Width="120" />
+        <DataGridTextColumn Header="Longo prazo" Binding="{ReflectionBinding Longo}" Width="120" />
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="90" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </Grid>
+</UserControl>

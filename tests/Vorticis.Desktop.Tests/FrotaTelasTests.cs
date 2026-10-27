@@ -114,6 +114,10 @@ public class FrotaTelasTests(SessaoHeadless headless, BancoDeTeste db) : IClassF
                 (new F.ViewModels.RelatorioFrotaViewModel(m, TabelasFrota.TituloAcompanhamento), new F.Views.RelatorioFrotaView()),
                 (new F.ViewModels.RelatorioFrotaViewModel(m, TabelasFrota.TituloViagensCliente), new F.Views.RelatorioFrotaView()),
                 (relatorio, new F.Views.RelatorioFrotaView()),
+                (new F.ViewModels.MultasViewModel(m), new F.Views.MultasView()),
+                (new F.ViewModels.ContratosViewModel(m, RegrasContratos.Financiamento), new F.Views.ContratosView()),
+                (new F.ViewModels.ContratosViewModel(m, RegrasContratos.Consorcio), new F.Views.ContratosView()),
+                (new F.ViewModels.BensContratosViewModel(m), new F.Views.BensContratosView()),
             ];
             foreach (var (vm, view) in telas)
             {
@@ -121,7 +125,10 @@ public class FrotaTelasTests(SessaoHeadless headless, BancoDeTeste db) : IClassF
                 var janela = new Window { Content = view, Width = 1280, Height = 760 };
                 janela.Show();
                 Dispatcher.UIThread.RunJobs();
-                Assert.NotNull(janela.CaptureRenderedFrame());
+                var quadro = janela.CaptureRenderedFrame();
+                Assert.NotNull(quadro);
+                if (Environment.GetEnvironmentVariable("VORTICIS_SCREENSHOTS") is { Length: > 0 } pasta && vm is F.ViewModels.MultasViewModel or F.ViewModels.ContratosViewModel)
+                    quadro.Save(Path.Combine(Directory.CreateDirectory(pasta).FullName, $"frota-{view.GetType().Name}-{(vm as F.ViewModels.ContratosViewModel)?.Tipo}.png"));
                 janela.Close();
             }
             var rv = new F.Views.RelatorioFrotaView { DataContext = relatorio };

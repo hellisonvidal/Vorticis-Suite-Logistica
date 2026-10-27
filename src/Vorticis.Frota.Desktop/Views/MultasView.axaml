@@ -14,7 +14,7 @@
         <DataGridTextColumn Header="Motorista" Binding="{ReflectionBinding Motorista}" Width="140" />
         <DataGridTextColumn Header="Auto de infração" Binding="{ReflectionBinding Auto}" Width="120" />
         <DataGridTextColumn Header="Data" Binding="{ReflectionBinding Data}" Width="90" />
-        <DataGridTextColumn Header="Infração" Binding="{ReflectionBinding Infracao}" Width="*" />
+        <DataGridTextColumn Header="Infração" Binding="{ReflectionBinding Infracao}" Width="*" MinWidth="160" />
         <DataGridTextColumn Header="Gravidade" Binding="{ReflectionBinding Gravidade}" Width="90" />
         <DataGridTextColumn Header="Pontos" Binding="{ReflectionBinding Pontos}" Width="60" />
         <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="100" />

@@ -127,6 +127,9 @@ contasreceber=10-gerencial.md#financeiro
 ; ---- frota (piloto)
 frota.painel=12-frota.md#painel-da-frota
 frota.multas=12-frota.md#monitor-de-multas-de-transito
+frota.financiamentos=15-financiamentos.md#financiamentos
+frota.consorcios=15-financiamentos.md#consorcios
+frota.contratos.bens=15-financiamentos.md#bens-financiados-e-consorciados
 frota.veiculos=12-frota.md#veiculos
 frota.motoristas=12-frota.md#motoristas
 frota.planos=12-frota.md#planos-de-manutencao

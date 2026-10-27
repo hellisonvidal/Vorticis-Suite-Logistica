@@ -18,6 +18,9 @@ public static class FrotaTelas
     public const string Planos = "frota.planos";
     public const string Documentos = "frota.documentos";
     public const string Multas = "frota.multas";
+    public const string Financiamentos = "frota.financiamentos";
+    public const string Consorcios = "frota.consorcios";
+    public const string BensContratos = "frota.contratos.bens";
     public const string Abastecimentos = "frota.abastecimentos";
     public const string Ordens = "frota.ordens";
     public const string Viagens = "frota.viagens";

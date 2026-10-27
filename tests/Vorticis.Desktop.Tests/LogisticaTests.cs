@@ -61,7 +61,11 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
         Assert.All(todos.Skip(1), vm => Assert.DoesNotContain(Folhas(vm.Menus), i => i.Chave == TelasComuns.Empresas));
         Assert.All(todos, vm => Assert.True(vm.ConheceTela(TelasComuns.Empresas)));
         Assert.All(todos.Skip(1), vm => Assert.Equal("Clientes", vm.Menus[0].Filhos![0].Titulo));
-        Assert.Equal(["Contas", "Monitores", "Relatórios"], Menus(todos[3]));
+        Assert.Equal(["Contas", "Imobilizado", "Monitores", "Relatórios"], Menus(todos[3]));
+        Assert.Equal(["Contas a pagar", "Contas a receber", "-", "Consórcios", "Financiamentos", "-", "Conciliação bancária"],
+                     todos[3].Menus.Single(m => m.Titulo == "_Contas").Filhos!.Select(f => f.Titulo));
+        Assert.Equal(["Bens financiados e consorciados", "-", "Cadastro de bens", "Cálculo e lançamento da depreciação"],
+                     todos[3].Menus.Single(m => m.Titulo == "_Imobilizado").Filhos!.Select(f => f.Titulo));
         Assert.Equal(["Compras", "Estoque", "Monitores", "Relatórios"], Menus(todos[4]));
         Assert.Equal(["Monitor de notas fiscais", "Monitor de multas de trânsito"], todos[4].Menus.Single(m => m.Titulo == "_Monitores").Filhos!.Select(f => f.Titulo));
         Assert.NotNull(todos[4].ImportacaoDaTela(FT.Multas));                // as multas também vêm de planilha
@@ -74,12 +78,14 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
         Em(2, FT.Planos, FT.Itens, FT.Ordens, FT.Autorizacao, FT.RelHistoricoManutencao);
         Em(1, FT.Faturas, Erp.Desktop.ViewModels.ErpTelas.PedidosVenda, Fiscal.Desktop.ViewModels.Telas.NotaSaida);
         Em(3, Fiscal.Desktop.ViewModels.Telas.ContasPagar, Fiscal.Desktop.ViewModels.Telas.ContasReceber, Fiscal.Desktop.ViewModels.Telas.ConciliacaoDuplicatas,
-           TelasComuns.ContasBancarias);
+           TelasComuns.ContasBancarias, FT.Financiamentos, FT.Consorcios, FT.BensContratos, ViewModels.Telas.Bens);
         Em(4, Erp.Desktop.ViewModels.ErpTelas.PedidosCompra, Fiscal.Desktop.ViewModels.Telas.NotaEntrada, Erp.Desktop.ViewModels.ErpTelas.Estoque,
            Erp.Desktop.ViewModels.ErpTelas.Painel, Fiscal.Desktop.ViewModels.Telas.Produtos, Fiscal.Desktop.ViewModels.Telas.RegrasFiscais, FT.Multas);
         Em(5, ViewModels.Telas.Lancamento, ViewModels.Telas.Balancete, ViewModels.Telas.Filiais, ViewModels.Telas.RelatorioGrupo);
         var doModulo = todos.SelectMany(vm => Folhas([.. vm.Modulo.ItensCadastros, .. vm.Modulo.Menus]).Where(x => x.Chave is { } c && !c.StartsWith("grafico.")
-                                                                                                         && c is not (TelasComuns.FormasPagamento or TelasComuns.ContasBancarias))
+                                                                                                         && c is not (TelasComuns.FormasPagamento or TelasComuns.ContasBancarias
+                                                                                                                      // o imobilizado também fica no Financeiro, junto dos contratos
+                                                                                                                      or ViewModels.Telas.Bens or ViewModels.Telas.Depreciacao))
                                                   .Select(x => (Modulo: vm.Modulo.NomeCurto, Chave: x.Chave!)).Distinct()).ToList();
         Assert.Empty(doModulo.GroupBy(x => x.Chave).Where(g => g.Count() > 1).Select(g => $"{g.Key}: {string.Join(", ", g.Select(x => x.Modulo))}"));
         // a emissão de CT-e/MDF-e e a NFS-e continuam "em breve"

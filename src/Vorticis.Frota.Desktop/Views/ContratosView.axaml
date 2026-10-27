@@ -1,0 +1,179 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Frota.Desktop.ViewModels"
+             x:Class="Vorticis.Frota.Desktop.Views.ContratosView" x:DataType="vm:ContratosViewModel">
+  <UserControl.Styles>
+    <Style Selector="TabControl#AbasContrato > TabItem">
+      <Setter Property="FontSize" Value="15" />
+      <Setter Property="MinHeight" Value="34" />
+      <Setter Property="Padding" Value="10,0" />
+    </Style>
+  </UserControl.Styles>
+  <Grid ColumnDefinitions="*,12,470" RowDefinitions="Auto,200,Auto,*" Margin="8">
+    <TextBlock Grid.ColumnSpan="3" Classes="titulo" Text="{Binding Titulo}" Margin="0,0,0,8" />
+    <DataGrid Grid.Row="1" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Número" Binding="{ReflectionBinding Numero}" Width="110" />
+        <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" MinWidth="160" />
+        <DataGridTextColumn Header="Credor" Binding="{ReflectionBinding Credor}" Width="130" />
+        <DataGridTextColumn Header="Data" Binding="{ReflectionBinding Data}" Width="90" />
+        <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="120" />
+        <DataGridTextColumn Header="Parcelas" Binding="{ReflectionBinding Parcelas}" Width="70" />
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="180" />
+      </DataGrid.Columns>
+    </DataGrid>
+    <StackPanel Grid.Row="2" Spacing="4" Margin="0,8,0,4">
+      <TextBlock Text="{Binding Resumo}" FontWeight="SemiBold" TextWrapping="Wrap" />
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <TextBlock Classes="rotulo" Text="Pagar em" VerticalAlignment="Center" />
+        <CalendarDatePicker SelectedDate="{Binding DataPagamento}" Width="140" />
+        <TextBlock Classes="rotulo" Text="Valor pago" VerticalAlignment="Center" />
+        <TextBox Text="{Binding ValorPago}" Width="110" />
+        <Button Content="Pagar parcela" Classes="accent" Command="{Binding PagarCommand}" />
+        <Button Content="Estornar pagamento" Command="{Binding EstornarPagamentoCommand}" />
+      </StackPanel>
+    </StackPanel>
+    <DataGrid Grid.Row="3" ItemsSource="{Binding ParcelasLista}" SelectedItem="{Binding ParcelaSelecionada}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Nº" Binding="{ReflectionBinding Numero}" Width="45" />
+        <DataGridTextColumn Header="Vencimento" Binding="{ReflectionBinding Vencimento}" Width="95" />
+        <DataGridTextColumn Header="Amortização" Binding="{ReflectionBinding Amortizacao}" Width="105" />
+        <DataGridTextColumn Header="Juros / taxa adm." Binding="{ReflectionBinding Juros}" Width="115" />
+        <DataGridTextColumn Header="Fundo reserva" Binding="{ReflectionBinding Outros}" Width="100" />
+        <DataGridTextColumn Header="Seguro" Binding="{ReflectionBinding Seguro}" Width="80" />
+        <DataGridTextColumn Header="Parcela" Binding="{ReflectionBinding Valor}" Width="100" />
+        <DataGridTextColumn Header="Saldo devedor" Binding="{ReflectionBinding Saldo}" Width="110" />
+        <DataGridTextColumn Header="Pagamento" Binding="{ReflectionBinding Pagamento}" Width="*" />
+      </DataGrid.Columns>
+    </DataGrid>
+    <DockPanel Grid.Row="1" Grid.RowSpan="3" Grid.Column="2">
+      <StackPanel DockPanel.Dock="Bottom" Spacing="6" Margin="0,8,0,0">
+        <StackPanel Orientation="Horizontal" Spacing="6" IsEnabled="{Binding PodeEditar}">
+          <Button Content="Novo" Command="{Binding NovoCommand}" />
+          <Button Content="Simular parcelas" Command="{Binding SimularCommand}" />
+          <Button Content="Gravar" Classes="accent" Command="{Binding GravarCommand}" />
+          <Button Content="Excluir" Command="{Binding ExcluirCommand}" />
+        </StackPanel>
+        <c:MensagensView />
+      </StackPanel>
+      <TabControl Name="AbasContrato">
+        <TabItem Header="Contrato">
+          <ScrollViewer>
+            <Grid ColumnDefinitions="140,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6"
+                  IsEnabled="{Binding PodeEditar}" Margin="0,6,0,0">
+              <TextBlock Classes="rotulo" Text="{Binding RotuloNumero}" />
+              <TextBox Grid.Column="1" Text="{Binding Numero}" Width="160" HorizontalAlignment="Left" />
+              <TextBlock Grid.Row="1" Classes="rotulo" Text="Descrição" />
+              <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Descricao}" Watermark="Ex.: cavalo mecânico Scania R 450" />
+              <TextBlock Grid.Row="2" Classes="rotulo" Text="{Binding RotuloCredor}" />
+              <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Credores}" SelectedItem="{Binding Credor}" HorizontalAlignment="Stretch" />
+              <TextBlock Grid.Row="3" Classes="rotulo" Text="{Binding RotuloData}" />
+              <CalendarDatePicker Grid.Row="3" Grid.Column="1" SelectedDate="{Binding DataContrato}" Width="140" />
+              <TextBlock Grid.Row="4" Classes="rotulo" Text="{Binding RotuloValor}" />
+              <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding ValorBem}" Width="140" HorizontalAlignment="Left" />
+              <TextBlock Grid.Row="5" Classes="rotulo" Text="Entrada" IsVisible="{Binding Financiamento}" />
+              <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Entrada}" Width="140" HorizontalAlignment="Left" IsVisible="{Binding Financiamento}" />
+              <TextBlock Grid.Row="6" Classes="rotulo" Text="IOF e tarifas financiados" IsVisible="{Binding Financiamento}" TextWrapping="Wrap" />
+              <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Encargos}" Width="140" HorizontalAlignment="Left" IsVisible="{Binding Financiamento}" />
+              <TextBlock Grid.Row="7" Classes="rotulo" Text="Juros (% ao mês)" IsVisible="{Binding Financiamento}" />
+              <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding TaxaJuros}" Width="90" HorizontalAlignment="Left" IsVisible="{Binding Financiamento}" />
+              <TextBlock Grid.Row="8" Classes="rotulo" Text="Sistema" IsVisible="{Binding Financiamento}" />
+              <ComboBox Grid.Row="8" Grid.Column="1" ItemsSource="{x:Static vm:ContratosViewModel.Sistemas}" SelectedItem="{Binding Sistema}"
+                        HorizontalAlignment="Stretch" IsVisible="{Binding Financiamento}" />
+              <TextBlock Grid.Row="5" Classes="rotulo" Text="Taxa de administração (%)" IsVisible="{Binding Consorcio}" TextWrapping="Wrap" />
+              <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding TaxaAdministracao}" Width="90" HorizontalAlignment="Left" IsVisible="{Binding Consorcio}" />
+              <TextBlock Grid.Row="6" Classes="rotulo" Text="Fundo de reserva (%)" IsVisible="{Binding Consorcio}" />
+              <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding FundoReserva}" Width="90" HorizontalAlignment="Left" IsVisible="{Binding Consorcio}" />
+              <TextBlock Grid.Row="7" Classes="rotulo" Text="Seguro por mês (R$)" IsVisible="{Binding Consorcio}" />
+              <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding SeguroMensal}" Width="140" HorizontalAlignment="Left" IsVisible="{Binding Consorcio}" />
+              <TextBlock Grid.Row="9" Classes="rotulo" Text="Parcelas" />
+              <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding QuantidadeParcelas}" Width="90" HorizontalAlignment="Left" />
+              <TextBlock Grid.Row="10" Classes="rotulo" Text="1º vencimento" />
+              <CalendarDatePicker Grid.Row="10" Grid.Column="1" SelectedDate="{Binding PrimeiroVencimento}" Width="140" />
+              <TextBlock Grid.Row="11" Classes="rotulo" Text="Situação" />
+              <ComboBox Grid.Row="11" Grid.Column="1" ItemsSource="{x:Static vm:ContratosViewModel.SituacoesContrato}" SelectedItem="{Binding Situacao}" Width="140" />
+              <TextBlock Grid.Row="12" Classes="rotulo" Text="Observação" />
+              <TextBox Grid.Row="12" Grid.Column="1" Text="{Binding Observacao}" />
+              <StackPanel Grid.Row="13" Grid.ColumnSpan="2" Spacing="6" IsVisible="{Binding Consorcio}">
+                <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                           Text="Quando a cota for contemplada (sorteio ou lance), informe a data e clique em Registrar contemplação: o bem entra no imobilizado e o que falta pagar vai para o passivo." />
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                  <CalendarDatePicker SelectedDate="{Binding DataOperacao}" Width="140" />
+                  <Button Content="Registrar contemplação" Command="{Binding RegistrarContemplacaoCommand}" />
+                </StackPanel>
+              </StackPanel>
+            </Grid>
+          </ScrollViewer>
+        </TabItem>
+        <TabItem Header="Rateio por placa">
+          <StackPanel Spacing="6" Margin="0,6,0,0" IsEnabled="{Binding PodeEditar}">
+            <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                       Text="Divida as despesas do contrato (juros, IOF e tarifas, taxa de administração e seguro) entre as placas. Na contabilização, cada parte vai ao centro de custo da frota do veículo. O total deve ser 100%." />
+            <ItemsControl ItemsSource="{Binding Rateio}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:RateioLinha">
+                  <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,0,0,4">
+                    <ComboBox ItemsSource="{Binding $parent[UserControl].((vm:ContratosViewModel)DataContext).VeiculosOpcoes}" SelectedItem="{Binding Veiculo}" Width="250" />
+                    <TextBox Text="{Binding Percentual}" Width="70" />
+                    <TextBlock Text="%" VerticalAlignment="Center" />
+                    <Button Content="Retirar" Command="{Binding $parent[UserControl].((vm:ContratosViewModel)DataContext).RetirarPlacaCommand}" CommandParameter="{Binding}" />
+                  </StackPanel>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Button Content="Incluir placa" Command="{Binding IncluirPlacaCommand}" />
+          </StackPanel>
+        </TabItem>
+        <TabItem Header="Contabilização">
+          <ScrollViewer>
+            <StackPanel Spacing="6" Margin="0,6,0,0">
+              <CheckBox Content="Contabilizar no Contábil" IsChecked="{Binding Contabiliza}" IsEnabled="{Binding PodeEditar}" />
+              <Grid ColumnDefinitions="160,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6" IsEnabled="{Binding PodeEditar}">
+                <TextBlock Classes="rotulo" Text="Conta do bem" />
+                <TextBox Grid.Column="1" Text="{Binding ContaBem}" Watermark="Imobilizado, ex.: 1.2.03.003 (ou a do bem ligado)" />
+                <TextBlock Grid.Row="1" Classes="rotulo" Text="Pagamento (banco/caixa)" />
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ContaPagamento}" />
+                <TextBlock Grid.Row="2" Classes="rotulo" Text="Curto prazo (circulante)" />
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ContaCurtoPrazo}" />
+                <TextBlock Grid.Row="3" Classes="rotulo" Text="Longo prazo (não circulante)" TextWrapping="Wrap" />
+                <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding ContaLongoPrazo}" />
+                <TextBlock Grid.Row="4" Classes="rotulo" Text="Despesa (juros/taxas)" />
+                <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding ContaDespesa}" />
+                <TextBlock Grid.Row="5" Classes="rotulo" Text="Consórcio (ativo)" IsVisible="{Binding Consorcio}" />
+                <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding ContaConsorcio}" IsVisible="{Binding Consorcio}" />
+              </Grid>
+              <TextBlock Text="{Binding SaldosContabeis}" FontWeight="SemiBold" TextWrapping="Wrap" />
+              <StackPanel Orientation="Horizontal" Spacing="6" IsVisible="{Binding Financiamento}">
+                <Button Content="Contabilizar contratação" Command="{Binding ContabilizarContratacaoCommand}" />
+                <Button Content="Desfazer" Command="{Binding DesfazerContratacaoCommand}" />
+              </StackPanel>
+              <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                         Text="Curto prazo: parcelas que vencem nos próximos 12 meses; longo prazo: as demais. Todo fim de mês (ou no balanço), informe a data-base e clique em Reclassificar para passar ao curto prazo as parcelas que entraram nos 12 meses." />
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <CalendarDatePicker SelectedDate="{Binding DataOperacao}" Width="140" />
+                <Button Content="Reclassificar curto/longo prazo" Command="{Binding ReclassificarCommand}" />
+              </StackPanel>
+            </StackPanel>
+          </ScrollViewer>
+        </TabItem>
+        <TabItem Header="Imobilizado">
+          <StackPanel Spacing="6" Margin="0,6,0,0">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <TextBlock Classes="rotulo" Text="Bem ligado:" />
+              <TextBlock Text="{Binding Bem}" FontWeight="SemiBold" TextWrapping="Wrap" />
+            </StackPanel>
+            <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                       Text="Cadastre o bem do contrato no imobilizado (com a vida útil e as contas do grupo, o valor do bem ou da carta e a placa como plaqueta). A depreciação é calculada pelo Contábil, em Imobilizado › Cálculo e lançamento da depreciação." />
+            <StackPanel Orientation="Horizontal" Spacing="6" IsEnabled="{Binding PodeEditar}">
+              <ComboBox ItemsSource="{Binding Grupos}" SelectedItem="{Binding Grupo}" Width="300">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate><TextBlock Text="{ReflectionBinding Descricao}" /></DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+              <Button Content="Gerar bem no imobilizado" Command="{Binding GerarBemCommand}" />
+            </StackPanel>
+          </StackPanel>
+        </TabItem>
+      </TabControl>
+    </DockPanel>
+  </Grid>
+</UserControl>
