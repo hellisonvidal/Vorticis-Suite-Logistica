@@ -4,7 +4,7 @@ Módulo **Vorticis Frota** (ícone grafite): coordenação da frota e manutenç�
 
 ## Onde o Frota está
 
-O Frota é a base do **[Vorticis Suite Logística](13-logistica.md)**, o programa único da transportadora: ali, as funções deste capítulo ficam nos módulos **Frota** (cadastros, abastecimentos, viagens, diárias, pedágio e relatórios da frota), **Transporte** (coletas e o TMS) e **Manutenção** (planos, peças e serviços, ordens de serviço, autorizações e relatórios da manutenção). O Vorticis Frota também pode ser aberto sozinho.
+O Frota é a base do **[Vorticis Suite Logística](13-logistica.md)**, o programa único da transportadora: ali, as funções deste capítulo ficam nos módulos **Frotas** (cadastros, abastecimentos, viagens, diárias, pedágio e relatórios da frota), **Transporte** (coletas e o TMS) e **Manutenção** (planos, peças e serviços, ordens de serviço, autorizações e relatórios da manutenção). O Vorticis Frota também pode ser aberto sozinho.
 
 ## Ordem dos cadastros
 
@@ -203,7 +203,7 @@ As coletas também alimentam o TMS: no conhecimento de transporte, escolha a ord
 
 **Para que serve:** trazer as passagens de pedágio do arquivo da operadora (Sem Parar, ConectCar, Veloe e outras), ver o gasto por veículo e lançar a **nota fiscal de entrada** da operadora sem digitar item por item.
 
-**Onde fica:** *Operação › Pedágio* (*Passagens e notas* e *Layouts de arquivo*); no Vorticis Suite Logística, no módulo **Frota**.
+**Onde fica:** *Operação › Pedágio* (*Passagens e notas* e *Layouts de arquivo*); no Vorticis Suite Logística, no módulo **Frotas**.
 
 ### Layouts de arquivo
 
@@ -243,7 +243,7 @@ Embaixo do título, os números da frota: veículos ativos, motoristas e viagens
 
 ## Relatórios da frota
 
-**Onde fica:** *Relatórios* (no Vorticis Suite Logística, nos módulos **Frota**, **Transporte** e **Manutenção**, cada um com os seus).
+**Onde fica:** *Relatórios* (no Vorticis Suite Logística, nos módulos **Frotas**, **Transporte** e **Manutenção**, cada um com os seus).
 
 Escolha o **Período** e, nos relatórios que têm, o **Veículo** e o **Motorista** (**(todos)** mostra tudo) e clique em **Gerar**; o relatório aparece na tela e pode ser exportado em PDF, Excel ou CSV.
 

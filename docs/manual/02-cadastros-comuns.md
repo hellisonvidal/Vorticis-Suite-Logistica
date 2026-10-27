@@ -17,7 +17,7 @@ Estes cadastros existem em todos os módulos e têm o mesmo código em todos ele
 7. **Salvar**.
 
 ### Logo da empresa (sai em todos os relatórios)
-No Vorticis Suite Logística, este cadastro se chama **Transportadoras**. O logo enviado aqui sai no cabeçalho, à esquerda do nome da empresa, em **todos os relatórios em PDF** dela: relatórios da frota, do TMS e do contábil, CT-e, faturas, livros etc.
+No Vorticis Suite Logística, este cadastro se chama **Transportadoras** e fica só no módulo **Frotas**. O logo enviado aqui sai no cabeçalho, à esquerda do nome da empresa, em **todos os relatórios em PDF** dela: relatórios da frota, do TMS e do contábil, CT-e, faturas, livros etc.
 1. Selecione a empresa na lista da direita (o logo é gravado na empresa selecionada).
 2. Na aba **Dados cadastrais**, em **Logo da empresa**, clique em **Enviar logo...** e escolha a imagem no computador: arquivo **PNG** ou **JPG** de até **1 MB** (de preferência com fundo branco ou transparente).
 3. A prévia aparece ao lado e o logo já vale para os próximos relatórios; não precisa clicar em Salvar.
@@ -87,7 +87,7 @@ Se o seu perfil não permite alterar, a tela só mostra os valores. Se você ape
 
 **Para que serve:** trazer de uma vez os cadastros que você já tem numa planilha (de outro sistema ou feita à mão), sem digitar um por um.
 
-**Onde fica:** no próprio grupo do cadastro, no menu *Cadastros*: cada grupo tem o item **Importar de planilha (Excel)** só com os cadastros dele. No Vorticis Suite Logística, cada módulo tem o seu, com os cadastros dele: clientes e fornecedores em todos; veículos, motoristas, frotas e rotas no **Frota**; tabelas de frete no **Transporte**; produtos e regras fiscais no **Gerencial**; centros de custo e históricos padrão na **Contabilidade**. O plano de contas tem importação própria (*Integrações › Importar › Plano de contas*).
+**Onde fica:** no próprio grupo do cadastro, no menu *Cadastros*: cada grupo tem o item **Importar de planilha (Excel)** só com os cadastros dele. No Vorticis Suite Logística, cada módulo tem o seu, com os cadastros dele: clientes e fornecedores em todos; veículos, motoristas, frotas e rotas no **Frotas**; tabelas de frete no **Transporte**; produtos e regras fiscais no **Gerencial**; centros de custo e históricos padrão na **Contabilidade**. O plano de contas tem importação própria (*Integrações › Importar › Plano de contas*).
 
 **Como usar:**
 1. Escolha o cadastro no menu. Se ainda não tem planilha, clique em **Gerar planilha modelo**: o sistema cria um .xlsx com as colunas do cadastro e uma linha de exemplo.

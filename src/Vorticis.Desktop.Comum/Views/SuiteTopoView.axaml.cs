@@ -39,9 +39,12 @@ public partial class SuiteTopoView : UserControl
         Dispatcher.UIThread.Post(() => BuscaFaixa.Focus(), DispatcherPriority.Loaded);
     }
 
+    /// <summary>Resultado da busca (no pop-up, fora da árvore do controle): abre a função e limpa a busca.</summary>
     private void ResultadoEscolhido(object? sender, RoutedEventArgs e)
     {
-        if (DataContext is SuiteViewModel s) s.Busca = "";
+        if (DataContext is not SuiteViewModel s || (sender as Control)?.DataContext is not NoSuite no) return;
+        s.Busca = "";                                     // fecha o pop-up dos resultados
+        s.AbrirFuncaoCommand.Execute(no);
         _recolher.Start();
     }
 }

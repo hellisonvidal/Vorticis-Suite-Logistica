@@ -11,7 +11,7 @@ using T = Vorticis.Frota.Desktop.ViewModels.FrotaTelas;
 namespace Vorticis.Logistica.Desktop;
 
 /// <summary>
-/// Módulo do Vorticis Suite Logística. A Suite tem sete módulos na mesma janela (Frota, Transporte, Manutenção, Faturamento, Financeiro, Gerencial
+/// Módulo do Vorticis Suite Logística. A Suite tem sete módulos na mesma janela (Frotas, Transporte, Manutenção, Faturamento, Financeiro, Gerencial
 /// e Contabilidade), cada um com os seus menus, a sua cor e o seu ícone; o login é um só. As telas são as dos módulos de origem (Frota, Gerencial,
 /// Fiscal e Contábil: mesmas regras, permissões e banco); a empresa ativa é a transportadora, cadastrada já com todos esses módulos.
 /// </summary>
@@ -76,6 +76,24 @@ public abstract class ModuloLogistica(params IModuloDesktop[] partes) : ModuloCo
     /// <summary>Itens de menu de uma parte, já com as chaves do programa.</summary>
     protected IReadOnlyList<ItemMenu> De(IModuloDesktop parte, params ItemMenu[] itens) => DaParte(parte, itens);
 
+    /// <summary>Cadastros › Transportadoras só no módulo Frotas (nos demais, a transportadora é só escolhida no alto da tela).</summary>
+    public virtual bool EmpresasNoMenuCadastros => false;
+
+    /// <summary>Todas as funções de faturamento (módulo Faturamento e menu Faturamento do Transporte); o módulo precisa das partes Frota e Gerencial.</summary>
+    protected IReadOnlyList<ItemMenu> FuncoesFaturamento() =>
+    [
+        .. De(Frota, ItemMenu.Tela("Faturas de frete", T.Faturas)), ItemMenu.Separador,
+        .. De(Gerencial, ItemMenu.Tela("Pedidos de venda", E.ViewModels.ErpTelas.PedidosVenda), ItemMenu.Tela("Notas fiscais de saída", Ft.NotaSaida)),
+        ItemMenu.Separador,
+        ItemMenu.EmBreve("Emissão de NF-e na SEFAZ"),
+        ItemMenu.EmBreve("NFS-e – Nota fiscal de serviço (Padrão Nacional)"),
+    ];
+
+    /// <summary>Relatórios do faturamento: faturas de frete, vendas e recebimentos.</summary>
+    protected IReadOnlyList<ItemMenu> RelatoriosFaturamento() =>
+        [.. De(Frota, ItemMenu.Tela(TabelasTms.TituloFaturas, T.RelFaturas)),
+         .. De(Gerencial, ItemMenu.Tela("Relatório de vendas", Ft.ResumoVendas), ItemMenu.Tela("Relatório de recebimentos", Ft.RelRecebimentos))];
+
     /// <summary>Menu Relatórios do módulo, com o submenu Gráficos quando há gráficos da área.</summary>
     protected ItemMenu Relatorios(params IEnumerable<ItemMenu>[] blocos)
     {
@@ -90,12 +108,13 @@ public abstract class ModuloLogistica(params IModuloDesktop[] partes) : ModuloCo
     }
 }
 
-/// <summary>Frota: veículos, motoristas, abastecimentos, viagens, diárias e pedágio.</summary>
+/// <summary>Frotas: transportadoras, veículos, motoristas, abastecimentos, viagens, diárias e pedágio.</summary>
 public sealed class ModuloFrotaLogistica() : ModuloLogistica(Frota)
 {
     protected override IReadOnlyList<(string Titulo, IModuloDesktop Parte)> AbasParametros => [("Frota", Frota)];
-    public override string NomeCurto => "Frota";
-    public override string Subtitulo => "Veículos, motoristas, abastecimentos, viagens, diárias e pedágio";
+    public override string NomeCurto => "Frotas";
+    public override string Subtitulo => "Transportadoras, veículos, motoristas, abastecimentos, viagens, diárias e pedágio";
+    public override bool EmpresasNoMenuCadastros => true;
     public override string CorDestaque => "#0284C7";
     public override string CorBarra => "#0C4A6E";
     public override string Icone => IconesModulos.Frota;
@@ -136,18 +155,19 @@ public sealed class ModuloFrotaLogistica() : ModuloLogistica(Frota)
     ];
 }
 
-/// <summary>Transporte (TMS): tabelas de frete, cotações, coletas, conhecimentos, manifestos e entregas.</summary>
-public sealed class ModuloTransporte() : ModuloLogistica(Frota)
+/// <summary>Transporte (TMS): tabelas de frete, cotações, coletas, conhecimentos, manifestos, entregas e todo o faturamento.</summary>
+public sealed class ModuloTransporte() : ModuloLogistica(Frota, Gerencial, Fiscal)
 {
-    protected override IReadOnlyList<(string Titulo, IModuloDesktop Parte)> AbasParametros => [("Frota e transporte", Frota)];
+    protected override IReadOnlyList<(string Titulo, IModuloDesktop Parte)> AbasParametros => [("Frota e transporte", Frota), ("Faturamento", Gerencial)];
     public override string NomeCurto => "Transporte";
-    public override string Subtitulo => "TMS: cotações, coletas, CT-e, MDF-e e entregas";
+    public override string Subtitulo => "TMS: cotações, coletas, CT-e, MDF-e, entregas e faturamento";
     public override string CorDestaque => "#0D9488";
     public override string CorBarra => "#134E4A";
     public override string Icone => IconesModulos.Transporte;
     protected override string? AreaGraficos => "Transporte";
 
-    public override IReadOnlyList<ItemMenu> ItensCadastros => De(Frota, ItemMenu.Tela("Tabelas de frete", T.TabelasFrete));
+    public override IReadOnlyList<ItemMenu> ItensCadastros =>
+        [.. De(Frota, ItemMenu.Tela("Tabelas de frete", T.TabelasFrete)), .. De(Gerencial, ItemMenu.Tela("Formas de pagamento", TelasComuns.FormasPagamento))];
 
     public override IReadOnlyList<ItemMenu> Menus =>
     [
@@ -161,6 +181,8 @@ public sealed class ModuloTransporte() : ModuloLogistica(Frota)
                 ItemMenu.Tela("Manifestos de carga (MDF-e)", T.Manifestos),
                 ItemMenu.Separador,
                 ItemMenu.EmBreve("Transmissão de CT-e e MDF-e à SEFAZ"))),
+        // todas as funções de faturamento também aqui (as mesmas do módulo Faturamento)
+        ItemMenu.Submenu("_Faturamento", [.. FuncoesFaturamento()]),
         Relatorios(De(Frota,
             ItemMenu.Tela(TabelasTms.TituloFretesCliente, T.RelFretesCliente),
             ItemMenu.Tela(TabelasTms.TituloFretesTrecho, T.RelFretesTrecho),
@@ -169,7 +191,8 @@ public sealed class ModuloTransporte() : ModuloLogistica(Frota)
             De(Frota,
             ItemMenu.Tela("Coletas por cliente", T.RelColetasCliente),
             ItemMenu.Tela("Coletas por rota", T.RelColetasRota),
-            ItemMenu.Tela("Coletas por motorista", T.RelColetasMotorista))),
+            ItemMenu.Tela("Coletas por motorista", T.RelColetasMotorista)),
+            RelatoriosFaturamento()),
     ];
 }
 
@@ -214,14 +237,8 @@ public sealed class ModuloFaturamento() : ModuloLogistica(Gerencial, Fiscal, Fro
 
     public override IReadOnlyList<ItemMenu> Menus =>
     [
-        ItemMenu.Submenu("_Faturamento",
-            [.. De(Frota, ItemMenu.Tela("Faturas de frete", T.Faturas)), ItemMenu.Separador,
-             .. De(Gerencial, ItemMenu.Tela("Pedidos de venda", E.ViewModels.ErpTelas.PedidosVenda), ItemMenu.Tela("Notas fiscais de saída", Ft.NotaSaida))]),
-        ItemMenu.Submenu("_Emissão eletrônica",
-            ItemMenu.EmBreve("Emissão de NF-e na SEFAZ"),
-            ItemMenu.EmBreve("NFS-e – Nota fiscal de serviço (Padrão Nacional)")),
-        Relatorios(De(Frota, ItemMenu.Tela(TabelasTms.TituloFaturas, T.RelFaturas)),
-            De(Gerencial, ItemMenu.Tela("Relatório de vendas", Ft.ResumoVendas), ItemMenu.Tela("Relatório de recebimentos", Ft.RelRecebimentos))),
+        ItemMenu.Submenu("_Faturamento", [.. FuncoesFaturamento()]),
+        Relatorios(RelatoriosFaturamento()),
     ];
 }
 

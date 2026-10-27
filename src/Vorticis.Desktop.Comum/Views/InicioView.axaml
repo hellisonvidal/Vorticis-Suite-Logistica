@@ -1,9 +1,10 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
+             xmlns:v="using:Vorticis.Desktop.Comum.Views"
              x:Class="Vorticis.Desktop.Comum.Views.InicioView"
              x:DataType="vm:InicioViewModel">
-  <!-- Tela de descanso: nome do programa ao fundo, centralizado -->
+  <!-- Tela de descanso: o ícone do módulo grande e suave no fundo e, por cima, o nome do programa, centralizado -->
   <Border Margin="-8" ClipToBounds="True">
     <Border.Background>
       <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
@@ -12,6 +13,11 @@
       </LinearGradientBrush>
     </Border.Background>
     <Grid>
+      <!-- ícone do módulo como plano de fundo: inteiro no centro e um pedaço maior saindo pelo canto, na cor do módulo -->
+      <v:IconeVetorial Width="560" Height="560" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.07"
+                       Dados="{Binding Icone}" Preenchimento="{Binding PincelDestaque}" IsHitTestVisible="False" />
+      <v:IconeVetorial Width="420" Height="420" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-110,-120" Opacity="0.05"
+                       Dados="{Binding Icone}" Preenchimento="{Binding PincelDestaque}" IsHitTestVisible="False" />
       <Viewbox Stretch="Uniform" Width="300" HorizontalAlignment="Center" VerticalAlignment="Center">
         <StackPanel HorizontalAlignment="Center">
           <TextBlock Text="Vorticis" FontSize="96" FontWeight="Bold" Foreground="{Binding PincelDestaque}" Opacity="0.22"

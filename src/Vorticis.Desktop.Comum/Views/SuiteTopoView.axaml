@@ -269,8 +269,7 @@
                 <ItemsControl ItemsSource="{Binding Resultados}">
                   <ItemsControl.ItemTemplate>
                     <DataTemplate x:DataType="vm:NoSuite">
-                      <Button Classes="resultado" Command="{Binding $parent[v:SuiteTopoView].((vm:SuiteViewModel)DataContext).AbrirFuncaoCommand}" CommandParameter="{Binding}"
-                              Click="ResultadoEscolhido">
+                      <Button Classes="resultado" Click="ResultadoEscolhido">
                         <StackPanel Orientation="Horizontal" Spacing="10">
                           <Border Width="26" Height="26" CornerRadius="7" Background="{Binding Modulo.Gradiente}">
                             <v:IconeVetorial Width="15" Height="15" Geometria="{Binding Modulo.Icone}" Preenchimento="White" />

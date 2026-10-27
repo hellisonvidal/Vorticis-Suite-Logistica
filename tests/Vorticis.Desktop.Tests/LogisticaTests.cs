@@ -31,7 +31,7 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
     public void Sete_modulos_com_as_funcoes_reorganizadas()
     {
         var todos = ModuloLogistica.Todos().Select(m => new MainViewModel(m)).ToList();
-        Assert.Equal(["Frota", "Transporte", "Manutenção", "Faturamento", "Financeiro", "Gerencial", "Contabilidade"], todos.Select(m => m.Modulo.NomeCurto));
+        Assert.Equal(["Frotas", "Transporte", "Manutenção", "Faturamento", "Financeiro", "Gerencial", "Contabilidade"], todos.Select(m => m.Modulo.NomeCurto));
         foreach (var vm in todos)
         {
             // menus do casco em volta dos do módulo; toda função habilitada abre uma tela conhecida; Folha fora
@@ -48,14 +48,23 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
         }
         static string[] Menus(MainViewModel vm) => [.. vm.Menus.Skip(1).SkipLast(2).Select(Sem)];
         Assert.Equal(["Operação", "Relatórios"], Menus(todos[0]));
-        Assert.Equal(["Operação", "Documentos", "Relatórios"], Menus(todos[1]));
+        Assert.Equal(["Operação", "Documentos", "Faturamento", "Relatórios"], Menus(todos[1]));
         Assert.Equal(["Serviços", "Relatórios"], Menus(todos[2]));
-        Assert.Equal(["Faturamento", "Emissão eletrônica", "Relatórios"], Menus(todos[3]));
+        Assert.Equal(["Faturamento", "Relatórios"], Menus(todos[3]));
+        // o Transporte tem todas as funções de faturamento (as mesmas do módulo Faturamento, inclusive os relatórios)
+        Assert.Subset(Chaves(todos[1]).ToHashSet(), Chaves(todos[3]).Where(c => !c.StartsWith("grafico.") && c != TelasComuns.Sair).ToHashSet());
+        Assert.Equal(Folhas(todos[3].Menus.Single(m => Sem(m) == "Faturamento").Filhos!).Select(i => i.Titulo),
+                     Folhas(todos[1].Menus.Single(m => Sem(m) == "Faturamento").Filhos!).Select(i => i.Titulo));
+        // Cadastros › Transportadoras só no Frotas (nos demais, a transportadora é escolhida no alto da tela)
+        Assert.Equal("Transportadoras", todos[0].Menus[0].Filhos![0].Titulo);
+        Assert.All(todos.Skip(1), vm => Assert.DoesNotContain(Folhas(vm.Menus), i => i.Chave == TelasComuns.Empresas));
+        Assert.All(todos, vm => Assert.True(vm.ConheceTela(TelasComuns.Empresas)));
+        Assert.All(todos.Skip(1), vm => Assert.Equal("Clientes", vm.Menus[0].Filhos![0].Titulo));
         Assert.Equal(["Contas", "Monitores", "Relatórios"], Menus(todos[4]));
         Assert.Equal(["Compras", "Estoque", "Monitores", "Relatórios"], Menus(todos[5]));
         Assert.Contains("Lançamentos", Menus(todos[6]));
 
-        // cada função num módulo só (sem repetir), com as funções da transportadora espalhadas pelos módulos certos
+        // cada função num módulo só (sem repetir; o faturamento está no Faturamento e no Transporte), com as funções espalhadas pelos módulos certos
         void Em(int modulo, params string[] chaves) => Assert.All(chaves, c => Assert.Contains(c, Chaves(todos[modulo])));
         Em(0, FT.Abastecimentos, FT.Viagens, FT.Diarias, FT.Pedagio, FT.Veiculos, FT.Motoristas, FT.Painel);
         Em(1, FT.Cotacoes, FT.Coletas, FT.Entregas, FT.Ctes, FT.Manifestos, FT.TabelasFrete);
@@ -66,7 +75,7 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
         Em(5, Erp.Desktop.ViewModels.ErpTelas.PedidosCompra, Fiscal.Desktop.ViewModels.Telas.NotaEntrada, Erp.Desktop.ViewModels.ErpTelas.Estoque,
            Erp.Desktop.ViewModels.ErpTelas.Painel, Fiscal.Desktop.ViewModels.Telas.Produtos, Fiscal.Desktop.ViewModels.Telas.RegrasFiscais);
         Em(6, ViewModels.Telas.Lancamento, ViewModels.Telas.Balancete, ViewModels.Telas.Filiais, ViewModels.Telas.RelatorioGrupo);
-        var doModulo = todos.SelectMany(vm => Folhas([.. vm.Modulo.ItensCadastros, .. vm.Modulo.Menus]).Where(x => x.Chave is { } c && !c.StartsWith("grafico.")
+        var doModulo = todos.Where(vm => vm.Modulo.NomeCurto != "Faturamento").SelectMany(vm => Folhas([.. vm.Modulo.ItensCadastros, .. vm.Modulo.Menus]).Where(x => x.Chave is { } c && !c.StartsWith("grafico.")
                                                                                                          && c is not (TelasComuns.FormasPagamento or TelasComuns.ContasBancarias))
                                                   .Select(x => (Modulo: vm.Modulo.NomeCurto, Chave: x.Chave!)).Distinct()).ToList();
         Assert.Empty(doModulo.GroupBy(x => x.Chave).Where(g => g.Count() > 1).Select(g => $"{g.Key}: {string.Join(", ", g.Select(x => x.Modulo))}"));

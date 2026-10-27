@@ -20,6 +20,9 @@ public partial class InicioViewModel(MainViewModelBase main) : ModuloViewModel(m
 
     public string Versao => $"versão {SobreViewModel.Versao}";
 
+    /// <summary>Ícone do módulo (Suite Logística: caminhão, rota, chave...), grande e suave ao fundo da tela inicial; null = só o nome.</summary>
+    public string? Icone => main.Modulo.Icone;
+
     [ObservableProperty] private string? _dica;
 
     /// <summary>Atrasadas e a vencer nos próximos 15 dias da empresa ativa (não inclui as cumpridas).</summary>

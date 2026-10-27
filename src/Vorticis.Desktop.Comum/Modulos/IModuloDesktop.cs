@@ -70,6 +70,9 @@ public interface IModuloDesktop
     /// </summary>
     bool UsaCadastrosComuns => true;
 
+    /// <summary>Mostra o cadastro das empresas (Empresas, Transportadoras...) no menu Cadastros. A Suite Logística o mostra só no módulo Frotas.</summary>
+    bool EmpresasNoMenuCadastros => true;
+
     /// <summary>Mostra Contadores no menu Cadastros. Sem ele, os contadores ficam só na aba Contadores do cadastro da empresa.</summary>
     bool ContadoresNoMenuCadastros => true;
 

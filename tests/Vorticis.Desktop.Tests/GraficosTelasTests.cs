@@ -34,7 +34,7 @@ public class GraficosTelasTests(SessaoHeadless headless, BancoDeTeste db) : ICla
             porModulo[m.NomeCurto] = graficos.Filhos!.Count;
             Assert.All(graficos.Filhos!, i => Assert.True(vm.ConheceTela(i.Chave!), i.Chave));
         }
-        Assert.Equal(new Dictionary<string, int> { ["Frota"] = 3, ["Transporte"] = 3, ["Financeiro"] = 2, ["Contabilidade"] = 1 }, porModulo);
+        Assert.Equal(new Dictionary<string, int> { ["Frotas"] = 3, ["Transporte"] = 3, ["Financeiro"] = 2, ["Contabilidade"] = 1 }, porModulo);
     }
 
     [Fact]

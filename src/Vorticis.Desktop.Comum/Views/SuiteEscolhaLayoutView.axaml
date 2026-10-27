@@ -35,8 +35,8 @@
       <TextBlock Text="Layout" VerticalAlignment="Center" IsVisible="{Binding !$parent[v:SuiteEscolhaLayoutView].SoIcone}" />
     </StackPanel>
     <Button.Flyout>
-      <Flyout Placement="BottomEdgeAlignedRight" ShowMode="Transient">
-        <Border Background="White" CornerRadius="16" Padding="20,18" Width="930" BoxShadow="0 18 50 0 #330F172A">
+      <Flyout Placement="BottomEdgeAlignedRight" ShowMode="Transient" FlyoutPresenterClasses="seletor-layout">
+        <Border Background="White" CornerRadius="16" Padding="20,18" Width="930" Margin="8" BorderBrush="#E2E8F0" BorderThickness="1" BoxShadow="0 12 32 0 #330F172A">
           <!-- estilos aqui dentro: o conteúdo do pop-up não herda os estilos do controle -->
           <Border.Styles>
             <Style Selector="Button.cartao">
@@ -80,8 +80,8 @@
               </ItemsControl.ItemsPanel>
               <ItemsControl.ItemTemplate>
                 <DataTemplate x:DataType="vm:OpcaoLayout">
-                  <Button Classes="cartao" Margin="0,0,10,0" Command="{Binding $parent[v:SuiteEscolhaLayoutView].((vm:SuiteViewModel)DataContext).EscolherLayoutCommand}"
-                          CommandParameter="{Binding Layout}" Click="Escolhido">
+                  <!-- o clique é tratado no código: o conteúdo do pop-up fica fora da árvore do controle ($parent não o alcança) -->
+                  <Button Classes="cartao" Margin="0,0,10,0" Click="Escolhido">
                     <Border Classes="moldura" Classes.selecionado="{Binding Selecionado}" CornerRadius="12" Padding="9">
                       <StackPanel Spacing="8">
                         <!-- miniatura do layout: janela com a navegação desenhada -->

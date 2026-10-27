@@ -10,7 +10,7 @@ public partial class App : AppSuiteBase
 {
     protected override string NomeSuite => ModuloLogistica.NomeSuite;
 
-    protected override string? Principal => "VorticisLogistica.Frota";
+    protected override string? Principal => new ModuloFrotaLogistica().NomeExecutavel;
 
     /// <summary>Todos os módulos estão no mesmo executável (não há um .exe por módulo para conferir).</summary>
     protected override bool SoInstalados => false;

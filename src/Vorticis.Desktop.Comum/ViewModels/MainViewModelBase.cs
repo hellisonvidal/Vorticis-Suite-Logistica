@@ -309,12 +309,14 @@ public abstract partial class MainViewModelBase : ObservableObject, IContexto, I
     /// <summary>Menus do casco em volta dos do módulo.</summary>
     private IReadOnlyList<ItemMenu> MontarMenus()
     {
-        var cadastros = new List<ItemMenu> { ItemMenu.Tela(Modulo.RotuloEmpresas, TelasComuns.Empresas) };
+        var cadastros = new List<ItemMenu>();
+        if (Modulo.EmpresasNoMenuCadastros) cadastros.Add(ItemMenu.Tela(Modulo.RotuloEmpresas, TelasComuns.Empresas));
         if (Modulo.UsaCadastrosComuns && Modulo.ContadoresNoMenuCadastros) cadastros.Add(ItemMenu.Tela("Contadores", TelasComuns.Contabilidade));
         if (Modulo.UsaCadastrosComuns && Modulo.UsaClientesFornecedores)
             cadastros.AddRange([ItemMenu.Tela("Clientes", TelasComuns.Clientes), ItemMenu.Tela("Fornecedores", TelasComuns.Fornecedores)]);
         if (Modulo.ItensCadastros.Count > 0) cadastros.AddRange(Modulo.ItensCadastros.Prepend(ItemMenu.Separador));
         cadastros = ComImportacao(cadastros);
+        while (cadastros.Count > 0 && cadastros[0].EhSeparador) cadastros.RemoveAt(0);   // sem o cadastro de empresas, não começa com separador
         cadastros.AddRange([ItemMenu.Separador, ItemMenu.Tela("Parâmetros", TelasComuns.Parametros)]);
         // O calendário de obrigações fica em "Obrigações", se o módulo tem esse menu; senão, em "Consultas";
         // sem nenhum dos dois, o casco cria o menu "Obrigações".
@@ -818,10 +820,6 @@ public abstract partial class MainViewModelBase : ObservableObject, IContexto, I
 
     public ModulosEmpresa ModuloAtual => Modulo.ModuloEmpresa;
     public string RotuloEmpresaAtiva => Modulo.RotuloEmpresaAtiva + ":";
-
-    /// <summary>Ícone do módulo (Suite: selo antes dos menus); null nos módulos sem desenho próprio.</summary>
-    public string? IconeModulo => Modulo.Icone;
-    public bool TemIconeModulo => Modulo.Icone is not null;
 
     public async Task<ModulosEmpresa?> EscolherModulosAsync(ModulosEmpresa inicial)
     {

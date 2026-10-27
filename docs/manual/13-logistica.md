@@ -4,21 +4,21 @@ O **Vorticis Suite Logística** é o programa da transportadora. Ele reúne **se
 
 | Módulo | Ícone e cor | O que tem | Detalhes no manual |
 |---|---|---|---|
-| **Frota** | caminhão, azul | Cadastros de veículos, motoristas, frotas, rotas, documentos e vencimentos; *Operação*: abastecimentos, viagens, diárias e pedágio; relatórios e gráficos da frota | [Frota](12-frota.md) |
-| **Transporte** | rota com marcador, verde-água | O TMS: tabelas de frete; *Operação*: cotações de frete, ordens de coleta e entregas e ocorrências; *Documentos*: CT-e e MDF-e (transmissão à SEFAZ em breve); relatórios e gráficos do transporte | [TMS](14-tms.md) |
+| **Frotas** | caminhão, azul | **Transportadoras** (só neste módulo) e os cadastros de veículos, motoristas, frotas, rotas, documentos e vencimentos; *Operação*: abastecimentos, viagens, diárias e pedágio; relatórios e gráficos da frota | [Frota](12-frota.md) |
+| **Transporte** | rota com marcador, verde-água | O TMS: tabelas de frete e formas de pagamento; *Operação*: cotações de frete, ordens de coleta e entregas e ocorrências; *Documentos*: CT-e e MDF-e (transmissão à SEFAZ em breve); *Faturamento*: todas as funções do módulo Faturamento (faturas de frete, pedidos de venda, notas fiscais de saída, NF-e e NFS-e em breve); relatórios e gráficos do transporte e do faturamento | [TMS](14-tms.md) |
 | **Manutenção** | chave de boca, laranja | Planos de manutenção e peças e serviços; *Serviços*: ordens de serviço e autorização de serviços; relatórios da manutenção | [Frota](12-frota.md#ordens-de-servico) |
-| **Faturamento** | nota fiscal, roxo | *Faturamento*: faturas de frete, pedidos de venda e notas fiscais de saída; *Emissão eletrônica*: NF-e e NFS-e (em breve); relatórios de faturas, vendas e recebimentos | [TMS](14-tms.md#faturas-de-frete), [Gerencial](10-gerencial.md) |
+| **Faturamento** | nota fiscal, roxo | *Faturamento*: faturas de frete, pedidos de venda e notas fiscais de saída, emissão de NF-e e NFS-e (em breve); relatórios de faturas, vendas e recebimentos (as mesmas funções também estão no menu *Faturamento* do módulo Transporte) | [TMS](14-tms.md#faturas-de-frete), [Gerencial](10-gerencial.md) |
 | **Financeiro** | carteira, verde | Contas bancárias e formas de pagamento; *Contas*: contas a pagar, contas a receber e conciliação bancária; *Monitores*: monitor de cobranças; relatórios e gráficos do financeiro | [Gerencial](10-gerencial.md) |
 | **Gerencial** | gráfico de barras, rosa | Produtos e [regras fiscais](05-fiscal.md#regras-fiscais); *Compras*: pedidos de compra, notas fiscais de entrada e importação de XML; *Estoque*; *Monitores*: monitor de notas fiscais; *Painel do empresário* e relatório de compras | [Gerencial](10-gerencial.md) |
 | **Contabilidade** | calculadora, índigo | Plano de contas, históricos, centros de custo e filiais; lançamentos, fechamentos, imobilizado, consultas, integrações (SPED) e os relatórios e gráficos contábeis | [Contábil](03-contabil.md) |
 
-Todos os módulos têm, em volta dos seus menus, os menus comuns: **Cadastros** (com *Transportadoras*, clientes, fornecedores, os cadastros do módulo, o item **Importar de planilha (Excel)** com os cadastros que aceitam importação e os **Parâmetros**), **Configurações** e **Ajuda**. A transportadora escolhida no alto continua a mesma ao trocar de módulo.
+Todos os módulos têm, em volta dos seus menus, os menus comuns: **Cadastros** (com clientes, fornecedores, os cadastros do módulo, o item **Importar de planilha (Excel)** com os cadastros que aceitam importação e os **Parâmetros**), **Configurações** e **Ajuda**. O cadastro **Transportadoras** fica só no módulo **Frotas** (*Cadastros › Transportadoras*); nos demais módulos a transportadora é só escolhida no alto da tela, e a escolhida continua a mesma ao trocar de módulo.
 
 ## Instalação e primeiro acesso
 
 1. Rode o instalador **Setup-VorticisSuiteLogistica**. Ele instala o programa e configura o banco de dados sozinho.
 2. Abra o atalho **Vorticis Suite Logística** (menu Iniciar ou área de trabalho) e entre com o seu usuário. Os sete módulos entram juntos.
-3. Cadastre a transportadora em *Cadastros › Transportadoras* (em qualquer módulo). Ela já fica ativa em todos os módulos. Envie também o **logo** da transportadora (aba *Dados cadastrais*, [Logo da empresa](02-cadastros-comuns.md#logo-da-empresa-sai-em-todos-os-relatorios)): ele sai em todos os relatórios em PDF.
+3. No módulo **Frotas**, cadastre a transportadora em *Cadastros › Transportadoras*. Ela já fica ativa em todos os módulos. Envie também o **logo** da transportadora (aba *Dados cadastrais*, [Logo da empresa](02-cadastros-comuns.md#logo-da-empresa-sai-em-todos-os-relatorios)): ele sai em todos os relatórios em PDF.
 4. Escolha a transportadora no alto da tela e siga a ordem dos cadastros do capítulo [Frota](12-frota.md#ordem-dos-cadastros).
 
 O Vorticis Suite Logística é instalado numa pasta própria (*Vorticis Logistica*) e usa o mesmo banco de dados do Vorticis no computador. Quem já tinha o programa com o nome antigo só precisa rodar o instalador novo: ele atualiza a instalação, troca os atalhos e mantém os dados.
@@ -26,9 +26,9 @@ O Vorticis Suite Logística é instalado numa pasta própria (*Vorticis Logistic
 ## Trocar de módulo
 
 - Clique no ícone ou no nome do módulo na navegação (à esquerda ou no alto, conforme o layout escolhido).
-- Ou use o teclado: **Ctrl+1** (Frota), **Ctrl+2** (Transporte), **Ctrl+3** (Manutenção), **Ctrl+4** (Faturamento), **Ctrl+5** (Financeiro), **Ctrl+6** (Gerencial) e **Ctrl+7** (Contabilidade). Os mesmos atalhos estão no menu *Exibir*.
+- Ou use o teclado: **Ctrl+1** (Frotas), **Ctrl+2** (Transporte), **Ctrl+3** (Manutenção), **Ctrl+4** (Faturamento), **Ctrl+5** (Financeiro), **Ctrl+6** (Gerencial) e **Ctrl+7** (Contabilidade). Os mesmos atalhos estão no menu *Exibir*.
 - **Ctrl+K** abre a busca de funções: digite parte do nome (sem acento, ex.: *viagens*, *balancete*) e clique no resultado para ir direto à tela, em qualquer módulo.
-- O selo colorido antes dos menus mostra em que módulo você está. As funções abertas de cada módulo continuam abertas quando você vai para outro; um número vermelho no ícone mostra quantas estão abertas.
+- A cor da barra de menus e o ícone grande do módulo, ao fundo da tela, mostram em que módulo você está. As funções abertas de cada módulo continuam abertas quando você vai para outro; um número vermelho no ícone mostra quantas estão abertas.
 
 Os atalhos de teclado de cada módulo continuam valendo dentro dele (ex.: **Ctrl+B** abastecimentos e **Ctrl+P** painel da frota, no Frota; **Ctrl+O** ordens de serviço, na Manutenção; **Ctrl+L** lançamento contábil, na Contabilidade). A lista completa fica em *Ajuda › Sobre*.
 
@@ -60,7 +60,7 @@ A navegação de cada layout pode ficar **recolhida** para deixar mais espaço p
 
 **Para que serve:** ver de relance como andam a frota, o transporte, o financeiro e o resultado, mês a mês.
 
-**Onde fica:** *Relatórios › Gráficos* de cada módulo (Frota, Transporte, Financeiro e Contabilidade):
+**Onde fica:** *Relatórios › Gráficos* de cada módulo (Frotas, Transporte, Financeiro e Contabilidade):
 
 | Área | Gráfico | O que mostra |
 |---|---|---|
@@ -84,8 +84,8 @@ A navegação de cada layout pode ficar **recolhida** para deixar mais espaço p
 
 | Módulo | Abas |
 |---|---|
-| **Frota**, **Transporte** e **Manutenção** | Frota: avisos de vencimento, alerta de consumo, limite de autorização das ordens de serviço, fator rodoviário das rotas, valores das diárias e contas da contabilização das diárias. |
-| **Faturamento** | Gerencial (contas de clientes e fornecedores, juros, multa, descontos e históricos das baixas) e Frota e transporte. |
+| **Frotas**, **Transporte** e **Manutenção** | Frota: avisos de vencimento, alerta de consumo, limite de autorização das ordens de serviço, fator rodoviário das rotas, valores das diárias e contas da contabilização das diárias. |
+| **Transporte** (também) e **Faturamento** | Faturamento / Gerencial: contas de clientes e fornecedores, juros, multa, descontos e históricos das baixas. |
 | **Financeiro** e **Gerencial** | Os parâmetros do financeiro e do fiscal usados nas contas a pagar e a receber. |
 | **Contabilidade** | Regras de lançamento, centros de custo, encerramento e o **Tipo de contabilização** (On-line ou Em lote, veja [Contabilização em lote](03-contabil.md#contabilizacao-em-lote)). |
 | Todos | **Menus**: escolha dos itens de menu do módulo que você quer ver (veja abaixo). |

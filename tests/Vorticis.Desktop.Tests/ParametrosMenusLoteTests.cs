@@ -41,7 +41,7 @@ public class ParametrosMenusLoteTests(SessaoHeadless headless, Vorticis.Infra.Te
         // cada módulo da Suite: Cadastros › Parâmetros com as abas das suas áreas e a aba Menus
         var esperado = new Dictionary<string, string[]>
         {
-            ["Frota"] = ["Frota", "Menus"], ["Transporte"] = ["Frota e transporte", "Menus"], ["Manutenção"] = ["Frota e manutenção", "Menus"],
+            ["Frotas"] = ["Frota", "Menus"], ["Transporte"] = ["Frota e transporte", "Faturamento", "Menus"], ["Manutenção"] = ["Frota e manutenção", "Menus"],
             ["Faturamento"] = ["Gerencial", "Frota e transporte", "Menus"], ["Financeiro"] = ["Financeiro", "Menus"], ["Gerencial"] = ["Gerencial", "Menus"],
             ["Contabilidade"] = ["Contábil", "Menus"],
         };
