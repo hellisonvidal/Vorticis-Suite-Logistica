@@ -229,6 +229,34 @@ Cada operadora manda um arquivo diferente (planilha Excel ou CSV). O layout diz 
    - As passagens ficam ligadas à nota (coluna *Nota*). Se a nota for excluída, elas voltam a ficar sem nota.
 5. Passagens importadas por engano (sem nota) podem ser marcadas e excluídas em **Excluir marcadas**.
 
+## Monitor de multas de trânsito
+
+**Onde fica:** no Vorticis Suite Logística, módulo **Gerencial**, *Monitores › Monitor de multas de trânsito* (no Frota avulso, *Relatórios › Monitor de multas de trânsito*).
+
+**Para que serve:** não perder os prazos das multas dos veículos da empresa: indicar o condutor, apresentar a defesa ou o recurso e pagar com desconto. Mostra também quantos pontos cada motorista acumulou.
+
+**Importante:** o sistema **não consulta o Detran** sozinho (os Detrans e a SENATRAN não oferecem consulta automática aberta às empresas). Lance cada notificação que chegar pelo correio ou pelo aplicativo **Carteira Digital de Trânsito / SNE**, ou importe uma planilha (do despachante ou da consulta no site do Detran).
+
+**Lançar uma multa:**
+1. Clique em **Nova multa**. Escolha o **Veículo** e, se já souber, o **Motorista (condutor)**.
+2. Digite o **Auto de infração** (número da notificação), o **Órgão autuador** (DETRAN, PRF, DER, prefeitura...), a **Data da infração** e o **Local**.
+3. Informe o **Enquadramento** (código da infração, ex.: 745-50) e a **Descrição**.
+4. Escolha a **Gravidade**: os **Pontos** e o **Valor** vêm sugeridos pela tabela do Código de Trânsito (confira com a notificação e corrija se for diferente).
+5. Se for pagar com desconto, informe o **Desconto (%)**: 20% pagando até o vencimento, ou 40% se a empresa aderiu ao SNE e não recorrer.
+6. Copie da notificação os prazos: **Indicar condutor até**, **Defesa/recurso até** e o **Vencimento** do boleto.
+7. Em **Quem paga**, escolha **Empresa** ou **Motorista (desconto)** (a multa será descontada do motorista; nesse caso escolha o motorista).
+8. **Gravar**.
+
+**Acompanhar:** a coluna **Próximo prazo** mostra o prazo pendente mais próximo (indicação do condutor enquanto a multa está *Notificada*; defesa/recurso enquanto não foi recorrida; pagamento) e a coluna **Alerta** avisa **VENCIDO** ou **A vencer** (dentro da antecedência dos avisos de *Cadastros › Parâmetros*). No alto, o resumo: multas em aberto, total a pagar (já com o desconto) e quantos prazos estão vencidos ou a vencer. Os mesmos alertas aparecem no [Painel da frota](#painel-da-frota).
+
+Use **Mostrar** para ver só as multas **Em aberto**, só as **Com prazo vencido ou a vencer** ou **Todas**.
+
+**Atualize a Situação** conforme o andamento: **Condutor indicado** (depois de indicar o motorista no Detran), **Em recurso**, **Paga** (informe a data e o valor pago) ou **Cancelada** (recurso aceito). Multas pagas ou canceladas saem dos alertas.
+
+**Pontos dos motoristas:** a tabela de baixo soma os pontos de cada motorista nas infrações dos **últimos 12 meses** (multas canceladas não contam). Use-a para acompanhar quem está perto do limite da CNH.
+
+**Importar de planilha:** clique em **Importar de planilha (Excel)** no alto da janela. Colunas: placa e auto de infração (obrigatórios), data, CPF do motorista, órgão, local, enquadramento, descrição, gravidade, pontos, valor, vencimento e os prazos. O veículo e o motorista precisam estar cadastrados; sem pontos ou valor, valem os da gravidade. Um auto de infração já lançado não é duplicado.
+
 ## Painel da frota
 
 **Onde fica:** *Relatórios › Painel da frota* (atalho **Ctrl+P**).
@@ -236,6 +264,7 @@ Cada operadora manda um arquivo diferente (planilha Excel ou CSV). O layout diz 
 Mostra, primeiro os vencidos e depois os a vencer:
 
 - documentos e CNHs vencidos ou dentro da antecedência dos avisos;
+- prazos de [multas de trânsito](#monitor-de-multas-de-transito) (indicação do condutor, recurso e pagamento) vencidos ou a vencer;
 - manutenções preventivas vencidas ou a vencer;
 - veículos cuja última média de consumo ficou abaixo do esperado.
 

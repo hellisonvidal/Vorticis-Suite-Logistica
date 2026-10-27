@@ -60,6 +60,7 @@ public sealed class ModuloFrota : IModuloDesktop
             ItemMenu.Tela("Autorização de serviços", FrotaTelas.Autorizacao)),
         ItemMenu.Submenu("_Relatórios",
             ItemMenu.Tela("Painel da frota", FrotaTelas.Painel),
+            ItemMenu.Tela("Monitor de multas de trânsito", FrotaTelas.Multas),
             ItemMenu.Tela("Custos por veículo", FrotaTelas.RelCustos),
             ItemMenu.Tela("Consumo de combustível", FrotaTelas.RelConsumo),
             ItemMenu.Tela("Resultado das viagens", FrotaTelas.RelViagens),
@@ -123,6 +124,9 @@ public sealed class ModuloFrota : IModuloDesktop
         c.Instancia("DocumentosFrota", m => new DocumentosViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
                     aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
             .Tela(FrotaTelas.Documentos, "Cadastros › Documentos e vencimentos", m => Pode(m, Todas), v => v.CarregarAsync());
+        c.Instancia("MultasTransito", m => new MultasViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
+                    aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
+            .Tela(FrotaTelas.Multas, "Monitores › Monitor de multas de trânsito", m => Pode(m, Todas), v => v.CarregarAsync());
         c.Instancia("Abastecimentos", m => new AbastecimentosViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
                     aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
             .Tela(FrotaTelas.Abastecimentos, "Operação › Abastecimentos", m => Pode(m, Permissao.FrotaOperacao, Permissao.FrotaRelatorios), v => v.CarregarAsync());

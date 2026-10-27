@@ -85,7 +85,7 @@ public static partial class RegrasFrota
         "PREVENTIVA" => "Preventiva", "CORRETIVA" => "Corretiva",
         "PROPRIA" => "Própria", "ALIMENTACAO" => "Alimentação", "REFEICAO" => "Refeição", "LANCADA" => "Lançada", "EM_COLETA" => "Em coleta",
         "RODOVIARIA" => "Rodoviária (online)", "ESTIMADA" => "Estimada (linha reta)",
-        _ => codigo.Length > 1 ? codigo[..1] + codigo[1..].ToLowerInvariant() : codigo,
+        _ => RegrasMultas.Rotulo(codigo) is var r && r != codigo ? r : codigo.Length > 1 ? codigo[..1] + codigo[1..].ToLowerInvariant() : codigo,
     };
 
     [GeneratedRegex("^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$")]

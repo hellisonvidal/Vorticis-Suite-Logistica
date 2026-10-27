@@ -3,7 +3,7 @@ using Vorticis.Domain.Comum;
 
 namespace Vorticis.Frota.Desktop;
 
-/// <summary>Importação de planilha dos cadastros da Frota e do TMS: veículos, motoristas, frotas, rotas e tabelas de frete.</summary>
+/// <summary>Importação de planilha dos cadastros da Frota e do TMS: veículos, motoristas, frotas, rotas, tabelas de frete e multas de trânsito.</summary>
 public static class ImportacoesFrota
 {
     private static ServicoFrota F(ContextoImportacao c) => ServicosFrota.De(c.App);
@@ -138,10 +138,50 @@ public static class ImportacoesFrota
         return await F(c).GravarTabelaFreteAsync(c.Empresa, t, c.Usuario);
     });
 
+    private static readonly DefinicaoImportacao Multas = new("multas", "Multas de trânsito",
+    [
+        new("placa", "Placa", true, "ABC1D23", "placa", "veiculo"),
+        new("auto", "Auto de infração", true, "E123456789", "auto", "auto_infracao", "ait", "numero_auto"),
+        new("data", "Data da infração", true, "15/03/2026", "data", "data_infracao"),
+        new("cpf", "CPF do motorista", false, "529.982.247-25", "cpf", "cpf_condutor", "condutor"),
+        new("orgao", "Órgão autuador", false, "DETRAN-SP", "orgao", "orgao_autuador"),
+        new("local", "Local", false, "Rod. Anhanguera km 100", "local", "local_infracao"),
+        new("enquadramento", "Enquadramento", false, "745-50", "enquadramento", "codigo", "codigo_infracao"),
+        new("descricao", "Descrição", false, "Velocidade até 20% acima da máxima", "descricao", "infracao"),
+        new("gravidade", "Gravidade", false, "Média", "gravidade", "natureza"),
+        new("pontos", "Pontos", false, "4", "pontos"),
+        new("valor", "Valor", false, "130,16", "valor", "valor_multa"),
+        new("vencimento", "Vencimento", false, "30/04/2026", "vencimento", "data_vencimento"),
+        new("indicacao", "Indicar condutor até", false, "", "prazo_indicacao", "indicacao"),
+        new("recurso", "Defesa/recurso até", false, "", "prazo_recurso", "recurso", "prazo_defesa"),
+    ], async (c, l) =>
+    {
+        var veiculos = await c.UmaVezAsync("veiculos", () => F(c).VeiculosAsync(c.Empresa, c.Usuario));
+        var placa = RegrasFrota.NormalizarPlaca(l.Texto("placa"));
+        if (veiculos.FirstOrDefault(v => v.Placa == placa) is not { } veiculo) return Resultado.Falha($"Veículo não cadastrado: {l.Texto("placa")}.");
+        long? motorista = null;
+        if (l.Texto("cpf") is { } cpfTexto)
+        {
+            var cpf = new string([.. cpfTexto.Where(char.IsAsciiDigit)]);
+            var motoristas = await c.UmaVezAsync("motoristas", () => F(c).MotoristasAsync(c.Empresa, c.Usuario));
+            motorista = motoristas.FirstOrDefault(m => m.Cpf == cpf)?.Id;
+            if (motorista is null) return Resultado.Falha($"Motorista não cadastrado: CPF {cpfTexto}.");
+        }
+        var gravidade = Codigo(l.Texto("gravidade"), RegrasMultas.Gravidades) ?? (l.Texto("gravidade") is null ? "MEDIA" : null);
+        if (gravidade is null) return Resultado.Falha($"Gravidade desconhecida: {l.Texto("gravidade")} (use leve, média, grave ou gravíssima).");
+        var data = l.Data("data") ?? DateOnly.FromDateTime(DateTime.Today);
+        var tabela = (await c.UmaVezAsync("ctb", async () => new List<TabelaInfracoes?> { await F(c).TabelaInfracoesAsync(data) }))[0];   // a tabela vigente (desde 2016)
+        (int Pontos, decimal Valor) sugestao = tabela?.PorGravidade.TryGetValue(gravidade, out var t) == true ? t : (0, 0m);
+        var multa = new MultaTransito(0, veiculo.Id, motorista, l.Texto("auto") ?? "", l.Texto("orgao"), data, l.Texto("local"), l.Texto("enquadramento"),
+                                      l.Texto("descricao"), gravidade, l.Inteiro("pontos") ?? sugestao.Pontos, l.Valor("valor") ?? sugestao.Valor, 0,
+                                      l.Data("vencimento"), l.Data("indicacao"), l.Data("recurso"));
+        return await F(c).GravarMultaAsync(c.Empresa, multa, c.Usuario);
+    });
+
     public static IReadOnlyList<DefinicaoImportacao> Todas { get; } =
     [
         Veiculos with { TelaCadastro = ViewModels.FrotaTelas.Veiculos }, Motoristas with { TelaCadastro = ViewModels.FrotaTelas.Motoristas },
         Frotas with { TelaCadastro = ViewModels.FrotaTelas.Frotas }, Rotas with { TelaCadastro = ViewModels.FrotaTelas.Rotas },
-        TabelasFrete with { TelaCadastro = ViewModels.FrotaTelas.TabelasFrete },
+        TabelasFrete with { TelaCadastro = ViewModels.FrotaTelas.TabelasFrete }, Multas with { TelaCadastro = ViewModels.FrotaTelas.Multas },
     ];
 }

@@ -66,7 +66,7 @@ public class FrotaTelasTests(SessaoHeadless headless, BancoDeTeste db) : IClassF
         Assert.Equal(["Cotações de frete", "Conhecimentos de transporte (CT-e)", "Manifestos de carga (MDF-e)", "Faturas de frete"],
                      emissao.Filhos!.Where(i => !i.EhSeparador).Select(i => i.Titulo));
         var rel = Assert.Single(vm.Menus, m => m.Titulo == "_Relatórios");
-        Assert.Equal(["Painel da frota", TabelasFrota.TituloCustos, TabelasFrota.TituloConsumo, TabelasFrota.TituloViagens, TabelasFrota.TituloVencimentos,
+        Assert.Equal(["Painel da frota", "Monitor de multas de trânsito", TabelasFrota.TituloCustos, TabelasFrota.TituloConsumo, TabelasFrota.TituloViagens, TabelasFrota.TituloVencimentos,
                       TabelasFrota.TituloCustosFrota, TabelasFrota.TituloDiariasColaborador, TabelasFrota.TituloDiariasFrota, TabelasFrota.TituloDiariasAcerto, TabelasFrota.TituloConsumoVeiculo,
                       TabelasFrota.TituloConsumoMotorista, TabelasFrota.TituloViagensMotorista, TabelasFrota.TituloViagensCliente, TabelasFrota.TituloViagensRota,
                       TabelasFrota.TituloColetasCliente, TabelasFrota.TituloColetasRota, TabelasFrota.TituloColetasMotorista, TabelasFrota.TituloResumo,

@@ -63,6 +63,8 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
         Assert.All(todos.Skip(1), vm => Assert.Equal("Clientes", vm.Menus[0].Filhos![0].Titulo));
         Assert.Equal(["Contas", "Monitores", "Relatórios"], Menus(todos[3]));
         Assert.Equal(["Compras", "Estoque", "Monitores", "Relatórios"], Menus(todos[4]));
+        Assert.Equal(["Monitor de notas fiscais", "Monitor de multas de trânsito"], todos[4].Menus.Single(m => m.Titulo == "_Monitores").Filhos!.Select(f => f.Titulo));
+        Assert.NotNull(todos[4].ImportacaoDaTela(FT.Multas));                // as multas também vêm de planilha
         Assert.Contains("Lançamentos", Menus(todos[5]));
 
         // cada função num módulo só (sem repetir), com as funções espalhadas pelos módulos certos
@@ -74,7 +76,7 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
         Em(3, Fiscal.Desktop.ViewModels.Telas.ContasPagar, Fiscal.Desktop.ViewModels.Telas.ContasReceber, Fiscal.Desktop.ViewModels.Telas.ConciliacaoDuplicatas,
            TelasComuns.ContasBancarias);
         Em(4, Erp.Desktop.ViewModels.ErpTelas.PedidosCompra, Fiscal.Desktop.ViewModels.Telas.NotaEntrada, Erp.Desktop.ViewModels.ErpTelas.Estoque,
-           Erp.Desktop.ViewModels.ErpTelas.Painel, Fiscal.Desktop.ViewModels.Telas.Produtos, Fiscal.Desktop.ViewModels.Telas.RegrasFiscais);
+           Erp.Desktop.ViewModels.ErpTelas.Painel, Fiscal.Desktop.ViewModels.Telas.Produtos, Fiscal.Desktop.ViewModels.Telas.RegrasFiscais, FT.Multas);
         Em(5, ViewModels.Telas.Lancamento, ViewModels.Telas.Balancete, ViewModels.Telas.Filiais, ViewModels.Telas.RelatorioGrupo);
         var doModulo = todos.SelectMany(vm => Folhas([.. vm.Modulo.ItensCadastros, .. vm.Modulo.Menus]).Where(x => x.Chave is { } c && !c.StartsWith("grafico.")
                                                                                                          && c is not (TelasComuns.FormasPagamento or TelasComuns.ContasBancarias))

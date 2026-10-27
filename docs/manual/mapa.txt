@@ -126,6 +126,7 @@ contasreceber=10-gerencial.md#financeiro
 
 ; ---- frota (piloto)
 frota.painel=12-frota.md#painel-da-frota
+frota.multas=12-frota.md#monitor-de-multas-de-transito
 frota.veiculos=12-frota.md#veiculos
 frota.motoristas=12-frota.md#motoristas
 frota.planos=12-frota.md#planos-de-manutencao
@@ -184,6 +185,7 @@ importar.motoristas=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel
 importar.frotas=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel
 importar.rotas=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel
 importar.tabelasfrete=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel
+importar.multas=12-frota.md#monitor-de-multas-de-transito
 importar.produtos=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel
 importar.regrasfiscais=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel
 importar.centroscusto=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel

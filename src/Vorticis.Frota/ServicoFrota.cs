@@ -345,7 +345,7 @@ public sealed partial class ServicoFrota(VorticisApp app)
     }
 
     /// <summary>
-    /// Painel da frota: documentos e CNHs vencidos ou a vencer (antecedência da configuração), preventivas vencidas ou a vencer e
+    /// Painel da frota: documentos, CNHs e prazos de multas vencidos ou a vencer (antecedência da configuração), preventivas vencidas ou a vencer e
     /// a última média de consumo abaixo do esperado (tolerância da configuração). Vencidos primeiro.
     /// </summary>
     public async Task<List<AvisoFrota>> AvisosAsync(long empresa, DateOnly hoje, long usuario, CancellationToken ct = default)
@@ -381,6 +381,9 @@ public sealed partial class ServicoFrota(VorticisApp app)
         foreach (var o in (await ListarOrdensAsync(empresa, hoje, hoje, ct)).Where(o => o.Situacao == "AGUARDANDO"))
             avisos.Add(new AvisoFrota(GravidadeAviso.Atencao, $"Autorização – OS nº {o.Numero} ({RegrasFrota.FormatarPlaca(o.Placa ?? "")})",
                                       $"{o.Descricao}: R$ {o.Total.ToString("N2", Formato.PtBr)} aguardando autorização", o.Data));
+        foreach (var m in await ListarMultasAsync(empresa, ct))
+            if (RegrasMultas.ProximoPrazo(m, hoje, cfg.DiasAviso) is { Gravidade: { } g } prazo)
+                avisos.Add(new AvisoFrota(g, $"Multa – {m.Placa} (auto {m.AutoInfracao})", $"{prazo.Assunto}: {RegrasFrota.TextoVencimento(prazo.Data, hoje)}", prazo.Data));
         return [.. avisos.OrderBy(a => a.Gravidade).ThenBy(a => a.Data ?? DateOnly.MaxValue)];
     }
 

@@ -257,12 +257,12 @@ public sealed class ModuloFinanceiro() : ModuloLogistica(Gerencial, Fiscal)
     ];
 }
 
-/// <summary>Gerencial: compras, estoque, monitor de notas e o painel do empresário.</summary>
-public sealed class ModuloGerencial() : ModuloLogistica(Gerencial, Fiscal)
+/// <summary>Gerencial: compras, estoque, monitores de notas fiscais e de multas de trânsito e o painel do empresário.</summary>
+public sealed class ModuloGerencial() : ModuloLogistica(Gerencial, Fiscal, Frota)
 {
     protected override IReadOnlyList<(string Titulo, IModuloDesktop Parte)> AbasParametros => [("Gerencial", Gerencial)];
     public override string NomeCurto => "Gerencial";
-    public override string Subtitulo => "Compras, estoque, notas fiscais de entrada e painel do empresário";
+    public override string Subtitulo => "Compras, estoque, monitores de notas e de multas e painel do empresário";
     public override string CorDestaque => "#DB2777";
     public override string CorBarra => "#831843";
     public override string Icone => IconesModulos.Gerencial;
@@ -277,8 +277,12 @@ public sealed class ModuloGerencial() : ModuloLogistica(Gerencial, Fiscal)
                 ItemMenu.Tela("Pedidos de compra", E.ViewModels.ErpTelas.PedidosCompra),
                 ItemMenu.Tela("Notas fiscais de entrada", Ft.NotaEntrada),
                 ItemMenu.Tela("Importação de XML", Ft.ImportacaoXml)),
-            ItemMenu.Submenu("_Estoque", ItemMenu.Tela("Posição e movimentos", E.ViewModels.ErpTelas.Estoque)),
-            ItemMenu.Submenu("_Monitores", ItemMenu.Tela("Monitor de notas fiscais", E.ViewModels.ErpTelas.MonitorNotas))),
+            ItemMenu.Submenu("_Estoque", ItemMenu.Tela("Posição e movimentos", E.ViewModels.ErpTelas.Estoque))),
+        ItemMenu.Submenu("_Monitores",
+        [
+            .. De(Gerencial, ItemMenu.Tela("Monitor de notas fiscais", E.ViewModels.ErpTelas.MonitorNotas)),
+            .. De(Frota, ItemMenu.Tela("Monitor de multas de trânsito", T.Multas)),
+        ]),
         Relatorios(De(Gerencial, ItemMenu.Tela("Painel do empresário", E.ViewModels.ErpTelas.Painel)),
             De(Gerencial, ItemMenu.Tela("Relatório de compras", Ft.ResumoCompras))),
     ];

@@ -1,0 +1,90 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Frota.Desktop.ViewModels"
+             x:Class="Vorticis.Frota.Desktop.Views.MultasView" x:DataType="vm:MultasViewModel">
+  <Grid ColumnDefinitions="*,12,420" RowDefinitions="Auto,Auto,*,Auto,170" Margin="8">
+    <TextBlock Grid.ColumnSpan="3" Classes="titulo" Text="Monitor de multas de trânsito" Margin="0,0,0,8" />
+    <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8" Margin="0,0,0,6">
+      <TextBlock Classes="rotulo" Text="Mostrar" VerticalAlignment="Center" />
+      <ComboBox ItemsSource="{x:Static vm:MultasViewModel.Filtros}" SelectedItem="{Binding Filtro}" Width="240" />
+      <TextBlock Text="{Binding Resumo}" VerticalAlignment="Center" FontWeight="SemiBold" TextWrapping="Wrap" />
+    </StackPanel>
+    <DataGrid Grid.Row="2" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Placa" Binding="{ReflectionBinding Placa}" Width="90" />
+        <DataGridTextColumn Header="Motorista" Binding="{ReflectionBinding Motorista}" Width="140" />
+        <DataGridTextColumn Header="Auto de infração" Binding="{ReflectionBinding Auto}" Width="120" />
+        <DataGridTextColumn Header="Data" Binding="{ReflectionBinding Data}" Width="90" />
+        <DataGridTextColumn Header="Infração" Binding="{ReflectionBinding Infracao}" Width="*" />
+        <DataGridTextColumn Header="Gravidade" Binding="{ReflectionBinding Gravidade}" Width="90" />
+        <DataGridTextColumn Header="Pontos" Binding="{ReflectionBinding Pontos}" Width="60" />
+        <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="100" />
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="120" />
+        <DataGridTextColumn Header="Próximo prazo" Binding="{ReflectionBinding ProximoPrazo}" Width="190" />
+        <DataGridTextColumn Header="Alerta" Binding="{ReflectionBinding Alerta}" Width="180" />
+      </DataGrid.Columns>
+    </DataGrid>
+    <TextBlock Grid.Row="3" Classes="rotulo" Text="Pontos dos motoristas nos últimos 12 meses (pela data da infração)" Margin="0,8,0,4" />
+    <DataGrid Grid.Row="4" ItemsSource="{Binding Pontuacao}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Motorista" Binding="{ReflectionBinding Motorista}" Width="*" />
+        <DataGridTextColumn Header="Pontos" Binding="{ReflectionBinding Pontos}" Width="80" />
+        <DataGridTextColumn Header="Multas" Binding="{ReflectionBinding Multas}" Width="80" />
+      </DataGrid.Columns>
+    </DataGrid>
+    <ScrollViewer Grid.Row="1" Grid.RowSpan="4" Grid.Column="2">
+      <StackPanel Spacing="6" IsEnabled="{Binding PodeEditar}">
+        <Grid ColumnDefinitions="130,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
+          <TextBlock Classes="rotulo" Text="Veículo" />
+          <ComboBox Grid.Column="1" ItemsSource="{Binding VeiculosOpcoes}" SelectedItem="{Binding Veiculo}" HorizontalAlignment="Stretch" />
+          <TextBlock Grid.Row="1" Classes="rotulo" Text="Motorista (condutor)" />
+          <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding MotoristasOpcoes}" SelectedItem="{Binding Motorista}" HorizontalAlignment="Stretch" />
+          <TextBlock Grid.Row="2" Classes="rotulo" Text="Auto de infração" />
+          <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding AutoInfracao}" />
+          <TextBlock Grid.Row="3" Classes="rotulo" Text="Órgão autuador" />
+          <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Orgao}" Watermark="DETRAN-SP, PRF, DER..." />
+          <TextBlock Grid.Row="4" Classes="rotulo" Text="Data da infração" />
+          <CalendarDatePicker Grid.Row="4" Grid.Column="1" SelectedDate="{Binding DataInfracao}" Width="140" />
+          <TextBlock Grid.Row="5" Classes="rotulo" Text="Local" />
+          <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Local}" />
+          <TextBlock Grid.Row="6" Classes="rotulo" Text="Enquadramento" />
+          <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Enquadramento}" Width="140" HorizontalAlignment="Left" Watermark="745-50" />
+          <TextBlock Grid.Row="7" Classes="rotulo" Text="Descrição" />
+          <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding Descricao}" Watermark="Transitar em velocidade superior..." />
+          <TextBlock Grid.Row="8" Classes="rotulo" Text="Gravidade" />
+          <ComboBox Grid.Row="8" Grid.Column="1" ItemsSource="{x:Static vm:MultasViewModel.Gravidades}" SelectedItem="{Binding Gravidade}" Width="140" />
+          <TextBlock Grid.Row="9" Classes="rotulo" Text="Pontos" />
+          <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding Pontos}" Width="80" HorizontalAlignment="Left" />
+          <TextBlock Grid.Row="10" Classes="rotulo" Text="Valor" />
+          <TextBox Grid.Row="10" Grid.Column="1" Text="{Binding Valor}" Width="140" HorizontalAlignment="Left" />
+          <TextBlock Grid.Row="11" Classes="rotulo" Text="Desconto (%)" />
+          <TextBox Grid.Row="11" Grid.Column="1" Text="{Binding Desconto}" Width="80" HorizontalAlignment="Left" Watermark="20 ou 40" />
+          <TextBlock Grid.Row="12" Classes="rotulo" Text="Indicar condutor até" />
+          <CalendarDatePicker Grid.Row="12" Grid.Column="1" SelectedDate="{Binding PrazoIndicacao}" Width="140" />
+          <TextBlock Grid.Row="13" Classes="rotulo" Text="Defesa/recurso até" />
+          <CalendarDatePicker Grid.Row="13" Grid.Column="1" SelectedDate="{Binding PrazoRecurso}" Width="140" />
+          <TextBlock Grid.Row="14" Classes="rotulo" Text="Vencimento" />
+          <CalendarDatePicker Grid.Row="14" Grid.Column="1" SelectedDate="{Binding Vencimento}" Width="140" />
+          <TextBlock Grid.Row="15" Classes="rotulo" Text="Quem paga" />
+          <ComboBox Grid.Row="15" Grid.Column="1" ItemsSource="{x:Static vm:MultasViewModel.Responsaveis}" SelectedItem="{Binding Responsavel}" HorizontalAlignment="Stretch" />
+          <TextBlock Grid.Row="16" Classes="rotulo" Text="Situação" />
+          <ComboBox Grid.Row="16" Grid.Column="1" ItemsSource="{x:Static vm:MultasViewModel.Situacoes}" SelectedItem="{Binding Situacao}" HorizontalAlignment="Stretch" />
+          <TextBlock Grid.Row="17" Classes="rotulo" Text="Pago em / valor" />
+          <StackPanel Grid.Row="17" Grid.Column="1" Orientation="Horizontal" Spacing="6">
+            <CalendarDatePicker SelectedDate="{Binding DataPagamento}" Width="140" />
+            <TextBox Text="{Binding ValorPago}" Width="110" />
+          </StackPanel>
+          <TextBlock Grid.Row="18" Classes="rotulo" Text="Observação" />
+          <TextBox Grid.Row="18" Grid.Column="1" Text="{Binding Observacao}" />
+        </Grid>
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <Button Content="Nova multa" Command="{Binding NovoCommand}" />
+          <Button Content="Gravar" Classes="accent" Command="{Binding GravarCommand}" />
+          <Button Content="Excluir" Command="{Binding ExcluirCommand}" />
+        </StackPanel>
+        <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                   Text="Lance cada notificação recebida (ou importe de planilha). Pontos e valor vêm sugeridos pela gravidade. O sistema não consulta o Detran: confira as multas no site do órgão ou no SNE." />
+        <c:MensagensView />
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>
