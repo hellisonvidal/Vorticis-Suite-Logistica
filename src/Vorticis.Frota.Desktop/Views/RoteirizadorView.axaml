@@ -1,16 +1,26 @@
 <UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:v="using:Vorticis.Frota.Desktop.Views" xmlns:vm="using:Vorticis.Frota.Desktop.ViewModels"
              x:Class="Vorticis.Frota.Desktop.Views.RoteirizadorView" x:DataType="vm:RoteirizadorViewModel">
-  <Grid ColumnDefinitions="*,12,470" RowDefinitions="Auto,Auto,*" Margin="8">
+  <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,*" Margin="8">
     <TextBlock Grid.ColumnSpan="3" Classes="titulo" Text="Roteirizador" Margin="0,0,0,6" />
     <StackPanel Grid.Row="1" Spacing="2" Margin="0,0,0,6">
       <TextBlock Text="{Binding Resumo}" FontWeight="SemiBold" TextWrapping="Wrap" />
       <TextBlock Text="{Binding CustoTexto}" FontWeight="Bold" Foreground="#0F766E" TextWrapping="Wrap" />
     </StackPanel>
     <Border Grid.Row="2" BorderBrush="LightGray" BorderThickness="1" CornerRadius="6" ClipToBounds="True">
-      <v:MapaRoteiro Name="Mapa" Paradas="{Binding MapaParadas}" Caminho="{Binding MapaCaminho}" />
+      <Panel>
+        <v:MapaRoteiro Name="Mapa" Paradas="{Binding MapaParadas}" Caminho="{Binding MapaCaminho}" RotulosTrechos="{Binding MapaRotulos}"
+                       Legenda="{Binding MapaLegenda}" VoltaOrigem="{Binding VoltarOrigem}" />
+        <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" Spacing="4">
+          <Button Content="+" Width="36" FontSize="18" FontWeight="Bold" HorizontalContentAlignment="Center" Click="Aproximar" ToolTip.Tip="Aproximar (ou roda do mouse)" />
+          <Button Content="−" Width="36" FontSize="18" FontWeight="Bold" HorizontalContentAlignment="Center" Click="Afastar" ToolTip.Tip="Afastar" />
+          <Button Content="⤢" Width="36" FontSize="16" HorizontalContentAlignment="Center" Click="Enquadrar" ToolTip.Tip="Enquadrar o roteiro (ou clique duplo no mapa)" />
+        </StackPanel>
+        <Button Content="{Binding TextoMapaGrande}" Command="{Binding AlternarMapaGrandeCommand}" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                Margin="10,10,10,28" />
+      </Panel>
     </Border>
-    <ScrollViewer Grid.Row="1" Grid.RowSpan="2" Grid.Column="2">
+    <ScrollViewer Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Width="470" Margin="12,0,0,0" IsVisible="{Binding !MapaGrande}">
       <StackPanel Spacing="6">
         <TextBlock Text="Paradas" FontWeight="Bold" FontSize="12" />
         <StackPanel Orientation="Horizontal" Spacing="6">

@@ -113,15 +113,50 @@ public class FrotaTelasTests(SessaoHeadless headless, BancoDeTeste db) : IClassF
             Assert.Equal(4, vm.MapaParadas.Count);
             Assert.StartsWith("https://www.google.com/maps/dir/-23.5329,-46.6395/", vm.UrlMapa);
 
-            var view = new F.Views.RoteirizadorView { DataContext = vm };
-            var janela = new Window { Content = view, Width = 1400, Height = 820 };
-            janela.Show();
-            Dispatcher.UIThread.RunJobs();
-            var quadro = janela.CaptureRenderedFrame();
-            Assert.NotNull(quadro);
-            if (Environment.GetEnvironmentVariable("VORTICIS_SCREENSHOTS") is { Length: > 0 } pasta)
-                quadro.Save(Path.Combine(Directory.CreateDirectory(pasta).FullName, "roteirizador.png"));
-            janela.Close();
+            // no mapa: o km de cada trecho e o quadro dos totais
+            Assert.Equal(vm.Trechos.Select(t => $"{Vorticis.Domain.Comum.Formato.Num(t.T.Km)} km"), vm.MapaRotulos);
+            Assert.StartsWith($"{Vorticis.Domain.Comum.Formato.Num(vm.Trechos.Sum(t => t.T.Km))} km", vm.MapaLegenda[0]);
+            Assert.Contains(vm.MapaLegenda, l => l.StartsWith("Custo aproximado"));
+
+            var pasta = Environment.GetEnvironmentVariable("VORTICIS_SCREENSHOTS");
+            var anterior = (F.Views.ProvedorBlocosMapa.Desligado, F.Views.ProvedorBlocosMapa.Fonte);
+            try
+            {
+                // sem internet: as cidades em pontos
+                F.Views.ProvedorBlocosMapa.Desligado = true;
+                var view = new F.Views.RoteirizadorView { DataContext = vm };
+                var janela = new Window { Content = view, Width = 1400, Height = 820 };
+                janela.Show();
+                Dispatcher.UIThread.RunJobs();
+                var mapa = view.FindControl<F.Views.MapaRoteiro>("Mapa")!;
+                Assert.InRange(mapa.Zoom, 6, 10);                                   // enquadra a região das paradas (SP e RJ)
+                var quadro = janela.CaptureRenderedFrame();
+                Assert.NotNull(quadro);
+                if (pasta is { Length: > 0 }) quadro.Save(Path.Combine(Directory.CreateDirectory(pasta).FullName, "roteirizador.png"));
+                // com o mapa de estradas: os blocos pedidos são os da região enquadrada; mapa grande esconde o painel
+                var pedidos = new List<(int Z, int X, int Y)>();
+                using var bloco = new Avalonia.Media.Imaging.RenderTargetBitmap(new Avalonia.PixelSize(256, 256));
+                using (var d = bloco.CreateDrawingContext())
+                {
+                    d.FillRectangle(new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.FromRgb(0xF2, 0xEF, 0xE9)), new Avalonia.Rect(0, 0, 256, 256));
+                    d.DrawLine(new Avalonia.Media.Pen(Avalonia.Media.Brushes.Orange, 6), new Avalonia.Point(0, 128), new Avalonia.Point(256, 140));
+                }
+                F.Views.ProvedorBlocosMapa.Desligado = false;
+                F.Views.ProvedorBlocosMapa.Fonte = (z, x, y) => { pedidos.Add((z, x, y)); return bloco; };
+                vm.AlternarMapaGrandeCommand.Execute(null);
+                Dispatcher.UIThread.RunJobs();
+                mapa.Enquadrar();
+                quadro = janela.CaptureRenderedFrame();
+                Assert.NotEmpty(pedidos);
+                var z = pedidos[0].Z;
+                double Tx(double lon) => (lon + 180) / 360 * Math.Pow(2, z);
+                Assert.Contains(pedidos, p => p.X == (int)Math.Floor(Tx(-46.6395)));         // o bloco de São Paulo está entre os desenhados
+                Assert.Equal("Mostrar o painel", vm.TextoMapaGrande);
+                if (pasta is { Length: > 0 }) quadro!.Save(Path.Combine(pasta, "roteirizador-mapa-grande.png"));
+                vm.AlternarMapaGrandeCommand.Execute(null);
+                janela.Close();
+            }
+            finally { (F.Views.ProvedorBlocosMapa.Desligado, F.Views.ProvedorBlocosMapa.Fonte) = anterior; }
             return Task.FromResult(true);
         }, TestContext.Current.CancellationToken));
         Assert.True(ok);

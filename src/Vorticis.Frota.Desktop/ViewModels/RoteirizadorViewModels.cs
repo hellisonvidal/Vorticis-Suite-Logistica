@@ -67,6 +67,12 @@ public partial class RoteirizadorViewModel(IContexto contexto) : TmsBase(context
     [ObservableProperty] private string _custoTexto = "";
     [ObservableProperty] private IReadOnlyList<PontoMapa> _mapaParadas = [];
     [ObservableProperty] private IReadOnlyList<(double Lat, double Lon)>? _mapaCaminho;
+    [ObservableProperty] private IReadOnlyList<string> _mapaRotulos = [];
+    [ObservableProperty] private IReadOnlyList<string> _mapaLegenda = [];
+    /// <summary>Mapa grande: esconde o painel das paradas para o mapa ocupar a janela.</summary>
+    [ObservableProperty] private bool _mapaGrande;
+    public string TextoMapaGrande => MapaGrande ? "Mostrar o painel" : "Mapa grande";
+    partial void OnMapaGrandeChanged(bool value) => OnPropertyChanged(nameof(TextoMapaGrande));
 
     public string UrlMapa => RegrasRoteirizacao.UrlGoogleMaps(Ordem, VoltarOrigem);
     private IReadOnlyList<ParadaRota> Ordem => [.. Paradas.Select(p => p.P)];
@@ -130,7 +136,7 @@ public partial class RoteirizadorViewModel(IContexto contexto) : TmsBase(context
     {
         MapaParadas = [.. Paradas.Select(p => BaseMunicipios.Obter(p.P.MunicipioIbge) is { } m ? new PontoMapa(m.Latitude, m.Longitude, $"{p.P.Municipio}/{p.P.Uf}") : null)
                              .Where(p => p is not null).Select(p => p!)];
-        MapaCaminho = _caminhoEstrada ?? (VoltarOrigem && MapaParadas.Count > 1 ? [.. MapaParadas.Select(p => (p.Lat, p.Lon)), (MapaParadas[0].Lat, MapaParadas[0].Lon)] : null);
+        MapaCaminho = _caminhoEstrada;
     }
 
     private void Totalizar()
@@ -142,7 +148,17 @@ public partial class RoteirizadorViewModel(IContexto contexto) : TmsBase(context
               + (VoltarOrigem ? " · com a volta à origem" : "");
         CustoTexto = r.CustoKm == 0 && r.Pedagios == 0 ? "Informe o custo por km (ou escolha o veículo e clique em Sugerir) para ver o custo aproximado."
             : $"Custo aproximado: {Formato.Num(r.Km)} km × {Formato.Moeda(r.CustoKm)} + pedágios {Formato.Moeda(r.Pedagios)} = {Formato.Moeda(r.CustoTotal)}";
+        // no mapa: o km de cada trecho e o quadro com os totais
+        MapaRotulos = [.. Trechos.Select(t => $"{Formato.Num(t.T.Km)} km")];
+        MapaLegenda = Paradas.Count < 2 ? [] :
+        [
+            $"{Formato.Num(r.Km)} km · {r.Horas.ToString("N1", Formato.PtBr)} h de direção",
+            $"{Paradas.Count} paradas" + (VoltarOrigem ? " · com a volta à origem" : "") + (_caminhoEstrada is null ? " · distâncias estimadas" : " · pela estrada"),
+            .. r.CustoKm > 0 || r.Pedagios > 0 ? [$"Custo aproximado {Formato.Moeda(r.CustoTotal)} ({Formato.Moeda(r.CustoKm)}/km + pedágios {Formato.Moeda(r.Pedagios)})"] : Array.Empty<string>(),
+        ];
     }
+
+    [RelayCommand] private void AlternarMapaGrande() => MapaGrande = !MapaGrande;
 
     [RelayCommand]
     private void IncluirParada()

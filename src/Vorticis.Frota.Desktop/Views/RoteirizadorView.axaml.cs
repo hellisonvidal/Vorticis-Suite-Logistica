@@ -8,6 +8,10 @@ public partial class RoteirizadorView : UserControl
 {
     public RoteirizadorView() => InitializeComponent();
 
+    private void Aproximar(object? sender, RoutedEventArgs e) => Mapa.Aproximar(1);
+    private void Afastar(object? sender, RoutedEventArgs e) => Mapa.Aproximar(-1);
+    private void Enquadrar(object? sender, RoutedEventArgs e) => Mapa.Enquadrar();
+
     /// <summary>Abre o roteiro no navegador (Google Maps traça o caminho pela estrada, na ordem das paradas).</summary>
     private async void AbrirGoogleMaps(object? sender, RoutedEventArgs e)
     {

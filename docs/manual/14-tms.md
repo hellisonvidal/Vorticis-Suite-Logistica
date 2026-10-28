@@ -156,9 +156,17 @@ A ocorrência não pode ser antes da emissão do CT-e nem no futuro. CT-e entreg
 6. No alto aparecem o total de km, o tempo de direção e o **Custo aproximado** (km × custo por km + pedágios).
 
 **O mapa:**
-- Desenhado pelo próprio programa, funciona sem internet. As cidades da região aparecem como pontos claros e as paradas numeradas: a origem em verde, as intermediárias em azul e o destino final em vermelho.
-- O caminho aparece em linha reta entre as paradas ou, depois de **Distâncias pela estrada**, pelo traçado da estrada.
-- **Abrir no Google Maps** abre o roteiro no navegador, com as paradas na ordem, para ver o trajeto pelas estradas e o trânsito.
+- **Com internet**, o fundo é o mapa de ruas e estradas do OpenStreetMap: rodovias, cidades, serras e litoral. As partes já vistas ficam guardadas no computador e aparecem mais rápido.
+- **Sem internet**, o mapa mostra as cidades da região como pontos claros.
+- **Paradas:** a origem aparece em verde, as intermediárias em azul e o destino final em vermelho, cada uma com o nome da cidade.
+- **Trechos:** sobre cada trecho aparece o **km** dele. A linha é tracejada (linha reta) até você clicar em **Distâncias pela estrada**; depois, a linha segue o traçado da estrada.
+- **Totais:** no canto de cima fica o quadro com o total de km, o tempo de direção, se as distâncias são estimadas ou pela estrada e o custo aproximado.
+- **Para ver melhor:**
+  - use a **roda do mouse** ou os botões **+** e **−** para aproximar e afastar;
+  - **arraste** com o mouse para mover o mapa;
+  - **⤢** (ou um clique duplo no mapa) volta a enquadrar o roteiro inteiro;
+  - **Mapa grande** esconde o painel das paradas para o mapa ocupar a janela; **Mostrar o painel** traz o painel de volta.
+- **Abrir no Google Maps** abre o roteiro no navegador, com as paradas na ordem, para ver o trajeto e o trânsito.
 
 **Gravar como rota:** dê um nome e clique em **Gravar como rota**. O roteiro vai para *Cadastros › Rotas*, com as paradas na ordem, o km total, o tempo e os pedágios, e fica disponível nas ordens de coleta e nas viagens. Com uma rota cadastrada escolhida, ela é atualizada.
 
