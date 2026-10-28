@@ -355,8 +355,63 @@ public sealed record CteLinha(Cte C)
 /// Emissão › Conhecimentos de transporte (CT-e): digitação com o frete pela tabela (ou pela cotação aprovada / ordem de coleta), emissão com a chave
 /// de acesso, cancelamento e minuta em PDF. A transmissão à SEFAZ fica para depois: a chave vem do emissor usado pela transportadora.
 /// </summary>
-public partial class CtesViewModel(IContexto contexto) : TmsBase(contexto)
+public partial class CtesViewModel(IContexto contexto) : TmsBase(contexto), Views.IEdicaoEmPopup
 {
+    private List<Cte> _todos = [];
+
+    /// <summary>A edição do CT-e (formulário e notas) abre numa janela pop-up sobre a lista.</summary>
+    [ObservableProperty] private bool _edicaoAberta;
+    [ObservableProperty] private string _filtroTexto = "";
+    [ObservableProperty] private string _painelQuantidadeCtes = "0";
+    [ObservableProperty] private string _painelFreteCtes = "";
+    [ObservableProperty] private string _painelIcms = "";
+    [ObservableProperty] private string _painelPesoCtes = "";
+    [ObservableProperty] private string _painelMercadoria = "";
+    public string TituloEdicao => Selecionado?.C is { } c ? $"CT-e {c.Serie}-{c.Numero} – {RegrasTms.Rotulo(c.Situacao)}" : "Novo CT-e";
+
+    partial void OnFiltroTextoChanged(string value) => Filtrar();
+
+    /// <summary>Lista pela busca (número, chave, remetente, destinatário, tomador, placa ou trecho) e o painel dos valores dos CT-e listados.</summary>
+    private void Filtrar()
+    {
+        var t = (FiltroTexto ?? "").Trim();
+        bool Tem(string? s) => s is not null && s.Contains(t, StringComparison.CurrentCultureIgnoreCase);
+        var itens = t.Length == 0 ? _todos : _todos.Where(c => $"{c.Serie}-{c.Numero}".Contains(t) || c.Numero.ToString() == t || Tem(c.Chave) || Tem(c.Remetente)
+                                                               || Tem(c.Destinatario) || Tem(c.Tomador) || Tem(c.Placa) || Tem(c.Trecho) || Tem(c.ChavesNfe)).ToList();
+        var atual = Selecionado?.C.Id;
+        Lista.Clear();
+        foreach (var c in itens) Lista.Add(new CteLinha(c));
+        if (atual is not null && Lista.FirstOrDefault(l => l.C.Id == atual) is { } l) Selecionado = l;
+        var validos = itens.Where(c => c.Situacao != "CANCELADO").ToList();
+        PainelQuantidadeCtes = $"{itens.Count}";
+        PainelFreteCtes = M(validos.Sum(c => c.ValorTotal));
+        PainelIcms = M(validos.Sum(c => c.Frete.Icms));
+        PainelPesoCtes = $"{Ext.Num(validos.Sum(c => c.PesoKg))} kg";
+        PainelMercadoria = M(validos.Sum(c => c.ValorMercadoria));
+        Totais = $"{itens.Count(c => c.Situacao == "DIGITADO")} digitado(s) · {itens.Count(c => c.Situacao == "EMITIDO")} emitido(s) · "
+                 + $"{itens.Count(c => c.Situacao == "EM_TRANSITO")} em trânsito · {itens.Count(c => c.Situacao == "ENTREGUE")} entregue(s) · "
+                 + $"{itens.Count(c => c.Situacao == "CANCELADO")} cancelado(s) · {itens.Count(c => c.FaturaNumero is null && c.Situacao is not ("DIGITADO" or "CANCELADO"))} sem fatura";
+    }
+
+    /// <summary>Novo CT-e: limpa o formulário e abre a janela de edição.</summary>
+    [RelayCommand]
+    private void NovoCte()
+    {
+        Novo();
+        OnPropertyChanged(nameof(TituloEdicao));
+        EdicaoAberta = true;
+    }
+
+    /// <summary>Abre o CT-e selecionado na janela de edição (também com duplo clique ou Enter na lista).</summary>
+    [RelayCommand]
+    private void Abrir()
+    {
+        Erros.Clear();
+        if (Selecionado is null) { Erros.Add("Selecione o CT-e na lista."); return; }
+        OnPropertyChanged(nameof(TituloEdicao));
+        EdicaoAberta = true;
+    }
+
     private List<TabelaFrete> _tabelas = [];
     private List<Cotacao> _cotacoes = [];
     private List<Coleta> _coletas = [];
@@ -576,11 +631,8 @@ public partial class CtesViewModel(IContexto contexto) : TmsBase(contexto)
         Encher(CotacoesOpcoes, "(nenhuma)", cotacoes.Select(c => new Opcao(c.Id, $"Nº {c.Numero} – {c.Cliente} – {M(c.ValorTotal)}")));
         Encher(ColetasOpcoes, "(nenhuma)", coletas.Where(c => c.Situacao != "CANCELADA").Select(c => new Opcao(c.Id, $"Nº {c.Numero} – {c.AgendadaEm:dd/MM} – {c.Remetente ?? c.EnderecoColeta}")));
         Encher(ViagensOpcoes, "(nenhuma)", viagens.Where(v => v.Situacao != "CANCELADA").Select(v => new Opcao(v.Id, $"Nº {v.Numero} – {v.Origem} → {v.Destino}")));
-        Lista.Clear();
-        foreach (var c in itens) Lista.Add(new CteLinha(c));
-        var validos = itens.Where(c => c.Situacao != "CANCELADO").ToList();
-        Totais = $"{itens.Count} CT-e · {itens.Count(c => c.Situacao == "DIGITADO")} digitado(s) · {itens.Count(c => c.Situacao == "EM_TRANSITO")} em trânsito · "
-                 + $"{itens.Count(c => c.Situacao == "ENTREGUE")} entregue(s) · frete {M(validos.Sum(c => c.ValorTotal))} · ICMS {M(validos.Sum(c => c.Frete.Icms))}";
+        _todos = itens;
+        Filtrar();
         if (Selecionado is null && Remetente is null) Novo();
     }
 
@@ -660,6 +712,7 @@ public partial class CtesViewModel(IContexto contexto) : TmsBase(contexto)
         var r = await app.Frota().ExcluirCteAsync(empresa, c.Id, usuario);
         if (!r.Sucesso) { MostrarResultado(r, ""); return; }
         Novo();
+        EdicaoAberta = false;
         await CarregarAsync();
         Mensagem = "CT-e excluído.";
     }, Permissao.FrotaTms);
@@ -697,8 +750,62 @@ public sealed record ManifestoLinha(Manifesto M)
 }
 
 /// <summary>Emissão › Manifestos de carga (MDF-e): reúne os CT-e emitidos de um veículo e motorista; encerrar ao fim da viagem.</summary>
-public partial class ManifestosViewModel(IContexto contexto) : TmsBase(contexto)
+public partial class ManifestosViewModel(IContexto contexto) : TmsBase(contexto), Views.IEdicaoEmPopup
 {
+    private List<Manifesto> _todos = [];
+
+    /// <summary>A edição do manifesto abre numa janela pop-up sobre a lista.</summary>
+    [ObservableProperty] private bool _edicaoAberta;
+    [ObservableProperty] private string _filtroTexto = "";
+    [ObservableProperty] private OpcaoFiltro? _filtroSituacao = FiltroSituacoes[0];
+    [ObservableProperty] private string _painelQuantidade = "0";
+    [ObservableProperty] private string _painelCtes = "0";
+    [ObservableProperty] private string _painelPeso = "";
+    [ObservableProperty] private string _painelCarga = "";
+    [ObservableProperty] private string _painelFrete = "";
+    public static IReadOnlyList<OpcaoFiltro> FiltroSituacoes { get; } =
+        [new(null, "(todas)"), new("ABERTO", "Aberto"), new("ENCERRADO", "Encerrado"), new("CANCELADO", "Cancelado")];
+    public string TituloEdicao => Selecionado?.M is { } m ? $"Manifesto (MDF-e) {m.Serie}-{m.Numero} – {RegrasTms.Rotulo(m.Situacao)}" : "Novo manifesto (MDF-e)";
+
+    partial void OnFiltroTextoChanged(string value) => Filtrar();
+    partial void OnFiltroSituacaoChanged(OpcaoFiltro? value) => Filtrar();
+
+    /// <summary>Lista pela situação e pela busca (número, chave, placa, motorista ou UF) e o painel dos valores dos manifestos listados.</summary>
+    private void Filtrar()
+    {
+        var t = (FiltroTexto ?? "").Trim();
+        bool Tem(string? s) => s is not null && s.Contains(t, StringComparison.CurrentCultureIgnoreCase);
+        var itens = _todos.Where(m => FiltroSituacao?.Valor is not { } sit || m.Situacao == sit)
+                          .Where(m => t.Length == 0 || $"{m.Serie}-{m.Numero}".Contains(t) || m.Numero.ToString() == t || Tem(m.Chave) || Tem(m.Placa)
+                                      || Tem(RegrasFrota.FormatarPlaca(m.Placa ?? "")) || Tem(m.MotoristaNome) || Tem(m.UfInicio) || Tem(m.UfFim) || Tem(m.UfsPercurso)).ToList();
+        var atual = Selecionado?.M.Id;
+        Lista.Clear();
+        foreach (var m in itens) Lista.Add(new ManifestoLinha(m));
+        if (atual is not null && Lista.FirstOrDefault(l => l.M.Id == atual) is { } l) Selecionado = l;
+        var validos = itens.Where(m => m.Situacao != "CANCELADO").ToList();
+        (PainelQuantidade, PainelCtes) = ($"{itens.Count}", $"{validos.Sum(m => m.Ctes.Count)}");
+        (PainelPeso, PainelCarga, PainelFrete) = ($"{Ext.Num(validos.Sum(m => m.PesoKg))} kg", M(validos.Sum(m => m.ValorMercadoria)), M(validos.Sum(m => m.ValorFrete)));
+        Totais = $"{itens.Count(m => m.Situacao == "ABERTO")} aberto(s) · {itens.Count(m => m.Situacao == "ENCERRADO")} encerrado(s) · "
+                 + $"{itens.Count(m => m.Situacao == "CANCELADO")} cancelado(s)";
+    }
+
+    [RelayCommand]
+    private async Task NovoManifestoAsync()
+    {
+        await NovoAsync();
+        OnPropertyChanged(nameof(TituloEdicao));
+        EdicaoAberta = true;
+    }
+
+    [RelayCommand]
+    private void Abrir()
+    {
+        Erros.Clear();
+        if (Selecionado is null) { Erros.Add("Selecione o manifesto na lista."); return; }
+        OnPropertyChanged(nameof(TituloEdicao));
+        EdicaoAberta = true;
+    }
+
     public ObservableCollection<ManifestoLinha> Lista { get; } = [];
     public ObservableCollection<CteMarcado> Ctes { get; } = [];
     public ObservableCollection<Opcao> ViagensOpcoes { get; } = [];
@@ -753,9 +860,8 @@ public partial class ManifestosViewModel(IContexto contexto) : TmsBase(contexto)
         ViagensOpcoes.Clear();
         ViagensOpcoes.Add(new Opcao(null, "(nenhuma)"));
         foreach (var v in viagens.Where(v => v.Situacao != "CANCELADA")) ViagensOpcoes.Add(new Opcao(v.Id, $"Nº {v.Numero} – {v.Origem} → {v.Destino}"));
-        Lista.Clear();
-        foreach (var m in itens) Lista.Add(new ManifestoLinha(m));
-        Totais = $"{itens.Count} manifesto(s) · {itens.Count(m => m.Situacao == "ABERTO")} aberto(s) · {itens.Sum(m => m.Ctes.Count)} CT-e";
+        _todos = itens;
+        Filtrar();
         Veiculo ??= VeiculosOpcoes.FirstOrDefault();
         Motorista ??= MotoristasOpcoes.FirstOrDefault();
         Viagem ??= ViagensOpcoes.FirstOrDefault();

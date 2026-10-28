@@ -26,6 +26,8 @@
       <CalendarDatePicker SelectedDate="{Binding FiltroInicio}" Width="130" />
       <TextBlock Text="a" VerticalAlignment="Center" />
       <CalendarDatePicker SelectedDate="{Binding FiltroFim}" Width="130" />
+      <ComboBox ItemsSource="{x:Static vm:DigitacaoDocumentoViewModel.FiltrosModelo}" SelectedIndex="{Binding FiltroModelo}" Width="150" IsVisible="{Binding EscolheModelo}" />
+      <TextBox Text="{Binding FiltroTexto}" Width="220" Watermark="Número, chave, nome ou CNPJ" />
       <Button Classes="mini" Content="Consultar" Command="{Binding ConsultarCommand}" />
       <Button Classes="mini accent" Content="Novo lançamento" Command="{Binding NovoLancamentoCommand}" IsEnabled="{Binding PodeManter}" />
       <Button Classes="mini" Content="Abrir" Command="{Binding AbrirCommand}" ToolTip.Tip="Abre a nota selecionada (também com duplo clique ou Enter)" />
@@ -64,6 +66,9 @@
         <DataGridTextColumn Header="Contab." Binding="{ReflectionBinding Contabilizado}" Width="75" />
       </DataGrid.Columns>
     </DataGrid>
-    <c:MensagensView Grid.Row="6" IsVisible="{Binding !DigitacaoAberta}" />
+    <StackPanel Grid.Row="6" Spacing="2">
+      <TextBlock Text="{Binding ResumoLista}" FontWeight="SemiBold" Margin="0,4,0,0" />
+      <c:MensagensView IsVisible="{Binding !DigitacaoAberta}" />
+    </StackPanel>
   </Grid>
 </UserControl>

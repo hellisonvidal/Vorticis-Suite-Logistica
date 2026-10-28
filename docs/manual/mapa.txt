@@ -77,6 +77,7 @@ produtos=05-fiscal.md#produtos
 regrasfiscais=05-fiscal.md#regras-fiscais
 notaentrada=05-fiscal.md#documentos-de-entrada-e-de-saida-digitacao
 notasaida=05-fiscal.md#documentos-de-entrada-e-de-saida-digitacao
+nfse=05-fiscal.md#nfs-e-notas-fiscais-de-servico
 importacaoxml=05-fiscal.md#importacao-de-xml-nf-e-nfc-e-nfs-e
 documentosfiscais=05-fiscal.md#consulta-de-documentos
 regrascontabilizacao=05-fiscal.md#regras-de-contabilizacao

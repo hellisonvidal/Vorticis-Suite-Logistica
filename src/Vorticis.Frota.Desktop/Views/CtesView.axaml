@@ -2,178 +2,57 @@
              xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Frota.Desktop.ViewModels"
              x:Class="Vorticis.Frota.Desktop.Views.CtesView" x:DataType="vm:CtesViewModel">
   <UserControl.Styles>
-    <Style Selector="TabControl#AbasCte > TabItem">
-      <Setter Property="FontSize" Value="15" />
-      <Setter Property="MinHeight" Value="34" />
-      <Setter Property="Padding" Value="10,0" />
-    </Style>
     <Style Selector="Border.cartao">
       <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}" />
       <Setter Property="CornerRadius" Value="6" />
-      <Setter Property="Padding" Value="10,6" />
+      <Setter Property="Padding" Value="12,6" />
+      <Setter Property="Margin" Value="0,0,8,0" />
     </Style>
   </UserControl.Styles>
-  <Grid ColumnDefinitions="*,12,480" RowDefinitions="Auto,Auto,*" Margin="8">
-    <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="8" Margin="0,0,0,6">
-      <TextBlock Classes="titulo" Text="Conhecimentos de transporte (CT-e)" VerticalAlignment="Center" />
+  <!-- Conhecimentos de transporte: a lista dos CT-e com filtros e o painel dos valores; Novo CT-e e Abrir (duplo clique ou Enter) editam numa janela pop-up. -->
+  <Grid RowDefinitions="Auto,Auto,Auto,Auto,*,Auto" Margin="8">
+    <TextBlock Classes="titulo" Text="Conhecimentos de transporte (CT-e)" Margin="0,0,0,6" />
+    <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8" Margin="0,0,0,6">
       <TextBlock Text="Período" VerticalAlignment="Center" />
       <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="130" />
       <TextBlock Text="a" VerticalAlignment="Center" />
       <CalendarDatePicker SelectedDate="{Binding Fim}" Width="130" />
       <TextBlock Text="Situação" VerticalAlignment="Center" />
       <ComboBox ItemsSource="{x:Static vm:CtesViewModel.FiltroSituacoes}" SelectedItem="{Binding FiltroSituacao}" Width="150" />
+      <TextBox Text="{Binding FiltroTexto}" Width="280" Watermark="Número, chave, cliente, placa, cidade ou NF-e" />
     </StackPanel>
-    <TextBlock Grid.Row="1" Grid.ColumnSpan="3" Text="{Binding Totais}" FontSize="12" Margin="0,0,0,6" />
-    <DataGrid Grid.Row="2" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+    <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,6">
+      <Border Classes="cartao"><StackPanel><TextBlock Text="CT-e listados" FontSize="11" /><TextBlock Text="{Binding PainelQuantidadeCtes}" FontSize="18" FontWeight="Bold" /></StackPanel></Border>
+      <Border Classes="cartao"><StackPanel><TextBlock Text="Frete (total da prestação)" FontSize="11" /><TextBlock Text="{Binding PainelFreteCtes}" FontSize="18" FontWeight="Bold" /></StackPanel></Border>
+      <Border Classes="cartao"><StackPanel><TextBlock Text="ICMS" FontSize="11" /><TextBlock Text="{Binding PainelIcms}" FontSize="18" FontWeight="Bold" /></StackPanel></Border>
+      <Border Classes="cartao"><StackPanel><TextBlock Text="Peso transportado" FontSize="11" /><TextBlock Text="{Binding PainelPesoCtes}" FontSize="18" FontWeight="Bold" /></StackPanel></Border>
+      <Border Classes="cartao"><StackPanel><TextBlock Text="Valor das mercadorias" FontSize="11" /><TextBlock Text="{Binding PainelMercadoria}" FontSize="18" FontWeight="Bold" /></StackPanel></Border>
+    </StackPanel>
+    <StackPanel Grid.Row="3" Spacing="6" Margin="0,0,0,6">
+      <TextBlock Text="{Binding Totais}" FontSize="12" />
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <Button Content="Novo CT-e" Classes="accent" Command="{Binding NovoCteCommand}" IsEnabled="{Binding PodeEditar}" />
+        <Button Content="Abrir" Command="{Binding AbrirCommand}" ToolTip.Tip="Abre o CT-e selecionado (também com duplo clique ou Enter)" />
+        <Button Content="Imprimir minuta (PDF)" Command="{Binding ImprimirCommand}" />
+        <Button Content="Excluir" Command="{Binding ExcluirCommand}" IsEnabled="{Binding PodeEditar}" />
+      </StackPanel>
+    </StackPanel>
+    <DataGrid Name="ListaCtes" Grid.Row="4" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False"
+              DoubleTapped="AoDuploClique" KeyDown="AoTeclar">
       <DataGrid.Columns>
-        <DataGridTextColumn Header="Nº" Binding="{ReflectionBinding Numero}" Width="65" />
-        <DataGridTextColumn Header="Emissão" Binding="{ReflectionBinding Emissao}" Width="85" />
-        <DataGridTextColumn Header="Tomador" Binding="{ReflectionBinding Tomador}" Width="130" />
-        <DataGridTextColumn Header="Destinatário" Binding="{ReflectionBinding Destinatario}" Width="130" />
-        <DataGridTextColumn Header="Trecho" Binding="{ReflectionBinding Trecho}" Width="*" />
-        <DataGridTextColumn Header="Peso (kg)" Binding="{ReflectionBinding Peso}" Width="75" />
-        <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="90" />
-        <DataGridTextColumn Header="Previsão" Binding="{ReflectionBinding Previsao}" Width="85" />
-        <DataGridTextColumn Header="Prazo" Binding="{ReflectionBinding Prazo}" Width="90" />
-        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="90" />
-        <DataGridTextColumn Header="Fatura" Binding="{ReflectionBinding Fatura}" Width="60" />
+        <DataGridTextColumn Header="Nº" Binding="{ReflectionBinding Numero}" Width="70" />
+        <DataGridTextColumn Header="Emissão" Binding="{ReflectionBinding Emissao}" Width="90" />
+        <DataGridTextColumn Header="Tomador" Binding="{ReflectionBinding Tomador}" Width="170" />
+        <DataGridTextColumn Header="Destinatário" Binding="{ReflectionBinding Destinatario}" Width="170" />
+        <DataGridTextColumn Header="Trecho" Binding="{ReflectionBinding Trecho}" Width="*" MinWidth="180" />
+        <DataGridTextColumn Header="Peso (kg)" Binding="{ReflectionBinding Peso}" Width="85" />
+        <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="110" />
+        <DataGridTextColumn Header="Previsão" Binding="{ReflectionBinding Previsao}" Width="90" />
+        <DataGridTextColumn Header="Prazo" Binding="{ReflectionBinding Prazo}" Width="120" />
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="100" />
+        <DataGridTextColumn Header="Fatura" Binding="{ReflectionBinding Fatura}" Width="65" />
       </DataGrid.Columns>
     </DataGrid>
-    <TabControl Name="AbasCte" Grid.Row="2" Grid.Column="2" Padding="0">
-    <TabItem Header="CT-e">
-    <ScrollViewer>
-    <StackPanel Spacing="6" IsEnabled="{Binding PodeEditar}">
-      <Grid ColumnDefinitions="140,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
-        <TextBlock Grid.ColumnSpan="2" Text="Documento" FontWeight="Bold" FontSize="12" Margin="0,6,0,0" />
-        <TextBlock Grid.Row="1" Classes="rotulo" Text="Série" />
-        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Serie}" Width="80" HorizontalAlignment="Left" />
-        <TextBlock Grid.Row="2" Classes="rotulo" Text="Emissão" />
-        <CalendarDatePicker Grid.Row="2" Grid.Column="1" SelectedDate="{Binding Emissao}" Width="140" HorizontalAlignment="Left" />
-        <TextBlock Grid.Row="3" Classes="rotulo" Text="CFOP" />
-        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Cfop}" Width="100" HorizontalAlignment="Left" />
-        <TextBlock Grid.Row="4" Classes="rotulo" Text="Situação" />
-        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SituacaoTexto}" FontWeight="Bold" />
-        <TextBlock Grid.Row="5" Grid.ColumnSpan="2" Text="Origem dos dados (opcional)" FontWeight="Bold" FontSize="12" Margin="0,6,0,0" />
-        <TextBlock Grid.Row="6" Classes="rotulo" Text="Cotação aprovada" />
-        <ComboBox Grid.Row="6" Grid.Column="1" ItemsSource="{Binding CotacoesOpcoes}" SelectedItem="{Binding Cotacao}" HorizontalAlignment="Stretch" />
-        <TextBlock Grid.Row="7" Classes="rotulo" Text="Ordem de coleta" />
-        <ComboBox Grid.Row="7" Grid.Column="1" ItemsSource="{Binding ColetasOpcoes}" SelectedItem="{Binding Coleta}" HorizontalAlignment="Stretch" />
-        <TextBlock Grid.Row="8" Classes="rotulo" Text="Viagem" />
-        <ComboBox Grid.Row="8" Grid.Column="1" ItemsSource="{Binding ViagensOpcoes}" SelectedItem="{Binding Viagem}" HorizontalAlignment="Stretch" />
-        <TextBlock Grid.Row="9" Grid.ColumnSpan="2" Text="Partes" FontWeight="Bold" FontSize="12" Margin="0,6,0,0" />
-        <TextBlock Grid.Row="10" Classes="rotulo" Text="Remetente" />
-        <ComboBox Grid.Row="10" Grid.Column="1" ItemsSource="{Binding ParticipantesOpcoes}" SelectedItem="{Binding Remetente}" HorizontalAlignment="Stretch" />
-        <TextBlock Grid.Row="11" Classes="rotulo" Text="Destinatário" />
-        <ComboBox Grid.Row="11" Grid.Column="1" ItemsSource="{Binding ParticipantesOpcoes}" SelectedItem="{Binding Destinatario}" HorizontalAlignment="Stretch" />
-        <TextBlock Grid.Row="12" Classes="rotulo" Text="Tomador (paga o frete)" />
-        <ComboBox Grid.Row="12" Grid.Column="1" ItemsSource="{Binding ParticipantesOpcoes}" SelectedItem="{Binding Tomador}" HorizontalAlignment="Stretch" />
-        <TextBlock Grid.Row="13" Grid.ColumnSpan="2" Text="Trecho" FontWeight="Bold" FontSize="12" Margin="0,6,0,0" />
-        <TextBlock Grid.Row="14" Classes="rotulo" Text="Origem" />
-        <StackPanel Grid.Row="14" Grid.Column="1" Orientation="Horizontal" Spacing="6"><ComboBox ItemsSource="{x:Static vm:SeletorMunicipio.Ufs}" SelectedItem="{Binding Origem.Uf}" Width="70" /><ComboBox ItemsSource="{Binding Origem.Municipios}" SelectedItem="{Binding Origem.Municipio}" Width="270" /></StackPanel>
-        <TextBlock Grid.Row="15" Classes="rotulo" Text="Destino" />
-        <StackPanel Grid.Row="15" Grid.Column="1" Orientation="Horizontal" Spacing="6"><ComboBox ItemsSource="{x:Static vm:SeletorMunicipio.Ufs}" SelectedItem="{Binding Destino.Uf}" Width="70" /><ComboBox ItemsSource="{Binding Destino.Municipios}" SelectedItem="{Binding Destino.Municipio}" Width="270" /></StackPanel>
-        <TextBlock Grid.Row="16" Grid.ColumnSpan="2" Text="Carga" FontWeight="Bold" FontSize="12" Margin="0,6,0,0" />
-        <TextBlock Grid.Row="17" Classes="rotulo" Text="Produto predominante" />
-        <TextBox Grid.Row="17" Grid.Column="1" Text="{Binding Produto}" />
-        <TextBlock Grid.Row="18" Classes="rotulo" Text="Volumes" />
-        <TextBox Grid.Row="18" Grid.Column="1" Text="{Binding Volumes}" Width="100" HorizontalAlignment="Left" />
-        <TextBlock Grid.Row="19" Classes="rotulo" Text="Peso (kg)" />
-        <TextBox Grid.Row="19" Grid.Column="1" Text="{Binding Peso}" Width="140" HorizontalAlignment="Left" />
-        <TextBlock Grid.Row="20" Classes="rotulo" Text="m³" />
-        <TextBox Grid.Row="20" Grid.Column="1" Text="{Binding VolumeM3}" Width="140" HorizontalAlignment="Left" />
-        <TextBlock Grid.Row="21" Classes="rotulo" Text="Valor da mercadoria" />
-        <TextBox Grid.Row="21" Grid.Column="1" Text="{Binding ValorMercadoria}" Width="140" HorizontalAlignment="Left" />
-        <TextBlock Grid.Row="22" Classes="rotulo" Text="Chaves das NF-e" />
-        <TextBox Grid.Row="22" Grid.Column="1" Text="{Binding ChavesNfe}" Watermark="uma chave por linha" AcceptsReturn="True" Height="60" TextWrapping="Wrap" />
-        <TextBlock Grid.Row="23" Classes="rotulo" Text="Veículo" />
-        <ComboBox Grid.Row="23" Grid.Column="1" ItemsSource="{Binding VeiculosOpcoes}" SelectedItem="{Binding Veiculo}" HorizontalAlignment="Stretch" />
-        <TextBlock Grid.Row="24" Classes="rotulo" Text="Motorista" />
-        <ComboBox Grid.Row="24" Grid.Column="1" ItemsSource="{Binding MotoristasOpcoes}" SelectedItem="{Binding Motorista}" HorizontalAlignment="Stretch" />
-        <TextBlock Grid.Row="25" Grid.ColumnSpan="2" Text="Frete" FontWeight="Bold" FontSize="12" Margin="0,6,0,0" />
-        <TextBlock Grid.Row="26" Classes="rotulo" Text="Tabela" />
-        <ComboBox Grid.Row="26" Grid.Column="1" ItemsSource="{Binding TabelasOpcoes}" SelectedItem="{Binding Tabela}" HorizontalAlignment="Stretch" />
-        <TextBlock Grid.Row="27" Classes="rotulo" Text="" />
-        <CheckBox Grid.Row="27" Grid.Column="1" IsChecked="{Binding CobraColeta}" Content="Cobrar coleta" />
-        <TextBlock Grid.Row="28" Classes="rotulo" Text="" />
-        <CheckBox Grid.Row="28" Grid.Column="1" IsChecked="{Binding CobraEntrega}" Content="Cobrar entrega" />
-        <TextBlock Grid.Row="29" Classes="rotulo" Text="" />
-        <Button Grid.Row="29" Grid.Column="1" Content="Calcular pela tabela" Command="{Binding CalcularPelaTabelaCommand}" HorizontalAlignment="Left" />
-        <TextBlock Grid.Row="30" Classes="rotulo" Text="Frete-peso" />
-        <TextBox Grid.Row="30" Grid.Column="1" Text="{Binding FretePeso}" Width="140" HorizontalAlignment="Left" />
-        <TextBlock Grid.Row="31" Classes="rotulo" Text="Ad valorem" />
-        <TextBox Grid.Row="31" Grid.Column="1" Text="{Binding AdValorem}" Width="140" HorizontalAlignment="Left" />
-        <TextBlock Grid.Row="32" Classes="rotulo" Text="GRIS" />
-        <TextBox Grid.Row="32" Grid.Column="1" Text="{Binding Gris}" Width="140" HorizontalAlignment="Left" />
-        <TextBlock Grid.Row="33" Classes="rotulo" Text="Pedágio" />
-        <TextBox Grid.Row="33" Grid.Column="1" Text="{Binding Pedagio}" Width="140" HorizontalAlignment="Left" />
-        <TextBlock Grid.Row="34" Classes="rotulo" Text="Taxas" />
-        <TextBox Grid.Row="34" Grid.Column="1" Text="{Binding Taxas}" Width="140" HorizontalAlignment="Left" />
-        <TextBlock Grid.Row="35" Classes="rotulo" Text="Alíquota ICMS (%)" />
-        <TextBox Grid.Row="35" Grid.Column="1" Text="{Binding AliquotaIcms}" Width="140" HorizontalAlignment="Left" />
-        <TextBlock Grid.Row="36" Classes="rotulo" Text="Resumo" />
-        <TextBlock Grid.Row="36" Grid.Column="1" Text="{Binding ResumoFrete}" TextWrapping="Wrap" FontWeight="Bold" />
-        <TextBlock Grid.Row="37" Classes="rotulo" Text="Previsão de entrega" />
-        <CalendarDatePicker Grid.Row="37" Grid.Column="1" SelectedDate="{Binding Previsao}" Width="140" HorizontalAlignment="Left" />
-        <TextBlock Grid.Row="38" Classes="rotulo" Text="Observação" />
-        <TextBox Grid.Row="38" Grid.Column="1" Text="{Binding Observacao}" />
-      </Grid>
-      <StackPanel Orientation="Horizontal" Spacing="6">
-        <Button Content="Novo CT-e" Command="{Binding NovoCommand}" />
-        <Button Content="Gravar" Classes="accent" Command="{Binding GravarCommand}" />
-        <Button Content="Excluir" Command="{Binding ExcluirCommand}" />
-        <Button Content="Imprimir minuta (PDF)" Command="{Binding ImprimirCommand}" />
-        <Button Content="Cancelar CT-e" Command="{Binding CancelarCommand}" />
-      </StackPanel>
-      <TextBlock Text="Emissão (depois de autorizado no emissor da SEFAZ)" FontWeight="Bold" FontSize="12" Margin="0,6,0,0" />
-      <Grid ColumnDefinitions="140,*" RowDefinitions="Auto,Auto" RowSpacing="6">
-        <TextBlock Classes="rotulo" Text="Chave de acesso" />
-        <TextBox Grid.Column="1" Text="{Binding Chave}" Watermark="44 dígitos" />
-        <TextBlock Grid.Row="1" Classes="rotulo" Text="Protocolo" />
-        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Protocolo}" />
-      </Grid>
-      <StackPanel Orientation="Horizontal" Spacing="6">
-        <Button Content="Registrar emissão" Command="{Binding EmitirCommand}" />
-      </StackPanel>
-      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
-                 Text="Digite o CT-e, grave e imprima a minuta. Depois de autorizado no emissor da SEFAZ, registre aqui a chave de acesso e o protocolo." />
-      <c:MensagensView />
-    </StackPanel>
-    </ScrollViewer>
-    </TabItem>
-    <TabItem Header="Notas transportadas (XML)">
-      <DockPanel Margin="0,6,0,0">
-        <StackPanel DockPanel.Dock="Top" Spacing="6">
-          <UniformGrid Columns="4">
-            <Border Classes="cartao" Margin="0,0,4,4"><StackPanel><TextBlock Text="Notas" FontSize="11" /><TextBlock Text="{Binding PainelQuantidade}" FontSize="18" FontWeight="Bold" /></StackPanel></Border>
-            <Border Classes="cartao" Margin="0,0,4,4"><StackPanel><TextBlock Text="Volumes" FontSize="11" /><TextBlock Text="{Binding PainelVolumes}" FontSize="18" FontWeight="Bold" /></StackPanel></Border>
-            <Border Classes="cartao" Margin="0,0,4,4"><StackPanel><TextBlock Text="Peso" FontSize="11" /><TextBlock Text="{Binding PainelPeso}" FontSize="18" FontWeight="Bold" /></StackPanel></Border>
-            <Border Classes="cartao" Margin="0,0,0,4"><StackPanel><TextBlock Text="Valor das notas" FontSize="11" /><TextBlock Text="{Binding PainelValor}" FontSize="18" FontWeight="Bold" /></StackPanel></Border>
-          </UniformGrid>
-          <TextBlock Text="{Binding PainelPartes}" FontSize="12" TextWrapping="Wrap" />
-          <TextBlock Text="{Binding PainelFrete}" FontSize="12" FontWeight="SemiBold" />
-          <StackPanel Orientation="Horizontal" Spacing="6" IsEnabled="{Binding PodeEditar}">
-            <Button Name="BotaoAnexarXml" Content="Anexar XML das NF-e..." Classes="accent" Click="AnexarXml" />
-            <Button Content="Retirar nota" Command="{Binding RetirarNotaCommand}" />
-          </StackPanel>
-          <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
-                     Text="Escolha um ou vários XML de NF-e (Ctrl+A seleciona todos os arquivos da pasta). Volumes, peso, valor da mercadoria e chaves vão para o CT-e; no CT-e novo, também o remetente, o destinatário, a origem e o destino. Grave o CT-e para guardar as notas." />
-          <c:MensagensView />
-        </StackPanel>
-        <DataGrid ItemsSource="{Binding Notas}" SelectedItem="{Binding NotaSelecionada}" IsReadOnly="True" AutoGenerateColumns="False" Margin="0,6,0,0">
-          <DataGrid.Columns>
-            <DataGridTextColumn Header="NF-e" Binding="{ReflectionBinding Numero}" Width="70" />
-            <DataGridTextColumn Header="Emissão" Binding="{ReflectionBinding Emissao}" Width="85" />
-            <DataGridTextColumn Header="Remetente" Binding="{ReflectionBinding Remetente}" Width="140" />
-            <DataGridTextColumn Header="Destinatário" Binding="{ReflectionBinding Destinatario}" Width="170" />
-            <DataGridTextColumn Header="Vol." Binding="{ReflectionBinding Volumes}" Width="50" />
-            <DataGridTextColumn Header="Peso (kg)" Binding="{ReflectionBinding Peso}" Width="85" />
-            <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="100" />
-            <DataGridTextColumn Header="Produto" Binding="{ReflectionBinding Produto}" Width="150" />
-            <DataGridTextColumn Header="Chave" Binding="{ReflectionBinding Chave}" Width="330" />
-          </DataGrid.Columns>
-        </DataGrid>
-      </DockPanel>
-    </TabItem>
-    </TabControl>
+    <c:MensagensView Grid.Row="5" IsVisible="{Binding !EdicaoAberta}" />
   </Grid>
 </UserControl>

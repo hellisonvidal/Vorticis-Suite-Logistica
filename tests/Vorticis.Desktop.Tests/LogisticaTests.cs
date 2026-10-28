@@ -52,8 +52,8 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
         Assert.Equal(["Serviços", "Relatórios"], Menus(todos[2]));
         // o Transporte tem todo o faturamento, com o CT-e e o MDF-e (não há mais o menu Documentos nem o módulo Faturamento), com os relatórios de faturas, vendas e recebimentos
         Assert.Equal(["Conhecimentos de transporte (CT-e)", "Manifestos de carga (MDF-e)", "Transmissão de CT-e e MDF-e à SEFAZ (em breve)", "-",
-                      "Faturas de frete", "-", "Pedidos de venda", "Notas fiscais de saída", "-", "Emissão de NF-e na SEFAZ (em breve)",
-                      "NFS-e – Nota fiscal de serviço (Padrão Nacional) (em breve)"],
+                      "Faturas de frete", "-", "Pedidos de venda", "Notas fiscais de saída", "NFS-e – Notas fiscais de serviço", "-",
+                      "Emissão de NF-e na SEFAZ (em breve)", "Transmissão da NFS-e ao Emissor Nacional (em breve)"],
                      todos[1].Menus.Single(m => Sem(m) == "Faturamento").Filhos!.Select(i => i.Titulo));
         Assert.Contains(Folhas(todos[1].Menus), i => i.Chave == Fiscal.Desktop.ViewModels.Telas.ResumoVendas);
         // Cadastros › Transportadoras só no Frotas (nos demais, a transportadora é escolhida no alto da tela)
@@ -88,9 +88,12 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
                                                                                                                       or ViewModels.Telas.Bens or ViewModels.Telas.Depreciacao))
                                                   .Select(x => (Modulo: vm.Modulo.NomeCurto, Chave: x.Chave!)).Distinct()).ToList();
         Assert.Empty(doModulo.GroupBy(x => x.Chave).Where(g => g.Count() > 1).Select(g => $"{g.Key}: {string.Join(", ", g.Select(x => x.Modulo))}"));
-        // a emissão de CT-e/MDF-e e a NFS-e continuam "em breve"
+        // a transmissão do CT-e/MDF-e e da NFS-e continuam "em breve"; a NFS-e já tem a sua lista (as notas de serviço, lançadas ou importadas)
+        Assert.Contains(Folhas(todos[1].Menus), i => i.Habilitado && i.Chave == Fiscal.Desktop.ViewModels.Telas.Nfse);
+        var nfse = new Fiscal.Desktop.ViewModels.NfseViewModel(todos[1]);
+        Assert.Equal((Vorticis.Fiscal.Documentos.ModeloDocumento.NFSe, false, "NFS-e – Notas fiscais de serviço"), (nfse.ModeloFixo, nfse.EscolheModelo, nfse.Titulo));
         Assert.Contains(Folhas(todos[1].Menus), i => !i.Habilitado && i.Titulo.StartsWith("Transmissão de CT-e"));
-        Assert.Contains(Folhas(todos[1].Menus), i => !i.Habilitado && i.Titulo.StartsWith("NFS-e"));
+        Assert.Contains(Folhas(todos[1].Menus), i => !i.Habilitado && i.Titulo.StartsWith("Transmissão da NFS-e"));
         // importação de planilha dentro de cada cadastro (botão na janela do cadastro); não há mais o submenu em Cadastros
         Assert.All(todos, vm => Assert.DoesNotContain(vm.Menus[0].Filhos!, i => i.Titulo.Contains("planilha")));
         string[] Importaveis(MainViewModel vm) => [.. Folhas(vm.Menus[0].Filhos!).Where(i => vm.ImportacaoDaTela(i.Chave) is not null).Select(i => i.Titulo)];

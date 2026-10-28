@@ -60,6 +60,14 @@ Só cotações abertas podem ser alteradas. Cotações abertas ou recusadas pode
 
 **Situações do CT-e:** **Digitado** (ainda pode ser alterado) › **Emitido** (com a chave de acesso) › **Em trânsito** (num manifesto ou com ocorrência de saída) › **Entregue**. Ou **Cancelado**.
 
+**A lista dos CT-e:** a tela abre com a lista dos conhecimentos do **Período**. Para achar um CT-e:
+- escolha a **Situação**;
+- ou digite no campo de busca o número, a chave, o nome do remetente, do destinatário ou do tomador, a placa, a cidade ou a chave de uma NF-e transportada.
+
+O **painel** acima da lista soma os CT-e listados (os cancelados ficam fora dos valores): quantidade, **frete** (total da prestação), **ICMS**, **peso transportado** e **valor das mercadorias**. Logo abaixo aparece quantos estão digitados, emitidos, em trânsito, entregues, cancelados e sem fatura.
+
+**Novo CT-e** abre uma **janela pop-up** com o CT-e em branco. **Abrir** (ou duplo clique ou Enter na lista) abre o CT-e selecionado na mesma janela, com as abas **CT-e** e **Notas transportadas (XML)**. Esc ou o X fecham a janela e voltam à lista.
+
 **Como digitar:**
 1. Clique em **Novo CT-e**. Confira a **Série** e a **Emissão**; o número é o próximo da série. O **CFOP** é opcional (4 dígitos começando por 5, 6 ou 7).
 2. Para não digitar tudo, use a **Origem dos dados**:
@@ -109,6 +117,8 @@ Em vez de digitar as chaves, peso e valores, anexe os XML das notas fiscais que 
 **Para que serve:** reunir os CT-e que seguem no mesmo veículo, com o motorista e o percurso, e controlar a abertura e o encerramento da viagem.
 
 **Onde fica:** módulo **Transporte**, *Faturamento › Manifestos de carga (MDF-e)*.
+
+**A lista dos manifestos:** a tela abre com os manifestos do **Período**. Filtre pela **Situação** (aberto, encerrado, cancelado) ou digite no campo de busca o número, a chave, a placa, o motorista ou uma UF. O **painel** soma os manifestos listados (os cancelados ficam fora dos valores): quantidade, **CT-e** neles, **peso**, **valor da carga** e **frete** dos CT-e. **Novo manifesto** e **Abrir** (ou duplo clique ou Enter) abrem o manifesto numa **janela pop-up**; Esc ou o X voltam à lista.
 
 **Como usar:**
 1. Clique em **Novo manifesto**. Confira a **Série** e a **Emissão** e escolha a **UF de início**, a **UF de fim** e, se passar por outros estados, as **UFs do percurso** (por exemplo, "MG, BA").

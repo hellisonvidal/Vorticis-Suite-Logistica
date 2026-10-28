@@ -84,9 +84,10 @@ public abstract class ModuloLogistica(params IModuloDesktop[] partes) : ModuloCo
     [
         .. De(Frota, ItemMenu.Tela("Faturas de frete", T.Faturas)), ItemMenu.Separador,
         .. De(Gerencial, ItemMenu.Tela("Pedidos de venda", E.ViewModels.ErpTelas.PedidosVenda), ItemMenu.Tela("Notas fiscais de saída", Ft.NotaSaida)),
+        .. De(Fiscal, ItemMenu.Tela("NFS-e – Notas fiscais de serviço", Ft.Nfse)),
         ItemMenu.Separador,
         ItemMenu.EmBreve("Emissão de NF-e na SEFAZ"),
-        ItemMenu.EmBreve("NFS-e – Nota fiscal de serviço (Padrão Nacional)"),
+        ItemMenu.EmBreve("Transmissão da NFS-e ao Emissor Nacional"),
     ];
 
     /// <summary>Relatórios do faturamento: faturas de frete, vendas e recebimentos.</summary>

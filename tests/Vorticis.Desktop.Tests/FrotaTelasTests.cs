@@ -163,6 +163,78 @@ public class FrotaTelasTests(SessaoHeadless headless, BancoDeTeste db) : IClassF
     }
 
     [Fact]
+    public async Task Ctes_e_manifestos_em_lista_com_filtros_painel_e_edicao_em_popup()
+    {
+        BancoDeTeste.ExigirBanco();
+        var adm = await db.AdminAsync();
+        var empresa = await db.CriarEmpresaAsync("93726154000146");
+        var svc = ServicosFrota.De(db.App);
+        long Part(string codigo, string nome) => db.EscalarAsync<long>("INSERT INTO core.participante (empresa_id, codigo, nome) VALUES (@e, @c, @n) RETURNING id",
+                                                                         ("e", empresa), ("c", codigo), ("n", nome)).GetAwaiter().GetResult();
+        var alfa = Part("C1", "Indústria Alfa");
+        var beta = Part("C2", "Comércio Beta");
+        var gama = Part("C3", "Atacado Gama");
+        var hoje = DateOnly.FromDateTime(DateTime.Today);
+        Cte Novo(long dest, decimal peso) => new(0, 1, 0, hoje, null, alfa, dest, alfa, new ParadaRota("SP", "3509502", "Campinas"), new ParadaRota("RJ", "3304557", "Rio de Janeiro"),
+                                                null, null, null, null, null, null, "Peças", 5, peso, 1, 10000m, null, RegrasTms.ComIcms(500m, 0, 0, 0, 0, 12m), null, null, null,
+                                                "DIGITADO", null, null, null, null);
+        Assert.True((await svc.GravarCteAsync(empresa, Novo(beta, 1000m), adm, TestContext.Current.CancellationToken)).Sucesso);
+        Assert.True((await svc.GravarCteAsync(empresa, Novo(gama, 2500m), adm, TestContext.Current.CancellationToken)).Sucesso);
+
+        var ok = await ForaDaSessao(headless.Sessao.Dispatch(async () =>
+        {
+            var ctx = new Contexto(db.App, adm, empresa);
+            var vm = new F.ViewModels.CtesViewModel(ctx);
+            await vm.CarregarAsync();
+            Assert.Equal(2, vm.Lista.Count);
+            Assert.Equal(("2", "3500 kg"), (vm.PainelQuantidadeCtes, vm.PainelPesoCtes));
+            vm.FiltroTexto = "gama";                                               // busca pelo destinatário
+            Assert.Equal(["Atacado Gama"], vm.Lista.Select(l => l.Destinatario));
+            Assert.Equal(("1", "2500 kg"), (vm.PainelQuantidadeCtes, vm.PainelPesoCtes));
+            vm.FiltroTexto = "";
+
+            // a lista fica na janela; Abrir (ou duplo clique/Enter) e Novo CT-e editam no pop-up
+            var view = new F.Views.CtesView { DataContext = vm };
+            var janela = new Window { Content = view, Width = 1400, Height = 820 };
+            janela.Show();
+            Dispatcher.UIThread.RunJobs();
+            if (Environment.GetEnvironmentVariable("VORTICIS_SCREENSHOTS") is { Length: > 0 } pasta)
+                janela.CaptureRenderedFrame()!.Save(Path.Combine(Directory.CreateDirectory(pasta).FullName, "ctes-lista.png"));
+            vm.AbrirCommand.Execute(null);
+            Assert.Single(vm.Erros);                                               // sem seleção, avisa
+            vm.Selecionado = vm.Lista[0];
+            vm.AbrirCommand.Execute(null);
+            Dispatcher.UIThread.RunJobs();
+            Assert.True(view.Popup.Janela is { IsVisible: true } p && p.Content is F.Views.CteEdicaoView && p.Title!.StartsWith("CT-e 1-"));
+            vm.EdicaoAberta = false;                                               // fechar o pop-up
+            Dispatcher.UIThread.RunJobs();
+            Assert.Null(view.Popup.Janela);
+            vm.NovoCteCommand.Execute(null);
+            Dispatcher.UIThread.RunJobs();
+            Assert.Equal("Novo CT-e", view.Popup.Janela!.Title);
+            view.Popup.Janela.Close();                                             // fechar pelo X avisa a tela
+            Dispatcher.UIThread.RunJobs();
+            Assert.False(vm.EdicaoAberta);
+            janela.Close();
+
+            var mvm = new F.ViewModels.ManifestosViewModel(ctx);
+            await mvm.CarregarAsync();
+            var mview = new F.Views.ManifestosView { DataContext = mvm };
+            var mjanela = new Window { Content = mview, Width = 1400, Height = 820 };
+            mjanela.Show();
+            Assert.Equal("0", mvm.PainelQuantidade);
+            await mvm.NovoManifestoCommand.ExecuteAsync(null);
+            Dispatcher.UIThread.RunJobs();
+            Assert.True(mview.Popup.Janela is { IsVisible: true } mp && mp.Content is F.Views.ManifestoEdicaoView);
+            mview.Popup.Janela!.Close();
+            Dispatcher.UIThread.RunJobs();
+            mjanela.Close();
+            return true;
+        }, TestContext.Current.CancellationToken));
+        Assert.True(ok);
+    }
+
+    [Fact]
     public async Task Cte_anexa_xml_das_notas_e_mostra_o_painel()
     {
         var ok = await ForaDaSessao(headless.Sessao.Dispatch(() =>
@@ -194,8 +266,8 @@ public class FrotaTelasTests(SessaoHeadless headless, BancoDeTeste db) : IClassF
             Assert.Equal(("2", "50", "1"), (vm.Volumes, vm.Peso, vm.PainelQuantidade));
             Assert.Equal([Chave(2)], RegrasTms.ChavesNfe(vm.ChavesNfe));
 
-            var view = new F.Views.CtesView { DataContext = vm };
-            var janela = new Window { Content = view, Width = 1400, Height = 820 };
+            var view = new F.Views.CteEdicaoView { DataContext = vm };              // a janela pop-up de edição do CT-e
+            var janela = new Window { Content = view, Width = 1000, Height = 820 };
             janela.Show();
             view.FindControl<TabControl>("AbasCte")!.SelectedIndex = 1;
             Dispatcher.UIThread.RunJobs();

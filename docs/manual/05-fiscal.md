@@ -39,7 +39,7 @@ As regras também podem vir de uma planilha: abra *Cadastros › Regras fiscais*
 **Para que serve:** consultar as notas fiscais lançadas e importadas e lançar à mão as que não têm XML.
 **Onde fica:** *Lançamentos › Documentos fiscais › Entrada* e *Saída* (no Vorticis Suite Logística: módulo **Gerencial**, *Compras › Notas fiscais de entrada*, e módulo **Transporte**, *Faturamento › Notas fiscais de saída*).
 
-A tela abre como **consulta**: escolha o **Período** e clique em **Consultar**. A lista mostra data, modelo, série, número, cliente ou fornecedor, valor, origem (digitada ou XML) e se já foi contabilizada. Os botões da consulta:
+A tela abre como **consulta**: escolha o **Período** e clique em **Consultar**. Para achar uma nota, escolha o **modelo** (NF-e, NFC-e ou NFS-e) e digite no campo de busca o **número**, parte da **chave**, o **nome** ou o **CNPJ** do cliente ou fornecedor. A lista mostra data, modelo, série, número, cliente ou fornecedor, valor, origem (digitada ou XML) e se já foi contabilizada. Embaixo da lista fica o resumo: quantidade de notas, **valor total**, **ICMS** e **ISS** (as canceladas são só contadas, fora dos valores). Os botões da consulta:
 
 - **Novo lançamento**: abre uma janela por cima da consulta (pop-up) com a nota em branco;
 - **Abrir** (ou duplo clique / Enter na nota): abre a nota selecionada na mesma janela;
@@ -62,6 +62,12 @@ A tela abre como **consulta**: escolha o **Período** e clique em **Consultar**.
 - *Seu perfil só permite consultar*: peça ao administrador para marcar, no seu perfil, a permissão **Importar XML e digitar notas fiscais** (*Configurações › Usuários › Perfis*).
 - *Nota contabilizada*: desfaça a contabilização para alterar, ou feche a janela e clique em **Novo lançamento** para lançar outra.
 - *Nota importada de XML* (faixa amarela): os dados do XML (valores, participante, itens) não mudam; a escrituração (CFOP de entrada, centro de custo, produto, contas, observações) e os **tributos dos itens** (aba *Tributos*) podem ser alterados.
+
+### NFS-e (notas fiscais de serviço)
+
+**Onde fica:** no Vorticis Suite Logística, módulo **Transporte**, *Faturamento › NFS-e – Notas fiscais de serviço*.
+
+É a mesma consulta das notas de saída, só com as **NFS-e**: a lista com período, busca e o resumo dos valores (com o **ISS**), e **Novo lançamento** já abre a nota com o modelo NFS-e. As NFS-e emitidas no Emissor Nacional ou no site da prefeitura entram por **Importar XML** ou são lançadas à mão. A transmissão da NFS-e ao Emissor Nacional pelo Vorticis ainda não está disponível (aparece "em breve" no menu).
 
 ### Importar uma NF-e pela chave de acesso
 

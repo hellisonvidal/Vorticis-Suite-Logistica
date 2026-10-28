@@ -18,6 +18,7 @@
     <DataTemplate DataType="vm:LivroApuracaoIpiViewModel"><v:LivroApuracaoView /></DataTemplate>
     <DataTemplate DataType="vm:NotaEntradaViewModel"><v:DigitacaoDocumentoView /></DataTemplate>
     <DataTemplate DataType="vm:NotaSaidaViewModel"><v:DigitacaoDocumentoView /></DataTemplate>
+    <DataTemplate DataType="vm:NfseViewModel"><v:DigitacaoDocumentoView /></DataTemplate>
     <DataTemplate DataType="vm:ProdutosViewModel"><v:ProdutosView /></DataTemplate>
     <DataTemplate DataType="vm:RegrasFiscaisViewModel"><v:RegrasFiscaisView /></DataTemplate>
     <DataTemplate DataType="vm:RelatorioProdutosViewModel"><v:RelatorioProdutosView /></DataTemplate>

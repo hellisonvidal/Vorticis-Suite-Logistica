@@ -195,7 +195,14 @@ public abstract partial class DigitacaoDocumentoViewModel(IContexto contexto) : 
     public static IReadOnlyList<ModeloDocumento> ModelosValores { get; } = [ModeloDocumento.NFe55, ModeloDocumento.NFCe65, ModeloDocumento.NFSe];
 
     public abstract TipoOperacao Operacao { get; }
-    public string Titulo => $"Nota fiscal de {Operacao.Rotulo().ToLowerInvariant()}";
+    public virtual string Titulo => $"Nota fiscal de {Operacao.Rotulo().ToLowerInvariant()}";
+    /// <summary>Modelo fixo da tela (NFS-e): a lista mostra só esse modelo e a nota nova já vem com ele; null = todos os modelos.</summary>
+    public virtual ModeloDocumento? ModeloFixo => null;
+    public bool EscolheModelo => ModeloFixo is null;
+    public static IReadOnlyList<string> FiltrosModelo { get; } = ["Todos os modelos", "NF-e (55)", "NFC-e (65)", "NFS-e"];
+    [ObservableProperty] private string _filtroTexto = "";
+    [ObservableProperty] private int _filtroModelo;
+    [ObservableProperty] private string _resumoLista = "";
     public string RotuloParticipante => Operacao == TipoOperacao.Entrada ? "Fornecedor" : "Cliente";
     public string RotuloData => Operacao == TipoOperacao.Entrada ? "Data de entrada" : "Data de saída";
 
@@ -400,11 +407,21 @@ public abstract partial class DigitacaoDocumentoViewModel(IContexto contexto) : 
 
     private async Task ListarAsync(VorticisApp app, long empresa, long usuario)
     {
-        var f = new FiltroDocumentos(Data(FiltroInicio, new DateOnly(DateTime.Today.Year, DateTime.Today.Month, 1)), Data(FiltroFim, DateOnly.FromDateTime(DateTime.Today)), Operacao);
+        var modelo = ModeloFixo ?? (FiltroModelo > 0 ? ModelosValores[FiltroModelo - 1] : null);
+        var f = new FiltroDocumentos(Data(FiltroInicio, new DateOnly(DateTime.Today.Year, DateTime.Today.Month, 1)), Data(FiltroFim, DateOnly.FromDateTime(DateTime.Today)), Operacao,
+                                     modelo, Texto: string.IsNullOrWhiteSpace(FiltroTexto) ? null : FiltroTexto.Trim());
         var r = await app.Fiscal().Documentos.ConsultarAsync(empresa, f, usuario);
         if (!r.Sucesso) { MostrarResultado(r, ""); return; }
         Lista.Clear();
         foreach (var d in r.Valor) Lista.Add(new DocumentoLinha(d));
+        // resumo da lista: quantidade e valores das notas válidas (as canceladas são só contadas)
+        var validas = r.Valor.Where(d => d.Situacao != Vorticis.Fiscal.Documentos.SituacaoDocumento.Cancelada).ToList();
+        var canceladas = r.Valor.Count - validas.Count;
+        ResumoLista = r.Valor.Count == 0 ? "Nenhuma nota no período."
+            : $"{r.Valor.Count} nota(s) · valor total {Numeros.Moeda(validas.Sum(d => d.Totais.Total))}"
+              + (validas.Sum(d => d.Totais.Icms) is > 0 and var icms ? $" · ICMS {Numeros.Moeda(icms)}" : "")
+              + (validas.Sum(d => d.Totais.Iss) is > 0 and var iss ? $" · ISS {Numeros.Moeda(iss)}" : "")
+              + (canceladas > 0 ? $" · {canceladas} cancelada(s), fora dos valores" : "");
     }
 
     [RelayCommand]
@@ -489,7 +506,8 @@ public abstract partial class DigitacaoDocumentoViewModel(IContexto contexto) : 
         (_documentoId, _participanteId) = (0, 0);
         _suprimirBusca = true;
         _retencoes = _retencoes with { IssRetido = false, RetPis = 0, RetCofins = 0, RetCsll = 0, Irrf = 0, RetPrev = 0 };
-        (Modelo, Serie, Numero, Chave, Emissao, DataLivro, Natureza, Participante, TotalInformado) = (0, "1", "", "", DateTime.Today, DateTime.Today, "", "", "");
+        (Modelo, Serie, Numero, Chave, Emissao, DataLivro, Natureza, Participante, TotalInformado) =
+            (ModeloFixo is { } fixo ? ModelosValores.ToList().IndexOf(fixo) : 0, "1", "", "", DateTime.Today, DateTime.Today, "", "", "");
         _suprimirBusca = false;
         (_novoParticipante, TemNovoParticipante, ParticipanteInfo) = (null, false, "");
         (Observacoes, ContaDebito, ContaCredito, EscProduto, Importada) = ("", "", "", "", false);
@@ -940,4 +958,12 @@ public sealed class NotaEntradaViewModel(IContexto contexto) : DigitacaoDocument
 public sealed class NotaSaidaViewModel(IContexto contexto) : DigitacaoDocumentoViewModel(contexto)
 {
     public override TipoOperacao Operacao => TipoOperacao.Saida;
+}
+
+/// <summary>Faturamento › NFS-e: as notas fiscais de serviço de saída (a mesma tela das notas de saída, só com o modelo NFS-e).</summary>
+public sealed class NfseViewModel(IContexto contexto) : DigitacaoDocumentoViewModel(contexto)
+{
+    public override TipoOperacao Operacao => TipoOperacao.Saida;
+    public override ModeloDocumento? ModeloFixo => ModeloDocumento.NFSe;
+    public override string Titulo => "NFS-e – Notas fiscais de serviço";
 }

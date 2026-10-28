@@ -1,0 +1,58 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Frota.Desktop.ViewModels"
+             x:Class="Vorticis.Frota.Desktop.Views.ManifestoEdicaoView" x:DataType="vm:ManifestosViewModel">
+  <!-- Janela pop-up de edição do manifesto (MDF-e): dados, CT-e do manifesto, gravação, cancelamento e encerramento. -->
+  <Grid Margin="12,8">
+    <ScrollViewer>
+    <StackPanel Spacing="6" IsEnabled="{Binding PodeEditar}">
+      <Grid ColumnDefinitions="140,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
+        <TextBlock Classes="rotulo" Text="Série" />
+        <TextBox Grid.Column="1" Text="{Binding Serie}" Width="80" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="1" Classes="rotulo" Text="Emissão" />
+        <CalendarDatePicker Grid.Row="1" Grid.Column="1" SelectedDate="{Binding Emissao}" Width="140" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="2" Classes="rotulo" Text="UF início" />
+        <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{x:Static vm:ManifestosViewModel.Ufs}" SelectedItem="{Binding UfInicio}" Width="80" />
+        <TextBlock Grid.Row="3" Classes="rotulo" Text="UF fim" />
+        <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{x:Static vm:ManifestosViewModel.Ufs}" SelectedItem="{Binding UfFim}" Width="80" />
+        <TextBlock Grid.Row="4" Classes="rotulo" Text="UFs do percurso" />
+        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding UfsPercurso}" Watermark="MG, BA" />
+        <TextBlock Grid.Row="5" Classes="rotulo" Text="Veículo" />
+        <ComboBox Grid.Row="5" Grid.Column="1" ItemsSource="{Binding VeiculosOpcoes}" SelectedItem="{Binding Veiculo}" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="6" Classes="rotulo" Text="Motorista" />
+        <ComboBox Grid.Row="6" Grid.Column="1" ItemsSource="{Binding MotoristasOpcoes}" SelectedItem="{Binding Motorista}" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="7" Classes="rotulo" Text="Viagem" />
+        <ComboBox Grid.Row="7" Grid.Column="1" ItemsSource="{Binding ViagensOpcoes}" SelectedItem="{Binding Viagem}" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="8" Classes="rotulo" Text="Chave do MDF-e" />
+        <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding Chave}" Watermark="opcional" />
+        <TextBlock Grid.Row="9" Classes="rotulo" Text="Observação" />
+        <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding Observacao}" />
+      </Grid>
+      <TextBlock Classes="rotulo" Text="CT-e do manifesto" />
+      <Border BorderBrush="LightGray" BorderThickness="1" Padding="4">
+        <ScrollViewer MaxHeight="220">
+          <ItemsControl ItemsSource="{Binding Ctes}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:CteMarcado">
+                <CheckBox IsChecked="{Binding Marcado}" Content="{Binding Texto}" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </Border>
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <Button Content="Gravar" Classes="accent" Command="{Binding GravarCommand}" />
+        <Button Content="Imprimir (PDF)" Command="{Binding ImprimirCommand}" />
+        <Button Content="Cancelar" Command="{Binding CancelarCommand}" />
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <TextBlock Classes="rotulo" Text="Encerramento" />
+        <CalendarDatePicker SelectedDate="{Binding Encerramento}" Width="140" />
+        <Button Content="Encerrar" Command="{Binding EncerrarCommand}" />
+      </StackPanel>
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="Marque os CT-e que seguem neste manifesto. Ao chegar ao destino, informe a data e encerre o manifesto." />
+      <c:MensagensView />
+    </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

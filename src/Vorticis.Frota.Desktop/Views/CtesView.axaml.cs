@@ -1,31 +1,29 @@
 using Avalonia.Controls;
-using Avalonia.Interactivity;
-using Avalonia.Platform.Storage;
+using Avalonia.Input;
 using Vorticis.Frota.Desktop.ViewModels;
 
 namespace Vorticis.Frota.Desktop.Views;
 
+/// <summary>Lista dos CT-e; Novo CT-e e Abrir (duplo clique ou Enter) editam o CT-e na janela pop-up <see cref="CteEdicaoView"/>.</summary>
 public partial class CtesView : UserControl
 {
-    public CtesView() => InitializeComponent();
+    public PopupEdicao Popup { get; }
 
-    /// <summary>Escolhe um ou vários XML de NF-e e os anexa ao CT-e em edição.</summary>
-    private async void AnexarXml(object? sender, RoutedEventArgs e)
+    public CtesView()
     {
-        if (DataContext is not CtesViewModel vm || TopLevel.GetTopLevel(this) is not { } top) return;
-        var arquivos = await top.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
-        {
-            Title = "XML das NF-e transportadas", AllowMultiple = true,
-            FileTypeFilter = [new FilePickerFileType("XML da NF-e") { Patterns = ["*.xml", "*.XML"] }, FilePickerFileTypes.All],
-        });
-        var lidos = new List<(string, byte[])>();
-        foreach (var a in arquivos)
-        {
-            await using var fluxo = await a.OpenReadAsync();
-            using var ms = new MemoryStream();
-            await fluxo.CopyToAsync(ms);
-            lidos.Add((a.Name, ms.ToArray()));
-        }
-        if (lidos.Count > 0) vm.AnexarXml(lidos);
+        InitializeComponent();
+        Popup = new PopupEdicao(this, () => new CteEdicaoView(), 1000, 820);
+    }
+
+    private void AoDuploClique(object? sender, TappedEventArgs e)
+    {
+        if (DataContext is CtesViewModel vm && (e.Source as Control)?.DataContext is CteLinha) vm.AbrirCommand.Execute(null);
+    }
+
+    private void AoTeclar(object? sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.Enter || DataContext is not CtesViewModel vm) return;
+        e.Handled = true;
+        vm.AbrirCommand.Execute(null);
     }
 }
