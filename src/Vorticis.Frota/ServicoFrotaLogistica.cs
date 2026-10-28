@@ -403,3 +403,29 @@ public sealed partial class ServicoFrota
         return new GeradorPdf().Gerar(doc).Conteudo;
     }
 }
+
+/// <summary>Roteirizador: trajeto pela estrada e custo por km sugerido para o veículo.</summary>
+public sealed partial class ServicoFrota
+{
+    /// <summary>Botão "Distâncias pela estrada" do roteirizador: o serviço público de rotas devolve o km de cada trecho e o desenho do caminho.</summary>
+    public async Task<Resultado<TrajetoEstrada>> BuscarTrajetoAsync(long empresa, IReadOnlyList<ParadaRota> paradas, long usuario, HttpClient? http = null,
+                                                                    string? urlBase = null, CancellationToken ct = default)
+    {
+        if (!await PodeVerAsync(usuario, empresa, ct)) return Resultado<TrajetoEstrada>.Falha("Sem permissão para o roteirizador.");
+        return await ServicoRotasOnline.ConsultarTrajetoAsync(http ?? HttpRotas, paradas, urlBase, ct);
+    }
+
+    /// <summary>
+    /// Custo por km do veículo nos últimos meses: abastecimentos e ordens de serviço (não canceladas nem reprovadas) divididos pelo km rodado
+    /// entre o menor e o maior hodômetro dos abastecimentos; null se não houver dados suficientes.
+    /// </summary>
+    public async Task<decimal?> CustoPorKmAsync(long empresa, long veiculo, DateOnly hoje, long usuario, int meses = 6, CancellationToken ct = default)
+    {
+        if (!await PodeVerAsync(usuario, empresa, ct)) return null;
+        var inicio = hoje.AddMonths(-meses);
+        var abastecimentos = await ListarAbastecimentosAsync(empresa, inicio, hoje, veiculo, ct);
+        var manutencao = (await ListarOrdensAsync(empresa, inicio, hoje, ct))
+            .Where(o => o.VeiculoId == veiculo && o.Data >= inicio && o.Situacao is not ("CANCELADA" or "REPROVADA")).Sum(o => o.Total);
+        return RegrasRoteirizacao.CustoPorKm(abastecimentos, manutencao);
+    }
+}

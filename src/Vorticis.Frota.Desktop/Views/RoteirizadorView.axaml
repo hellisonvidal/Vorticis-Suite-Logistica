@@ -1,0 +1,84 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:v="using:Vorticis.Frota.Desktop.Views" xmlns:vm="using:Vorticis.Frota.Desktop.ViewModels"
+             x:Class="Vorticis.Frota.Desktop.Views.RoteirizadorView" x:DataType="vm:RoteirizadorViewModel">
+  <Grid ColumnDefinitions="*,12,470" RowDefinitions="Auto,Auto,*" Margin="8">
+    <TextBlock Grid.ColumnSpan="3" Classes="titulo" Text="Roteirizador" Margin="0,0,0,6" />
+    <StackPanel Grid.Row="1" Spacing="2" Margin="0,0,0,6">
+      <TextBlock Text="{Binding Resumo}" FontWeight="SemiBold" TextWrapping="Wrap" />
+      <TextBlock Text="{Binding CustoTexto}" FontWeight="Bold" Foreground="#0F766E" TextWrapping="Wrap" />
+    </StackPanel>
+    <Border Grid.Row="2" BorderBrush="LightGray" BorderThickness="1" CornerRadius="6" ClipToBounds="True">
+      <v:MapaRoteiro Name="Mapa" Paradas="{Binding MapaParadas}" Caminho="{Binding MapaCaminho}" />
+    </Border>
+    <ScrollViewer Grid.Row="1" Grid.RowSpan="2" Grid.Column="2">
+      <StackPanel Spacing="6">
+        <TextBlock Text="Paradas" FontWeight="Bold" FontSize="12" />
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <TextBlock Classes="rotulo" Text="Rota cadastrada" VerticalAlignment="Center" />
+          <ComboBox ItemsSource="{Binding RotasOpcoes}" SelectedItem="{Binding Rota}" Width="300" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <ComboBox ItemsSource="{x:Static vm:SeletorMunicipio.Ufs}" SelectedItem="{Binding NovaParada.Uf}" Width="70" />
+          <ComboBox ItemsSource="{Binding NovaParada.Municipios}" SelectedItem="{Binding NovaParada.Municipio}" Width="230" />
+          <Button Content="Incluir parada" Classes="accent" Command="{Binding IncluirParadaCommand}" />
+        </StackPanel>
+        <Grid ColumnDefinitions="*,6,Auto">
+          <ListBox ItemsSource="{Binding Paradas}" SelectedItem="{Binding ParadaSelecionada}" MinHeight="120" MaxHeight="220">
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:ParadaRoteiroLinha"><TextBlock Text="{Binding Texto}" /></DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+          <StackPanel Grid.Column="2" Spacing="4">
+            <Button Content="▲ Subir" Command="{Binding SubirCommand}" HorizontalAlignment="Stretch" />
+            <Button Content="▼ Descer" Command="{Binding DescerCommand}" HorizontalAlignment="Stretch" />
+            <Button Content="Retirar" Command="{Binding RetirarParadaCommand}" HorizontalAlignment="Stretch" />
+            <Button Content="Limpar" Command="{Binding LimparCommand}" HorizontalAlignment="Stretch" />
+          </StackPanel>
+        </Grid>
+        <CheckBox Content="A última parada é o destino final (fica no fim)" IsChecked="{Binding FixarDestino}" />
+        <CheckBox Content="Voltar à origem no fim" IsChecked="{Binding VoltarOrigem}" />
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <Button Content="Otimizar ordem (mais curta)" Command="{Binding OtimizarCommand}" />
+          <Button Content="Distâncias pela estrada" Command="{Binding DistanciasEstradaCommand}" />
+        </StackPanel>
+        <TextBlock Text="Trechos (o km pode ser ajustado)" FontWeight="Bold" FontSize="12" Margin="0,6,0,0" />
+        <ItemsControl ItemsSource="{Binding Trechos}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:TrechoLinha">
+              <Grid ColumnDefinitions="*,6,90" Margin="0,0,0,4">
+                <StackPanel>
+                  <TextBlock Text="{Binding Descricao}" TextWrapping="Wrap" />
+                  <TextBlock Text="{Binding Referencia}" FontSize="11" Foreground="Gray" />
+                </StackPanel>
+                <TextBox Grid.Column="2" Text="{Binding Km}" VerticalAlignment="Center" />
+              </Grid>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <TextBlock Text="Custo" FontWeight="Bold" FontSize="12" Margin="0,6,0,0" />
+        <Grid ColumnDefinitions="150,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="6">
+          <TextBlock Classes="rotulo" Text="Veículo" />
+          <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+            <ComboBox ItemsSource="{Binding VeiculosOpcoes}" SelectedItem="{Binding Veiculo}" Width="190" />
+            <Button Content="Sugerir custo/km" Command="{Binding SugerirCustoCommand}" />
+          </StackPanel>
+          <TextBlock Grid.Row="1" Classes="rotulo" Text="Custo por km (R$)" />
+          <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding CustoKm}" Width="120" HorizontalAlignment="Left" />
+          <TextBlock Grid.Row="2" Classes="rotulo" Text="Pedágios (R$)" />
+          <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Pedagios}" Width="120" HorizontalAlignment="Left" />
+          <TextBlock Grid.Row="3" Classes="rotulo" Text="Velocidade média (km/h)" />
+          <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Velocidade}" Width="80" HorizontalAlignment="Left" />
+        </Grid>
+        <TextBlock Text="Guardar e ver no mapa" FontWeight="Bold" FontSize="12" Margin="0,6,0,0" />
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <TextBox Text="{Binding NomeRota}" Watermark="Nome da rota" Width="220" />
+          <Button Content="Gravar como rota" Command="{Binding GravarRotaCommand}" />
+        </StackPanel>
+        <Button Content="Abrir no Google Maps" Click="AbrirGoogleMaps" HorizontalAlignment="Left" />
+        <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                   Text="Sem internet, as distâncias são estimadas pela linha reta entre as cidades vezes o fator rodoviário dos Parâmetros. Distâncias pela estrada e Abrir no Google Maps usam a internet." />
+        <c:MensagensView />
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

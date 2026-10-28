@@ -134,6 +134,38 @@ Em vez de digitar as chaves, peso e valores, anexe os XML das notas fiscais que 
 
 A ocorrência não pode ser antes da emissão do CT-e nem no futuro. CT-e entregue ou cancelado não recebe mais ocorrências.
 
+## Roteirizador
+
+**Para que serve:** montar o roteiro de uma viagem com várias cidades, achar a **ordem mais curta**, ajustar as distâncias, calcular o **custo aproximado** e ver tudo num **mapa**.
+
+**Onde fica:** módulo **Transporte**, *Operação › Roteirizador*.
+
+**Como usar:**
+1. Escolha a UF e o município e clique em **Incluir parada**. A primeira parada é a **origem**.
+   - Com **A última parada é o destino final** marcado, as próximas entram antes do destino.
+   - Para partir de uma rota já cadastrada, escolha-a em **Rota cadastrada**.
+2. Clique em **Otimizar ordem (mais curta)**. O programa reordena as paradas pelo menor caminho e mostra quantos km economizou.
+   - A origem sempre fica no início; o destino final também, se marcado.
+   - Marque **Voltar à origem no fim** quando o caminhão retorna à base: a volta entra no cálculo.
+3. Para mudar a ordem à mão, selecione a parada e use **▲ Subir** e **▼ Descer**. **Retirar** tira a parada e **Limpar** recomeça.
+4. Confira os **Trechos**. O km de cada trecho vem estimado: a linha reta entre as cidades vezes o fator rodoviário dos *Parâmetros*.
+   - **Distâncias pela estrada** (precisa de internet) consulta o km real de cada trecho pela estrada e desenha o caminho no mapa.
+   - Para **customizar**, digite o km do trecho: o valor digitado vale sobre o estimado e o da estrada. Abaixo de cada trecho aparecem os valores de referência.
+5. Em **Custo**, informe o **Custo por km**, os **Pedágios** e a **Velocidade média**.
+   - Para o custo por km, escolha o **Veículo** e clique em **Sugerir custo/km**. O programa soma os abastecimentos e as ordens de serviço dos últimos 6 meses e divide pelo km rodado.
+6. No alto aparecem o total de km, o tempo de direção e o **Custo aproximado** (km × custo por km + pedágios).
+
+**O mapa:**
+- Desenhado pelo próprio programa, funciona sem internet. As cidades da região aparecem como pontos claros e as paradas numeradas: a origem em verde, as intermediárias em azul e o destino final em vermelho.
+- O caminho aparece em linha reta entre as paradas ou, depois de **Distâncias pela estrada**, pelo traçado da estrada.
+- **Abrir no Google Maps** abre o roteiro no navegador, com as paradas na ordem, para ver o trajeto pelas estradas e o trânsito.
+
+**Gravar como rota:** dê um nome e clique em **Gravar como rota**. O roteiro vai para *Cadastros › Rotas*, com as paradas na ordem, o km total, o tempo e os pedágios, e fica disponível nas ordens de coleta e nas viagens. Com uma rota cadastrada escolhida, ela é atualizada.
+
+**Dicas:**
+- Com até 8 paradas no meio, a ordem encontrada é a mais curta possível; com mais, o programa usa um método rápido que chega muito perto disso.
+- A ordem é otimizada pelas distâncias em linha reta. Se uma estrada obriga a desvios, ajuste a ordem à mão e confira com **Distâncias pela estrada**.
+
 ## CIOT (operações de transporte)
 
 **Para que serve:** registrar cada frete que a transportadora **subcontrata** de um transportador autônomo (**TAC**, pessoa física) ou de uma empresa equiparada (**ETC** com até 3 veículos). A lei (Res. ANTT 5.862/2019) exige que essa operação tenha um **CIOT** (Código Identificador da Operação de Transporte), gerado por uma **IPEF** (Repom, Pamcard, e-Frete, Target e outras), que também paga o frete ao contratado. O CIOT vai no MDF-e da viagem.

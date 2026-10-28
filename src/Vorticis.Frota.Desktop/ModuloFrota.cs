@@ -44,6 +44,7 @@ public sealed class ModuloFrota : IModuloDesktop
             ItemMenu.Separador,
             ItemMenu.Submenu("_Coletas", ItemMenu.Tela("Ordens de coleta", FrotaTelas.Coletas)),
             ItemMenu.Tela("Entregas e ocorrências", FrotaTelas.Entregas),
+            ItemMenu.Tela("Roteirizador", FrotaTelas.Roteirizador),
             ItemMenu.Tela("CIOT – operações de transporte", FrotaTelas.Ciot),
             ItemMenu.Submenu("_Pedágio",
                 ItemMenu.Tela("Passagens e notas", FrotaTelas.Pedagio),
@@ -205,6 +206,7 @@ public sealed class ModuloFrota : IModuloDesktop
         Tms(c, "Ctes", FrotaTelas.Ctes, "Emissão › Conhecimentos de transporte (CT-e)", m => new CtesViewModel(m), v => v.CarregarAsync());
         Tms(c, "Manifestos", FrotaTelas.Manifestos, "Emissão › Manifestos de carga (MDF-e)", m => new ManifestosViewModel(m), v => v.CarregarAsync());
         Tms(c, "Entregas", FrotaTelas.Entregas, "Operações › Entregas e ocorrências", m => new EntregasViewModel(m), v => v.CarregarAsync());
+        Tms(c, "Roteirizador", FrotaTelas.Roteirizador, "Operação › Roteirizador", m => new RoteirizadorViewModel(m), v => v.CarregarAsync());
         Tms(c, "Ciot", FrotaTelas.Ciot, "Operação › CIOT – operações de transporte", m => new CiotViewModel(m), v => v.CarregarAsync());
         Tms(c, "FaturasFrete", FrotaTelas.Faturas, "Emissão › Faturas de frete", m => new FaturasFreteViewModel(m), v => v.CarregarAsync());
         Relatorio(c, "RelFretesCliente", FrotaTelas.RelFretesCliente, TabelasTms.TituloFretesCliente);

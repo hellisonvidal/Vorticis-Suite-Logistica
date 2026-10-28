@@ -57,7 +57,7 @@ public class FrotaTelasTests(SessaoHeadless headless, BancoDeTeste db) : IClassF
         Assert.DoesNotContain("Planos de manutenção", cadastros);
         Assert.Contains("Documentos e vencimentos", cadastros);
         var operacao = Assert.Single(vm.Menus, m => m.Titulo == "_Operação");
-        Assert.Equal(["Abastecimentos", "Viagens", "Diárias", "_Coletas", "Entregas e ocorrências", "CIOT – operações de transporte", "_Pedágio"], operacao.Filhos!.Where(i => !i.EhSeparador).Select(i => i.Titulo));
+        Assert.Equal(["Abastecimentos", "Viagens", "Diárias", "_Coletas", "Entregas e ocorrências", "Roteirizador", "CIOT – operações de transporte", "_Pedágio"], operacao.Filhos!.Where(i => !i.EhSeparador).Select(i => i.Titulo));
         Assert.Equal(["Ordens de coleta"], operacao.Filhos!.Single(i => i.Titulo == "_Coletas").Filhos!.Select(i => i.Titulo));
         var manutencao = Assert.Single(vm.Menus, m => m.Titulo == "_Manutenção");
         Assert.Equal(["Planos de manutenção", "Peças e serviços", "Ordens de serviço", "Autorização de serviços"], manutencao.Filhos!.Select(i => i.Titulo));
@@ -75,6 +75,56 @@ public class FrotaTelasTests(SessaoHeadless headless, BancoDeTeste db) : IClassF
                      rel.Filhos!.Where(i => !i.EhSeparador).Select(i => i.Titulo));
         Assert.All(Folhas(vm.Menus).Where(i => i.Chave is not null && i.Chave != TelasComuns.Sair), i => Assert.True(vm.ConheceTela(i.Chave!), i.Chave));
         Assert.All(vm.Atalhos.Where(a => a.Chave is not null), a => Assert.True(vm.ConheceTela(a.Chave!), a.Chave));
+    }
+
+    [Fact]
+    public async Task Roteirizador_ordena_paradas_calcula_custo_e_desenha_o_mapa()
+    {
+        var ok = await ForaDaSessao(headless.Sessao.Dispatch(() =>
+        {
+            var vm = new F.ViewModels.RoteirizadorViewModel(new F.MainViewModel()) { FixarDestino = true };
+            void Incluir(string uf, string nome)
+            {
+                vm.NovaParada.Uf = uf;
+                vm.NovaParada.Municipio = vm.NovaParada.Municipios.Single(m => m.Nome == nome);
+                vm.IncluirParadaCommand.Execute(null);
+            }
+            Incluir("SP", "São Paulo");
+            Incluir("RJ", "Rio de Janeiro");                            // destino final
+            Incluir("SP", "São José dos Campos");                       // entram antes do destino
+            Incluir("SP", "Campinas");
+            Assert.Equal(["1. São Paulo/SP", "2. São José dos Campos/SP", "3. Campinas/SP", "4. Rio de Janeiro/RJ"], vm.Paradas.Select(p => p.Texto));
+            vm.OtimizarCommand.Execute(null);
+            Assert.Equal(["São Paulo", "Campinas", "São José dos Campos", "Rio de Janeiro"], vm.Paradas.Select(p => p.P.Municipio));
+            Assert.Contains("km a menos", vm.Mensagem);
+            Assert.Equal(3, vm.Trechos.Count);
+            // o usuário ajusta o km de um trecho; o total e o custo acompanham
+            vm.Trechos[0].Km = "100";
+            Assert.Equal(100m, vm.Trechos[0].T.Km);
+            vm.CustoKm = "5";
+            vm.Pedagios = "80";
+            var km = vm.Trechos.Sum(t => t.T.Km);
+            Assert.Contains(Vorticis.Domain.Comum.Formato.Moeda(km * 5 + 80), vm.CustoTexto);
+            // reordenar à mão: descer a 2ª parada
+            vm.ParadaSelecionada = vm.Paradas[1];
+            vm.DescerCommand.Execute(null);
+            Assert.Equal("São José dos Campos", vm.Paradas[1].P.Municipio);
+            Assert.Null(vm.Trechos[0].T.KmInformado);                  // o trecho mudou (São Paulo → São José): vale o estimado
+            Assert.Equal(4, vm.MapaParadas.Count);
+            Assert.StartsWith("https://www.google.com/maps/dir/-23.5329,-46.6395/", vm.UrlMapa);
+
+            var view = new F.Views.RoteirizadorView { DataContext = vm };
+            var janela = new Window { Content = view, Width = 1400, Height = 820 };
+            janela.Show();
+            Dispatcher.UIThread.RunJobs();
+            var quadro = janela.CaptureRenderedFrame();
+            Assert.NotNull(quadro);
+            if (Environment.GetEnvironmentVariable("VORTICIS_SCREENSHOTS") is { Length: > 0 } pasta)
+                quadro.Save(Path.Combine(Directory.CreateDirectory(pasta).FullName, "roteirizador.png"));
+            janela.Close();
+            return Task.FromResult(true);
+        }, TestContext.Current.CancellationToken));
+        Assert.True(ok);
     }
 
     [Fact]

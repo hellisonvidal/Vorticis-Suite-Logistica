@@ -196,4 +196,28 @@ public static class ServicoRotasOnline
             return Resultado<DistanciaRodoviaria>.Falha(semServico);
         }
     }
+
+    /// <summary>Trajeto pela estrada passando pelas paradas na ordem: km e horas, km de cada trecho e o desenho do caminho (para o mapa do roteirizador).</summary>
+    public static async Task<Resultado<TrajetoEstrada>> ConsultarTrajetoAsync(HttpClient http, IReadOnlyList<ParadaRota> paradas, string? urlBase = null, CancellationToken ct = default)
+    {
+        const string semServico = "Não foi possível consultar o serviço de rotas (verifique a internet). As distâncias estimadas foram mantidas.";
+        var cidades = paradas.Select(p => BaseMunicipios.Obter(p.MunicipioIbge)).ToList();
+        if (cidades.Count < 2 || cidades.Any(c => c is null)) return Resultado<TrajetoEstrada>.Falha("Inclua ao menos duas paradas com municípios válidos.");
+        var pontos = string.Join(';', cidades.Select(c => string.Create(CultureInfo.InvariantCulture, $"{c!.Longitude:0.#####},{c.Latitude:0.#####}")));
+        try
+        {
+            using var limite = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            limite.CancelAfter(TimeSpan.FromSeconds(30));
+            using var resposta = await http.GetAsync($"{(urlBase ?? UrlPadrao).TrimEnd('/')}/route/v1/driving/{pontos}?overview=simplified&geometries=geojson", limite.Token);
+            if (!resposta.IsSuccessStatusCode) return Resultado<TrajetoEstrada>.Falha(semServico);
+            return RegrasRoteirizacao.LerTrajeto(await resposta.Content.ReadAsStringAsync(limite.Token)) is { } t
+                ? Resultado<TrajetoEstrada>.Ok(t)
+                : Resultado<TrajetoEstrada>.Falha("O serviço de rotas não encontrou caminho entre as cidades. As distâncias estimadas foram mantidas.");
+        }
+        catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or JsonException or KeyNotFoundException or InvalidOperationException or FormatException)
+        {
+            if (ct.IsCancellationRequested) throw;
+            return Resultado<TrajetoEstrada>.Falha(semServico);
+        }
+    }
 }
