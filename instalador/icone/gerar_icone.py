@@ -6,8 +6,8 @@
   (C, F, FP, E, G, CD, FR, VL), para não confundir os sistemas na barra de tarefas.
   VorticisInstalador.ico — o ícone do instalador (e da Vorticis Suite), diferente de todos: a espiral branca sobre um quadrado
   azul-marinho arredondado, com uma faixa nas cores dos módulos e uma seta de instalação.
-  VorticisLogistica.ico (programa e atalhos) e VorticisLogisticaInstalador.ico (instalador) do Vorticis Suite Logística: a marca que
-  aparece na janela (quadrado em degradê azul-céu → índigo com o "V" branco); o do instalador tem ainda um selo dourado de instalação.
+  VorticisLogistica.ico (janela, executável e atalhos) e VorticisLogisticaInstalador.ico (instalador) do Vorticis Suite Logística: um caminhão
+  branco sobre azul-marinho, dentro de um anel com as cores dos seis módulos; o do instalador tem ainda um selo dourado de instalação.
 
 Usa só o símbolo (a espiral à esquerda da logo): o nome VORTICIS fica ilegível nos tamanhos de ícone.
 O fundo branco da logo vira transparente. As cores devem ser as mesmas de IModuloDesktop.CorDestaque e
@@ -155,42 +155,62 @@ def instalador(base: Image.Image, fundo: str, modulos: list[str]) -> Image.Image
     return img
 
 
-def marca_logistica(selo_instalacao: bool = False) -> Image.Image:
+# Cores dos seis módulos do Vorticis Suite Logística, na ordem da navegação (Frotas, Transporte, Manutenção, Financeiro, Gerencial, Contabilidade)
+CORES_MODULOS_LOGISTICA = ["#0284C7", "#0D9488", "#EA580C", "#16A34A", "#DB2777", "#4F46E5"]
+
+
+def icone_logistica(selo_instalacao: bool = False) -> Image.Image:
     """
-    Ícone do Vorticis Suite Logística igual à marca que aparece na janela do programa (navegação da Suite): quadrado arredondado em degradê
-    de azul-céu (#38BDF8) a índigo (#6366F1) com o "V" branco (o mesmo desenho de IconesModulos.Marca). O do instalador leva ainda um
-    pequeno selo dourado de instalação no canto. Desenhado em 2048 e reduzido.
+    Ícone do programa (janela, executável e atalhos) e do instalador do Vorticis Suite Logística: um caminhão branco sobre fundo azul-marinho,
+    dentro de um anel de seis arcos nas cores dos módulos (Frotas, Transporte, Manutenção, Financeiro, Gerencial e Contabilidade).
+    O do instalador leva ainda um selo dourado de instalação no canto. Desenhado em 2048 e reduzido.
     """
     S = 2048
     img = Image.new("RGBA", (S, S), (0, 0, 0, 0))
     yy, xx = np.mgrid[0:S, 0:S].astype(np.float32) / S
-    t = np.clip((xx + yy) / 2, 0, 1)[..., None]                          # degradê na diagonal, como na janela
-    a, b = np.array(hex_rgb("#38BDF8")), np.array(hex_rgb("#6366F1"))
+    t = np.clip((xx + yy) / 2, 0, 1)[..., None]
+    a, b = np.array(hex_rgb("#1E3A8A")), np.array(hex_rgb("#0F172A"))
     cor = a[None, None, :] * (1 - t) + b[None, None, :] * t
-    brilho = np.exp(-(((xx - 0.25) ** 2 + (yy - 0.2) ** 2) / 0.08))[..., None] * 0.18   # reflexo suave no alto
+    brilho = np.exp(-(((xx - 0.3) ** 2 + (yy - 0.22) ** 2) / 0.06))[..., None] * 0.16
     cor = np.clip(cor + brilho, 0, 1)
     fundo = Image.fromarray((np.dstack([cor, np.ones((S, S, 1), np.float32)]) * 255).astype(np.uint8), "RGBA")
-    m = round(S * 0.035)
+    m = round(S * 0.03)
     mascara = Image.new("L", (S, S), 0)
-    ImageDraw.Draw(mascara).rounded_rectangle((m, m, S - m, S - m), radius=round(S * 0.27), fill=255)
+    ImageDraw.Draw(mascara).rounded_rectangle((m, m, S - m, S - m), radius=round(S * 0.24), fill=255)
     img.paste(fundo, (0, 0), mascara)
-    # o "V" (grade 24×24 de IconesModulos.Marca), ocupando 60% do lado, centralizado
-    lado = S * 0.60
-    x0, y0 = (S - lado) / 2, (S - lado) / 2 + S * 0.01
-    def P(x, y): return (x0 + x / 24 * lado, y0 + y / 24 * lado)
-    v = [P(2.5, 4), P(7.2, 4), P(12, 15.3), P(16.8, 4), P(21.5, 4), P(14.2, 20), P(9.8, 20)]
-    sombra = Image.new("RGBA", (S, S), (0, 0, 0, 0))
-    ImageDraw.Draw(sombra).polygon([(x, y + S * 0.012) for x, y in v], fill=(15, 23, 42, 70))
-    img.alpha_composite(sombra)
-    ImageDraw.Draw(img).polygon(v, fill=(255, 255, 255, 255))
+    d = ImageDraw.Draw(img)
+
+    # anel dos módulos: seis arcos, a partir do alto, com um pequeno vão entre eles
+    cx, cy, r, w = S / 2, S / 2, S * 0.395, S * 0.075
+    for k, c in enumerate(CORES_MODULOS_LOGISTICA):
+        ini = -90 + k * 60 + 4
+        d.arc((cx - r, cy - r, cx + r, cy + r), ini, ini + 52, fill=c, width=round(w))
+
+    # caminhão (vista de lado, para a direita): baú, cabine, para-brisa, chassi e rodas
+    branco = (255, 255, 255, 255)
+    marinho = "#14254F"
+    u = S / 100                                     # unidade: 1% do lado
+    bx0, by0, bx1, by1 = 27 * u, 37 * u, 58 * u, 61 * u                 # baú
+    d.rounded_rectangle((bx0, by0, bx1, by1), radius=2.2 * u, fill=branco)
+    cab = [(59.5 * u, 44 * u), (66 * u, 44 * u), (73 * u, 52 * u), (73 * u, 61 * u), (59.5 * u, 61 * u)]   # cabine com o bico inclinado
+    d.polygon(cab, fill=branco)
+    d.polygon([(61.5 * u, 46.2 * u), (65.2 * u, 46.2 * u), (69.6 * u, 51.6 * u), (61.5 * u, 51.6 * u)], fill=marinho)   # para-brisa
+    d.rounded_rectangle((26 * u, 60 * u, 74 * u, 64 * u), radius=1.5 * u, fill=branco)                                 # chassi
+    for x in (35 * u, 47 * u, 66 * u):                                                                                  # rodas
+        d.ellipse((x - 5.4 * u, 63.5 * u - 5.4 * u, x + 5.4 * u, 63.5 * u + 5.4 * u), fill=marinho)
+        d.ellipse((x - 4 * u, 63.5 * u - 4 * u, x + 4 * u, 63.5 * u + 4 * u), fill=branco)
+        d.ellipse((x - 1.7 * u, 63.5 * u - 1.7 * u, x + 1.7 * u, 63.5 * u + 1.7 * u), fill=marinho)
+    # faixas de velocidade atrás do caminhão
+    for k, y in enumerate((41.5, 48.5, 55.5)):
+        d.rounded_rectangle(((17 + k * 2) * u, y * u, (24 + k * 0) * u, (y + 2.2) * u), radius=1.1 * u, fill=(255, 255, 255, 170))
+
     if selo_instalacao:
-        d = ImageDraw.Draw(img)
-        cx, cy, r = S * 0.78, S * 0.78, S * 0.17
-        d.ellipse((cx - r - S * 0.02, cy - r - S * 0.02, cx + r + S * 0.02, cy + r + S * 0.02), fill=(255, 255, 255, 255))
-        d.ellipse((cx - r, cy - r, cx + r, cy + r), fill="#F59E0B")
-        w, h = r * 0.24, r * 0.55
-        d.rounded_rectangle((cx - w / 2, cy - h, cx + w / 2, cy + h * 0.15), radius=w / 3, fill=(255, 255, 255, 255))
-        d.polygon([(cx - r * 0.5, cy), (cx + r * 0.5, cy), (cx, cy + r * 0.5)], fill=(255, 255, 255, 255))
+        sx, sy, sr = S * 0.80, S * 0.80, S * 0.15
+        d.ellipse((sx - sr - S * 0.02, sy - sr - S * 0.02, sx + sr + S * 0.02, sy + sr + S * 0.02), fill=branco)
+        d.ellipse((sx - sr, sy - sr, sx + sr, sy + sr), fill="#F59E0B")
+        hw, hh = sr * 0.24, sr * 0.55
+        d.rounded_rectangle((sx - hw / 2, sy - hh, sx + hw / 2, sy + hh * 0.15), radius=hw / 3, fill=branco)
+        d.polygon([(sx - sr * 0.5, sy), (sx + sr * 0.5, sy), (sx, sy + sr * 0.5)], fill=branco)
     return img.resize((512, 512), Image.LANCZOS)
 
 
@@ -207,15 +227,15 @@ def main() -> None:
         salvar(nome, selo(img, cor, sigla))
     for nome, (fundo, modulos) in INSTALADORES.items():
         salvar(nome, instalador(base, fundo, modulos))
-    salvar("VorticisLogistica", marca_logistica())
-    salvar("VorticisLogisticaInstalador", marca_logistica(selo_instalacao=True))
+    salvar("VorticisLogistica", icone_logistica())
+    salvar("VorticisLogisticaInstalador", icone_logistica(selo_instalacao=True))
 
 
 if __name__ == "__main__":
     import sys
     # "python3 -I gerar_icone.py VorticisLogisticaInstalador" refaz só os ícones do programa e do instalador da Suite Logística
     if sys.argv[1:] == ["VorticisLogisticaInstalador"]:
-        salvar("VorticisLogistica", marca_logistica())
-        salvar("VorticisLogisticaInstalador", marca_logistica(selo_instalacao=True))
+        salvar("VorticisLogistica", icone_logistica())
+        salvar("VorticisLogisticaInstalador", icone_logistica(selo_instalacao=True))
     else:
         main()
