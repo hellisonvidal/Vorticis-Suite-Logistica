@@ -172,6 +172,7 @@ tms.cotacoes=14-tms.md#cotacoes-de-frete
 tms.ctes=14-tms.md#conhecimentos-de-transporte-ct-e
 tms.manifestos=14-tms.md#manifestos-de-carga-mdf-e
 tms.entregas=14-tms.md#entregas-e-ocorrencias
+tms.ciot=14-tms.md#ciot-operacoes-de-transporte
 tms.faturas=14-tms.md#faturas-de-frete
 tms.rel.fretescliente=14-tms.md#relatorios-do-tms
 tms.rel.fretestrecho=14-tms.md#relatorios-do-tms

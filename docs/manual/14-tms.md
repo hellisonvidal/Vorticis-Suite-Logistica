@@ -134,6 +134,51 @@ Em vez de digitar as chaves, peso e valores, anexe os XML das notas fiscais que 
 
 A ocorrência não pode ser antes da emissão do CT-e nem no futuro. CT-e entregue ou cancelado não recebe mais ocorrências.
 
+## CIOT (operações de transporte)
+
+**Para que serve:** registrar cada frete que a transportadora **subcontrata** de um transportador autônomo (**TAC**, pessoa física) ou de uma empresa equiparada (**ETC** com até 3 veículos). A lei (Res. ANTT 5.862/2019) exige que essa operação tenha um **CIOT** (Código Identificador da Operação de Transporte), gerado por uma **IPEF** (Repom, Pamcard, e-Frete, Target e outras), que também paga o frete ao contratado. O CIOT vai no MDF-e da viagem.
+
+**Onde fica:** módulo **Transporte**, *Operação › CIOT – operações de transporte*.
+
+**Situações:** **Digitado** (sem CIOT, pode ser alterado) › **Declarado** (com o CIOT da IPEF) › **Encerrado** (viagem concluída). Ou **Cancelado**.
+
+**Como lançar:**
+1. Clique em **Nova operação** e escolha o **Tipo**:
+   - **Padrão**: uma viagem;
+   - **TAC agregado**: o autônomo trabalha para você por um período.
+2. Em **TAC ou empresa**, escolha o contratado. Cadastre-o antes em *Cadastros › Fornecedores*: com **CPF** ele é TAC; com **CNPJ**, ETC.
+3. Informe o **RNTRC** do contratado (8 ou 9 dígitos), a **Placa** do veículo dele, o nome e o CPF do **Motorista**.
+4. Escolha a **Viagem** (opcional), a **Origem** e o **Destino**, o **Início** e o **Fim**, o **Produto**, o **NCM** e o **Peso**.
+5. Informe o **Valor do frete** combinado, o **Vale-pedágio** (pago à parte, não entra no frete), o **Adiantamento** e, para o TAC, os **Dependentes** do IR.
+6. Clique em **Calcular retenções** para ver o resumo: frete, retenções, líquido, adiantamento e **SALDO** a pagar.
+7. Marque os **CT-e da operação** (os conhecimentos das cargas que o contratado vai levar).
+8. **Gravar**. A operação recebe um número e fica **Digitada**.
+
+**Retenções do TAC** (calculadas sozinhas, só para contratado com CPF):
+- **INSS**: 11% sobre 20% do frete, até o teto do INSS do mês;
+- **SEST/SENAT**: 2,5% sobre os mesmos 20%;
+- **IRRF**: tabela progressiva mensal sobre 10% do frete, menos o INSS e os dependentes, com a redução da Lei 15.270/2025.
+
+Os fretes do mesmo TAC no mesmo mês são somados, porque o teto do INSS e a tabela do IR são mensais: o segundo frete do mês retém a diferença. As alíquotas e tabelas ficam nos parâmetros legais (TAC_RETENCOES e as tabelas de INSS e IRRF), não no programa. Contratado com CNPJ (ETC) não tem retenção.
+
+**Depois de gravar:**
+1. Registre a operação no site ou aplicativo da **IPEF** contratada. Ela gera o CIOT e faz o pagamento do adiantamento e do saldo ao contratado.
+2. Volte ao Vorticis, informe a **IPEF**, o **CIOT** (12 dígitos) e o **Código verificador** e clique em **Declarar CIOT**. A operação passa a **Declarada** e não muda mais.
+3. Informe o CIOT também no MDF-e da viagem (no emissor da SEFAZ).
+4. Ao fim da viagem, encerre a operação na IPEF e clique em **Encerrar**.
+
+**Outras ações:**
+- **Contrato de frete (PDF)**: contrato e recibo com as partes, o trecho, a carga, os valores, as retenções, o adiantamento e o saldo, com campos de assinatura.
+- **Cancelar operação**: para a digitada ou a declarada (cancele também na IPEF).
+- **Excluir**: só a digitada.
+
+**Regras:**
+- Um CT-e só pode estar em uma operação ativa.
+- O adiantamento não pode passar do valor líquido.
+- O CIOT é obrigatório para declarar e encerrar.
+
+**Importante:** o Vorticis não se comunica com as IPEFs. A geração do CIOT e o pagamento são feitos no sistema da IPEF; aqui ficam o controle, os cálculos e os documentos. O piso mínimo de frete da ANTT não é conferido: consulte a tabela da ANTT ao combinar o valor.
+
 ## Faturas de frete
 
 **Para que serve:** cobrar do cliente vários fretes de uma vez, numa fatura com vencimento, e lançar a conta a receber no Financeiro.

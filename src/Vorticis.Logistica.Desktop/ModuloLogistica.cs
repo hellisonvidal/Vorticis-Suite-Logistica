@@ -175,7 +175,9 @@ public sealed class ModuloTransporte() : ModuloLogistica(Frota, Gerencial, Fisca
             ItemMenu.Submenu("_Operação",
                 ItemMenu.Tela("Cotações de frete", T.Cotacoes),
                 ItemMenu.Tela("Ordens de coleta", T.Coletas),
-                ItemMenu.Tela("Entregas e ocorrências", T.Entregas))),
+                ItemMenu.Tela("Entregas e ocorrências", T.Entregas),
+                ItemMenu.Separador,
+                ItemMenu.Tela("CIOT – operações de transporte", T.Ciot))),
         // todo o faturamento da transportadora: os documentos do transporte (CT-e e MDF-e), as faturas de frete, os pedidos de venda e as notas de saída
         ItemMenu.Submenu("_Faturamento",
         [

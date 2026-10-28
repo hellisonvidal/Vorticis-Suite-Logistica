@@ -1,0 +1,113 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Frota.Desktop.ViewModels"
+             x:Class="Vorticis.Frota.Desktop.Views.CiotView" x:DataType="vm:CiotViewModel">
+  <Grid ColumnDefinitions="*,12,480" RowDefinitions="Auto,Auto,*" Margin="8">
+    <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="8" Margin="0,0,0,6">
+      <TextBlock Classes="titulo" Text="CIOT – operações de transporte" VerticalAlignment="Center" />
+      <TextBlock Text="Período" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Inicio}" Width="130" />
+      <TextBlock Text="a" VerticalAlignment="Center" />
+      <CalendarDatePicker SelectedDate="{Binding Fim}" Width="130" />
+    </StackPanel>
+    <TextBlock Grid.Row="1" Grid.ColumnSpan="3" Text="{Binding Totais}" FontSize="12" Margin="0,0,0,6" />
+    <DataGrid Grid.Row="2" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Nº" Binding="{ReflectionBinding Numero}" Width="50" />
+        <DataGridTextColumn Header="CIOT" Binding="{ReflectionBinding Ciot}" Width="115" />
+        <DataGridTextColumn Header="Contratado" Binding="{ReflectionBinding Contratado}" Width="150" />
+        <DataGridTextColumn Header="Placa" Binding="{ReflectionBinding Placa}" Width="85" />
+        <DataGridTextColumn Header="Trecho" Binding="{ReflectionBinding Trecho}" Width="*" MinWidth="140" />
+        <DataGridTextColumn Header="Início" Binding="{ReflectionBinding Inicio}" Width="85" />
+        <DataGridTextColumn Header="Frete" Binding="{ReflectionBinding Frete}" Width="100" />
+        <DataGridTextColumn Header="Retenções" Binding="{ReflectionBinding Retencoes}" Width="95" />
+        <DataGridTextColumn Header="Saldo" Binding="{ReflectionBinding Saldo}" Width="100" />
+        <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="140" />
+      </DataGrid.Columns>
+    </DataGrid>
+    <ScrollViewer Grid.Row="2" Grid.Column="2">
+      <StackPanel Spacing="6" IsEnabled="{Binding PodeEditar}">
+        <Grid ColumnDefinitions="140,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
+          <TextBlock Grid.ColumnSpan="2" Text="Contratado" FontWeight="Bold" FontSize="12" />
+          <TextBlock Grid.Row="1" Classes="rotulo" Text="Tipo" />
+          <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{x:Static vm:CiotViewModel.Tipos}" SelectedItem="{Binding Tipo}" HorizontalAlignment="Stretch" />
+          <TextBlock Grid.Row="2" Classes="rotulo" Text="TAC ou empresa" />
+          <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding ParticipantesOpcoes}" SelectedItem="{Binding Contratado}" HorizontalAlignment="Stretch" />
+          <TextBlock Grid.Row="3" Classes="rotulo" Text="RNTRC" />
+          <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Rntrc}" Width="140" HorizontalAlignment="Left" />
+          <TextBlock Grid.Row="4" Classes="rotulo" Text="Placa do veículo" />
+          <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Placa}" Width="140" HorizontalAlignment="Left" />
+          <TextBlock Grid.Row="5" Classes="rotulo" Text="Motorista" />
+          <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding MotoristaNome}" />
+          <TextBlock Grid.Row="6" Classes="rotulo" Text="CPF do motorista" />
+          <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding MotoristaCpf}" Width="160" HorizontalAlignment="Left" />
+          <TextBlock Grid.Row="7" Grid.ColumnSpan="2" Text="Viagem e carga" FontWeight="Bold" FontSize="12" Margin="0,6,0,0" />
+          <TextBlock Grid.Row="8" Classes="rotulo" Text="Viagem (opcional)" />
+          <ComboBox Grid.Row="8" Grid.Column="1" ItemsSource="{Binding ViagensOpcoes}" SelectedItem="{Binding Viagem}" HorizontalAlignment="Stretch" />
+          <TextBlock Grid.Row="9" Classes="rotulo" Text="Origem" />
+          <StackPanel Grid.Row="9" Grid.Column="1" Orientation="Horizontal" Spacing="6"><ComboBox ItemsSource="{x:Static vm:SeletorMunicipio.Ufs}" SelectedItem="{Binding Origem.Uf}" Width="70" /><ComboBox ItemsSource="{Binding Origem.Municipios}" SelectedItem="{Binding Origem.Municipio}" Width="250" /></StackPanel>
+          <TextBlock Grid.Row="10" Classes="rotulo" Text="Destino" />
+          <StackPanel Grid.Row="10" Grid.Column="1" Orientation="Horizontal" Spacing="6"><ComboBox ItemsSource="{x:Static vm:SeletorMunicipio.Ufs}" SelectedItem="{Binding Destino.Uf}" Width="70" /><ComboBox ItemsSource="{Binding Destino.Municipios}" SelectedItem="{Binding Destino.Municipio}" Width="250" /></StackPanel>
+          <TextBlock Grid.Row="11" Classes="rotulo" Text="Início / fim" />
+          <StackPanel Grid.Row="11" Grid.Column="1" Orientation="Horizontal" Spacing="6"><CalendarDatePicker SelectedDate="{Binding DataInicio}" Width="140" /><CalendarDatePicker SelectedDate="{Binding DataFim}" Width="140" /></StackPanel>
+          <TextBlock Grid.Row="12" Classes="rotulo" Text="Produto / NCM" />
+          <StackPanel Grid.Row="12" Grid.Column="1" Orientation="Horizontal" Spacing="6"><TextBox Text="{Binding Produto}" Width="200" /><TextBox Text="{Binding Ncm}" Width="110" Watermark="NCM" /></StackPanel>
+          <TextBlock Grid.Row="13" Classes="rotulo" Text="Peso (kg)" />
+          <TextBox Grid.Row="13" Grid.Column="1" Text="{Binding PesoKg}" Width="140" HorizontalAlignment="Left" />
+          <TextBlock Grid.Row="14" Grid.ColumnSpan="2" Text="Valores" FontWeight="Bold" FontSize="12" Margin="0,6,0,0" />
+          <TextBlock Grid.Row="15" Classes="rotulo" Text="Valor do frete" />
+          <TextBox Grid.Row="15" Grid.Column="1" Text="{Binding ValorFrete}" Width="140" HorizontalAlignment="Left" />
+          <TextBlock Grid.Row="16" Classes="rotulo" Text="Vale-pedágio" />
+          <TextBox Grid.Row="16" Grid.Column="1" Text="{Binding ValePedagio}" Width="140" HorizontalAlignment="Left" />
+          <TextBlock Grid.Row="17" Classes="rotulo" Text="Adiantamento" />
+          <TextBox Grid.Row="17" Grid.Column="1" Text="{Binding Adiantamento}" Width="140" HorizontalAlignment="Left" />
+          <TextBlock Grid.Row="18" Classes="rotulo" Text="Dependentes (IR)" />
+          <TextBox Grid.Row="18" Grid.Column="1" Text="{Binding Dependentes}" Width="80" HorizontalAlignment="Left" />
+          <TextBlock Grid.Row="19" Classes="rotulo" Text="Resumo" />
+          <StackPanel Grid.Row="19" Grid.Column="1" Spacing="4">
+            <TextBlock Text="{Binding ResumoValores}" TextWrapping="Wrap" FontWeight="SemiBold" />
+            <Button Content="Calcular retenções" Command="{Binding CalcularCommand}" />
+          </StackPanel>
+          <TextBlock Grid.Row="20" Classes="rotulo" Text="Situação" />
+          <TextBlock Grid.Row="20" Grid.Column="1" Text="{Binding SituacaoTexto}" FontWeight="Bold" />
+          <TextBlock Grid.Row="21" Classes="rotulo" Text="Observação" />
+          <TextBox Grid.Row="21" Grid.Column="1" Text="{Binding Observacao}" />
+        </Grid>
+        <TextBlock Classes="rotulo" Text="CT-e da operação" />
+        <Border BorderBrush="LightGray" BorderThickness="1" Padding="4">
+          <ScrollViewer MaxHeight="160">
+            <ItemsControl ItemsSource="{Binding Ctes}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:CteMarcado">
+                  <CheckBox IsChecked="{Binding Marcado}" Content="{Binding Texto}" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </ScrollViewer>
+        </Border>
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <Button Content="Nova operação" Command="{Binding NovoCommand}" />
+          <Button Content="Gravar" Classes="accent" Command="{Binding GravarCommand}" />
+          <Button Content="Excluir" Command="{Binding ExcluirCommand}" />
+          <Button Content="Contrato de frete (PDF)" Command="{Binding ImprimirCommand}" />
+        </StackPanel>
+        <TextBlock Text="CIOT gerado pela IPEF" FontWeight="Bold" FontSize="12" Margin="0,6,0,0" />
+        <Grid ColumnDefinitions="140,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="6">
+          <TextBlock Classes="rotulo" Text="IPEF" />
+          <TextBox Grid.Column="1" Text="{Binding Ipef}" Watermark="Repom, Pamcard, e-Frete, Target..." />
+          <TextBlock Grid.Row="1" Classes="rotulo" Text="CIOT" />
+          <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Ciot}" Watermark="12 dígitos" Width="180" HorizontalAlignment="Left" />
+          <TextBlock Grid.Row="2" Classes="rotulo" Text="Código verificador" />
+          <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding CodigoVerificador}" Width="100" HorizontalAlignment="Left" />
+        </Grid>
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <Button Content="Declarar CIOT" Command="{Binding DeclararCommand}" />
+          <Button Content="Encerrar" Command="{Binding EncerrarCommand}" />
+          <Button Content="Cancelar operação" Command="{Binding CancelarCommand}" />
+        </StackPanel>
+        <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                   Text="Grave a operação, registre-a na IPEF contratada (que gera o CIOT e paga o frete ao contratado) e informe o CIOT aqui. O CIOT também vai no MDF-e da viagem." />
+        <c:MensagensView />
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

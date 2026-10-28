@@ -57,7 +57,7 @@ public class FrotaTelasTests(SessaoHeadless headless, BancoDeTeste db) : IClassF
         Assert.DoesNotContain("Planos de manutenção", cadastros);
         Assert.Contains("Documentos e vencimentos", cadastros);
         var operacao = Assert.Single(vm.Menus, m => m.Titulo == "_Operação");
-        Assert.Equal(["Abastecimentos", "Viagens", "Diárias", "_Coletas", "Entregas e ocorrências", "_Pedágio"], operacao.Filhos!.Where(i => !i.EhSeparador).Select(i => i.Titulo));
+        Assert.Equal(["Abastecimentos", "Viagens", "Diárias", "_Coletas", "Entregas e ocorrências", "CIOT – operações de transporte", "_Pedágio"], operacao.Filhos!.Where(i => !i.EhSeparador).Select(i => i.Titulo));
         Assert.Equal(["Ordens de coleta"], operacao.Filhos!.Single(i => i.Titulo == "_Coletas").Filhos!.Select(i => i.Titulo));
         var manutencao = Assert.Single(vm.Menus, m => m.Titulo == "_Manutenção");
         Assert.Equal(["Planos de manutenção", "Peças e serviços", "Ordens de serviço", "Autorização de serviços"], manutencao.Filhos!.Select(i => i.Titulo));
@@ -165,6 +165,7 @@ public class FrotaTelasTests(SessaoHeadless headless, BancoDeTeste db) : IClassF
                 (new F.ViewModels.ContratosViewModel(m, RegrasContratos.Financiamento), new F.Views.ContratosView()),
                 (new F.ViewModels.ContratosViewModel(m, RegrasContratos.Consorcio), new F.Views.ContratosView()),
                 (new F.ViewModels.BensContratosViewModel(m), new F.Views.BensContratosView()),
+                (new F.ViewModels.CiotViewModel(m), new F.Views.CiotView()),
             ];
             foreach (var (vm, view) in telas)
             {
@@ -174,7 +175,7 @@ public class FrotaTelasTests(SessaoHeadless headless, BancoDeTeste db) : IClassF
                 Dispatcher.UIThread.RunJobs();
                 var quadro = janela.CaptureRenderedFrame();
                 Assert.NotNull(quadro);
-                if (Environment.GetEnvironmentVariable("VORTICIS_SCREENSHOTS") is { Length: > 0 } pasta && vm is F.ViewModels.MultasViewModel or F.ViewModels.ContratosViewModel)
+                if (Environment.GetEnvironmentVariable("VORTICIS_SCREENSHOTS") is { Length: > 0 } pasta && vm is F.ViewModels.MultasViewModel or F.ViewModels.ContratosViewModel or F.ViewModels.CiotViewModel)
                     quadro.Save(Path.Combine(Directory.CreateDirectory(pasta).FullName, $"frota-{view.GetType().Name}-{(vm as F.ViewModels.ContratosViewModel)?.Tipo}.png"));
                 janela.Close();
             }

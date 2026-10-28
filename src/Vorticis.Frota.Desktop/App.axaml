@@ -15,6 +15,7 @@
     <DataTemplate DataType="vm:MultasViewModel"><v:MultasView /></DataTemplate>
     <DataTemplate DataType="vm:ContratosViewModel"><v:ContratosView /></DataTemplate>
     <DataTemplate DataType="vm:BensContratosViewModel"><v:BensContratosView /></DataTemplate>
+    <DataTemplate DataType="vm:CiotViewModel"><v:CiotView /></DataTemplate>
     <DataTemplate DataType="vm:AbastecimentosViewModel"><v:AbastecimentosView /></DataTemplate>
     <DataTemplate DataType="vm:OrdensViewModel"><v:OrdensView /></DataTemplate>
     <DataTemplate DataType="vm:ItensManutencaoViewModel"><v:ItensManutencaoView /></DataTemplate>
