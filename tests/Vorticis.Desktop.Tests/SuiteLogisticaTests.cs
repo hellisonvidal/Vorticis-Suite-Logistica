@@ -146,6 +146,53 @@ public class SuiteLogisticaTests(BancoDeTeste db, SessaoHeadless headless) : ICl
     }
 
     [Fact]
+    public async Task X_da_janela_pergunta_e_fecha_em_todos_os_layouts()
+    {
+        BancoDeTeste.ExigirBanco();
+        await PrepararBancoAsync();
+        var anterior = SuiteViewModel.ArquivoLayout;
+        SuiteViewModel.ArquivoLayout = Path.Combine(Path.GetTempPath(), $"suite-{Guid.NewGuid():N}.txt");
+        try
+        {
+            var r = await ForaDaSessao(headless.Sessao.Dispatch(async () =>
+            {
+                var suite = NovaSuite(LayoutSuite.Lateral);
+                var janela = new MainWindow { Width = 1400, Height = 860 };
+                janela.UsarSuite(suite);
+                janela.Show();
+                await EntrarAsync(suite);
+                suite.Ativo.Vm.AbrirCommand.Execute(Vorticis.Frota.Desktop.ViewModels.FrotaTelas.Veiculos);   // uma função aberta
+                Dispatcher.UIThread.RunJobs();
+                foreach (var layout in Enum.GetValues<LayoutSuite>())
+                {
+                    suite.Layout = layout;
+                    if (layout == LayoutSuite.Painel) suite.NoPainel = true;      // o painel esconde as janelas das funções
+                    Dispatcher.UIThread.RunJobs();
+                    janela.Close();                                               // o X da janela
+                    Dispatcher.UIThread.RunJobs();
+                    var vm = (MainViewModelBase)janela.DataContext!;
+                    Assert.NotNull(vm.Confirmacao);
+                    var dialogo = janela.DialogoConfirmacao;
+                    Assert.True(dialogo is { IsVisible: true } && dialogo.Owner is Window { IsVisible: true }, $"{layout}: a pergunta ficou escondida");
+                    vm.ResponderConfirmacaoCommand.Execute(false);               // Continuar trabalhando
+                    Dispatcher.UIThread.RunJobs();
+                    Assert.True(janela.IsVisible);
+                    janela.Close();                                               // um segundo X também pergunta
+                    Dispatcher.UIThread.RunJobs();
+                    Assert.True(janela.DialogoConfirmacao is { IsVisible: true }, $"{layout}: o segundo X não respondeu");
+                    vm.ResponderConfirmacaoCommand.Execute(false);
+                    Dispatcher.UIThread.RunJobs();
+                }
+                Fechar(janela);
+                Assert.False(janela.IsVisible);                                   // confirmado, fecha
+                return true;
+            }, TestContext.Current.CancellationToken));
+            Assert.True(r);
+        }
+        finally { SuiteViewModel.ArquivoLayout = anterior; }
+    }
+
+    [Fact]
     public async Task Botao_Layout_troca_o_layout_pelo_cartao_e_fixa_a_navegacao()
     {
         BancoDeTeste.ExigirBanco();

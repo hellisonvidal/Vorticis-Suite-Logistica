@@ -156,13 +156,21 @@ public partial class MainWindow : Window
     {
         if (_fechamentoConfirmado || _vm is null) return;
         e.Cancel = true;
-        if (_vm.Confirmacao is not null) return;                          // já há uma pergunta aberta
+        if (_vm.Confirmacao is { } pendente)                               // já há uma pergunta aberta: traz para a frente (ou mostra de novo)
+        {
+            if (_dialogo is { IsVisible: true } d) d.Activate();
+            else MostrarConfirmacao(pendente);
+            return;
+        }
         if (await _vm.ConfirmarAsync($"Fechar o {(Suite is null ? _vm.Modulo.Nome : Suite.Nome)}", "Deseja realmente fechar o sistema?", "Fechar", "Continuar trabalhando"))
         {
             _fechamentoConfirmado = true;
             Close();
         }
     }
+
+    /// <summary>Diálogo de confirmação à mostra (null se não houver).</summary>
+    public Window? DialogoConfirmacao => _dialogo;
 
     /// <summary>Janela modal em primeiro plano (pop-up de uma função); os diálogos de confirmação abrem sobre ela.</summary>
     public Window? ModalAberta { get; set; }
@@ -382,9 +390,17 @@ public partial class MainWindow : Window
         {
             if (!_fechandoPorCodigo.Remove(dialogo) && ReferenceEquals(_vm?.Confirmacao, pedido)) _vm.ResponderConfirmacaoCommand.Execute(false);
         };
+        if (_dialogo is { } anterior && !ReferenceEquals(anterior, dialogo)) { _fechandoPorCodigo.Add(anterior); anterior.Close(); }
         _dialogo = dialogo;
-        _ = dialogo.ShowDialog(ModalAberta ?? JanelaAtiva ?? this);
+        _ = dialogo.ShowDialog(DonoDoDialogo());
     }
+
+    /// <summary>
+    /// Dona do diálogo: a janela visível mais à frente (pop-up, função ativa ou a principal). Uma dona escondida (as funções ficam
+    /// escondidas no painel da Suite e no módulo que não está à frente) deixaria o diálogo invisível e o X da janela sem resposta.
+    /// </summary>
+    private Window DonoDoDialogo() =>
+        ModalAberta is { IsVisible: true } modal ? modal : JanelaAtiva is { IsVisible: true } funcao ? funcao : this;
 
     /// <summary>Ao entrar ou sair do sistema, volta a maximizar (caso o usuário tenha restaurado o tamanho).</summary>
     private void AoMudarVm(object? sender, PropertyChangedEventArgs e)
