@@ -163,6 +163,18 @@ public class SuiteLogisticaTests(BancoDeTeste db, SessaoHeadless headless) : ICl
                 await EntrarAsync(suite);
                 suite.Ativo.Vm.AbrirCommand.Execute(Vorticis.Frota.Desktop.ViewModels.FrotaTelas.Veiculos);   // uma função aberta
                 Dispatcher.UIThread.RunJobs();
+                // não há menu Exibir em nenhum módulo; o layout fica em Configurações
+                foreach (var m in suite.Modulos)
+                {
+                    suite.TrocarCommand.Execute(m);
+                    Dispatcher.UIThread.RunJobs();
+                    var menus = janela.FindControl<Menu>("MenuPrincipal")!.Items.OfType<MenuItem>().Select(i => i.Header as string).ToList();
+                    Assert.DoesNotContain("E_xibir", menus);
+                    var config = janela.FindControl<Menu>("MenuPrincipal")!.Items.OfType<MenuItem>().Single(i => i.Header as string == "Con_figurações");
+                    Assert.Equal("Layout da Suite", ((MenuItem)config.Items[0]!).Header);
+                }
+                suite.TrocarCommand.Execute(suite.Modulos[0]);
+                Dispatcher.UIThread.RunJobs();
                 foreach (var layout in Enum.GetValues<LayoutSuite>())
                 {
                     suite.Layout = layout;

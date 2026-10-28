@@ -20,7 +20,7 @@ Veja também o capítulo [Vorticis Suite Logística](13-logistica.md).
 
 1. Entre uma vez com o seu usuário: o login vale para todos os módulos.
 2. Troque de módulo pela navegação do layout escolhido ou pelas teclas **Ctrl+1**, **Ctrl+2**…. Os módulos aparecem em ordem alfabética em todos os layouts (Contábil, Fiscal, Folha, Frota, Gerencial), e as teclas seguem essa ordem. A empresa escolhida continua a mesma quando também está liberada no outro módulo. As funções abertas de cada módulo ficam guardadas: ao voltar, elas reaparecem.
-3. Para mudar o visual, use o botão **⚙ Layout**, que aparece em todos os layouts (na barra de abas, na barra lateral, embaixo da árvore e no topo do painel). Também dá para usar *Configurações › Layout da Suite* ou *Exibir › Layout da Suite*. A escolha fica gravada neste computador.
+3. Para mudar o visual, use o botão **⚙ Layout**, que aparece em todos os layouts (na barra de abas, na barra lateral, embaixo da árvore e no topo do painel). Também dá para usar *Configurações › Layout da Suite*. A escolha fica gravada neste computador.
    - **A – Abas no topo:** uma aba por módulo acima do menu.
    - **B – Barra lateral (padrão):** ícones coloridos dos módulos à esquerda.
 

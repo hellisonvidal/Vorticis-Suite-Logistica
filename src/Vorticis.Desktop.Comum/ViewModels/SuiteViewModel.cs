@@ -6,7 +6,7 @@ using Vorticis.Desktop.Comum.Modulos;
 
 namespace Vorticis.Desktop.Comum.ViewModels;
 
-/// <summary>Temas de navegação da Suite (o usuário escolhe em Exibir › Layout da Suite).</summary>
+/// <summary>Temas de navegação da Suite (o usuário escolhe no botão Layout ou em Configurações › Layout da Suite).</summary>
 public enum LayoutSuite
 {
     /// <summary>A: uma aba por módulo acima do menu.</summary>

@@ -429,8 +429,7 @@ public partial class MainWindow : Window
         foreach (var item in vm.MenusVisiveis) MenuPrincipal.Items.Add(CriarItem(vm, item));
         if (Suite is { } suite)
         {
-            MenuPrincipal.Items.Insert(MenuPrincipal.Items.Count - 1, MenuExibir(suite));
-            // o layout também fica em Configurações, onde se procura por ajustes
+            // o layout da Suite fica em Configurações (não há menu Exibir: os módulos são trocados pela navegação ou por Ctrl+1, Ctrl+2...)
             if (MenuPrincipal.Items.OfType<MenuItem>().FirstOrDefault(m => (m.Header as string) == "Con_figurações") is { } config)
             {
                 config.Items.Insert(0, MenuLayout(suite));
@@ -457,22 +456,6 @@ public partial class MainWindow : Window
             Header = (suite.TopoFixo ? "●  " : "     ") + "Fixar a navegação no topo (A, D e E)", Command = suite.AlternarTopoFixoCommand,
         });
         return layout;
-    }
-
-    /// <summary>Suite: Exibir › layout (A, B, C, D) e ir para outro módulo (Ctrl+1, Ctrl+2...).</summary>
-    private static MenuItem MenuExibir(SuiteViewModel suite)
-    {
-        var exibir = new MenuItem { Header = "E_xibir" };
-        exibir.Items.Add(MenuLayout(suite));
-        exibir.Items.Add(new Separator());
-        for (var i = 0; i < suite.Modulos.Count; i++)
-            exibir.Items.Add(new MenuItem
-            {
-                Header = $"Ir para o módulo {suite.Modulos[i].Nome}", Command = suite.TrocarCommand, CommandParameter = suite.Modulos[i],
-                InputGesture = i < 9 ? KeyGesture.Parse($"Ctrl+{i + 1}") : null,
-            });
-        if (suite.EhPainel) exibir.Items.Add(new MenuItem { Header = "Início (painel dos módulos)", Command = suite.IrParaPainelCommand });
-        return exibir;
     }
 
     private void AtualizarItensComRecurso(MainViewModelBase vm)

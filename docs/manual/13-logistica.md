@@ -25,7 +25,7 @@ O Vorticis Suite Logística é instalado numa pasta própria (*Vorticis Logistic
 ## Trocar de módulo
 
 - Clique no ícone ou no nome do módulo na navegação (à esquerda ou no alto, conforme o layout escolhido).
-- Ou use o teclado: **Ctrl+1** (Frotas), **Ctrl+2** (Transporte), **Ctrl+3** (Manutenção), **Ctrl+4** (Financeiro), **Ctrl+5** (Gerencial) e **Ctrl+6** (Contabilidade). Os mesmos atalhos estão no menu *Exibir*.
+- Ou use o teclado: **Ctrl+1** (Frotas), **Ctrl+2** (Transporte), **Ctrl+3** (Manutenção), **Ctrl+4** (Financeiro), **Ctrl+5** (Gerencial) e **Ctrl+6** (Contabilidade).
 - **Ctrl+K** abre a busca de funções: digite parte do nome (sem acento, ex.: *viagens*, *balancete*) e clique no resultado para ir direto à tela, em qualquer módulo.
 - A cor da barra de menus e o ícone grande do módulo, ao fundo da tela, mostram em que módulo você está. As funções abertas de cada módulo continuam abertas quando você vai para outro; um número vermelho no ícone mostra quantas estão abertas.
 
@@ -35,7 +35,7 @@ Os atalhos de teclado de cada módulo continuam valendo dentro dele (ex.: **Ctrl
 
 **Para que serve:** escolher como a navegação entre os módulos aparece na tela.
 
-**Onde fica:** no botão **Layout** (ícone de quatro quadros), presente em todos os layouts, e em *Exibir › Layout da Suite* ou *Configurações › Layout da Suite*. A escolha fica gravada neste computador.
+**Onde fica:** no botão **Layout** (ícone de quatro quadros), presente em todos os layouts, e em *Configurações › Layout da Suite*. A escolha fica gravada neste computador.
 
 | Layout | Como é |
 |---|---|
@@ -53,7 +53,7 @@ A navegação de cada layout pode ficar **recolhida** para deixar mais espaço p
 
 - **À esquerda (B e C):** recolhida, vira uma faixa fina com as cores dos módulos na beirada esquerda da janela; ela abre quando o mouse se aproxima e recolhe sozinha quando ele sai.
 - **No alto (A, D e E):** recolhida, vira uma faixa fina colorida no alto da janela; ela abre quando o mouse chega ao alto e recolhe quando ele sai.
-- Para deixá-la **sempre à mostra**, clique em **Fixar** (ícone de alfinete) na própria navegação; para voltar a recolher, clique em **Soltar**. A opção também está no cartão de layouts (*Fixar a navegação deste layout*) e em *Exibir › Layout da Suite*. A navegação à esquerda e a do alto guardam cada uma a sua escolha.
+- Para deixá-la **sempre à mostra**, clique em **Fixar** (ícone de alfinete) na própria navegação; para voltar a recolher, clique em **Soltar**. A opção também está no cartão de layouts (*Fixar a navegação deste layout*) e em *Configurações › Layout da Suite*. A navegação à esquerda e a do alto guardam cada uma a sua escolha.
 
 ## Gráficos
 
