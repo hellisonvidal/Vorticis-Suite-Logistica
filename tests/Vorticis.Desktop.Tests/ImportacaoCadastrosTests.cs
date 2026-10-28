@@ -58,6 +58,21 @@ public class ImportacaoCadastrosTests(BancoDeTeste db) : IClassFixture<BancoDeTe
 
         Assert.Empty(await Importar(ctx, defs["tabelasfrete"], "Descrição;UF de origem;UF de destino;Valor por kg;Frete mínimo;ICMS\nSP x RJ;SP;RJ;0,50;150;12"));
         Assert.Equal((0.50m, 150m, 12m), (await svc.TabelasFreteAsync(empresa, adm, ct)).Select(t => (t.ValorKg, t.FreteMinimo, t.AliquotaIcms)).Single());
+
+        // abastecimentos do relatório de transações do cartão (ex.: Rede Frota): nomes de coluna e de combustível do relatório
+        const string relatorio = """
+            Data Transação;Placa;Produto;Quantidade;Valor Transação;Hodômetro;Estabelecimento;CPF Motorista
+            10/03/2026;ABC-1D23;DIESEL S-10;300,5;1.803,00;150.800;Posto Alfa;529.982.247-25
+            12/03/2026;ABC-1D23;ARLA 32;20;80,00;151.400;Posto Alfa;
+            12/03/2026;ZZZ9Z99;DIESEL S-10;100;600,00;1000;Posto Beta;
+            """;
+        var errosAbast = await Importar(ctx, defs["abastecimentos"], relatorio);
+        Assert.Contains("Veículo não cadastrado: ZZZ9Z99", Assert.Single(errosAbast));
+        var abast = await svc.AbastecimentosAsync(empresa, new(2026, 3, 1), new(2026, 3, 31), null, adm, ct);
+        Assert.Equal([("DIESEL_S10", 300.5m, 1803m, 150800m, true), ("ARLA32", 20m, 80m, 151400m, false)],
+                     abast.OrderBy(a => a.Data).Select(a => (a.Combustivel, a.Litros, a.ValorTotal, a.Km, a.MotoristaId is not null)));
+        Assert.Equal(3, (await Importar(ctx, defs["abastecimentos"], relatorio)).Count);    // a mesma planilha de novo não duplica
+        Assert.Equal("DIESEL", ImportacoesFrota.Combustivel("Óleo Diesel S500"));
     }
 
     [Fact]

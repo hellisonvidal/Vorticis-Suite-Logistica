@@ -189,6 +189,7 @@ importar.frotas=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel
 importar.rotas=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel
 importar.tabelasfrete=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel
 importar.multas=12-frota.md#monitor-de-multas-de-transito
+importar.abastecimentos=12-frota.md#importar-abastecimentos-do-cartao-de-combustivel-rede-frota-e-outros
 importar.produtos=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel
 importar.regrasfiscais=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel
 importar.centroscusto=02-cadastros-comuns.md#importar-cadastros-de-planilha-excel

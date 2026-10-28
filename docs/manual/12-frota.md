@@ -74,6 +74,21 @@ Como a média é calculada: entre dois abastecimentos de **tanque cheio**, o km 
 
 Na lista, a coluna **Média** traz ⚠ quando a média ficou abaixo da esperada do veículo menos a tolerância dos *Parâmetros* (pode indicar vazamento, desvio de combustível ou necessidade de manutenção).
 
+### Importar abastecimentos do cartão de combustível (Rede Frota e outros)
+
+Quem abastece com cartão ou rede conveniada (Rede Frota, Ticket Log, Repom...) não precisa digitar: exporte o **relatório de transações** do portal da rede em Excel ou CSV e importe.
+
+1. No portal da rede, gere o relatório de transações/abastecimentos do período e salve em Excel (.xlsx) ou CSV.
+2. Em *Abastecimentos*, clique em **Importar de planilha (Excel)** no alto da janela e escolha o arquivo.
+3. Confira as colunas ligadas: **Placa**, **Data**, **Km (hodômetro)**, **Litros**, **Valor total** (obrigatórios), **Combustível**, **Posto**, **CPF do motorista** e **Completou o tanque**. O sistema já reconhece nomes como *Data Transação*, *Quantidade*, *Valor Transação*, *Hodômetro*, *Produto* e *Estabelecimento*; ajuste o que for preciso e use **Gravar layout** para a próxima vez.
+4. **Importar**. Os nomes de combustível do relatório são entendidos (*DIESEL S-10*, *ARLA 32*, *Óleo diesel S500*...); sem combustível, vale o do veículo. Sem a coluna *Completou o tanque*, cada abastecimento conta como tanque cheio.
+
+As linhas de veículo não cadastrado ficam de fora com o aviso, e uma transação já importada (mesma placa, data, combustível, litros e valor) não entra de novo: pode importar o mesmo período outra vez sem duplicar. Importe em ordem de data, porque o km de cada abastecimento é conferido com o anterior.
+
+**Notas fiscais dos postos:** baixe os XML das notas no portal da rede e importe em *Gerencial › Compras › Importação de XML*.
+
+**Integração automática:** a Rede Frota não publica uma API ou webservice aberto para sistemas de gestão; a integração direta depende de acordo com a própria Rede Frota. Por isso o caminho é o relatório exportado do portal, que funciona com qualquer rede.
+
 ## Peças e serviços
 
 **Onde fica:** *Manutenção › Peças e serviços*.

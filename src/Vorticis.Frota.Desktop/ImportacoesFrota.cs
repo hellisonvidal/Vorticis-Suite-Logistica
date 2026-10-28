@@ -138,6 +138,60 @@ public static class ImportacoesFrota
         return await F(c).GravarTabelaFreteAsync(c.Empresa, t, c.Usuario);
     });
 
+    /// <summary>Combustível pelo código ou pelo nome, ignorando espaços, hífens e pontos (ex.: "Diesel S-10", "ARLA 32", "Óleo diesel S10").</summary>
+    public static string? Combustivel(string? texto)
+    {
+        if (texto is null) return null;
+        static string So(string t) => new string([.. TabelaImportada.Normalizar(t).Where(char.IsLetterOrDigit)]).ToLowerInvariant();
+        var t = So(texto);
+        return RegrasFrota.CombustiveisAbastecimento.FirstOrDefault(c => So(c) == t || So(RegrasFrota.Rotulo(c)) == t)
+               ?? (t.Contains("arla") ? "ARLA32" : t.Contains("s10") ? "DIESEL_S10" : t.Contains("diesel") ? "DIESEL"
+                   : t.Contains("etanol") || t.Contains("alcool") ? "ETANOL" : t.Contains("gasolina") ? "GASOLINA" : t.Contains("gnv") ? "GNV" : null);
+    }
+
+    /// <summary>
+    /// Abastecimentos de planilha: o relatório de transações do cartão/rede de abastecimento (Rede Frota, Ticket Log, Repom...) exportado em
+    /// Excel ou CSV. A mesma placa, data, litros e valor já lançados não entram de novo.
+    /// </summary>
+    private static readonly DefinicaoImportacao Abastecimentos = new("abastecimentos", "Abastecimentos",
+    [
+        new("placa", "Placa", true, "ABC1D23", "placa", "veiculo"),
+        new("data", "Data", true, "15/03/2026", "data", "data_transacao", "data_abastecimento", "data_hora"),
+        new("km", "Km (hodômetro)", true, "150320", "km", "hodometro", "odometro", "quilometragem"),
+        new("litros", "Litros", true, "350,5", "litros", "quantidade", "qtd", "volume"),
+        new("valor", "Valor total", true, "2100,00", "valor", "valor_total", "total", "valor_transacao"),
+        new("combustivel", "Combustível", false, "Diesel S10", "combustivel", "produto", "item", "servico"),
+        new("posto", "Posto", false, "Posto Exemplo", "posto", "estabelecimento", "razao_social", "nome_fantasia"),
+        new("cpf", "CPF do motorista", false, "529.982.247-25", "cpf", "cpf_motorista", "documento_motorista"),
+        new("cheio", "Completou o tanque", false, "Sim", "tanque_cheio", "completou"),
+    ], async (c, l) =>
+    {
+        var veiculos = await c.UmaVezAsync("veiculos", () => F(c).VeiculosAsync(c.Empresa, c.Usuario));
+        var placa = RegrasFrota.NormalizarPlaca(l.Texto("placa"));
+        if (veiculos.FirstOrDefault(v => v.Placa == placa) is not { } veiculo) return Resultado.Falha($"Veículo não cadastrado: {l.Texto("placa")}.");
+        var combustivel = Combustivel(l.Texto("combustivel")) ?? (l.Texto("combustivel") is null ? veiculo.Combustivel switch
+        {
+            "DIESEL_S10" or "DIESEL" or "GASOLINA" or "ETANOL" or "GNV" => veiculo.Combustivel,
+            "FLEX" => "ETANOL",
+            _ => "DIESEL_S10",
+        } : null);
+        if (combustivel is null) return Resultado.Falha($"Combustível desconhecido: {l.Texto("combustivel")}.");
+        long? motorista = null;
+        if (l.Texto("cpf") is { } cpfTexto)
+        {
+            var cpf = new string([.. cpfTexto.Where(char.IsAsciiDigit)]);
+            var motoristas = await c.UmaVezAsync("motoristas", () => F(c).MotoristasAsync(c.Empresa, c.Usuario));
+            motorista = motoristas.FirstOrDefault(m => m.Cpf == cpf)?.Id;
+        }
+        if (l.Data("data") is not { } data) return Resultado.Falha($"Data inválida: {l.Texto("data")}.");
+        var (litros, valor) = (l.Valor("litros") ?? 0, l.Valor("valor") ?? 0);
+        if ((await F(c).AbastecimentosAsync(c.Empresa, data, data, veiculo.Id, c.Usuario)).Any(a => a.Litros == litros && a.ValorTotal == valor && a.Combustivel == combustivel))
+            return Resultado.Falha($"Já importado: {RegrasFrota.FormatarPlaca(placa)} em {data:dd/MM/yyyy}, {litros} litros.");
+        var a = new Abastecimento(0, veiculo.Id, motorista, data, l.Valor("km") ?? 0, litros, valor, combustivel, l.Texto("posto"), l.Sim("cheio", true),
+                                  "Importado de planilha");
+        return await F(c).GravarAbastecimentoAsync(c.Empresa, a, c.Usuario);
+    });
+
     private static readonly DefinicaoImportacao Multas = new("multas", "Multas de trânsito",
     [
         new("placa", "Placa", true, "ABC1D23", "placa", "veiculo"),
@@ -183,5 +237,6 @@ public static class ImportacoesFrota
         Veiculos with { TelaCadastro = ViewModels.FrotaTelas.Veiculos }, Motoristas with { TelaCadastro = ViewModels.FrotaTelas.Motoristas },
         Frotas with { TelaCadastro = ViewModels.FrotaTelas.Frotas }, Rotas with { TelaCadastro = ViewModels.FrotaTelas.Rotas },
         TabelasFrete with { TelaCadastro = ViewModels.FrotaTelas.TabelasFrete }, Multas with { TelaCadastro = ViewModels.FrotaTelas.Multas },
+        Abastecimentos with { TelaCadastro = ViewModels.FrotaTelas.Abastecimentos },
     ];
 }
