@@ -303,7 +303,10 @@ public class SuiteLogisticaTests(BancoDeTeste db, SessaoHeadless headless) : ICl
                 Assert.IsType<ImportacaoCadastrosViewModel>(frotas.Conteudo);
                 frotas.AbrirCommand.Execute(Vorticis.Frota.Desktop.ViewModels.FrotaTelas.Abastecimentos);
                 Dispatcher.UIThread.RunJobs();
-                Assert.False(BotaoImportar()?.IsVisible == true, "Abastecimentos não é cadastro importável");
+                Assert.True(BotaoImportar()?.IsVisible, "Abastecimentos importa o relatório do cartão de combustível");
+                frotas.AbrirCommand.Execute(Vorticis.Frota.Desktop.ViewModels.FrotaTelas.Viagens);
+                Dispatcher.UIThread.RunJobs();
+                Assert.False(BotaoImportar()?.IsVisible == true, "Viagens não tem importação de planilha");
                 foreach (var f in frotas.JanelasAbertas.ToList()) frotas.FecharFuncaoCommand.Execute(f);
                 Dispatcher.UIThread.RunJobs();
 
