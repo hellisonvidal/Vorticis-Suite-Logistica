@@ -43,6 +43,7 @@ public sealed partial class SeletorMunicipio : ObservableObject
 public abstract partial class TmsBase(IContexto contexto) : FrotaBase(contexto, Permissao.FrotaTms)
 {
     public ObservableCollection<Opcao> ParticipantesOpcoes { get; } = [];
+    protected List<ParticipanteResumo> Participantes { get; private set; } = [];
     [ObservableProperty] private DateTime? _inicio = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
     [ObservableProperty] private DateTime? _fim = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(1).AddDays(-1);
     [ObservableProperty] private string _totais = "";
@@ -55,6 +56,7 @@ public abstract partial class TmsBase(IContexto contexto) : FrotaBase(contexto, 
     protected async Task CarregarParticipantesAsync(VorticisApp app, long empresa, long usuario, string vazio = "(escolha)")
     {
         var participantes = await app.Frota().ParticipantesAsync(empresa, usuario);
+        Participantes = participantes;
         ParticipantesOpcoes.Clear();
         ParticipantesOpcoes.Add(new Opcao(null, vazio));
         foreach (var p in participantes) ParticipantesOpcoes.Add(new Opcao(p.Id, p.ToString()));
@@ -321,6 +323,19 @@ public partial class CotacoesViewModel(IContexto contexto) : TmsBase(contexto)
 
 // ---------------------------------------------------------------------------------------------- conhecimentos (CT-e)
 
+public sealed record NotaCteLinha(NotaTransportada N)
+{
+    public string Numero => $"{N.Numero}" + (N.Serie > 0 ? $"/{N.Serie}" : "");
+    public string Emissao => Ext.Data(N.Emissao);
+    public string Remetente => N.EmitenteNome;
+    public string Destinatario => N.DestinatarioNome + (N.Destino is { } d ? $" ({d.Municipio}/{d.Uf})" : "");
+    public string Volumes => N.Volumes.ToString("N0", Formato.PtBr);
+    public string Peso => Formato.Num(N.Peso);
+    public string Valor => Formato.Moeda(N.Valor);
+    public string Produto => N.Produto ?? "";
+    public string Chave => N.Chave;
+}
+
 public sealed record CteLinha(Cte C)
 {
     public string Numero => $"{C.Serie}-{C.Numero}";
@@ -389,6 +404,15 @@ public partial class CtesViewModel(IContexto contexto) : TmsBase(contexto)
     [ObservableProperty] private string _chave = "";
     [ObservableProperty] private string _protocolo = "";
     [ObservableProperty] private string _situacaoTexto = "Novo (digitado)";
+    public ObservableCollection<NotaCteLinha> Notas { get; } = [];
+    [ObservableProperty] private NotaCteLinha? _notaSelecionada;
+    [ObservableProperty] private string _painelQuantidade = "0";
+    [ObservableProperty] private string _painelVolumes = "0";
+    [ObservableProperty] private string _painelPeso = "0";
+    [ObservableProperty] private string _painelValor = Formato.Moeda(0);
+    [ObservableProperty] private string _painelPartes = "";
+    [ObservableProperty] private string _painelFrete = "";
+    private bool _notasAlteradas;
 
     protected override void AoMudarPeriodo() => _ = CarregarAsync();
     partial void OnFiltroSituacaoChanged(OpcaoFiltro? value) => _ = CarregarAsync();
@@ -398,6 +422,7 @@ public partial class CtesViewModel(IContexto contexto) : TmsBase(contexto)
     partial void OnPedagioChanged(string value) => Resumir();
     partial void OnTaxasChanged(string value) => Resumir();
     partial void OnAliquotaIcmsChanged(string value) => Resumir();
+    partial void OnResumoFreteChanged(string value) => AtualizarPainel();
 
     private static decimal V(string s) => Formato.LerValor(s) ?? 0;
     private ComponentesFrete Componentes() => RegrasTms.ComIcms(V(FretePeso), V(AdValorem), V(Gris), V(Pedagio), V(Taxas), V(AliquotaIcms));
@@ -449,7 +474,87 @@ public partial class CtesViewModel(IContexto contexto) : TmsBase(contexto)
         Origem.Definir(c.Origem);
         Destino.Definir(c.Destino);
         Preencher(c.Frete);
+        _ = CarregarNotasAsync(c.Id);
         SituacaoTexto = RegrasTms.Rotulo(c.Situacao) + (c.Recebedor is { } r ? $" – recebido por {r}" : "") + (c.FaturaNumero is { } f ? $" – fatura nº {f}" : "");
+    }
+
+    private async Task CarregarNotasAsync(long cte)
+    {
+        Notas.Clear();
+        _notasAlteradas = false;
+        AtualizarPainel();
+        if (Contexto.App is not { } app || Contexto.Sessao is not { } sessao || Contexto.EmpresaId is not { } empresa) return;
+        var notas = await app.Frota().NotasCteAsync(empresa, cte, sessao.Id);
+        if (Selecionado?.C.Id != cte) return;
+        foreach (var n in notas) Notas.Add(new NotaCteLinha(n));
+        AtualizarPainel();
+    }
+
+    /// <summary>Painel das notas: quantidade, volumes, peso, valor, remetentes/destinatários e o frete sobre o valor das notas.</summary>
+    private void AtualizarPainel()
+    {
+        var r = ResumoNotasCte.De([.. Notas.Select(n => n.N)], Componentes().Total);
+        (PainelQuantidade, PainelVolumes, PainelPeso, PainelValor) = (r.Notas.ToString(), r.Volumes.ToString("N0", Formato.PtBr), Formato.Num(r.Peso) + " kg", Formato.Moeda(r.Valor));
+        PainelPartes = r.Notas == 0 ? "" : $"{r.Remetentes} remetente(s) · {r.Destinatarios} destinatário(s) · peso bruto {Formato.Num(r.PesoBruto)} kg · "
+                                          + $"líquido {Formato.Num(r.PesoLiquido)} kg" + (r.Produto is null ? "" : $" · produto principal: {r.Produto}");
+        PainelFrete = r.Valor == 0 ? "" : $"Frete do CT-e = {r.FretePorValor.ToString("N2", Formato.PtBr)}% do valor das notas";
+    }
+
+    /// <summary>
+    /// Anexa as NF-e pelos XML: soma volumes, peso e valor na carga do CT-e, junta as chaves e, no CT-e novo, preenche remetente, destinatário,
+    /// tomador (o remetente), origem, destino e produto pelas notas. As notas são guardadas ao gravar o CT-e.
+    /// </summary>
+    public void AnexarXml(IEnumerable<(string Nome, byte[] Conteudo)> arquivos)
+    {
+        Erros.Clear();
+        var novas = 0;
+        foreach (var (nome, conteudo) in arquivos)
+        {
+            var (nota, erro) = LeitorNfeTransporte.Ler(conteudo);
+            if (nota is null) { Erros.Add($"{Path.GetFileName(nome)}: {erro}"); continue; }
+            if (Notas.Any(n => n.N.Chave == nota.Chave)) { Erros.Add($"{Path.GetFileName(nome)}: a NF-e nº {nota.Numero} já está anexada."); continue; }
+            Notas.Add(new NotaCteLinha(nota));
+            novas++;
+        }
+        if (novas == 0) return;
+        _notasAlteradas = true;
+        var primeira = Notas[0].N;
+        if (Remetente?.Id is null) Remetente = PorDocumento(primeira.EmitenteDocumento) ?? Remetente;
+        if (Destinatario?.Id is null && Notas.Select(n => n.N.DestinatarioDocumento).Distinct().Count() == 1)
+            Destinatario = PorDocumento(primeira.DestinatarioDocumento) ?? Destinatario;
+        if (Tomador?.Id is null && Remetente?.Id is not null) Tomador = Remetente;
+        if (Origem.Municipio is null && primeira.Origem is { } o) Origem.Definir(o);
+        if (Destino.Municipio is null && primeira.Destino is { } d) Destino.Definir(d);
+        AplicarTotais();
+        var semCadastro = Notas.Select(n => n.N).SelectMany(n => new[] { (n.EmitenteDocumento, n.EmitenteNome), (n.DestinatarioDocumento, n.DestinatarioNome) })
+                               .Where(x => PorDocumento(x.Item1) is null).Select(x => x.Item2).Distinct().ToList();
+        Mensagem = $"{novas} NF-e anexada(s). Grave o CT-e para guardar as notas."
+                   + (semCadastro.Count > 0 ? $" Sem cadastro em Clientes/Fornecedores: {string.Join(", ", semCadastro)}." : "");
+    }
+
+    private Opcao? PorDocumento(string? documento) =>
+        documento is null ? null : Participantes.FirstOrDefault(p => p.Documento == documento) is { } p ? Escolher(ParticipantesOpcoes, p.Id) : null;
+
+    /// <summary>Volumes, peso, valor da mercadoria, chaves e produto do CT-e pela soma das notas anexadas.</summary>
+    private void AplicarTotais()
+    {
+        var r = ResumoNotasCte.De([.. Notas.Select(n => n.N)]);
+        if (r.Notas > 0) (Volumes, Peso, ValorMercadoria) = (r.Volumes.ToString(), Ext.Num(r.Peso), Ext.Num(r.Valor));
+        if (string.IsNullOrWhiteSpace(Produto) && r.Produto is { } p) Produto = p.Length > 100 ? p[..100] : p;
+        var anexadas = Notas.Select(n => n.N.Chave).ToList();
+        ChavesNfe = string.Join("\n", RegrasTms.ChavesNfe(ChavesNfe).Concat(anexadas).Distinct());
+        AtualizarPainel();
+    }
+
+    [RelayCommand]
+    private void RetirarNota()
+    {
+        if (NotaSelecionada is not { } n) { Erros.Clear(); Erros.Add("Selecione a nota."); return; }
+        Notas.Remove(n);
+        ChavesNfe = string.Join("\n", RegrasTms.ChavesNfe(ChavesNfe).Where(k => k != n.N.Chave));
+        _notasAlteradas = true;
+        AplicarTotais();
+        Mensagem = $"NF-e nº {n.N.Numero} retirada. Grave o CT-e para confirmar.";
     }
 
     public async Task CarregarAsync()
@@ -499,6 +604,9 @@ public partial class CtesViewModel(IContexto contexto) : TmsBase(contexto)
         (Tabela, Cotacao, Coleta, Viagem, Veiculo, Motorista) = (TabelasOpcoes.FirstOrDefault(), CotacoesOpcoes.FirstOrDefault(), ColetasOpcoes.FirstOrDefault(),
                                                                 ViagensOpcoes.FirstOrDefault(), VeiculosOpcoes.FirstOrDefault(), MotoristasOpcoes.FirstOrDefault());
         Preencher(RegrasTms.ComIcms(0, 0, 0, 0, 0, 0));
+        Notas.Clear();
+        _notasAlteradas = false;
+        AtualizarPainel();
     }
 
     private Cte Montar() => new(Selecionado?.C.Id ?? 0, Ext.Int(Serie) ?? -1, Selecionado?.C.Numero ?? 0, Ext.Dia(Emissao), Cfop, Remetente?.Id ?? 0, Destinatario?.Id ?? 0,
@@ -511,6 +619,12 @@ public partial class CtesViewModel(IContexto contexto) : TmsBase(contexto)
     {
         var r = await app.Frota().GravarCteAsync(empresa, Montar(), usuario);
         if (!r.Sucesso) { MostrarResultado(r, ""); return; }
+        if (_notasAlteradas)
+        {
+            var rn = await app.Frota().GravarNotasCteAsync(empresa, r.Valor.Id, [.. Notas.Select(n => n.N)], usuario);
+            if (!rn.Sucesso) { MostrarResultado(rn, ""); return; }
+            _notasAlteradas = false;
+        }
         await CarregarAsync();
         Selecionado = Lista.FirstOrDefault(l => l.C.Id == r.Valor.Id);
         Mensagem = $"CT-e {r.Valor.Serie}-{r.Valor.Numero} gravado (digitado): {M(r.Valor.ValorTotal)}. Depois de autorizado no emissor, informe a chave e clique em Registrar emissão.";

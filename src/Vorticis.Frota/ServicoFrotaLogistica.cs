@@ -317,8 +317,8 @@ public sealed partial class ServicoFrota
     // ------------------------------------------------------------------ coletas
 
     public async Task<List<ParticipanteResumo>> ParticipantesAsync(long empresa, long usuario, CancellationToken ct = default)
-        => !await PodeVerAsync(usuario, empresa, ct) ? [] : await _db.ListarAsync("SELECT id, codigo, nome FROM core.participante WHERE empresa_id = @e ORDER BY nome",
-                                                                                 r => new ParticipanteResumo(r.GetInt64(0), r.GetString(1), r.GetString(2)), ct, ("e", empresa));
+        => !await PodeVerAsync(usuario, empresa, ct) ? [] : await _db.ListarAsync("SELECT id, codigo, nome, cpf_cnpj FROM core.participante WHERE empresa_id = @e ORDER BY nome",
+                                                                                 r => new ParticipanteResumo(r.GetInt64(0), r.GetString(1), r.GetString(2), r.Texto(3)), ct, ("e", empresa));
 
     public async Task<List<Coleta>> ColetasAsync(long empresa, DateOnly inicio, DateOnly fim, string? situacao, long usuario, CancellationToken ct = default)
         => await PodeVerAsync(usuario, empresa, ct) ? await ListarColetasAsync(empresa, inicio, fim, situacao, ct) : [];

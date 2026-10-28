@@ -78,6 +78,53 @@ public class FrotaTelasTests(SessaoHeadless headless, BancoDeTeste db) : IClassF
     }
 
     [Fact]
+    public async Task Cte_anexa_xml_das_notas_e_mostra_o_painel()
+    {
+        var ok = await ForaDaSessao(headless.Sessao.Dispatch(() =>
+        {
+            static string Chave(int numero)
+            {
+                var c43 = $"352603{"11222333000181"}55001{numero:000000000}1{12345678}";
+                return c43 + RegrasTms.DigitoChave(c43);
+            }
+            static byte[] Xml(int numero, decimal valor, int vol, decimal peso) => System.Text.Encoding.UTF8.GetBytes($"""
+                <nfeProc xmlns="http://www.portalfiscal.inf.br/nfe"><NFe><infNFe Id="NFe{Chave(numero)}">
+                <ide><serie>1</serie><nNF>{numero}</nNF><dhEmi>2026-03-02T10:00:00-03:00</dhEmi></ide>
+                <emit><CNPJ>11222333000181</CNPJ><xNome>Indústria Alfa</xNome><enderEmit><cMun>3509502</cMun><xMun>Campinas</xMun><UF>SP</UF></enderEmit></emit>
+                <dest><CNPJ>22333444000181</CNPJ><xNome>Comércio Beta</xNome><enderDest><cMun>3304557</cMun><xMun>Rio de Janeiro</xMun><UF>RJ</UF></enderDest></dest>
+                <det><prod><xProd>Peças</xProd><vProd>{valor}</vProd></prod></det>
+                <total><ICMSTot><vNF>{valor}</vNF></ICMSTot></total><transp><vol><qVol>{vol}</qVol><pesoB>{peso}</pesoB></vol></transp>
+                </infNFe></NFe></nfeProc>
+                """);
+            var vm = new F.ViewModels.CtesViewModel(new F.MainViewModel());
+            vm.AnexarXml([("1.xml", Xml(1, 6000, 3, 100)), ("2.xml", Xml(2, 4000, 2, 50)), ("1-de-novo.xml", Xml(1, 6000, 3, 100)), ("lixo.xml", "<x/>"u8.ToArray())]);
+            Assert.Equal(2, vm.Notas.Count);
+            Assert.Equal(2, vm.Erros.Count);                                           // a repetida e o arquivo que não é NF-e
+            Assert.Equal(("5", "150", "10000", "Peças"), (vm.Volumes, vm.Peso, vm.ValorMercadoria, vm.Produto));
+            Assert.Equal([Chave(1), Chave(2)], RegrasTms.ChavesNfe(vm.ChavesNfe));
+            Assert.Equal(("2", "5", "10.000,00"), (vm.PainelQuantidade, vm.PainelVolumes, vm.PainelValor));
+            Assert.Equal(("RJ", "3304557"), (vm.Destino.Uf, vm.Destino.Municipio?.Ibge));    // trecho pelas notas
+            vm.NotaSelecionada = vm.Notas[0];
+            vm.RetirarNotaCommand.Execute(null);
+            Assert.Equal(("2", "50", "1"), (vm.Volumes, vm.Peso, vm.PainelQuantidade));
+            Assert.Equal([Chave(2)], RegrasTms.ChavesNfe(vm.ChavesNfe));
+
+            var view = new F.Views.CtesView { DataContext = vm };
+            var janela = new Window { Content = view, Width = 1400, Height = 820 };
+            janela.Show();
+            view.FindControl<TabControl>("AbasCte")!.SelectedIndex = 1;
+            Dispatcher.UIThread.RunJobs();
+            var quadro = janela.CaptureRenderedFrame();
+            Assert.NotNull(quadro);
+            if (Environment.GetEnvironmentVariable("VORTICIS_SCREENSHOTS") is { Length: > 0 } pasta)
+                quadro.Save(Path.Combine(Directory.CreateDirectory(pasta).FullName, "cte-notas.png"));
+            janela.Close();
+            return Task.FromResult(true);
+        }, TestContext.Current.CancellationToken));
+        Assert.True(ok);
+    }
+
+    [Fact]
     public async Task Telas_da_frota_renderizam_e_o_relatorio_monta_as_colunas_da_tabela()
     {
         var ok = await ForaDaSessao(headless.Sessao.Dispatch(() =>

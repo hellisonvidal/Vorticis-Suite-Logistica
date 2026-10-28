@@ -82,6 +82,28 @@ Só cotações abertas podem ser alteradas. Cotações abertas ou recusadas pode
 - **Cancelar CT-e**: para o digitado ou o emitido que ainda não está num manifesto aberto nem numa fatura. Se ele já foi autorizado, cancele também no emissor da SEFAZ.
 - **Excluir**: só o digitado. A cotação usada volta a ficar aprovada.
 
+### Anexar as NF-e pelo XML (painel das notas)
+
+Em vez de digitar as chaves, peso e valores, anexe os XML das notas fiscais que vão na carga. Use a aba **Notas transportadas (XML)**, ao lado da aba **CT-e**.
+
+1. Clique em **Novo CT-e** (ou selecione um CT-e **digitado**).
+2. Na aba **Notas transportadas (XML)**, clique em **Anexar XML das NF-e...** e escolha os arquivos. Pode escolher vários de uma vez; para pegar a pasta inteira, use **Ctrl+A**.
+3. O programa lê cada nota e:
+   - soma os **volumes**, o **peso** (o peso bruto da nota; sem ele, o líquido) e o **valor da mercadoria** na aba *CT-e*;
+   - junta as **chaves das NF-e** no campo de chaves;
+   - preenche o **produto predominante** (o de maior valor nas notas), se estiver vazio;
+   - no CT-e novo, escolhe o **remetente** (emitente da nota) e o **destinatário** pelo CNPJ, se estiverem cadastrados em Clientes/Fornecedores. O **tomador** passa a ser o remetente; troque se o frete for pago pelo destinatário;
+   - preenche a **origem** e o **destino** pelos municípios do emitente e do destinatário.
+4. Confira o **painel**: quantidade de notas, volumes, peso, valor das notas, quantos remetentes e destinatários diferentes, peso bruto e líquido. Depois de calcular o frete, aparece também quanto o frete representa do valor das notas (%).
+5. Para tirar uma nota, selecione-a e clique em **Retirar nota**: os totais são refeitos.
+6. Clique em **Gravar** (aba *CT-e*). As notas ficam guardadas com o CT-e.
+
+**Regras:**
+- Arquivos que não são NF-e, com chave inválida ou repetidos aparecem em vermelho e ficam de fora.
+- Uma NF-e só pode estar em um CT-e ativo; num CT-e cancelado, ela fica livre para outro.
+- Depois de **emitido**, as notas do CT-e não mudam mais.
+- Se o remetente ou o destinatário não estiverem cadastrados, a mensagem avisa o nome: cadastre em *Cadastros › Clientes* (pode buscar os dados na Receita pelo CNPJ) e escolha no CT-e.
+
 ## Manifestos de carga (MDF-e)
 
 **Para que serve:** reunir os CT-e que seguem no mesmo veículo, com o motorista e o percurso, e controlar a abertura e o encerramento da viagem.

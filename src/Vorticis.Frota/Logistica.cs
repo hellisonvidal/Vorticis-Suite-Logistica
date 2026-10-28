@@ -38,7 +38,7 @@ public sealed record Coleta(long Id, int Numero, DateTime AgendadaEm, long? Reme
                             decimal PesoKg, decimal ValorMercadoria, long? VeiculoId, long? MotoristaId, long? RotaId, string Situacao, string? Observacao,
                             string? Remetente = null, string? Destinatario = null, string? Placa = null, string? MotoristaNome = null, string? RotaNome = null);
 
-public sealed record ParticipanteResumo(long Id, string Codigo, string Nome)
+public sealed record ParticipanteResumo(long Id, string Codigo, string Nome, string? Documento = null)
 {
     public override string ToString() => $"{Codigo} – {Nome}";
 }

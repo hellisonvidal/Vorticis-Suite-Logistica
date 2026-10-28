@@ -1,6 +1,18 @@
 <UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Frota.Desktop.ViewModels"
              x:Class="Vorticis.Frota.Desktop.Views.CtesView" x:DataType="vm:CtesViewModel">
+  <UserControl.Styles>
+    <Style Selector="TabControl#AbasCte > TabItem">
+      <Setter Property="FontSize" Value="15" />
+      <Setter Property="MinHeight" Value="34" />
+      <Setter Property="Padding" Value="10,0" />
+    </Style>
+    <Style Selector="Border.cartao">
+      <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}" />
+      <Setter Property="CornerRadius" Value="6" />
+      <Setter Property="Padding" Value="10,6" />
+    </Style>
+  </UserControl.Styles>
   <Grid ColumnDefinitions="*,12,480" RowDefinitions="Auto,Auto,*" Margin="8">
     <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="8" Margin="0,0,0,6">
       <TextBlock Classes="titulo" Text="Conhecimentos de transporte (CT-e)" VerticalAlignment="Center" />
@@ -27,7 +39,9 @@
         <DataGridTextColumn Header="Fatura" Binding="{ReflectionBinding Fatura}" Width="60" />
       </DataGrid.Columns>
     </DataGrid>
-    <ScrollViewer Grid.Row="2" Grid.Column="2">
+    <TabControl Name="AbasCte" Grid.Row="2" Grid.Column="2" Padding="0">
+    <TabItem Header="CT-e">
+    <ScrollViewer>
     <StackPanel Spacing="6" IsEnabled="{Binding PodeEditar}">
       <Grid ColumnDefinitions="140,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
         <TextBlock Grid.ColumnSpan="2" Text="Documento" FontWeight="Bold" FontSize="12" Margin="0,6,0,0" />
@@ -125,5 +139,41 @@
       <c:MensagensView />
     </StackPanel>
     </ScrollViewer>
+    </TabItem>
+    <TabItem Header="Notas transportadas (XML)">
+      <DockPanel Margin="0,6,0,0">
+        <StackPanel DockPanel.Dock="Top" Spacing="6">
+          <UniformGrid Columns="4">
+            <Border Classes="cartao" Margin="0,0,4,4"><StackPanel><TextBlock Text="Notas" FontSize="11" /><TextBlock Text="{Binding PainelQuantidade}" FontSize="18" FontWeight="Bold" /></StackPanel></Border>
+            <Border Classes="cartao" Margin="0,0,4,4"><StackPanel><TextBlock Text="Volumes" FontSize="11" /><TextBlock Text="{Binding PainelVolumes}" FontSize="18" FontWeight="Bold" /></StackPanel></Border>
+            <Border Classes="cartao" Margin="0,0,4,4"><StackPanel><TextBlock Text="Peso" FontSize="11" /><TextBlock Text="{Binding PainelPeso}" FontSize="18" FontWeight="Bold" /></StackPanel></Border>
+            <Border Classes="cartao" Margin="0,0,0,4"><StackPanel><TextBlock Text="Valor das notas" FontSize="11" /><TextBlock Text="{Binding PainelValor}" FontSize="18" FontWeight="Bold" /></StackPanel></Border>
+          </UniformGrid>
+          <TextBlock Text="{Binding PainelPartes}" FontSize="12" TextWrapping="Wrap" />
+          <TextBlock Text="{Binding PainelFrete}" FontSize="12" FontWeight="SemiBold" />
+          <StackPanel Orientation="Horizontal" Spacing="6" IsEnabled="{Binding PodeEditar}">
+            <Button Name="BotaoAnexarXml" Content="Anexar XML das NF-e..." Classes="accent" Click="AnexarXml" />
+            <Button Content="Retirar nota" Command="{Binding RetirarNotaCommand}" />
+          </StackPanel>
+          <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                     Text="Escolha um ou vários XML de NF-e (Ctrl+A seleciona todos os arquivos da pasta). Volumes, peso, valor da mercadoria e chaves vão para o CT-e; no CT-e novo, também o remetente, o destinatário, a origem e o destino. Grave o CT-e para guardar as notas." />
+          <c:MensagensView />
+        </StackPanel>
+        <DataGrid ItemsSource="{Binding Notas}" SelectedItem="{Binding NotaSelecionada}" IsReadOnly="True" AutoGenerateColumns="False" Margin="0,6,0,0">
+          <DataGrid.Columns>
+            <DataGridTextColumn Header="NF-e" Binding="{ReflectionBinding Numero}" Width="70" />
+            <DataGridTextColumn Header="Emissão" Binding="{ReflectionBinding Emissao}" Width="85" />
+            <DataGridTextColumn Header="Remetente" Binding="{ReflectionBinding Remetente}" Width="140" />
+            <DataGridTextColumn Header="Destinatário" Binding="{ReflectionBinding Destinatario}" Width="170" />
+            <DataGridTextColumn Header="Vol." Binding="{ReflectionBinding Volumes}" Width="50" />
+            <DataGridTextColumn Header="Peso (kg)" Binding="{ReflectionBinding Peso}" Width="85" />
+            <DataGridTextColumn Header="Valor" Binding="{ReflectionBinding Valor}" Width="100" />
+            <DataGridTextColumn Header="Produto" Binding="{ReflectionBinding Produto}" Width="150" />
+            <DataGridTextColumn Header="Chave" Binding="{ReflectionBinding Chave}" Width="330" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </DockPanel>
+    </TabItem>
+    </TabControl>
   </Grid>
 </UserControl>
