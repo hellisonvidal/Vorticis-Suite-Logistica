@@ -1,209 +1,133 @@
 using Vorticis.Desktop.Comum.Modulos;
-using Vorticis.Domain.Seguranca;
 using Vorticis.Frota.Desktop.ViewModels;
 
 namespace Vorticis.Frota.Desktop;
 
-/// <summary>
-/// Módulo Frota: a empresa ativa é a transportadora. Veículos, motoristas, abastecimentos, viagens, vencimentos e manutenção (ordens de serviço
-/// com autorização e notas de compra).
-/// TMS: tabelas de frete, cotações, conhecimentos (CT-e), manifestos (MDF-e), entregas e faturas de frete (a transmissão à SEFAZ fica para depois).
-/// Permissões FROTA_* conferidas nos serviços.
-/// </summary>
 public sealed class ModuloFrota : IModuloDesktop
 {
-    public string Nome => "Vorticis Frota";
-    public Vorticis.Application.Cadastros.ModulosEmpresa ModuloEmpresa => Vorticis.Application.Cadastros.ModulosEmpresa.Frota;
+    public string Nome => "Frota";
     public string NomeCurto => "Frota";
-    public string Subtitulo => "Coordenação de frota e manutenção para transportadoras";
-    public string NomeExecutavel => "VorticisFrota";
-    public string CorDestaque => "#475569";   // grafite-aço (ícone e selo do módulo)
-    public string CorBarra => "#1E293B";      // asfalto
-    public bool UsaCalendarioObrigacoes => false;
-    /// <summary>Cria os serviços da Frota na abertura, para registrar o processador da Contabilização em lote.</summary>
-    public void PrepararServicos(Vorticis.Infra.VorticisApp app) => _ = app.Frota();
-    public string RotuloEmpresas => "Transportadoras";
-    public string RotuloEmpresaAtiva => "Transportadora";
+    public string NomeExecutavel => "frota";
+    public string Subtitulo => "Gestão de Frota e Logística";
+    public bool GerenciaSistema => false;
+    public IBrush PincelDestaque => new SolidColorBrush(Color.Parse("#059669"));
+    public IBrush PincelBarra => new SolidColorBrush(Color.Parse("#047857"));
 
-    public IReadOnlyList<ItemMenu> ItensCadastros { get; } =
+    public IReadOnlyList<ItemMenu> Menus =>
     [
-        ItemMenu.Tela("Veículos", FrotaTelas.Veiculos),
-        ItemMenu.Tela("Motoristas", FrotaTelas.Motoristas),
-        ItemMenu.Tela("Frotas", FrotaTelas.Frotas),
-        ItemMenu.Tela("Rotas", FrotaTelas.Rotas),
-        ItemMenu.Tela("Tabelas de frete", FrotaTelas.TabelasFrete),
-        ItemMenu.Tela("Documentos e vencimentos", FrotaTelas.Documentos),
+        new ItemMenu("Cadastros", ItemMenuTipo.Submenu, filhos:
+        [
+            new ItemMenu("Veículos", ItemMenuTipo.Tela, FrotaTelas.Veiculos),
+            new ItemMenu("Motoristas", ItemMenuTipo.Tela, FrotaTelas.Motoristas),
+            new ItemMenu("Frotas", ItemMenuTipo.Tela, FrotaTelas.Frotas),
+            new ItemMenu("Tabelas de Frete", ItemMenuTipo.Tela, FrotaTelas.TabelasFrete),
+            new ItemMenu("Documentos da Frota", ItemMenuTipo.Tela, FrotaTelas.DocumentosFrota),
+            new ItemMenu("Rotas", ItemMenuTipo.Tela, FrotaTelas.Rotas),
+            new ItemMenu("Pontos de Parada", ItemMenuTipo.Tela, FrotaTelas.PontosParada),
+        ]),
+        new ItemMenu("Operação", ItemMenuTipo.Submenu, filhos:
+        [
+            new ItemMenu("Painel", ItemMenuTipo.Tela, FrotaTelas.Painel),
+            new ItemMenu("Abastecimentos", ItemMenuTipo.Tela, FrotaTelas.Abastecimentos),
+            new ItemMenu("Viagens", ItemMenuTipo.Tela, FrotaTelas.Viagens),
+            new ItemMenu("Diárias", ItemMenuTipo.Tela, FrotaTelas.Diarias),
+            new ItemMenu("Coletas", ItemMenuTipo.Tela, FrotaTelas.Coletas),
+            new ItemMenu("Entregas", ItemMenuTipo.Tela, FrotaTelas.Entregas),
+            new ItemMenu("Pedágio", ItemMenuTipo.Tela, FrotaTelas.Pedagio),
+            new ItemMenu("Layouts Pedágio", ItemMenuTipo.Tela, FrotaTelas.LayoutsPedagio),
+        ]),
+        new ItemMenu("Emissão (Faturamento TMS)", ItemMenuTipo.Submenu, filhos:
+        [
+            new ItemMenu("Cotações", ItemMenuTipo.Tela, FrotaTelas.Cotacoes),
+            new ItemMenu("CT-es", ItemMenuTipo.Tela, FrotaTelas.Ctes),
+            new ItemMenu("Manifestos", ItemMenuTipo.Tela, FrotaTelas.Manifestos),
+            new ItemMenu("Faturas de Frete", ItemMenuTipo.Tela, FrotaTelas.FaturasFrete),
+        ]),
+        new ItemMenu("Manutenção", ItemMenuTipo.Submenu, filhos:
+        [
+            new ItemMenu("Planos de Manutenção", ItemMenuTipo.Tela, FrotaTelas.PlanosManutencao),
+            new ItemMenu("Itens de Manutenção", ItemMenuTipo.Tela, FrotaTelas.ItensManutencao),
+            new ItemMenu("Ordens de Serviço", ItemMenuTipo.Tela, FrotaTelas.OrdensServico),
+            new ItemMenu("Autorização de Serviços", ItemMenuTipo.Tela, FrotaTelas.AutorizacaoServicos),
+            new ItemMenu("Notas de Compra", ItemMenuTipo.Tela, FrotaTelas.NotasCompra),
+        ]),
+        new ItemMenu("Multas e Infrações", ItemMenuTipo.Submenu, filhos:
+        [
+            new ItemMenu("Monitor de Multas", ItemMenuTipo.Tela, FrotaTelas.MonitorMultas),
+            new ItemMenu("Infrações", ItemMenuTipo.Tela, FrotaTelas.Infracoes),
+            new ItemMenu("Indicação de Condutor", ItemMenuTipo.Tela, FrotaTelas.IndicacaoCondutor),
+            new ItemMenu("Recursos de Multas", ItemMenuTipo.Tela, FrotaTelas.RecursosMultas),
+            new ItemMenu("Parcelamento de Multas", ItemMenuTipo.Tela, FrotaTelas.ParcelamentoMultas),
+        ]),
+        new ItemMenu("Relatórios", ItemMenuTipo.Submenu, filhos:
+        [
+            new ItemMenu("Custos por Veículo", ItemMenuTipo.Tela, FrotaTelas.RelCustosVeiculo),
+            new ItemMenu("Consumo de Combustível", ItemMenuTipo.Tela, FrotaTelas.RelConsumoCombustivel),
+            new ItemMenu("Viagens", ItemMenuTipo.Tela, FrotaTelas.RelViagens),
+            new ItemMenu("Vencimentos", ItemMenuTipo.Tela, FrotaTelas.RelVencimentos),
+            new ItemMenu("Ordens de Serviço", ItemMenuTipo.Tela, FrotaTelas.RelOrdensServico),
+            new ItemMenu("Aprovações", ItemMenuTipo.Tela, FrotaTelas.RelAprovacoes),
+            new ItemMenu("Notas de Compra", ItemMenuTipo.Tela, FrotaTelas.RelNotasCompra),
+            new ItemMenu("Manutenção Preventiva", ItemMenuTipo.Tela, FrotaTelas.RelManutencaoPreventiva),
+            new ItemMenu("Histórico de Veículos", ItemMenuTipo.Tela, FrotaTelas.RelHistoricoVeiculos),
+            new ItemMenu("Multas por Veículo", ItemMenuTipo.Tela, FrotaTelas.RelMultasVeiculo),
+            new ItemMenu("Multas por Condutor", ItemMenuTipo.Tela, FrotaTelas.RelMultasCondutor),
+            new ItemMenu("Custos com Multas", ItemMenuTipo.Tela, FrotaTelas.RelCustosMultas),
+            new ItemMenu("Pontuação CNH", ItemMenuTipo.Tela, FrotaTelas.RelPontuacaoCnh),
+            new ItemMenu("Tabelas de Frete", ItemMenuTipo.Tela, FrotaTelas.RelTabelasFrete),
+            new ItemMenu("CT-es", ItemMenuTipo.Tela, FrotaTelas.RelCtes),
+            new ItemMenu("Manifestos", ItemMenuTipo.Tela, FrotaTelas.RelManifestos),
+            new ItemMenu("Prazos de Entrega", ItemMenuTipo.Tela, FrotaTelas.RelPrazosEntrega),
+            new ItemMenu("Faturas de Frete", ItemMenuTipo.Tela, FrotaTelas.RelFaturasFrete),
+            new ItemMenu("Coletas", ItemMenuTipo.Tela, FrotaTelas.RelColetas),
+            new ItemMenu("Diárias", ItemMenuTipo.Tela, FrotaTelas.RelDiarias),
+            new ItemMenu("Resumo Operacional", ItemMenuTipo.Tela, FrotaTelas.RelResumoOperacional),
+        ]),
     ];
 
-    public IReadOnlyList<ItemMenu> Menus { get; } =
+    public IReadOnlyList<AtalhoPainel> Atalhos =>
     [
-        ItemMenu.Submenu("_Operação",
-            ItemMenu.Tela("Abastecimentos", FrotaTelas.Abastecimentos),
-            ItemMenu.Tela("Viagens", FrotaTelas.Viagens),
-            ItemMenu.Tela("Diárias", FrotaTelas.Diarias),
-            ItemMenu.Separador,
-            ItemMenu.Submenu("_Coletas", ItemMenu.Tela("Ordens de coleta", FrotaTelas.Coletas)),
-            ItemMenu.Tela("Entregas e ocorrências", FrotaTelas.Entregas),
-            ItemMenu.Submenu("_Pedágio",
-                ItemMenu.Tela("Passagens e notas", FrotaTelas.Pedagio),
-                ItemMenu.Tela("Layouts de arquivo", FrotaTelas.LayoutsPedagio))),
-        ItemMenu.Submenu("_Emissão",
-            ItemMenu.Tela("Cotações de frete", FrotaTelas.Cotacoes),
-            ItemMenu.Tela("Conhecimentos de transporte (CT-e)", FrotaTelas.Ctes),
-            ItemMenu.Tela("Manifestos de carga (MDF-e)", FrotaTelas.Manifestos),
-            ItemMenu.Separador,
-            ItemMenu.Tela("Faturas de frete", FrotaTelas.Faturas)),
-        ItemMenu.Submenu("_Manutenção",
-            ItemMenu.Tela("Planos de manutenção", FrotaTelas.Planos),
-            ItemMenu.Tela("Peças e serviços", FrotaTelas.Itens),
-            ItemMenu.Tela("Ordens de serviço", FrotaTelas.Ordens),
-            ItemMenu.Tela("Autorização de serviços", FrotaTelas.Autorizacao)),
-        ItemMenu.Submenu("_Relatórios",
-            ItemMenu.Tela("Painel da frota", FrotaTelas.Painel),
-            ItemMenu.Tela("Custos por veículo", FrotaTelas.RelCustos),
-            ItemMenu.Tela("Consumo de combustível", FrotaTelas.RelConsumo),
-            ItemMenu.Tela("Resultado das viagens", FrotaTelas.RelViagens),
-            ItemMenu.Tela("Vencimentos e manutenções", FrotaTelas.RelVencimentos),
-            ItemMenu.Tela("Custos por frota", FrotaTelas.RelCustosFrota),
-            ItemMenu.Tela("Diárias por colaborador", FrotaTelas.RelDiariasColaborador),
-            ItemMenu.Tela("Diárias por frota", FrotaTelas.RelDiariasFrota),
-            ItemMenu.Tela("Diárias pagas e acertadas", FrotaTelas.RelDiariasAcerto),
-            ItemMenu.Tela("Consumo por veículo", FrotaTelas.RelConsumoVeiculo),
-            ItemMenu.Tela("Consumo por motorista", FrotaTelas.RelConsumoMotorista),
-            ItemMenu.Tela("Viagens por motorista", FrotaTelas.RelViagensMotorista),
-            ItemMenu.Tela("Viagens por cliente", FrotaTelas.RelViagensCliente),
-            ItemMenu.Tela("Viagens por rota", FrotaTelas.RelViagensRota),
-            ItemMenu.Tela("Coletas por cliente", FrotaTelas.RelColetasCliente),
-            ItemMenu.Tela("Coletas por rota", FrotaTelas.RelColetasRota),
-            ItemMenu.Tela("Coletas por motorista", FrotaTelas.RelColetasMotorista),
-            ItemMenu.Tela("Resumo gerencial da frota", FrotaTelas.RelResumo),
-            ItemMenu.Separador,
-            ItemMenu.Tela("Acompanhamento das ordens de serviço", FrotaTelas.RelAcompanhamento),
-            ItemMenu.Tela("Aprovações de serviços", FrotaTelas.RelAprovacoes),
-            ItemMenu.Tela("Notas fiscais de compra", FrotaTelas.RelNotas),
-            ItemMenu.Tela("Manutenções preventivas", FrotaTelas.RelPreventivas),
-            ItemMenu.Tela("Histórico de manutenção por veículo", FrotaTelas.RelHistoricoManutencao),
-            ItemMenu.Separador,
-            ItemMenu.Tela(TabelasTms.TituloFretesCliente, FrotaTelas.RelFretesCliente),
-            ItemMenu.Tela(TabelasTms.TituloFretesTrecho, FrotaTelas.RelFretesTrecho),
-            ItemMenu.Tela(TabelasTms.TituloConhecimentos, FrotaTelas.RelConhecimentos),
-            ItemMenu.Tela(TabelasTms.TituloPrazoEntrega, FrotaTelas.RelPrazoEntrega),
-            ItemMenu.Tela(TabelasTms.TituloFaturas, FrotaTelas.RelFaturas)),
+        new AtalhoPainel(FrotaTelas.Veiculos, "Veículos", "Cadastro de veículos da frota"),
+        new AtalhoPainel(FrotaTelas.Motoristas, "Motoristas", "Cadastro de motoristas"),
+        new AtalhoPainel(FrotaTelas.Viagens, "Viagens", "Controle de viagens"),
+        new AtalhoPainel(FrotaTelas.Abastecimentos, "Abastecimentos", "Registro de abastecimentos"),
+        new AtalhoPainel(FrotaTelas.OrdensServico, "Ordens de Serviço", "Manutenção da frota"),
+        new AtalhoPainel(FrotaTelas.MonitorMultas, "Monitor de Multas", "Acompanhamento de multas"),
     ];
 
-    public IReadOnlyList<DefinicaoGrafico> Graficos => GraficosFrota.Todos;
-
-    public IReadOnlyList<DefinicaoImportacao> Importacoes => ImportacoesFrota.Todas;
-
-    public IReadOnlyList<AtalhoTela> Atalhos { get; } =
-    [
-        new("Ctrl+B", FrotaTelas.Abastecimentos, "Abastecimentos"),
-        new("Ctrl+P", FrotaTelas.Painel, "Painel da frota"),
-        new("Ctrl+O", FrotaTelas.Ordens, "Ordens de serviço"),
-    ];
-
-    private static bool Pode(MainViewModelBase m, params Permissao[] p) => m.TemAcessoNaEmpresa && p.Any(m.Pode);
-    private static readonly Permissao[] Todas = [Permissao.FrotaCadastros, Permissao.FrotaOperacao, Permissao.FrotaRelatorios, Permissao.FrotaManutencao, Permissao.FrotaAprovar, Permissao.FrotaTms];
-    private static readonly Permissao[] PermissoesTms = [Permissao.FrotaTms, Permissao.FrotaOperacao, Permissao.FrotaRelatorios];
-    private static readonly Permissao[] Manutencao = [Permissao.FrotaManutencao, Permissao.FrotaAprovar, Permissao.FrotaRelatorios];
-
-    public void RegistrarTelas(CatalogoTelas c)
+    public void RegistrarTelas(CatalogoTelas catalogo)
     {
-        c.Instancia("PainelFrota", m => new PainelFrotaViewModel(m), aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
-            .Tela(FrotaTelas.Painel, "Relatórios › Painel da frota", m => Pode(m, Todas), v => v.CarregarAsync());
-        c.Instancia("Veiculos", m => new VeiculosViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
-                    aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
-            .Tela(FrotaTelas.Veiculos, "Cadastros › Veículos", m => Pode(m, Todas), v => v.CarregarAsync());
-        c.Instancia("Motoristas", m => new MotoristasViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
-                    aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
-            .Tela(FrotaTelas.Motoristas, "Cadastros › Motoristas", m => Pode(m, Todas), v => v.CarregarAsync());
-        c.Instancia("PlanosManutencao", m => new PlanosViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
-                    aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
-            .Tela(FrotaTelas.Planos, "Manutenção › Planos de manutenção", m => Pode(m, Manutencao), v => v.CarregarAsync());
-        c.Instancia("DocumentosFrota", m => new DocumentosViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
-                    aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
-            .Tela(FrotaTelas.Documentos, "Cadastros › Documentos e vencimentos", m => Pode(m, Todas), v => v.CarregarAsync());
-        c.Instancia("Abastecimentos", m => new AbastecimentosViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
-                    aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
-            .Tela(FrotaTelas.Abastecimentos, "Operação › Abastecimentos", m => Pode(m, Permissao.FrotaOperacao, Permissao.FrotaRelatorios), v => v.CarregarAsync());
-        c.Instancia("ItensManutencao", m => new ItensManutencaoViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
-                    aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
-            .Tela(FrotaTelas.Itens, "Manutenção › Peças e serviços", m => Pode(m, Manutencao), v => v.CarregarAsync());
-        c.Instancia("OrdensServico", m => new OrdensViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
-                    aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
-            .Tela(FrotaTelas.Ordens, "Manutenção › Ordens de serviço", m => Pode(m, Manutencao), v => v.CarregarAsync());
-        c.Instancia("AutorizacaoServicos", m => new AutorizacaoViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
-                    aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
-            .Tela(FrotaTelas.Autorizacao, "Manutenção › Autorização de serviços", m => Pode(m, Manutencao), v => v.CarregarAsync());
-        c.Instancia("NotasCompra", m => new NotasCompraViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
-                    aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
-            .Tela(FrotaTelas.Notas, "Manutenção › Notas de compra", m => Pode(m, Manutencao), v => v.CarregarAsync());
-        c.Instancia("Viagens", m => new ViagensViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
-                    aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
-            .Tela(FrotaTelas.Viagens, "Operação › Viagens", m => Pode(m, Permissao.FrotaOperacao, Permissao.FrotaRelatorios), v => v.CarregarAsync());
-        c.Instancia("Frotas", m => new FrotasViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
-                    aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
-            .Tela(FrotaTelas.Frotas, "Cadastros › Frotas", m => Pode(m, Todas), v => v.CarregarAsync());
-        c.Instancia("Rotas", m => new RotasViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
-                    aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
-            .Tela(FrotaTelas.Rotas, "Cadastros › Rotas", m => Pode(m, Todas), v => v.CarregarAsync());
-        c.Instancia("Diarias", m => new DiariasViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
-                    aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
-            .Tela(FrotaTelas.Diarias, "Operação › Diárias", m => Pode(m, Permissao.FrotaOperacao, Permissao.FrotaRelatorios), v => v.CarregarAsync());
-        c.Instancia("Coletas", m => new ColetasViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
-                    aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
-            .Tela(FrotaTelas.Coletas, "Operação › Coletas › Ordens de coleta", m => Pode(m, Permissao.FrotaOperacao, Permissao.FrotaRelatorios), v => v.CarregarAsync());
-        Relatorio(c, "RelCustosFrotaGrupo", FrotaTelas.RelCustosFrota, Vorticis.Frota.TabelasFrota.TituloCustosFrota);
-        Relatorio(c, "RelDiariasColab", FrotaTelas.RelDiariasColaborador, Vorticis.Frota.TabelasFrota.TituloDiariasColaborador);
-        Relatorio(c, "RelDiariasFrota", FrotaTelas.RelDiariasFrota, Vorticis.Frota.TabelasFrota.TituloDiariasFrota);
-        Relatorio(c, "RelCustosFrota", FrotaTelas.RelCustos, Vorticis.Frota.TabelasFrota.TituloCustos);
-        Relatorio(c, "RelConsumoFrota", FrotaTelas.RelConsumo, Vorticis.Frota.TabelasFrota.TituloConsumo);
-        Relatorio(c, "RelViagensFrota", FrotaTelas.RelViagens, Vorticis.Frota.TabelasFrota.TituloViagens);
-        Relatorio(c, "RelVencimentosFrota", FrotaTelas.RelVencimentos, Vorticis.Frota.TabelasFrota.TituloVencimentos);
-        Relatorio(c, "RelOrdensFrota", FrotaTelas.RelAcompanhamento, Vorticis.Frota.TabelasFrota.TituloAcompanhamento);
-        Relatorio(c, "RelAprovacoesFrota", FrotaTelas.RelAprovacoes, Vorticis.Frota.TabelasFrota.TituloAprovacoes);
-        Relatorio(c, "RelNotasFrota", FrotaTelas.RelNotas, Vorticis.Frota.TabelasFrota.TituloNotas);
-        Relatorio(c, "RelConsumoVeiculo", FrotaTelas.RelConsumoVeiculo, Vorticis.Frota.TabelasFrota.TituloConsumoVeiculo);
-        Relatorio(c, "RelConsumoMotorista", FrotaTelas.RelConsumoMotorista, Vorticis.Frota.TabelasFrota.TituloConsumoMotorista);
-        Relatorio(c, "RelPreventivas", FrotaTelas.RelPreventivas, Vorticis.Frota.TabelasFrota.TituloPreventivas);
-        Relatorio(c, "RelHistoricoManutencao", FrotaTelas.RelHistoricoManutencao, Vorticis.Frota.TabelasFrota.TituloHistoricoManutencao);
-        Relatorio(c, "RelViagensMotorista", FrotaTelas.RelViagensMotorista, Vorticis.Frota.TabelasFrota.TituloViagensMotorista);
-        Relatorio(c, "RelViagensCliente", FrotaTelas.RelViagensCliente, Vorticis.Frota.TabelasFrota.TituloViagensCliente);
-        Relatorio(c, "RelViagensRota", FrotaTelas.RelViagensRota, Vorticis.Frota.TabelasFrota.TituloViagensRota);
-        Relatorio(c, "RelColetasCliente", FrotaTelas.RelColetasCliente, Vorticis.Frota.TabelasFrota.TituloColetasCliente);
-        Relatorio(c, "RelColetasRota", FrotaTelas.RelColetasRota, Vorticis.Frota.TabelasFrota.TituloColetasRota);
-        Relatorio(c, "RelColetasMotorista", FrotaTelas.RelColetasMotorista, Vorticis.Frota.TabelasFrota.TituloColetasMotorista);
-        Relatorio(c, "RelDiariasAcerto", FrotaTelas.RelDiariasAcerto, Vorticis.Frota.TabelasFrota.TituloDiariasAcerto);
-        Relatorio(c, "RelResumoFrota", FrotaTelas.RelResumo, Vorticis.Frota.TabelasFrota.TituloResumo);
-        c.Instancia("Pedagio", m => new PedagioViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
-                    aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
-            .Tela(FrotaTelas.Pedagio, "Operações › Pedágio › Passagens e notas", m => Pode(m, Permissao.FrotaOperacao, Permissao.FrotaRelatorios), v => v.CarregarAsync());
-        c.Instancia("LayoutsPedagio", m => new LayoutsPedagioViewModel(m), atualizarPermissoes: v => v.AtualizarPermissoes(),
-                    aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
-            .Tela(FrotaTelas.LayoutsPedagio, "Operações › Pedágio › Layouts de arquivo", m => Pode(m, Permissao.FrotaOperacao, Permissao.FrotaRelatorios), v => v.CarregarAsync());
-        Tms(c, "TabelasFrete", FrotaTelas.TabelasFrete, "Cadastros › Tabelas de frete", m => new TabelasFreteViewModel(m), v => v.CarregarAsync());
-        Tms(c, "Cotacoes", FrotaTelas.Cotacoes, "Emissão › Cotações de frete", m => new CotacoesViewModel(m), v => v.CarregarAsync());
-        Tms(c, "Ctes", FrotaTelas.Ctes, "Emissão › Conhecimentos de transporte (CT-e)", m => new CtesViewModel(m), v => v.CarregarAsync());
-        Tms(c, "Manifestos", FrotaTelas.Manifestos, "Emissão › Manifestos de carga (MDF-e)", m => new ManifestosViewModel(m), v => v.CarregarAsync());
-        Tms(c, "Entregas", FrotaTelas.Entregas, "Operações › Entregas e ocorrências", m => new EntregasViewModel(m), v => v.CarregarAsync());
-        Tms(c, "FaturasFrete", FrotaTelas.Faturas, "Emissão › Faturas de frete", m => new FaturasFreteViewModel(m), v => v.CarregarAsync());
-        Relatorio(c, "RelFretesCliente", FrotaTelas.RelFretesCliente, TabelasTms.TituloFretesCliente);
-        Relatorio(c, "RelFretesTrecho", FrotaTelas.RelFretesTrecho, TabelasTms.TituloFretesTrecho);
-        Relatorio(c, "RelConhecimentos", FrotaTelas.RelConhecimentos, TabelasTms.TituloConhecimentos);
-        Relatorio(c, "RelPrazoEntrega", FrotaTelas.RelPrazoEntrega, TabelasTms.TituloPrazoEntrega);
-        Relatorio(c, "RelFaturasFrete", FrotaTelas.RelFaturas, TabelasTms.TituloFaturas);
-        c.Instancia("ParametrosModulo", m => new ParametrosFrotaViewModel(m), aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
-            .Tela(TelasComuns.Parametros, "Cadastros › Parâmetros", m => m.TemAcessoNaEmpresa, v => v.CarregarAsync());
+        catalogo.Registrar(FrotaTelas.Veiculos, () => new VeiculosView());
+        catalogo.Registrar(FrotaTelas.Motoristas, () => new MotoristasView());
+        catalogo.Registrar(FrotaTelas.Frotas, () => new FrotasView());
+        catalogo.Registrar(FrotaTelas.TabelasFrete, () => new TabelasFreteView());
+        catalogo.Registrar(FrotaTelas.DocumentosFrota, () => new DocumentosFrotaView());
+        catalogo.Registrar(FrotaTelas.Rotas, () => new RotasView());
+        catalogo.Registrar(FrotaTelas.PontosParada, () => new PontosParadaView());
+        catalogo.Registrar(FrotaTelas.Painel, () => new PainelFrotaView());
+        catalogo.Registrar(FrotaTelas.Abastecimentos, () => new AbastecimentosView());
+        catalogo.Registrar(FrotaTelas.Viagens, () => new ViagensView());
+        catalogo.Registrar(FrotaTelas.Diarias, () => new DiariasView());
+        catalogo.Registrar(FrotaTelas.Coletas, () => new ColetasView());
+        catalogo.Registrar(FrotaTelas.Entregas, () => new EntregasView());
+        catalogo.Registrar(FrotaTelas.Pedagio, () => new PedagioView());
+        catalogo.Registrar(FrotaTelas.LayoutsPedagio, () => new LayoutsPedagioView());
+        catalogo.Registrar(FrotaTelas.Cotacoes, () => new CotacoesView());
+        catalogo.Registrar(FrotaTelas.Ctes, () => new CtesView());
+        catalogo.Registrar(FrotaTelas.Manifestos, () => new ManifestosView());
+        catalogo.Registrar(FrotaTelas.FaturasFrete, () => new FaturasFreteView());
+        catalogo.Registrar(FrotaTelas.PlanosManutencao, () => new PlanosManutencaoView());
+        catalogo.Registrar(FrotaTelas.ItensManutencao, () => new ItensManutencaoView());
+        catalogo.Registrar(FrotaTelas.OrdensServico, () => new OrdensServicoView());
+        catalogo.Registrar(FrotaTelas.AutorizacaoServicos, () => new AutorizacaoServicosView());
+        catalogo.Registrar(FrotaTelas.NotasCompra, () => new NotasCompraView());
+        catalogo.Registrar(FrotaTelas.MonitorMultas, () => new MonitorMultasView());
+        catalogo.Registrar(FrotaTelas.Infracoes, () => new InfracoesView());
+        catalogo.Registrar(FrotaTelas.IndicacaoCondutor, () => new IndicacaoCondutorView());
+        catalogo.Registrar(FrotaTelas.RecursosMultas, () => new RecursosMultasView());
+        catalogo.Registrar(FrotaTelas.ParcelamentoMultas, () => new ParcelamentoMultasView());
+        // Relatórios
+        foreach (var rel in FrotaTelas.RelatoriosFrota.Todos)
+            catalogo.Registrar(rel, () => new RelatorioGenericoView(rel));
     }
-
-    private static void Tms<T>(CatalogoTelas c, string instancia, string chave, string titulo, Func<MainViewModelBase, T> criar, Func<T, Task> carregar) where T : FrotaBase =>
-        c.Instancia(instancia, criar, atualizarPermissoes: v => v.AtualizarPermissoes(), aoTrocarEmpresa: (v, ativa) => ativa ? carregar(v) : Task.CompletedTask)
-            .Tela(chave, titulo, m => Pode(m, PermissoesTms), carregar);
-
-    private static void Relatorio(CatalogoTelas c, string instancia, string chave, string titulo) =>
-        c.Instancia(instancia, m => new RelatorioFrotaViewModel(m, titulo), atualizarPermissoes: v => v.AtualizarPermissoesExportacao(),
-                    aoTrocarEmpresa: (v, ativa) => ativa ? v.CarregarAsync() : Task.CompletedTask)
-            .Tela(chave, $"Relatórios › {titulo}", m => Pode(m, Permissao.FrotaRelatorios), v => v.CarregarAsync());
 }
-
-public sealed class MainViewModel() : MainViewModelBase(new ModuloFrota());

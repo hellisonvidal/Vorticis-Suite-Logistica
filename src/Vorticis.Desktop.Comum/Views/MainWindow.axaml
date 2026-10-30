@@ -1,125 +1,35 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
-        xmlns:v="using:Vorticis.Desktop.Comum.Views"
-        xmlns:seg="using:Vorticis.Application.Seguranca"
+        xmlns:vm="clr-namespace:Vorticis.Desktop.Comum.ViewModels"
+        xmlns:views="clr-namespace:Vorticis.Desktop.Comum.Views"
+        x:DataType="vm:MainWindowViewModel"
         x:Class="Vorticis.Desktop.Comum.Views.MainWindow"
-        x:DataType="vm:MainViewModelBase"
-        Title="Vorticis"
-        Icon="avares://Vorticis.Desktop.Comum/Assets/VorticisContabil.ico"
-        Width="1200" Height="760" MinWidth="900" MinHeight="560"
-        WindowStartupLocation="CenterScreen" WindowState="Maximized">
+        Title="Vorticis Suite Logística"
+        Width="1400" Height="900"
+        WindowStartupLocation="CenterScreen"
+        Icon="/Assets/vorticis.ico">
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
 
+    <Window.Styles>
+        <Style Selector="Window">
+            <Setter Property="Background" Value="{DynamicResource WindowBackground}"/>
+        </Style>
+    </Window.Styles>
 
-  <Window.Styles>
-    <Style Selector="Border.janela-aberta">
-      <Setter Property="Background" Value="#DDE3EC" />
-    </Style>
-    <Style Selector="Border.janela-aberta.ativa">
-      <Setter Property="Background" Value="{DynamicResource CorDestaqueModulo}" />
-    </Style>
-    <Style Selector="Border.janela-aberta.ativa Button.chip">
-      <Setter Property="Foreground" Value="White" />
-    </Style>
-    <Style Selector="Button.chip">
-      <Setter Property="Background" Value="Transparent" />
-      <Setter Property="BorderThickness" Value="0" />
-      <Setter Property="MinHeight" Value="22" />
-    </Style>
-    <Style Selector="Menu#MenuPrincipal > MenuItem">
-      <Setter Property="FontSize" Value="13" />
-      <Setter Property="Padding" Value="10,4" />
-      <Setter Property="Foreground" Value="White" />
-    </Style>
-    <Style Selector="Menu#MenuPrincipal MenuItem MenuItem">
-      <Setter Property="FontSize" Value="13" />
-      <Setter Property="Padding" Value="10,5" />
-    </Style>
-  </Window.Styles>
+    <DockPanel>
+        <views:BarraSuperiorView DockPanel.Dock="Top" DataContext="{Binding BarraSuperior}"/>
 
-  <DockPanel>
-    <!-- Suite (vários módulos na mesma janela): navegação à esquerda (B, C) e no topo (A, D); vazias nos executáveis de um módulo -->
-    <ContentControl Name="SuiteLado" DockPanel.Dock="Left" IsVisible="False" />
-    <ContentControl Name="SuiteTopo" DockPanel.Dock="Top" IsVisible="False" />
-    <!-- O nome do programa fica só na barra de título da janela. Menus à esquerda; empresa ativa e usuário à direita -->
-    <!-- A cor da barra e a faixa de destaque identificam o módulo (IModuloDesktop.CorBarra / CorDestaque); o nome dele fica só no título -->
-    <Border DockPanel.Dock="Top" BorderBrush="{Binding PincelDestaque}" BorderThickness="0,0,0,4" IsVisible="{Binding Logado}">
-    <Border Background="{Binding PincelBarra}" Padding="4,0,8,0">
-      <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto">
-        <!-- Os itens vêm do módulo (IModuloDesktop.Menus) e são montados em MainWindow.axaml.cs -->
-        <Menu Name="MenuPrincipal" Grid.Column="1" />
-        <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-          <TextBlock Text="{Binding RotuloEmpresaAtiva}" Foreground="#C9D6E8" FontSize="12" VerticalAlignment="Center" />
-          <ComboBox ItemsSource="{Binding EmpresasPermitidas}" SelectedItem="{Binding EmpresaSelecionada}"
-                    MinWidth="220" MaxWidth="360" FontSize="12" MinHeight="24" Padding="8,1"
-                    PlaceholderText="Nenhuma empresa">
-            <ComboBox.ItemTemplate>
-              <DataTemplate x:DataType="seg:EmpresaPermitida">
-                <TextBlock>
-                  <Run Text="{Binding Codigo, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" – " /><Run Text="{Binding RazaoSocial, Mode=OneWay}" />
-                </TextBlock>
-              </DataTemplate>
-            </ComboBox.ItemTemplate>
-          </ComboBox>
-        </StackPanel>
-        <TextBlock Grid.Column="4" Text="{Binding UsuarioRotulo}" Foreground="#E3E8F2" FontSize="12"
-                   VerticalAlignment="Center" Margin="12,0,0,0" />
-      </Grid>
-    </Border>
-    </Border>
+        <Panel DockPanel.Dock="Bottom" Height="28" Background="{DynamicResource StatusBarBackground}">
+            <TextBlock Text="{Binding StatusBarTexto}" VerticalAlignment="Center" Margin="12,0" FontSize="11" Foreground="{DynamicResource TextSecondary}"/>
+        </Panel>
 
-    <!-- Faixa fixa logo abaixo dos menus (sempre visível depois de entrar, para as janelas das funções nunca a cobrirem):
-         à esquerda, as funções abertas (clicar traz para a frente, ✕ fecha); à direita, na Folha, a competência e a situação dela -->
-    <Border Name="BarraFuncoes" DockPanel.Dock="Top" Background="#EEF1F5" BorderBrush="#D0D5DD" BorderThickness="0,0,0,1" Padding="8,3"
-            MinHeight="34" IsVisible="{Binding Logado}">
-      <Grid ColumnDefinitions="*,Auto">
-        <ItemsControl Name="FuncoesAbertas" ItemsSource="{Binding JanelasAbertas}" VerticalAlignment="Center">
-          <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
-          </ItemsControl.ItemsPanel>
-          <ItemsControl.ItemTemplate>
-            <DataTemplate x:DataType="vm:FuncaoAberta">
-              <Border Classes="janela-aberta" Classes.ativa="{Binding Ativa}" CornerRadius="3" Margin="0,1,6,1" Padding="2,0">
-                <StackPanel Orientation="Horizontal">
-                  <Button Content="{Binding Rotulo}" ToolTip.Tip="{Binding Titulo}" Classes="chip" FontSize="12" Padding="8,2"
-                          Command="{Binding $parent[Window].((vm:MainViewModelBase)DataContext).AtivarFuncaoCommand}" CommandParameter="{Binding}" />
-                  <Button Content="✕" Classes="chip" FontSize="11" Padding="6,2" ToolTip.Tip="Fechar"
-                          Command="{Binding $parent[Window].((vm:MainViewModelBase)DataContext).FecharFuncaoCommand}" CommandParameter="{Binding}" />
-                </StackPanel>
-              </Border>
-            </DataTemplate>
-          </ItemsControl.ItemTemplate>
-        </ItemsControl>
-        <!-- Período de trabalho do módulo (Folha: competência) e a situação dela; fechado bloqueia inclusões, alterações e exclusões -->
-        <StackPanel Name="FaixaPeriodo" Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" IsVisible="{Binding UsaPeriodo}"
-                    Margin="12,0,0,0">
-          <TextBlock Text="{Binding RotuloPeriodo}" Foreground="#44506A" FontSize="12" VerticalAlignment="Center" />
-          <ComboBox ItemsSource="{Binding ListaPeriodos}" SelectedItem="{Binding PeriodoEscolhido}" Width="150"
-                    FontSize="12" MinHeight="24" MaxDropDownHeight="360">
-            <ComboBox.ItemTemplate>
-              <DataTemplate x:DataType="vm:OpcaoPeriodo">
-                <TextBlock Text="{Binding Texto}" />
-              </DataTemplate>
-            </ComboBox.ItemTemplate>
-          </ComboBox>
-          <CheckBox Content="Só fechadas" IsChecked="{Binding SomenteFechados}" Foreground="#44506A" FontSize="12"
-                    VerticalAlignment="Center" Margin="6,0,0,0" ToolTip.Tip="Mostra na lista só as competências já fechadas" />
-          <Border Background="{Binding PincelSituacaoPeriodo}" CornerRadius="3" Padding="6,1"
-                  VerticalAlignment="Center" ToolTip.Tip="Situação do período: inclusões, alterações e exclusões só com o período aberto">
-            <TextBlock Text="{Binding SituacaoPeriodo}" FontSize="11" FontWeight="SemiBold" Foreground="#1F2937" />
-          </Border>
-        </StackPanel>
-      </Grid>
-    </Border>
-
-    <Border DockPanel.Dock="Bottom" Background="#EEF1F5" Padding="12,3">
-      <TextBlock Text="{Binding Status}" FontSize="11" Foreground="#44506A" TextWrapping="Wrap" />
-    </Border>
-
-    <Panel Name="AreaTrabalho">
-      <ContentControl Name="AreaPrincipal" Content="{Binding ConteudoPrincipal}" Margin="8" />
-      <!-- Suite, layout D: painel inicial com os cartões dos módulos (cobre a área de trabalho) -->
-      <ContentControl Name="SuitePainel" IsVisible="False" />
-    </Panel>
-  </DockPanel>
+        <Panel>
+            <TransitioningContentControl Content="{Binding ConteudoAtual}"
+                                         PageTransition="{x:Static CrossFade.PageTransition}"
+                                         HorizontalContentAlignment="Stretch"
+                                         VerticalContentAlignment="Stretch"/>
+        </Panel>
+    </DockPanel>
 </Window>

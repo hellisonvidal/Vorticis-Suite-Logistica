@@ -1,35 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- Casco comum dos executáveis da suíte (Contábil, Fiscal, Folha): bootstrap, janela principal com menu fornecido
-       pelo módulo, login, conexão com o banco, empresas, usuários, perfis, certificados, backup, configurações etc. -->
+
   <PropertyGroup>
-    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
+
   <ItemGroup>
-    <!-- Ícones dos módulos (usados nas janelas; cada executável usa o seu, ver IModuloDesktop.NomeExecutavel) -->
-    <AvaloniaResource Include="..\..\instalador\icone\VorticisContabil.ico" Link="Assets\VorticisContabil.ico" />
-    <AvaloniaResource Include="..\..\instalador\icone\VorticisFiscal.ico" Link="Assets\VorticisFiscal.ico" />
-    <AvaloniaResource Include="..\..\instalador\icone\VorticisFolha.ico" Link="Assets\VorticisFolha.ico" />
-    <AvaloniaResource Include="..\..\instalador\icone\VorticisEscritorio.ico" Link="Assets\VorticisEscritorio.ico" />
-    <AvaloniaResource Include="..\..\instalador\icone\VorticisGerencial.ico" Link="Assets\VorticisGerencial.ico" />
-    <AvaloniaResource Include="..\..\instalador\icone\VorticisCondominio.ico" Link="Assets\VorticisCondominio.ico" />
-    <AvaloniaResource Include="..\..\instalador\icone\VorticisFrota.ico" Link="Assets\VorticisFrota.ico" />
-    <AvaloniaResource Include="..\..\instalador\icone\VorticisLogistica.ico" Link="Assets\VorticisLogistica.ico" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+    <PackageReference Include="Material.Avalonia" Version="3.6.0" />
+    <PackageReference Include="Avalonia" Version="11.2.0" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.2.0" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.0" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.2.0" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="11.2.0" />
+    <PackageReference Include="Material.Icons.Avalonia" Version="3.6.0" />
+    <PackageReference Include="Material.Dialogs.Avalonia" Version="3.6.0" />
   </ItemGroup>
-  <ItemGroup>
-    <!-- Manual do usuário (Ajuda › Manual do usuário): os .md e o mapa tela → tópico (F1) vão como recurso embutido -->
-    <EmbeddedResource Include="..\..\docs\manual\*.md;..\..\docs\manual\mapa.txt" LogicalName="Manual/%(Filename)%(Extension)" />
-  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Vorticis.Infra\Vorticis.Infra.csproj" />
-    <PackageReference Include="Avalonia" />
-    <PackageReference Include="Avalonia.Desktop" />
-    <PackageReference Include="Avalonia.Themes.Fluent" />
-    <PackageReference Include="Avalonia.Fonts.Inter" />
-    <PackageReference Include="Avalonia.Controls.DataGrid" />
-    <PackageReference Include="CommunityToolkit.Mvvm" />
-    <PackageReference Include="System.Security.Cryptography.ProtectedData" />
   </ItemGroup>
-  <ItemGroup>
-    <InternalsVisibleTo Include="Vorticis.Desktop.Tests" />
-  </ItemGroup>
+
 </Project>

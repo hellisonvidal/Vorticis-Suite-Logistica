@@ -1,18 +1,37 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
-             x:Class="Vorticis.Desktop.Comum.Views.ParametrosAbasView"
-             x:DataType="vm:ParametrosAbasViewModel">
-  <Grid RowDefinitions="Auto,Auto,*" Margin="12,12,12,0">
-    <TextBlock Grid.Row="0" Classes="titulo" Text="{Binding Titulo}" />
-    <TextBlock Grid.Row="1" TextWrapping="Wrap" FontSize="12" Foreground="Gray" Margin="0,2,0,6" Text="{Binding Descricao}" />
-    <TabControl Grid.Row="2" ItemsSource="{Binding Abas}" SelectedItem="{Binding AbaSelecionada}">
-      <TabControl.ItemTemplate>
-        <DataTemplate x:DataType="vm:AbaParametros"><TextBlock Text="{Binding Titulo}" /></DataTemplate>
-      </TabControl.ItemTemplate>
-      <TabControl.ContentTemplate>
-        <DataTemplate x:DataType="vm:AbaParametros"><ContentControl Content="{Binding Conteudo}" /></DataTemplate>
-      </TabControl.ContentTemplate>
-    </TabControl>
-  </Grid>
+             xmlns:vm="clr-namespace:Vorticis.Desktop.Comum.ViewModels"
+             x:DataType="vm:ParametrosAbasViewModel"
+             x:Class="Vorticis.Desktop.Comum.Views.ParametrosAbasView">
+    <Design.DataContext>
+        <vm:ParametrosAbasViewModel />
+    </Design.DataContext>
+
+    <Border Background="{DynamicResource PageBackground}" Padding="16">
+        <DockPanel>
+            <Border DockPanel.Dock="Left" Width="220" Background="{DynamicResource CardBackground}" Margin="0,0,16,0" CornerRadius="8">
+                <StackPanel Margin="8">
+                    <TextBlock Text="PARÂMETROS" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource TextSecondary}" Margin="8,8,8,16"/>
+                    <ItemsControl ItemsSource="{Binding Abas}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:AbaParametros">
+                                <RadioButton Content="{Binding Titulo}"
+                                             IsChecked="{Binding $parent[UserControl].DataContext.AbaSelecionada, Converter={x:Static ObjectConverters.EqualsToBool}, ConverterParameter={Binding}, Mode=TwoWay}"
+                                             GroupName="ParametrosAbas"
+                                             FontSize="13" Padding="12,8" Margin="4,2"
+                                             Background="Transparent"
+                                             BorderBrush="{DynamicResource BorderBrush}"
+                                             BorderThickness="1"
+                                             CornerRadius="4"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+            <Border Background="{DynamicResource CardBackground}" CornerRadius="8" Padding="24">
+                <ContentControl Content="{Binding AbaSelecionada.Conteudo}"/>
+            </Border>
+        </DockPanel>
+    </Border>
 </UserControl>
