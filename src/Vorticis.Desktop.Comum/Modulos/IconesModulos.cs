@@ -30,6 +30,11 @@ public static class IconesModulos
         "F0 M5,2 H19 V21 L17.25,19.6 L15.5,21 L13.75,19.6 L12,21 L10.25,19.6 L8.5,21 L6.75,19.6 L5,21 Z " +
         "M8,5.8 H16 V7.4 H8 Z M8,9.4 H16 V11 H8 Z M8,13 H13 V14.6 H8 Z";
 
+    /// <summary>Carrinho de compras: alça, cesto e duas rodas.</summary>
+    public const string Compras =
+        "F0 M1.5,3 H5 L5.6,5.5 H22 L19.7,14.4 H8.1 L8.6,16.2 H19.6 V18 H7.2 L3.6,4.8 H1.5 Z " +
+        "M9.2,18.9 A1.6,1.6 0 1 0 9.2,22.1 A1.6,1.6 0 1 0 9.2,18.9 Z M17.8,18.9 A1.6,1.6 0 1 0 17.8,22.1 A1.6,1.6 0 1 0 17.8,18.9 Z";
+
     /// <summary>Carteira: corpo, aba de cima e o fecho com botão.</summary>
     public const string Financeiro =
         "F0 M3,7 H19 A2,2 0 0 1 21,9 V18 A2,2 0 0 1 19,20 H5 A2,2 0 0 1 3,18 Z M5,5.6 L15.2,2.5 L16.4,5.6 Z " +

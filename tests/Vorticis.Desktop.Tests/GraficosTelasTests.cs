@@ -38,6 +38,20 @@ public class GraficosTelasTests(SessaoHeadless headless, BancoDeTeste db) : ICla
     }
 
     [Fact]
+    public void Bi_do_financeiro_separa_as_contas_em_aberto_por_faixa_de_atraso()
+    {
+        static Vorticis.Fiscal.Duplicatas.Duplicata D(int diasAtraso, decimal saldo, bool paga = false) => new(
+            1, null, null, null, null, "Cliente", Vorticis.Fiscal.Duplicatas.TipoDuplicata.Receber, "1", "1", new DateOnly(2026, 1, 1),
+            new DateOnly(2026, 6, 30).AddDays(-diasAtraso), saldo, 0, 0, 0, paga ? 0 : saldo,
+            paga ? Vorticis.Fiscal.Duplicatas.SituacaoDuplicata.Liquidada : Vorticis.Fiscal.Duplicatas.SituacaoDuplicata.Aberta, null, "MANUAL");
+        var faixas = Fiscal.Desktop.GraficosFiscais.PorFaixa([D(-10, 100), D(0, 50), D(1, 10), D(30, 20), D(31, 5), D(90, 7), D(91, 1000), D(400, 3), D(45, 999, paga: true)],
+                                                             new DateOnly(2026, 6, 30));
+        Assert.Equal([150m, 30m, 5m, 7m, 1003m], faixas);
+        Assert.Equal(["A vencer", "1 a 30 dias", "31 a 60 dias", "61 a 90 dias", "Acima de 90 dias"], Fiscal.Desktop.GraficosFiscais.FaixasAtraso.Select(f => f.Nome));
+        Assert.All(Fiscal.Desktop.GraficosFiscais.Bi, g => Assert.Equal(Fiscal.Desktop.GraficosFiscais.AreaBi, g.Area));
+    }
+
+    [Fact]
     public async Task Custos_da_frota_por_mes_somam_cada_origem()
     {
         BancoDeTeste.ExigirBanco();

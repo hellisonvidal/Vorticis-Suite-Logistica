@@ -41,8 +41,8 @@ public class ParametrosMenusLoteTests(SessaoHeadless headless, Vorticis.Infra.Te
         // cada módulo da Suite: Cadastros › Parâmetros com as abas das suas áreas e a aba Menus
         var esperado = new Dictionary<string, string[]>
         {
-            ["Frotas"] = ["Frota", "Menus"], ["Transporte"] = ["Frota e transporte", "Faturamento", "Menus"], ["Manutenção"] = ["Frota e manutenção", "Menus"],
-["Financeiro"] = ["Financeiro", "Menus"], ["Gerencial"] = ["Gerencial", "Menus"],
+            ["Frotas"] = ["Frota e manutenção", "Menus"], ["Transporte"] = ["Frota e transporte", "Menus"], ["Faturamento"] = ["Faturamento", "CT-e e faturas de frete", "Menus"],
+            ["Compras"] = ["Compras e estoque", "Menus"], ["Financeiro"] = ["Financeiro", "Menus"], ["Gestão"] = ["Gestão", "Menus"],
             ["Contabilidade"] = ["Contábil", "Menus"],
         };
         foreach (var m in ModuloLogistica.Todos())
@@ -57,9 +57,11 @@ public class ParametrosMenusLoteTests(SessaoHeadless headless, Vorticis.Infra.Te
         var vm = new MainViewModel(new ModuloTransporte());
         var abas = Assert.IsType<ParametrosAbasViewModel>(vm.ViewModelDaTela(TelasComuns.Parametros));
         Assert.IsType<Vorticis.Frota.Desktop.ViewModels.ParametrosFrotaViewModel>(abas.Abas[0].Conteudo);
-        Assert.IsType<Vorticis.Fiscal.Desktop.ViewModels.ParametrosFiscalViewModel>(abas.Abas[1].Conteudo);
-        // cada área mantém a sua tela de parâmetros com chave própria (F1 e ManualTests)
-        Assert.Equal(4, vm.ChavesDeTelas.Count(c => c == TelasComuns.Parametros || c.EndsWith(":" + TelasComuns.Parametros)));
+        vm = new MainViewModel(new ModuloFaturamento());
+        abas = Assert.IsType<ParametrosAbasViewModel>(vm.ViewModelDaTela(TelasComuns.Parametros));
+        Assert.IsType<Vorticis.Fiscal.Desktop.ViewModels.ParametrosFiscalViewModel>(abas.Abas[0].Conteudo);
+        // cada área mantém a sua tela de parâmetros com chave própria (F1 e ManualTests): a do programa e a de cada uma das 4 partes
+        Assert.Equal(5, vm.ChavesDeTelas.Count(c => c == TelasComuns.Parametros || c.EndsWith(":" + TelasComuns.Parametros)));
         // Contabilização em lote: item do Exportar da Contabilidade, só com a empresa em lote
         vm = new MainViewModel(new ModuloContabilidade());
         Assert.IsType<Vorticis.Desktop.ViewModels.ParametrosContabilViewModel>(((ParametrosAbasViewModel)vm.ViewModelDaTela(TelasComuns.Parametros)!).Abas[0].Conteudo);
@@ -123,7 +125,7 @@ public class ParametrosMenusLoteTests(SessaoHeadless headless, Vorticis.Infra.Te
         var ok = await ForaDaSessao(headless.Sessao.Dispatch(async () =>
         {
             HospedeiroSuite.IncluirTelas(Avalonia.Application.Current!, ModuloLogistica.Apps());
-            var vm = new MainViewModel(new ModuloTransporte());
+            var vm = new MainViewModel(new ModuloFaturamento());
             await vm.InicializarAsync(db.ConnectionString);
             var login = Assert.IsType<LoginViewModel>(vm.Conteudo);
             (login.Usuario, login.Senha) = ("admin_teste", "Senha1234");
@@ -141,8 +143,8 @@ public class ParametrosMenusLoteTests(SessaoHeadless headless, Vorticis.Infra.Te
                 var abas = Assert.IsType<ParametrosAbasViewModel>(vm.Conteudo);
                 static CampoParametro Campo(ParametrosViewModel p, string chave) => p.Grupos.SelectMany(g => g.Campos).Single(c => c.Chave == chave);
                 static Task Salvar(ParametrosViewModel p) => ((IAsyncRelayCommand)p.SalvarCommand).ExecuteAsync(null);
-                var frota = (ParametrosViewModel)abas.Abas[0].Conteudo;
-                var gerencial = (ParametrosViewModel)abas.Abas[1].Conteudo;
+                var gerencial = (ParametrosViewModel)abas.Abas[0].Conteudo;
+                var frota = (ParametrosViewModel)abas.Abas[1].Conteudo;
                 Assert.All(new[] { frota, gerencial }, p => Assert.True(p.PodeGravar));
                 Assert.False(string.IsNullOrEmpty(Campo(frota, "dias").Texto));   // as abas já vieram carregadas
 

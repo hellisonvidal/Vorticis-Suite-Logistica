@@ -29,8 +29,8 @@ public partial class LoginViewModel(MainViewModelBase main) : ModuloViewModel(ma
     private bool _senhaVeioSalva;
 
     /// <summary>Nome e descrição do módulo, mostrados no topo da tela de acesso.</summary>
-    public string NomeModulo => main.Modulo.Nome;
-    public string SubtituloModulo => main.Modulo.Subtitulo;
+    public string NomeModulo => main.Modulo.NomeAcesso;
+    public string SubtituloModulo => main.Modulo.SubtituloAcesso;
 
     /// <summary>Cor de destaque do módulo (nome no topo da tela de acesso).</summary>
     public Avalonia.Media.IBrush PincelDestaque => main.PincelDestaque;

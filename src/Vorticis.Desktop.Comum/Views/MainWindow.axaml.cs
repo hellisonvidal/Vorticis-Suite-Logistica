@@ -427,35 +427,7 @@ public partial class MainWindow : Window
         MenuPrincipal.Items.Clear();
         _itensComRecurso.Clear();
         foreach (var item in vm.MenusVisiveis) MenuPrincipal.Items.Add(CriarItem(vm, item));
-        if (Suite is { } suite)
-        {
-            // o layout da Suite fica em Configurações (não há menu Exibir: os módulos são trocados pela navegação ou por Ctrl+1, Ctrl+2...)
-            if (MenuPrincipal.Items.OfType<MenuItem>().FirstOrDefault(m => (m.Header as string) == "Con_figurações") is { } config)
-            {
-                config.Items.Insert(0, MenuLayout(suite));
-                config.Items.Insert(1, new Separator());
-            }
-        }
-    }
-
-    private static MenuItem MenuLayout(SuiteViewModel suite)
-    {
-        var layout = new MenuItem { Header = "Layout da Suite" };
-        foreach (var (valor, nome) in SuiteViewModel.Nomes)
-            layout.Items.Add(new MenuItem
-            {
-                Header = (valor == suite.Layout ? "●  " : "     ") + nome, Command = suite.EscolherLayoutCommand, CommandParameter = valor,
-            });
-        layout.Items.Add(new Separator());
-        layout.Items.Add(new MenuItem
-        {
-            Header = (suite.LateralFixa ? "●  " : "     ") + "Fixar a navegação à esquerda (B e C)", Command = suite.AlternarFixaCommand,
-        });
-        layout.Items.Add(new MenuItem
-        {
-            Header = (suite.TopoFixo ? "●  " : "     ") + "Fixar a navegação no topo (A, D e E)", Command = suite.AlternarTopoFixoCommand,
-        });
-        return layout;
+        // o layout da Suite fica só no botão Layout da navegação (não há menu Exibir nem item em Configurações)
     }
 
     private void AtualizarItensComRecurso(MainViewModelBase vm)

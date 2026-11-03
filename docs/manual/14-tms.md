@@ -56,7 +56,7 @@ Só cotações abertas podem ser alteradas. Cotações abertas ou recusadas pode
 
 **Para que serve:** registrar o documento de cada carga transportada, com as partes, a carga e o valor do frete, e acompanhar a situação dele até a entrega e a fatura.
 
-**Onde fica:** módulo **Transporte**, *Faturamento › Conhecimentos de transporte (CT-e)*.
+**Onde fica:** módulo **Faturamento**, *Faturamento › Conhecimentos de transporte (CT-e)*.
 
 **Situações do CT-e:** **Digitado** (ainda pode ser alterado) › **Emitido** (com a chave de acesso) › **Em trânsito** (num manifesto ou com ocorrência de saída) › **Entregue**. Ou **Cancelado**.
 
@@ -116,7 +116,7 @@ Em vez de digitar as chaves, peso e valores, anexe os XML das notas fiscais que 
 
 **Para que serve:** reunir os CT-e que seguem no mesmo veículo, com o motorista e o percurso, e controlar a abertura e o encerramento da viagem.
 
-**Onde fica:** módulo **Transporte**, *Faturamento › Manifestos de carga (MDF-e)*.
+**Onde fica:** módulo **Faturamento**, *Faturamento › Manifestos de carga (MDF-e)*.
 
 **A lista dos manifestos:** a tela abre com os manifestos do **Período**. Filtre pela **Situação** (aberto, encerrado, cancelado) ou digite no campo de busca o número, a chave, a placa, o motorista ou uma UF. O **painel** soma os manifestos listados (os cancelados ficam fora dos valores): quantidade, **CT-e** neles, **peso**, **valor da carga** e **frete** dos CT-e. **Novo manifesto** e **Abrir** (ou duplo clique ou Enter) abrem o manifesto numa **janela pop-up**; Esc ou o X voltam à lista.
 
@@ -233,7 +233,7 @@ Os fretes do mesmo TAC no mesmo mês são somados, porque o teto do INSS e a tab
 
 **Para que serve:** cobrar do cliente vários fretes de uma vez, numa fatura com vencimento, e lançar a conta a receber no Financeiro.
 
-**Onde fica:** módulo **Transporte**, *Faturamento › Faturas de frete*.
+**Onde fica:** módulo **Faturamento**, *Faturamento › Faturas de frete*.
 
 **Como usar:**
 1. Em **Nova fatura**, escolha o **Cliente (tomador)**. Aparecem os CT-e emitidos dele que ainda não foram faturados, todos marcados. Desmarque os que ficam para depois; o total é mostrado embaixo.
@@ -246,7 +246,7 @@ A lista mostra o **saldo a receber** de cada fatura, vindo da conta a receber, e
 
 ## Relatórios do TMS
 
-**Onde fica:** *Relatórios* do módulo **Transporte** (junto com os relatórios de faturas, vendas e recebimentos).
+**Onde fica:** *Relatórios* do módulo **Transporte** (o de conhecimentos emitidos fica no módulo **Faturamento**, junto com os relatórios de faturas, vendas e recebimentos).
 
 | Relatório | O que mostra |
 |---|---|

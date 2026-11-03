@@ -156,13 +156,13 @@ def instalador(base: Image.Image, fundo: str, modulos: list[str]) -> Image.Image
 
 
 # Cores dos seis módulos do Vorticis Suite Logística, na ordem da navegação (Frotas, Transporte, Manutenção, Financeiro, Gerencial, Contabilidade)
-CORES_MODULOS_LOGISTICA = ["#0284C7", "#0D9488", "#EA580C", "#16A34A", "#DB2777", "#4F46E5"]
+CORES_MODULOS_LOGISTICA = ["#0284C7", "#0D9488", "#EA580C", "#CA8A04", "#16A34A", "#DB2777", "#4F46E5"]
 
 
 def icone_logistica(selo_instalacao: bool = False) -> Image.Image:
     """
     Ícone do programa (janela, executável e atalhos) e do instalador do Vorticis Suite Logística: um caminhão branco sobre fundo azul-marinho,
-    dentro de um anel de seis arcos nas cores dos módulos (Frotas, Transporte, Manutenção, Financeiro, Gerencial e Contabilidade).
+    dentro de um anel de sete arcos nas cores dos módulos (Frotas, Transporte, Faturamento, Compras, Financeiro, Gestão e Contabilidade).
     O do instalador leva ainda um selo dourado de instalação no canto. Desenhado em 2048 e reduzido.
     """
     S = 2048
@@ -180,11 +180,12 @@ def icone_logistica(selo_instalacao: bool = False) -> Image.Image:
     img.paste(fundo, (0, 0), mascara)
     d = ImageDraw.Draw(img)
 
-    # anel dos módulos: seis arcos, a partir do alto, com um pequeno vão entre eles
+    # anel dos módulos: um arco por módulo, a partir do alto, com um pequeno vão entre eles
     cx, cy, r, w = S / 2, S / 2, S * 0.395, S * 0.075
+    passo = 360 / len(CORES_MODULOS_LOGISTICA)
     for k, c in enumerate(CORES_MODULOS_LOGISTICA):
-        ini = -90 + k * 60 + 4
-        d.arc((cx - r, cy - r, cx + r, cy + r), ini, ini + 52, fill=c, width=round(w))
+        ini = -90 + k * passo + 4
+        d.arc((cx - r, cy - r, cx + r, cy + r), ini, ini + passo - 8, fill=c, width=round(w))
 
     # caminhão (vista de lado, para a direita): baú, cabine, para-brisa, chassi e rodas
     branco = (255, 255, 255, 255)

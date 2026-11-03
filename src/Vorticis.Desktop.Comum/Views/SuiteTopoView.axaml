@@ -121,15 +121,10 @@
           </Button>
           <v:SuiteEscolhaLayoutView />
         </StackPanel>
-        <Border DockPanel.Dock="Left" Width="34" Height="34" CornerRadius="10" Margin="0,0,12,8" VerticalAlignment="Center">
-          <Border.Background>
-            <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-              <GradientStop Color="#38BDF8" Offset="0" />
-              <GradientStop Color="#6366F1" Offset="1" />
-            </LinearGradientBrush>
-          </Border.Background>
-          <v:IconeVetorial Width="20" Height="20" Dados="{x:Static m:IconesModulos.Marca}" Preenchimento="White" ToolTip.Tip="{Binding Nome}" />
-        </Border>
+        <StackPanel DockPanel.Dock="Left" VerticalAlignment="Center" Margin="4,0,12,0">
+          <TextBlock Text="VORTICIS" FontSize="10" FontWeight="Bold" Foreground="#2563EB" LetterSpacing="2" />
+          <TextBlock Text="Suite Logística" FontSize="13" FontWeight="SemiBold" Foreground="#0F172A" />
+        </StackPanel>
         <ItemsControl ItemsSource="{Binding Modulos}">
           <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="3" /></ItemsPanelTemplate>
@@ -176,16 +171,10 @@
           <v:SuiteEscolhaLayoutView />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Spacing="10">
-          <Border Width="34" Height="34" CornerRadius="10">
-            <Border.Background>
-              <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-                <GradientStop Color="#38BDF8" Offset="0" />
-                <GradientStop Color="#6366F1" Offset="1" />
-              </LinearGradientBrush>
-            </Border.Background>
-            <v:IconeVetorial Width="20" Height="20" Dados="{x:Static m:IconesModulos.Marca}" Preenchimento="White" />
-          </Border>
-          <TextBlock Text="{Binding Nome}" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" Foreground="#0F172A" Margin="0,0,14,0" />
+          <StackPanel VerticalAlignment="Center" Margin="0,0,14,0" ToolTip.Tip="{Binding Nome}">
+            <TextBlock Text="VORTICIS" FontSize="10" FontWeight="Bold" Foreground="#2563EB" LetterSpacing="2" />
+            <TextBlock Text="Suite Logística" FontSize="14" FontWeight="SemiBold" Foreground="#0F172A" />
+          </StackPanel>
           <Button Command="{Binding IrParaPainelCommand}" ToolTip.Tip="Painel com todos os módulos" Padding="12,6" CornerRadius="9">
             <StackPanel Orientation="Horizontal" Spacing="7">
               <v:IconeVetorial Width="15" Height="15" Dados="{x:Static m:IconesModulos.Inicio}" Preenchimento="#334155" />
@@ -220,15 +209,6 @@
       </Border.Background>
       <Grid ColumnDefinitions="Auto,*,Auto,Auto">
         <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center" Margin="0,0,16,0">
-          <Border Width="34" Height="34" CornerRadius="10" BoxShadow="0 0 14 0 #556366F1">
-            <Border.Background>
-              <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-                <GradientStop Color="#38BDF8" Offset="0" />
-                <GradientStop Color="#6366F1" Offset="1" />
-              </LinearGradientBrush>
-            </Border.Background>
-            <v:IconeVetorial Width="20" Height="20" Dados="{x:Static m:IconesModulos.Marca}" Preenchimento="White" />
-          </Border>
           <StackPanel VerticalAlignment="Center">
             <TextBlock Text="VORTICIS" FontSize="10.5" FontWeight="Bold" Foreground="#7DD3FC" LetterSpacing="2" />
             <TextBlock Text="Suite Logística" FontSize="13.5" FontWeight="SemiBold" Foreground="White" />

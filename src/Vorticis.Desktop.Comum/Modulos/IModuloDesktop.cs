@@ -112,6 +112,10 @@ public interface IModuloDesktop
     /// <summary>Desenho do ícone do módulo na navegação da Suite (caminho vetorial 24×24, ex.: <see cref="IconesModulos"/>); null = sigla.</summary>
     string? Icone => null;
 
+    /// <summary>Nome e descrição mostrados na tela de acesso (login); na Suite, o nome da Suite, sem o do módulo.</summary>
+    string NomeAcesso => Nome;
+    string SubtituloAcesso => Subtitulo;
+
     /// <summary>Áreas do manual mostradas sem marcar "todos os módulos" (o programa que junta módulos mostra as de todos eles).</summary>
     IReadOnlyList<string> AreasDoManual => [NomeCurto];
 

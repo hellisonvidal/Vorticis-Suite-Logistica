@@ -47,12 +47,12 @@ public class SuiteLogisticaTests(BancoDeTeste db, SessaoHeadless headless) : ICl
         new([.. ModuloLogistica.Todos().Select(m => new MainViewModel(m))], layout, ModuloLogistica.NomeSuite, new ModuloFrotaLogistica().NomeExecutavel, ordemAlfabetica: false);
 
     [Fact]
-    public async Task Seis_modulos_na_ordem_do_trabalho_com_icone_e_cor() => Assert.True(await ForaDaSessao(headless.Sessao.Dispatch(() =>
+    public async Task Sete_modulos_na_ordem_do_trabalho_com_icone_e_cor() => Assert.True(await ForaDaSessao(headless.Sessao.Dispatch(() =>
     {
         var suite = NovaSuite(LayoutSuite.Lateral);
-        Assert.Equal(["Frotas", "Transporte", "Manutenção", "Financeiro", "Gerencial", "Contabilidade"], suite.Modulos.Select(m => m.Nome));
+        Assert.Equal(["Frotas", "Transporte", "Faturamento", "Compras", "Financeiro", "Gestão", "Contabilidade"], suite.Modulos.Select(m => m.Nome));
         Assert.All(suite.Modulos, m => Assert.NotNull(m.Icone));
-        Assert.Equal(6, suite.Modulos.Select(m => m.Vm.Modulo.CorDestaque).Distinct().Count());
+        Assert.Equal(7, suite.Modulos.Select(m => m.Vm.Modulo.CorDestaque).Distinct().Count());
         Assert.Equal("Frotas", suite.Principal.Modulo.NomeCurto);   // o login é feito no módulo Frotas e vale para todos
         Assert.Equal(5, suite.OpcoesLayout.Count);
         Assert.Single(suite.OpcoesLayout, o => o.Selecionado);
@@ -63,7 +63,7 @@ public class SuiteLogisticaTests(BancoDeTeste db, SessaoHeadless headless) : ICl
     public async Task Icones_sao_caminhos_validos() => Assert.True(await ForaDaSessao(headless.Sessao.Dispatch(() =>
     {
         foreach (var d in new[] { IconesModulos.Frota, IconesModulos.Transporte, IconesModulos.Manutencao, IconesModulos.Faturamento, IconesModulos.Financeiro,
-                                  IconesModulos.Gerencial, IconesModulos.Contabilidade, IconesModulos.Marca, IconesModulos.Layout, IconesModulos.Fixar,
+                                  IconesModulos.Gerencial, IconesModulos.Compras, IconesModulos.Contabilidade, IconesModulos.Marca, IconesModulos.Layout, IconesModulos.Fixar,
                                   IconesModulos.Inicio, IconesModulos.Busca })
         {
             var g = Avalonia.Media.Geometry.Parse(d);
@@ -163,7 +163,7 @@ public class SuiteLogisticaTests(BancoDeTeste db, SessaoHeadless headless) : ICl
                 await EntrarAsync(suite);
                 suite.Ativo.Vm.AbrirCommand.Execute(Vorticis.Frota.Desktop.ViewModels.FrotaTelas.Veiculos);   // uma função aberta
                 Dispatcher.UIThread.RunJobs();
-                // não há menu Exibir em nenhum módulo; o layout fica em Configurações
+                // não há menu Exibir em nenhum módulo nem o Layout da Suite em Configurações (o layout fica no botão Layout)
                 foreach (var m in suite.Modulos)
                 {
                     suite.TrocarCommand.Execute(m);
@@ -171,7 +171,7 @@ public class SuiteLogisticaTests(BancoDeTeste db, SessaoHeadless headless) : ICl
                     var menus = janela.FindControl<Menu>("MenuPrincipal")!.Items.OfType<MenuItem>().Select(i => i.Header as string).ToList();
                     Assert.DoesNotContain("E_xibir", menus);
                     var config = janela.FindControl<Menu>("MenuPrincipal")!.Items.OfType<MenuItem>().Single(i => i.Header as string == "Con_figurações");
-                    Assert.Equal("Layout da Suite", ((MenuItem)config.Items[0]!).Header);
+                    Assert.DoesNotContain(config.Items.OfType<MenuItem>(), i => (i.Header as string)?.Contains("Layout") == true);
                 }
                 suite.TrocarCommand.Execute(suite.Modulos[0]);
                 Dispatcher.UIThread.RunJobs();
