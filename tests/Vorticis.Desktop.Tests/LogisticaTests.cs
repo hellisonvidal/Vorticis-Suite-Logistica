@@ -121,6 +121,27 @@ public class LogisticaTests(SessaoHeadless headless, Vorticis.Infra.Tests.BancoD
     }
 
     [Fact]
+    public void Estrutura_dos_menus_sem_separadores_sobrando_submenus_vazios_ou_itens_repetidos()
+    {
+        foreach (var vm in ModuloLogistica.Todos().Select(m => new MainViewModel(m)))
+        {
+            void Conferir(IReadOnlyList<ItemMenu> itens, string onde)
+            {
+                Assert.True(itens.Count > 0, $"{vm.Modulo.NomeCurto}: submenu vazio em {onde}");
+                Assert.False(itens[0].EhSeparador, $"{vm.Modulo.NomeCurto}: separador no começo de {onde}");
+                Assert.False(itens[^1].EhSeparador, $"{vm.Modulo.NomeCurto}: separador no fim de {onde}");
+                for (var i = 1; i < itens.Count; i++)
+                    Assert.False(itens[i].EhSeparador && itens[i - 1].EhSeparador, $"{vm.Modulo.NomeCurto}: dois separadores seguidos em {onde}");
+                var chaves = itens.Where(i => i.Chave is not null).Select(i => i.Chave!).ToList();
+                Assert.True(chaves.Count == chaves.Distinct().Count(), $"{vm.Modulo.NomeCurto}: item repetido em {onde}");
+                Assert.True(itens.Where(i => !i.EhSeparador).Select(i => Sem(i)).Distinct().Count() == itens.Count(i => !i.EhSeparador), $"{vm.Modulo.NomeCurto}: título repetido em {onde}");
+                foreach (var f in itens.Where(i => i.Filhos is not null)) Conferir(f.Filhos!, onde + " › " + Sem(f));
+            }
+            Conferir(vm.Menus, "menu");
+        }
+    }
+
+    [Fact]
     public void Transportadora_e_cadastrada_em_todos_os_modulos_reunidos_e_o_manual_mostra_as_areas_deles()
     {
         foreach (IModuloDesktop m in ModuloLogistica.Todos())
