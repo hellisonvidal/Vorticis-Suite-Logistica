@@ -148,4 +148,5 @@ As permissões são as dos perfis de acesso (*Configurações › Usuários*, ab
 ## O que vem a seguir
 
 - **Transmissão à SEFAZ:** CT-e e MDF-e autorizados direto pelo programa (DACTE e DAMDFE, cancelamento, carta de correção e encerramento) e NFS-e pelo Padrão Nacional. Hoje o [TMS](14-tms.md) registra a chave de acesso do documento autorizado no seu emissor.
+- **Integração com outros sistemas:** já disponível, veja [Integração por API](16-api.md).
 - **Integração contábil do TMS:** as faturas de frete e o ICMS dos conhecimentos virando lançamentos contábeis; as notas de compra da manutenção virando conta a pagar e despesa do veículo.

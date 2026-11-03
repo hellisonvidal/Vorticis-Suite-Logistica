@@ -73,6 +73,7 @@ public static class TelasComuns
     public const string AlterarSenha = "senha";
     public const string Conexao = "conexao";
     public const string Backup = "backup";
+    public const string Api = "api";
     public const string Obrigacoes = "obrigacoes";
     /// <summary>Cadastros › Parâmetros: cada módulo registra a sua tela com esta chave.</summary>
     public const string Parametros = "parametros";
@@ -242,6 +243,8 @@ public abstract partial class MainViewModelBase : ObservableObject, IContexto, I
             .Tela(TelasComuns.Usuarios, "Configurações › Usuários", null, v => AbrirCentralUsuarios(v, TelasComuns.Usuarios))
             .Tela(TelasComuns.AlterarSenha, "Configurações › Usuários", null, v => AbrirCentralUsuarios(v, TelasComuns.AlterarSenha));
 
+        c.Instancia("Api", m => new ApiViewModel(m))
+            .Tela(TelasComuns.Api, "Configurações › Integração por API", Admin, v => v.CarregarAsync());
         c.Instancia(nameof(Backup), m => new BackupViewModel(m))
             .Tela(TelasComuns.Backup, "Configurações › Backup e restauração", Admin, v => v.CarregarAsync());
         c.Instancia(nameof(ConfiguracoesGerais), m => new ConfiguracoesGeraisViewModel(m))
@@ -289,6 +292,7 @@ public abstract partial class MainViewModelBase : ObservableObject, IContexto, I
             yield return ItemMenu.Tela("Certificados digitais", TelasComuns.Certificados);
             foreach (var i in sistema[..3]) yield return i;
         }
+        if (Modulo.RotasApi.Count > 0) yield return ItemMenu.Tela("Integração por API", TelasComuns.Api);
         yield return ItemMenu.Separador;
         yield return ItemMenu.Tela("Sair (trocar de usuário)", TelasComuns.Sair);
     }

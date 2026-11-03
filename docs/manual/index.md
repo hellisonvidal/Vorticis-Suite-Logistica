@@ -19,6 +19,7 @@ Cada função segue o mesmo roteiro: **para que serve**, **onde fica no menu**, 
 | [TMS – gestão do transporte](14-tms.md) | Tabelas de frete, cotações, CT-e, manifestos (MDF-e), entregas e faturas de frete |
 | [Financiamentos, consórcios e imobilizado](15-financiamentos.md) | Financiamentos (Price e SAC) e consórcios: parcelas, pagamentos, rateio por placa, curto e longo prazo, contabilização e o bem no imobilizado |
 | [Vorticis Suite Logística](13-logistica.md) | O programa da transportadora: sete módulos na mesma janela (Frotas, Transporte, Faturamento, Compras, Financeiro, Gestão e Contabilidade), cinco layouts de navegação e login único |
+| [Integração por API](16-api.md) | Chaves de acesso e funções para outros sistemas consultarem e enviarem dados (veículos, abastecimentos, CT-e, contas) |
 | [Configurações](08-configuracoes.md) | Backup, configurações gerais, conexão e solução de problemas |
 
 ## Dicas gerais de uso

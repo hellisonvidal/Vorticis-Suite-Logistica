@@ -92,6 +92,9 @@ public sealed class VorticisApp : IAsyncDisposable
     public ServicoEmpresa Empresas { get; }
     /// <summary>Logo da empresa, impresso no cabeçalho dos relatórios em PDF.</summary>
     public Cadastros.ServicoLogoEmpresa LogoEmpresa => new(DataSource, Autorizador);
+
+    /// <summary>Chaves de acesso da integração por API.</summary>
+    public Api.ServicoChavesApi ChavesApi => new(DataSource);
     public ServicoEncerramento Encerramento { get; }
     public ServicoPlanoReferencial PlanoReferencial { get; }
     public ServicoResponsaveis Responsaveis { get; }

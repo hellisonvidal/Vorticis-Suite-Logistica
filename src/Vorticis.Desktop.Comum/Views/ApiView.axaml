@@ -1,0 +1,59 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
+             x:Class="Vorticis.Desktop.Comum.Views.ApiView" x:DataType="vm:ApiViewModel">
+  <!-- Configurações › Integração por API -->
+  <ScrollViewer>
+    <StackPanel Margin="8" Spacing="8">
+      <TextBlock Classes="titulo" Text="Integração por API" />
+      <TextBlock FontSize="12" Foreground="#44506A" TextWrapping="Wrap"
+                 Text="Outros sistemas (cartão de combustível, rastreador, ERP do cliente, BI) podem consultar e enviar dados ao Vorticis pela API. Cada sistema recebe uma chave de acesso desta transportadora; a chave age com as permissões do usuário que a gerou." />
+
+      <TextBlock Classes="secao" Text="Servidor da API" />
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <TextBlock Text="Porta" VerticalAlignment="Center" />
+        <TextBox Text="{Binding Porta}" Width="80" />
+        <Button Content="Ligar a API" Classes="accent" Command="{Binding LigarCommand}" />
+        <Button Content="Desligar" Command="{Binding DesligarCommand}" />
+        <TextBlock Text="{Binding SituacaoServidor}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="8,0,0,0" />
+      </StackPanel>
+      <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                 Text="A API funciona enquanto o programa está aberto, neste computador (http://localhost). Toda chamada leva o cabeçalho Authorization: Bearer seguido da chave. GET /api/v1 lista as funções." />
+
+      <TextBlock Classes="secao" Text="Chaves de acesso" />
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <TextBox Text="{Binding NomeChave}" Width="260" Watermark="Nome (ex.: Rastreador, Cartão de combustível)" />
+        <CheckBox Content="Pode gravar (ex.: enviar abastecimentos)" IsChecked="{Binding Escrita}" />
+        <Button Content="Gerar chave" Command="{Binding GerarCommand}" />
+        <Button Content="Revogar a selecionada" Command="{Binding RevogarCommand}" />
+      </StackPanel>
+      <Border Background="#FFF7E0" BorderBrush="#E0B000" BorderThickness="1" CornerRadius="4" Padding="8"
+              IsVisible="{Binding ChaveGerada, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+        <StackPanel Spacing="4">
+          <TextBlock Text="Chave gerada (copie agora: ela não aparece de novo):" FontWeight="SemiBold" />
+          <TextBox Text="{Binding ChaveGerada}" IsReadOnly="True" FontFamily="Consolas, Menlo, monospace" />
+        </StackPanel>
+      </Border>
+      <DataGrid ItemsSource="{Binding Chaves}" SelectedItem="{Binding Selecionada}" IsReadOnly="True" AutoGenerateColumns="False" Height="200">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Nome" Binding="{ReflectionBinding Nome}" Width="*" />
+          <DataGridTextColumn Header="Início da chave" Binding="{ReflectionBinding Inicio}" Width="130" />
+          <DataGridTextColumn Header="Usuário" Binding="{ReflectionBinding Usuario}" Width="110" />
+          <DataGridTextColumn Header="Acesso" Binding="{ReflectionBinding Acesso}" Width="140" />
+          <DataGridTextColumn Header="Criada em" Binding="{ReflectionBinding Criada}" Width="130" />
+          <DataGridTextColumn Header="Último uso" Binding="{ReflectionBinding UltimoUso}" Width="130" />
+          <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="160" />
+        </DataGrid.Columns>
+      </DataGrid>
+
+      <TextBlock Classes="secao" Text="Funções disponíveis" />
+      <DataGrid ItemsSource="{Binding Rotas}" IsReadOnly="True" AutoGenerateColumns="False" Height="220">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Método" Binding="{ReflectionBinding Metodo}" Width="70" />
+          <DataGridTextColumn Header="Caminho" Binding="{ReflectionBinding Caminho}" Width="220" />
+          <DataGridTextColumn Header="O que faz" Binding="{ReflectionBinding Descricao}" Width="*" />
+        </DataGrid.Columns>
+      </DataGrid>
+      <c:MensagensView />
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

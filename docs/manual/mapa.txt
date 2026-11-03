@@ -19,6 +19,7 @@ perfis=01-primeiros-passos.md#usuarios-perfis-e-empresas-por-usuario
 senha=01-primeiros-passos.md#usuarios-perfis-e-empresas-por-usuario
 conexao=08-configuracoes.md#conexao-com-o-banco-de-dados
 backup=08-configuracoes.md#backup-e-restauracao
+api=16-api.md#configurar-a-integracao-por-api
 configuracoesgerais=08-configuracoes.md#configuracoes-gerais
 certificados=08-configuracoes.md#certificados-digitais
 obrigacoes=07-obrigacoes.md#calendario-de-obrigacoes

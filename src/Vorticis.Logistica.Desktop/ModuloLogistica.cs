@@ -44,6 +44,9 @@ public abstract class ModuloLogistica(params IModuloDesktop[] partes) : ModuloCo
     public string NomeAcesso => NomeSuite;
     public string SubtituloAcesso => "Frotas, transporte, faturamento, compras, financeiro, gestão e contabilidade";
 
+    /// <summary>Integração por API (Configurações › Integração por API).</summary>
+    public IReadOnlyList<Vorticis.Infra.Api.RotaApi> RotasApi => Desktop.RotasApi.Todas;
+
     public bool UsaCalendarioObrigacoes => false;
     public string RotuloEmpresas => "Transportadoras";
     public string RotuloEmpresaAtiva => "Transportadora";
