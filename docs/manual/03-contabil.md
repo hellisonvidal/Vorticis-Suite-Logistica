@@ -8,7 +8,11 @@ Menus do módulo Vorticis Contábil. Permissões: cada função depende do seu p
 **Onde fica:** *Cadastros › Plano de contas*.
 
 ### Escolher um plano
-1. Se a empresa ainda não tem plano, clique em **Escolher plano**, selecione um modelo e **Usar este plano**. A troca só é possível enquanto não há lançamentos.
+1. Se a empresa ainda não tem plano (ou para trocá-lo), clique em **Novo plano de contas** e escolha:
+   - **Usar um modelo pronto:** selecione o modelo e clique em **Usar este plano**;
+   - **Montar o meu próprio plano:** o plano novo começa só com os **grupos principais** (sugeridos: 1 Ativo, 2 Passivo, 3 Patrimônio líquido, 4 Receitas, 5 Custos e 6 Despesas). Mude códigos, nomes, natureza e saldo; **Remover** tira um grupo e **Adicionar grupo** acrescenta outro. Clique em **Criar o plano** e depois inclua as contas de cada grupo (**Incluir**).
+   A troca do plano só é possível enquanto não há lançamentos.
+   A tela mostra a lista das contas já cadastradas; **Incluir**, **Alterar** ou o duplo clique numa conta abrem o formulário da conta numa janela pop-up.
 2. Para importar de uma planilha, veja [Importar plano de contas](#importar-plano-de-contas).
 
 ### Manter contas

@@ -216,6 +216,58 @@ public sealed partial class ServicoPlanoContas(IRepositorioPlanoContas repositor
         }
     }
 
+    /// <summary>Grupos principais sugeridos para um plano de contas próprio (o usuário muda os nomes e os códigos, tira ou acrescenta).</summary>
+    public static IReadOnlyList<Cadastros.ContaModelo> GruposPlanoProprio { get; } =
+    [
+        new("1", "ATIVO", "01", IndicadorDC.D, false),
+        new("2", "PASSIVO", "02", IndicadorDC.C, false),
+        new("3", "PATRIMÔNIO LÍQUIDO", "03", IndicadorDC.C, false),
+        new("4", "RECEITAS", "04", IndicadorDC.C, false),
+        new("5", "CUSTOS", "04", IndicadorDC.D, false),
+        new("6", "DESPESAS", "04", IndicadorDC.D, false),
+    ];
+
+    /// <summary>Erros dos grupos de um plano próprio (código numérico e único, nome e natureza).</summary>
+    public static IReadOnlyList<string> ValidarGruposProprios(IReadOnlyList<Cadastros.ContaModelo> grupos)
+    {
+        var erros = new List<string>();
+        if (grupos.Count == 0) erros.Add("Informe ao menos um grupo do plano (ex.: 1 ATIVO).");
+        foreach (var g in grupos)
+        {
+            var nome = string.IsNullOrWhiteSpace(g.Descricao) ? g.Codigo : g.Descricao;
+            if (string.IsNullOrWhiteSpace(g.Codigo) || !g.Codigo.All(c => char.IsDigit(c) || c == '.'))
+                erros.Add($"Grupo \"{nome}\": o código deve ter só números (ex.: 1, 2, 3).");
+            if (string.IsNullOrWhiteSpace(g.Descricao)) erros.Add($"Grupo {g.Codigo}: informe o nome.");
+            if (!NaturezasValidas.Contains(g.CodNat)) erros.Add($"Grupo {g.Codigo}: natureza inválida.");
+        }
+        foreach (var d in grupos.GroupBy(g => g.Codigo.Trim()).Where(x => x.Count() > 1)) erros.Add($"Código {d.Key} repetido.");
+        return erros;
+    }
+
+    /// <summary>
+    /// Cria um plano de contas próprio, do jeito que o usuário quer: começa só com os grupos principais escolhidos (contas sintéticas) e as demais
+    /// contas são incluídas depois, no próprio cadastro. Substitui o plano atual, como os modelos: só antes do primeiro lançamento.
+    /// </summary>
+    public async Task<Resultado<int>> CriarPlanoProprioAsync(long empresaId, IReadOnlyList<Cadastros.ContaModelo> grupos, long usuarioId, CancellationToken ct = default)
+    {
+        if (await autorizador.NegarAsync<int>(usuarioId, empresaId, Permissao.PlanoContasManter, ct) is { } negado) return negado;
+        var normalizados = grupos.Select(g => g with { Codigo = g.Codigo.Trim(), Descricao = g.Descricao.Trim().ToUpperInvariant(), Analitica = false }).ToList();
+        if (ValidarGruposProprios(normalizados) is { Count: > 0 } erros) return Resultado<int>.Falha(erros);
+        var atual = await repositorio.ListarAsync(empresaId, ct);
+        if (atual.FirstOrDefault(c => c.TemMovimento) is { } comMovimento)
+            return Resultado<int>.Falha($"O plano atual já tem lançamentos (ex.: conta {comMovimento.Codigo}); criar um plano novo substitui o plano inteiro " +
+                                        "e só é permitido antes do primeiro lançamento.");
+        try
+        {
+            await repositorio.SubstituirAsync(empresaId, normalizados, usuarioId, ct);
+            return Resultado<int>.Ok(normalizados.Count);
+        }
+        catch (ViolacaoRegraException ex)
+        {
+            return Resultado<int>.Falha($"Não foi possível criar o plano: {ex.Message}");
+        }
+    }
+
     public async Task<Cadastros.ConfiguracaoContabil> ObterConfiguracaoAsync(long empresaId, long usuarioId, CancellationToken ct = default)
         => (await autorizador.ObterAsync(usuarioId, empresaId, ct)).TemAcesso ? await repositorio.ObterConfiguracaoAsync(empresaId, ct) : new();
 

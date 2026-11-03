@@ -17,6 +17,23 @@ public sealed record OpcaoNatureza(string Codigo, string Nome)
     ];
 }
 
+/// <summary>Grupo principal de um plano de contas próprio (linha editável na escolha do plano).</summary>
+public sealed partial class GrupoPlanoLinha : ObservableObject
+{
+    [ObservableProperty] private string _codigo = "";
+    [ObservableProperty] private string _descricao = "";
+    [ObservableProperty] private OpcaoNatureza _natureza = OpcaoNatureza.Todas[0];
+    [ObservableProperty] private OpcaoSaldo _saldo = OpcaoSaldo.Todas[0];
+
+    public ContaModelo Conta => new(Codigo, Descricao, Natureza.Codigo, Saldo.DC, false);
+
+    public static GrupoPlanoLinha De(ContaModelo c) => new()
+    {
+        Codigo = c.Codigo, Descricao = c.Descricao,
+        Natureza = OpcaoNatureza.Todas.First(n => n.Codigo == c.CodNat), Saldo = OpcaoSaldo.Todas.First(o => o.DC == c.NaturezaSaldo),
+    };
+}
+
 public sealed record OpcaoSaldo(IndicadorDC DC, string Nome)
 {
     public static readonly IReadOnlyList<OpcaoSaldo> Todas = [new(IndicadorDC.D, "Devedora"), new(IndicadorDC.C, "Credora")];
@@ -93,6 +110,42 @@ public partial class PlanoContasViewModel(IContexto contexto) : CadastroViewMode
     }
 
     private string? _modeloAplicado;
+
+    /// <summary>Na escolha do plano: false = usar um modelo pronto; true = montar um plano próprio, a partir dos grupos principais.</summary>
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(UsarModelo))] private bool _planoProprio;
+    public bool UsarModelo { get => !PlanoProprio; set => PlanoProprio = !value; }
+    public ObservableCollection<GrupoPlanoLinha> GruposProprio { get; } = [.. ServicoPlanoContas.GruposPlanoProprio.Select(GrupoPlanoLinha.De)];
+
+    [RelayCommand]
+    private void AdicionarGrupo()
+    {
+        var proximo = GruposProprio.Select(g => int.TryParse(g.Codigo, out var n) ? n : 0).DefaultIfEmpty(0).Max() + 1;
+        GruposProprio.Add(new GrupoPlanoLinha { Codigo = proximo.ToString(), Natureza = OpcaoNatureza.Todas.First(n => n.Codigo == "04") });
+    }
+
+    [RelayCommand]
+    private void RemoverGrupo(GrupoPlanoLinha? grupo)
+    {
+        if (grupo is not null) GruposProprio.Remove(grupo);
+    }
+
+    /// <summary>Cria o plano próprio com os grupos informados (substitui o plano atual; só sem lançamentos).</summary>
+    [RelayCommand]
+    private Task CriarPlanoProprioAsync() => ExecutarAsync(async (app, empresa, usuario) =>
+    {
+        var grupos = GruposProprio.Select(g => g.Conta).ToList();
+        if (ServicoPlanoContas.ValidarGruposProprios(grupos) is { Count: > 0 } erros) { foreach (var e in erros) Erros.Add(e); return; }
+        if (TemPlano && !await Contexto.ConfirmarAsync("Criar um plano de contas novo",
+                "O plano de contas atual será substituído por um plano novo, só com os grupos informados. Isso só é possível enquanto não houver lançamentos. Deseja continuar?",
+                "Criar o plano", "Cancelar"))
+            return;
+        var r = await app.PlanoContas.CriarPlanoProprioAsync(empresa, grupos, usuario);
+        if (!r.Sucesso) { MostrarResultado(r, ""); return; }
+        EscolhendoPlano = false;
+        PlanoProprio = false;
+        await CarregarAsync();
+        Mensagem = $"Plano próprio criado com {r.Valor} grupo(s). Agora inclua as contas (Incluir), escolhendo a conta superior de cada uma.";
+    }, Permissao.PlanoContasManter);
 
     /// <summary>Aplica o modelo escolhido, substituindo o plano da empresa (só sem lançamentos; com plano, pede confirmação).</summary>
     [RelayCommand]

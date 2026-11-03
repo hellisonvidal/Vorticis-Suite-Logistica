@@ -83,6 +83,17 @@ public class ContabilidadeEmpresaTests(BancoDeTeste db) : IClassFixture<BancoDeT
         Assert.Equal(("servicos_simples", modelo.Contas.LucrosAcumulados, modelo.Contas.PrejuizosAcumulados), (cfg.ModeloPlano, cfg.ContaLucros, cfg.ContaPrejuizos));
         Assert.True(cfg.GrandePorte);       // demais configurações preservadas
 
+        // plano próprio: só os grupos principais escolhidos pelo usuário (sintéticos); depois as contas são incluídas no cadastro
+        Assert.Contains("repetido", string.Join(";", (await svc.CriarPlanoProprioAsync(empresa, [new("1", "Ativo", "01", IndicadorDC.D), new("1", "Outro", "02", IndicadorDC.C)], adm, ct)).Erros));
+        var proprio = await svc.CriarPlanoProprioAsync(empresa, [new("1", "Bens e direitos", "01", IndicadorDC.D), new("2", "Obrigações", "02", IndicadorDC.C),
+                                                                  new("3", "Resultado", "04", IndicadorDC.C)], adm, ct);
+        Assert.True(proprio.Sucesso, string.Join("; ", proprio.Erros));
+        var grupos = await svc.ListarAsync(empresa, adm, ct);
+        Assert.Equal(["1 BENS E DIREITOS", "2 OBRIGAÇÕES", "3 RESULTADO"], grupos.Select(c => $"{c.Codigo} {c.Descricao}"));
+        Assert.All(grupos, c => Assert.False(c.Analitica));
+        aplicado = await svc.AplicarModeloAsync(empresa, "servicos_simples", adm, ct);    // volta ao modelo para o restante do teste
+        Assert.True(aplicado.Sucesso);
+
         // com lançamento, a troca é recusada
         var contas = (await svc.ListarAsync(empresa, adm, ct));
         var debito = contas.First(c => c.Analitica && c.CodNat == "01" && c.NaturezaSaldo == IndicadorDC.D).Codigo;
