@@ -325,6 +325,9 @@ Todos aparecem na tela e têm os botões **PDF**, **Excel (.xlsx)** e **CSV**. E
 ### Demonstração do Resultado (DRE)
 *Relatórios › Contábeis › Demonstração do Resultado (DRE)*: informe o **período** e o **nível** de detalhe e clique em **Gerar**. A DRE ignora os lançamentos de encerramento. Exporte em PDF, Excel ou CSV. O Livro Contábil Completo continua incluindo o Balanço e a DRE.
 
+### Relatórios comparativos com anos anteriores
+No **Balanço Patrimonial** e na **DRE**, escolha em **Comparar** *Com o ano anterior* (ou com os 2, 3 ou 4 anos anteriores) e clique em **Gerar**. Ao lado da coluna do período escolhido aparecem as colunas dos mesmos períodos dos anos anteriores (no Balanço, a mesma data de cada ano; na DRE, o mesmo intervalo de datas) e a coluna **Var. %**, a variação sobre o ano anterior. Contas que só tiveram valor num dos anos aparecem com zero nos demais. O PDF, o Excel e o CSV saem com as mesmas colunas.
+
 ### DMPL
 *Relatórios › Contábeis › DMPL*: mutações do patrimônio líquido (CPC 26) por componente (capital, reservas, lucros ou prejuízos acumulados). Informe o período e **Gerar**. O saldo final confere com o balanço.
 

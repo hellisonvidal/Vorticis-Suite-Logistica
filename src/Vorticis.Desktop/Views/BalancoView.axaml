@@ -11,6 +11,9 @@
       <CalendarDatePicker SelectedDate="{Binding Data31}" Width="140" />
       <TextBlock Text="Nível" VerticalAlignment="Center" />
       <ComboBox ItemsSource="{x:Static vm:BalancoViewModel.Niveis}" SelectedItem="{Binding Nivel}" Width="70" />
+      <TextBlock Text="Comparar" VerticalAlignment="Center" />
+      <ComboBox ItemsSource="{x:Static vm:BalancoViewModel.OpcoesComparacao}" SelectedItem="{Binding Comparacao}" Width="200"
+                ToolTip.Tip="Relatório comparativo: o mesmo período (ou a mesma data) dos anos anteriores, lado a lado, com a variação sobre o ano anterior" />
       <Button Content="Gerar" Command="{Binding GerarCommand}" Classes="accent" />
       <Rectangle Width="1" Fill="#D0D5DD" Margin="6,4" />
       <c:BarraExportacaoView />
@@ -24,16 +27,26 @@
     <Grid ColumnDefinitions="*,12,*" RowDefinitions="Auto,*">
       <TextBlock Text="ATIVO" FontWeight="SemiBold" Foreground="#1F3A5F" />
       <TextBlock Grid.Column="2" Text="PASSIVO E PATRIMÔNIO LÍQUIDO" FontWeight="SemiBold" Foreground="#1F3A5F" />
-      <DataGrid Grid.Row="1" ItemsSource="{Binding Ativo}" IsReadOnly="True" AutoGenerateColumns="False" FontFamily="Consolas, Menlo, monospace">
+      <DataGrid Classes="comparativa" Grid.Row="1" ItemsSource="{Binding Ativo}" IsReadOnly="True" AutoGenerateColumns="False" FontFamily="Consolas, Menlo, monospace">
         <DataGrid.Columns>
           <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" />
-          <DataGridTextColumn Header="R$" Binding="{ReflectionBinding Valor}" Width="130" />
+          <DataGridTextColumn Header="R$" Binding="{ReflectionBinding Valor}" Width="130" Tag="atual" />
+          <DataGridTextColumn Header="" Binding="{ReflectionBinding Anterior1}" Width="130" Tag="ant0" IsVisible="False" />
+          <DataGridTextColumn Header="" Binding="{ReflectionBinding Anterior2}" Width="130" Tag="ant1" IsVisible="False" />
+          <DataGridTextColumn Header="" Binding="{ReflectionBinding Anterior3}" Width="130" Tag="ant2" IsVisible="False" />
+          <DataGridTextColumn Header="" Binding="{ReflectionBinding Anterior4}" Width="130" Tag="ant3" IsVisible="False" />
+          <DataGridTextColumn Header="Var. %" Binding="{ReflectionBinding Variacao}" Width="80" Tag="var" IsVisible="False" />
         </DataGrid.Columns>
       </DataGrid>
-      <DataGrid Grid.Row="1" Grid.Column="2" ItemsSource="{Binding PassivoPl}" IsReadOnly="True" AutoGenerateColumns="False" FontFamily="Consolas, Menlo, monospace">
+      <DataGrid Classes="comparativa" Grid.Row="1" Grid.Column="2" ItemsSource="{Binding PassivoPl}" IsReadOnly="True" AutoGenerateColumns="False" FontFamily="Consolas, Menlo, monospace">
         <DataGrid.Columns>
           <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" />
-          <DataGridTextColumn Header="R$" Binding="{ReflectionBinding Valor}" Width="130" />
+          <DataGridTextColumn Header="R$" Binding="{ReflectionBinding Valor}" Width="130" Tag="atual" />
+          <DataGridTextColumn Header="" Binding="{ReflectionBinding Anterior1}" Width="130" Tag="ant0" IsVisible="False" />
+          <DataGridTextColumn Header="" Binding="{ReflectionBinding Anterior2}" Width="130" Tag="ant1" IsVisible="False" />
+          <DataGridTextColumn Header="" Binding="{ReflectionBinding Anterior3}" Width="130" Tag="ant2" IsVisible="False" />
+          <DataGridTextColumn Header="" Binding="{ReflectionBinding Anterior4}" Width="130" Tag="ant3" IsVisible="False" />
+          <DataGridTextColumn Header="Var. %" Binding="{ReflectionBinding Variacao}" Width="80" Tag="var" IsVisible="False" />
         </DataGrid.Columns>
       </DataGrid>
     </Grid>
