@@ -8,6 +8,20 @@ namespace Vorticis.Fiscal.Postgres;
 
 public sealed class RepositorioContabilizacao(NpgsqlDataSource ds) : IRepositorioContabilizacao
 {
+    public async Task<IReadOnlyList<RegraFiscal>> ListarRegrasFiscaisComContaAsync(long empresaId, CancellationToken ct)
+    {
+        await using var cmd = ds.CreateCommand("""
+            SELECT id, codigo, descricao, operacao, cfop_origem, cfop_destino, conta_contabil
+              FROM fiscal.regra_fiscal WHERE empresa_id = @e AND ativa AND conta_contabil IS NOT NULL ORDER BY codigo
+            """).Com("e", empresaId);
+        var res = new List<RegraFiscal>();
+        await using var r = await cmd.ExecuteReaderAsync(ct);
+        while (await r.ReadAsync(ct))
+            res.Add(new RegraFiscal(r.GetInt64(0), r.GetInt32(1), r.GetString(2), r.GetString(3) == "S" ? TipoOperacao.Saida : TipoOperacao.Entrada,
+                                    r.GetString(4), r.GetString(5).Trim(), ContaContabil: r.GetString(6)));
+        return res;
+    }
+
     public async Task<IReadOnlyList<RegraContabilizacao>> ListarRegrasAsync(long empresaId, CancellationToken ct)
     {
         await using var cmd = ds.CreateCommand("""

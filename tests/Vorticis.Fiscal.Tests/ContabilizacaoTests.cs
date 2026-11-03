@@ -67,6 +67,35 @@ public class MotorContabilizacaoTests
     }
 
     [Fact]
+    public void Conta_da_regra_fiscal_entra_no_lugar_da_receita_e_dispensa_a_regra_com_a_conta_do_cliente()
+    {
+        RegraFiscal Rf(string cfop, string? conta, bool ativa = true) => new(1, 1, "Venda", TipoOperacao.Saida, "51", cfop, Ativa: ativa, ContaContabil: conta);
+        var regras = new[] { new RegraContabilizacao(1, 100, null, "5102", null, null, "1.1.02.001", "3.1.01.001", "NF {DOCUMENTO}") };
+        // com a regra de contabilização: a conta da regra fiscal substitui a receita (crédito na saída)
+        var p = MotorContabilizacao.Montar(1, Doc(), [Item("5102", 100m)], regras, regrasFiscais: [Rf("5102", "3.1.01.009")]);
+        Assert.Equal(("1.1.02.001", "3.1.01.009"), (p.Lancamento!.Partidas[0].CodigoConta, p.Lancamento.Partidas[1].CodigoConta));
+        // sem regra de contabilização, mas com a conta de clientes (nota com duplicata): monta pela regra fiscal
+        var semRegra = MotorContabilizacao.Montar(1, Doc(), [Item("5353", 80m)], [], contaParticipante: "1.1.02.100", regrasFiscais: [Rf("5353", "3.1.02.001")]);
+        Assert.True(semRegra.Pronta, string.Join(";", semRegra.Erros));
+        Assert.Equal(("1.1.02.100", "3.1.02.001"), (semRegra.Lancamento!.Partidas[0].CodigoConta, semRegra.Lancamento.Partidas[1].CodigoConta));
+        // regra fiscal inativa, de outro CFOP ou sem conta não muda nada
+        var outra = MotorContabilizacao.Montar(1, Doc(), [Item("5102", 100m)], regras, regrasFiscais: [Rf("5102", "3.1.01.009", ativa: false), Rf("5101", "3.9")]);
+        Assert.Equal("3.1.01.001", outra.Lancamento!.Partidas[1].CodigoConta);
+    }
+
+    [Fact]
+    public void Tabelas_de_cst_tem_legenda_e_aceitam_codigo_fora_da_tabela()
+    {
+        Assert.Equal("00 – Tributada integralmente", TabelasCst.Icms.Single(o => o.Codigo == "00").Rotulo);
+        Assert.Contains(TabelasCst.Icms, o => o.Codigo == "102");
+        Assert.Contains(TabelasCst.PisCofins, o => o.Codigo == "50");
+        Assert.Same(TabelasCst.EmBranco, TabelasCst.Opcao(TabelasCst.Icms, ""));
+        Assert.Equal("000 – código informado", TabelasCst.Opcao(TabelasCst.Icms, "000").Rotulo);
+        Assert.Equal(TabelasCst.Icms.Count, TabelasCst.Icms.Select(o => o.Codigo).Distinct().Count());
+        Assert.Equal(TabelasCst.PisCofins.Count, TabelasCst.PisCofins.Select(o => o.Codigo).Distinct().Count());
+    }
+
+    [Fact]
     public void Cfop_sem_regra_e_documento_cancelado_nao_geram_lancamento()
     {
         var sem = MotorContabilizacao.Montar(1, Doc(), [Item("5102", 10m)], []);

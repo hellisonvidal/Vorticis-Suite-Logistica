@@ -6,7 +6,7 @@ namespace Vorticis.Fiscal.Documentos;
 /// Os CSTs são opcionais: preenchidos, substituem os do XML.
 /// </summary>
 public sealed record RegraFiscal(long Id, int Codigo, string Descricao, TipoOperacao Operacao, string CfopOrigem, string CfopDestino,
-                                 string? CstIcms = null, string? CstPis = null, string? CstCofins = null, bool Ativa = true)
+                                 string? CstIcms = null, string? CstPis = null, string? CstCofins = null, bool Ativa = true, string? ContaContabil = null)
 {
     public override string ToString() => $"{Codigo} – {Descricao}";
 }
@@ -39,7 +39,8 @@ public static class RegrasFiscais
     {
         static string? Cst(string? s) => Digitos(s) is { Length: > 0 } d ? d : null;
         return r with { Descricao = r.Descricao?.Trim() ?? "", CfopOrigem = Digitos(r.CfopOrigem), CfopDestino = Digitos(r.CfopDestino),
-                        CstIcms = Cst(r.CstIcms), CstPis = Cst(r.CstPis), CstCofins = Cst(r.CstCofins) };
+                        CstIcms = Cst(r.CstIcms), CstPis = Cst(r.CstPis), CstCofins = Cst(r.CstCofins),
+                        ContaContabil = string.IsNullOrWhiteSpace(r.ContaContabil) ? null : r.ContaContabil.Trim() };
     }
 
     public static IReadOnlyList<string> Validar(RegraFiscal r)

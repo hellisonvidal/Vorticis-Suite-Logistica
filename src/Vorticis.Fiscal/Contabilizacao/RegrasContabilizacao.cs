@@ -56,7 +56,7 @@ public static class MotorContabilizacao
     /// (crédito na entrada, débito na saída), exceto quando a nota ou uma regra específica do participante já define a conta.
     /// </summary>
     public static PropostaContabilizacao Montar(long empresaId, DocumentoFiscal doc, IReadOnlyList<ItemFiscal> itens, IReadOnlyList<RegraContabilizacao> regras,
-                                                bool usaCentroCusto = false, string? contaParticipante = null)
+                                                bool usaCentroCusto = false, string? contaParticipante = null, IReadOnlyList<RegraFiscal>? regrasFiscais = null)
     {
         var erros = new List<string>();
         if (doc.Situacao != SituacaoDocumento.Autorizada)
@@ -77,6 +77,18 @@ public static class MotorContabilizacao
                 var cre = string.IsNullOrWhiteSpace(doc.ContaCredito) ? regra?.ContaCredito : doc.ContaCredito.Trim();
                 if (deb is not null && cre is not null)
                     regra = (regra ?? new RegraContabilizacao(0, 0, null, null, null, null, deb, cre, "NF {DOCUMENTO} - {PARTICIPANTE}")) with { ContaDebito = deb, ContaCredito = cre };
+            }
+            // conta contábil da regra fiscal do CFOP: a conta da mercadoria/despesa (entrada) ou da receita (saída), com a contrapartida da regra
+            // de contabilização ou, sem ela, da conta de fornecedores/clientes
+            if (regrasFiscais?.FirstOrDefault(rf => rf.Ativa && rf.Operacao == doc.Operacao && rf.ContaContabil is { Length: > 0 } && rf.CfopDestino.Trim() == grupo.Key.Cfop)
+                is { ContaContabil: { } contaFiscal })
+            {
+                var entradaDoc = doc.Operacao == TipoOperacao.Entrada;
+                if (regra is null && !string.IsNullOrWhiteSpace(contaParticipante))
+                    regra = new RegraContabilizacao(0, 0, doc.Operacao, grupo.Key.Cfop, null, null, entradaDoc ? contaFiscal : contaParticipante.Trim(),
+                                                    entradaDoc ? contaParticipante.Trim() : contaFiscal, RegraContabilizacao.HistoricoPadrao);
+                else if (regra is not null && entradaDoc && string.IsNullOrWhiteSpace(doc.ContaDebito)) regra = regra with { ContaDebito = contaFiscal };
+                else if (regra is not null && !entradaDoc && string.IsNullOrWhiteSpace(doc.ContaCredito)) regra = regra with { ContaCredito = contaFiscal };
             }
             if (regra is null)
             {

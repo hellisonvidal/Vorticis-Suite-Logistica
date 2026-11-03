@@ -99,6 +99,17 @@ public class ImportacaoCadastrosTests(BancoDeTeste db) : IClassFixture<BancoDeTe
         Assert.Empty(await Importar(ctx, fiscais["regrasfiscais"], "Descrição;Operação;CFOP do XML;CFOP da escrituração;CST do ICMS\nVenda ST;Saída;5102;5405;060"));
         var venda = (await Vorticis.Fiscal.VorticisAppFiscalExtensions.Fiscal(db.App).RegrasFiscais.ListarAsync(empresa, adm, ct)).Single(r => r.Descricao == "Venda ST");
         Assert.Equal((Vorticis.Fiscal.Documentos.TipoOperacao.Saida, "5405", "060"), (venda.Operacao, venda.CfopDestino, venda.CstIcms));
+        // conta contábil da regra: precisa existir no plano e ser analítica
+        var regrasSvc = Vorticis.Fiscal.VorticisAppFiscalExtensions.Fiscal(db.App).RegrasFiscais;
+        Assert.Contains("não existe", (await regrasSvc.GravarAsync(empresa, venda with { ContaContabil = "9.9.9.999" }, adm, ct)).Erros[0]);
+        var planoEmpresa = await db.App.PlanoContas.ListarAsync(empresa, adm, ct);
+        if (planoEmpresa.FirstOrDefault(c => !c.Analitica) is { } sintetica)
+            Assert.Contains("sintética", (await regrasSvc.GravarAsync(empresa, venda with { ContaContabil = sintetica.Codigo }, adm, ct)).Erros[0]);
+        if (planoEmpresa.FirstOrDefault(c => c.Analitica && c.CodNat == "04") is { } receita)
+        {
+            Assert.True((await regrasSvc.GravarAsync(empresa, venda with { ContaContabil = receita.Codigo }, adm, ct)).Sucesso);
+            Assert.Equal(receita.Codigo, (await regrasSvc.ListarAsync(empresa, adm, ct)).Single(r => r.Id == venda.Id).ContaContabil);
+        }
 
         // o de-para fica gravado por empresa e cadastro (e é substituído ao gravar de novo)
         var layouts = new Vorticis.Infra.Importacao.ServicoLayoutsPlanilha(db.App.DataSource);

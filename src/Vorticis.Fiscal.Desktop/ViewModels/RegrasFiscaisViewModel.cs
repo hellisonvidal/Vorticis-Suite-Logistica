@@ -14,6 +14,7 @@ public sealed record RegraFiscalLinha(RegraFiscal R)
     public string Operacao => R.Operacao == TipoOperacao.Entrada ? "Entrada" : "Saída";
     public string CfopOrigem => R.CfopOrigem.Length == 4 ? R.CfopOrigem : R.CfopOrigem + "… (todos que começam assim)";
     public string CfopDestino => R.CfopDestino;
+    public string Conta => R.ContaContabil ?? "";
     public string Csts => string.Join("  ", new[] { ("ICMS", R.CstIcms), ("PIS", R.CstPis), ("COFINS", R.CstCofins) }.Where(c => c.Item2 is not null).Select(c => $"{c.Item1} {c.Item2}"));
     public string Situacao => R.Ativa ? "Ativa" : "Inativa";
 }
@@ -30,14 +31,28 @@ public partial class RegrasFiscaisViewModel(IContexto contexto) : ModuloViewMode
     [ObservableProperty] private RegraFiscalLinha? _selecionada;
     [ObservableProperty] private string _codigo = "";
     [ObservableProperty] private string _descricao = "";
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(RotuloOrigem), nameof(RotuloDestino), nameof(ExemploDestino))] private int _operacao;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(RotuloOrigem), nameof(RotuloDestino), nameof(ExemploDestino), nameof(RotuloConta))] private int _operacao;
     [ObservableProperty] private string _cfopOrigem = "";
     [ObservableProperty] private string _cfopDestino = "";
     [ObservableProperty] private string _cstIcms = "";
     [ObservableProperty] private string _cstPis = "";
     [ObservableProperty] private string _cstCofins = "";
     [ObservableProperty] private bool _ativa = true;
+    /// <summary>Conta contábil da contabilização: na entrada, a conta debitada (estoque, despesa, custo); na saída, a conta creditada (receita).</summary>
+    [ObservableProperty] private string _contaContabil = "";
+    [ObservableProperty] private string _nomeContaContabil = "";
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(ExemploTeste))] private int _operacaoTeste;
+
+    // CSTs escolhidos na lista com as legendas (o código vai para os campos de texto, que são os gravados)
+    public static IReadOnlyList<OpcaoCst> OpcoesIcms => TabelasCst.Icms;
+    public static IReadOnlyList<OpcaoCst> OpcoesPisCofins => TabelasCst.PisCofins;
+    public OpcaoCst CstIcmsOpcao { get => TabelasCst.Opcao(TabelasCst.Icms, CstIcms); set => CstIcms = value?.Codigo ?? ""; }
+    public OpcaoCst CstPisOpcao { get => TabelasCst.Opcao(TabelasCst.PisCofins, CstPis); set => CstPis = value?.Codigo ?? ""; }
+    public OpcaoCst CstCofinsOpcao { get => TabelasCst.Opcao(TabelasCst.PisCofins, CstCofins); set => CstCofins = value?.Codigo ?? ""; }
+    partial void OnCstIcmsChanged(string value) => OnPropertyChanged(nameof(CstIcmsOpcao));
+    partial void OnCstPisChanged(string value) => OnPropertyChanged(nameof(CstPisOpcao));
+    partial void OnCstCofinsChanged(string value) => OnPropertyChanged(nameof(CstCofinsOpcao));
+    public string RotuloConta => Operacao == 1 ? "Conta contábil (receita, crédito)" : "Conta contábil (débito: estoque, despesa ou custo)";
     [ObservableProperty] private string _teste = "";
     [ObservableProperty] private string _resultadoTeste = "";
 
@@ -56,6 +71,7 @@ public partial class RegrasFiscaisViewModel(IContexto contexto) : ModuloViewMode
         (Codigo, Descricao, Operacao, CfopOrigem, CfopDestino, Ativa) =
             (r.Codigo.ToString(), r.Descricao, r.Operacao == TipoOperacao.Saida ? 1 : 0, r.CfopOrigem, r.CfopDestino, r.Ativa);
         (CstIcms, CstPis, CstCofins) = (r.CstIcms ?? "", r.CstPis ?? "", r.CstCofins ?? "");
+        (ContaContabil, NomeContaContabil) = (r.ContaContabil ?? "", "");
     }
 
     partial void OnOperacaoTesteChanged(int value) => OnTesteChanged(Teste);
@@ -81,17 +97,25 @@ public partial class RegrasFiscaisViewModel(IContexto contexto) : ModuloViewMode
         OnTesteChanged(Teste);
     });
 
+    /// <summary>Consulta o plano de contas (com inclusão de conta nova) e preenche a conta contábil da regra.</summary>
+    public async Task EscolherContaAsync(Avalonia.Controls.Window dono)
+    {
+        if (await Vorticis.Desktop.Comum.Views.SeletorContaContabil.EscolherAsync(dono, Contexto, ContaContabil) is { } c)
+            (ContaContabil, NomeContaContabil) = (c.Codigo, c.Descricao);
+    }
+
     [RelayCommand]
     private void Nova()
     {
         Selecionada = null;
         (Codigo, Descricao, CfopOrigem, CfopDestino, CstIcms, CstPis, CstCofins, Ativa) = (ProximoCodigo.ToString(), "", "", "", "", "", "", true);
+        (ContaContabil, NomeContaContabil) = ("", "");
     }
 
     [RelayCommand]
     private Task GravarAsync() => ExecutarAsync(async (app, empresa, usuario) =>
     {
-        var r = new RegraFiscal(Selecionada?.R.Id ?? 0, int.TryParse(Codigo.Trim(), out var c) ? c : 0, Descricao, Tipo, CfopOrigem, CfopDestino, CstIcms, CstPis, CstCofins, Ativa);
+        var r = new RegraFiscal(Selecionada?.R.Id ?? 0, int.TryParse(Codigo.Trim(), out var c) ? c : 0, Descricao, Tipo, CfopOrigem, CfopDestino, CstIcms, CstPis, CstCofins, Ativa, ContaContabil);
         var g = await app.Fiscal().RegrasFiscais.GravarAsync(empresa, r, usuario);
         if (!g.Sucesso) { MostrarResultado(g, ""); return; }
         await CarregarAsync();

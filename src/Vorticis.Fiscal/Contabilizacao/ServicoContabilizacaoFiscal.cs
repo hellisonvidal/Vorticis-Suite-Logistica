@@ -14,6 +14,9 @@ public sealed record ContaResolvida(long Id, string Codigo, bool Analitica, bool
 public interface IRepositorioContabilizacao
 {
     Task<IReadOnlyList<RegraContabilizacao>> ListarRegrasAsync(long empresaId, CancellationToken ct);
+
+    /// <summary>Regras fiscais ativas com conta contábil (a conta da mercadoria/despesa ou da receita, por CFOP da escrituração).</summary>
+    Task<IReadOnlyList<RegraFiscal>> ListarRegrasFiscaisComContaAsync(long empresaId, CancellationToken ct) => Task.FromResult<IReadOnlyList<RegraFiscal>>([]);
     Task<long> GravarRegraAsync(long empresaId, RegraContabilizacao regra, long contaDebitoId, long contaCreditoId, CancellationToken ct);
     Task ExcluirRegraAsync(long empresaId, long regraId, CancellationToken ct);
 
@@ -112,11 +115,13 @@ public sealed class ServicoContabilizacaoFiscal(IRepositorioContabilizacao repos
         var itens = (await documentos.ListarItensAsync(empresaId, inicio, fim, operacao, ct)).ToLookup(i => i.DocumentoId, i => i.Item);
         var regras = await repositorio.ListarRegrasAsync(empresaId, ct);
         var usaCentro = await repositorio.CentroCustoAtivoAsync(empresaId, ct);
+        var regrasFiscais = await repositorio.ListarRegrasFiscaisComContaAsync(empresaId, ct);
         // Nota com duplicatas: a contrapartida é a conta de fornecedores (entrada) ou de clientes (saída) dos Parâmetros do Fiscal.
         var comDuplicata = duplicatas is null || docs.Count == 0 ? new HashSet<long>() : await duplicatas.DocumentosComDuplicataAsync(empresaId, docs.Select(d => d.Id), ct);
         var config = comDuplicata.Count == 0 ? null : await duplicatas!.ObterConfiguracaoAsync(empresaId, ct);
         return docs.Select(d => MotorContabilizacao.Montar(empresaId, d, itens[d.Id].ToList(), regras, usaCentro,
-            comDuplicata.Contains(d.Id) ? config?.ContaParticipante(d.Operacao == TipoOperacao.Entrada ? TipoDuplicata.Pagar : TipoDuplicata.Receber) : null)).ToList();
+            comDuplicata.Contains(d.Id) ? config?.ContaParticipante(d.Operacao == TipoOperacao.Entrada ? TipoDuplicata.Pagar : TipoDuplicata.Receber) : null,
+            regrasFiscais)).ToList();
     }
 
     /// <summary>

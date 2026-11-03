@@ -18,28 +18,34 @@ public sealed class ServicoRegrasFiscais(NpgsqlDataSource ds, Autorizador autori
 
     /// <summary>Regras da empresa (só as ativas, para aplicar nas notas).</summary>
     public Task<List<RegraFiscal>> RegrasAsync(long empresa, bool soAtivas = true, CancellationToken ct = default) => _db.ListarAsync("""
-        SELECT id, codigo, descricao, operacao, cfop_origem, cfop_destino, cst_icms, cst_pis, cst_cofins, ativa FROM fiscal.regra_fiscal
+        SELECT id, codigo, descricao, operacao, cfop_origem, cfop_destino, cst_icms, cst_pis, cst_cofins, ativa, conta_contabil FROM fiscal.regra_fiscal
          WHERE empresa_id = @e AND (ativa OR NOT @a) ORDER BY codigo
         """, r => new RegraFiscal(r.GetInt64(0), r.GetInt32(1), r.GetString(2), r.GetString(3) == "S" ? TipoOperacao.Saida : TipoOperacao.Entrada,
-                                  r.GetString(4), r.GetString(5).Trim(), r.Texto(6), r.Texto(7), r.Texto(8), r.GetBoolean(9)), ct, ("e", empresa), ("a", soAtivas));
+                                  r.GetString(4), r.GetString(5).Trim(), r.Texto(6), r.Texto(7), r.Texto(8), r.GetBoolean(9), r.Texto(10)), ct, ("e", empresa), ("a", soAtivas));
 
     public async Task<Resultado<long>> GravarAsync(long empresa, RegraFiscal regra, long usuario, CancellationToken ct = default)
     {
         if (await autorizador.VerificarAsync(usuario, empresa, Permissao.FiscalDocumentosImportar, ct) is { } neg) return Resultado<long>.Falha(neg);
         var n = RegrasFiscais.Normalizar(regra);
         if (RegrasFiscais.Validar(n) is { Count: > 0 } erros) return Resultado<long>.Falha(erros);
+        if (n.ContaContabil is { } conta)
+        {
+            var tipo = await _db.EscalarAsync<string?>("SELECT tipo::text FROM contabil.plano_contas WHERE empresa_id = @e AND codigo = @c", ct, ("e", empresa), ("c", conta));
+            if (tipo is null) return Resultado<long>.Falha($"Conta contábil {conta}: não existe no plano de contas da empresa.");
+            if (tipo != "A") return Resultado<long>.Falha($"Conta contábil {conta}: é sintética; escolha uma conta analítica (que recebe lançamentos).");
+        }
         try
         {
             (string, object?)[] p = [("e", empresa), ("id", n.Id), ("c", n.Codigo), ("d", n.Descricao), ("o", n.Operacao == TipoOperacao.Saida ? "S" : "E"),
-                                     ("de", n.CfopOrigem), ("para", n.CfopDestino), ("ci", n.CstIcms), ("cp", n.CstPis), ("cc", n.CstCofins), ("a", n.Ativa)];
+                                     ("de", n.CfopOrigem), ("para", n.CfopDestino), ("ci", n.CstIcms), ("cp", n.CstPis), ("cc", n.CstCofins), ("a", n.Ativa), ("conta", n.ContaContabil)];
             return Resultado<long>.Ok(n.Id == 0
                 ? await _db.EscalarAsync<long>("""
-                    INSERT INTO fiscal.regra_fiscal (empresa_id, codigo, descricao, operacao, cfop_origem, cfop_destino, cst_icms, cst_pis, cst_cofins, ativa)
-                    VALUES (@e, @c, @d, @o, @de, @para, @ci, @cp, @cc, @a) RETURNING id
+                    INSERT INTO fiscal.regra_fiscal (empresa_id, codigo, descricao, operacao, cfop_origem, cfop_destino, cst_icms, cst_pis, cst_cofins, ativa, conta_contabil)
+                    VALUES (@e, @c, @d, @o, @de, @para, @ci, @cp, @cc, @a, @conta) RETURNING id
                     """, ct, p)
                 : await _db.EscalarAsync<long?>("""
                     UPDATE fiscal.regra_fiscal SET codigo = @c, descricao = @d, operacao = @o, cfop_origem = @de, cfop_destino = @para,
-                           cst_icms = @ci, cst_pis = @cp, cst_cofins = @cc, ativa = @a
+                           cst_icms = @ci, cst_pis = @cp, cst_cofins = @cc, ativa = @a, conta_contabil = @conta
                      WHERE id = @id AND empresa_id = @e RETURNING id
                     """, ct, p) ?? throw new ViolacaoRegraException("Regra não encontrada."));
         }

@@ -25,6 +25,8 @@ Menus do módulo Vorticis Fiscal. As escriturações usam os cadastros de client
 2. Para incluir ou mudar uma: **Nova regra**, escreva a **Descrição**, escolha a **Operação** (*Entrada* ou *Saída*), informe o **CFOP do XML** e o **CFOP da escrituração** e, se quiser, os CSTs; clique em **Gravar**.
    - O CFOP do XML pode ser completo (**5102**) ou só o começo (**51** vale para todos os 51xx). Quando duas regras servem, vale a mais específica (5102 vence 51).
    - Na entrada, o CFOP da escrituração começa por 1, 2 ou 3; na saída, por 5, 6 ou 7.
+   - Os **CSTs** do ICMS, do PIS e da COFINS são escolhidos numa lista com a **legenda de cada código** (ex.: *00 – Tributada integralmente*, *102 – Simples Nacional: tributada sem permissão de crédito*, *50 – Entrada com direito a crédito…*). *(em branco – mantém o do XML)* deixa o CST que veio na nota.
+   - **Conta contábil** (opcional): a conta da contabilização das notas deste CFOP: na **entrada**, a conta debitada (estoque, despesa ou custo); na **saída**, a conta creditada (receita). Digite o código ou clique em **Plano de contas…** para consultar o plano: busque por código, reduzido ou nome, dê duplo clique (ou **Usar esta conta**) numa conta analítica. Se a conta não existir, informe o código e a descrição em *Não encontrou? Inclua a conta no plano* e clique em **Incluir conta**: ela é criada no plano (embaixo da conta sintética do código) e já fica escolhida.
    - Desmarque **Ativa** para parar de usar uma regra sem excluí-la.
 3. Em **Testar um CFOP do XML**, escolha a operação e digite um CFOP para ver como ele será escriturado.
 
@@ -33,6 +35,8 @@ As regras também podem vir de uma planilha: abra *Cadastros › Regras fiscais*
 **Quando a troca acontece:**
 - Na **importação de XML** (arquivo, pasta ou pela chave): cada item recebe o CFOP (e os CSTs preenchidos) da regra da operação da nota; o CFOP do XML fica guardado e aparece na coluna *CFOP (XML)*. Item sem regra fica com o CFOP que veio, para você ajustar.
 - Nas notas já importadas: abra a nota, vá à aba **Escrituração** e clique em **Aplicar regras fiscais**; depois, **Gravar escrituração**.
+
+**Na contabilização:** com a conta contábil na regra, as notas do CFOP da escrituração usam essa conta no lugar da conta da regra de contabilização (débito na entrada, crédito na saída). Sem regra de contabilização para o CFOP, a nota com duplicata é contabilizada com a conta da regra fiscal e a conta de fornecedores ou clientes dos Parâmetros. As contas escolhidas na própria nota continuam valendo primeiro.
 
 ## Documentos de entrada e de saída (digitação)
 
