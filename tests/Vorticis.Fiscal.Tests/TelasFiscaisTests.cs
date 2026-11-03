@@ -55,6 +55,39 @@ public class TabelasFiscaisTests
     }
 
     [Fact]
+    public void Excel_sai_com_as_colunas_de_valor_em_moeda_com_duas_casas()
+    {
+        var t = new TabelaRelatorio("Contas", [new("Cliente"), new("Valor", TipoColuna.Valor), new("Parcelas", TipoColuna.Inteiro), new("Saldo", TipoColuna.Valor)],
+            [new LinhaRelatorio(["Alfa", 1500.5m, 3, -20m]), new LinhaRelatorio(["Beta", 10m, 1, 0m])]);
+        var xlsx = ExportadorExcel.Gerar([t, t with { Titulo = "Outra" }]);
+        using var zip = new System.IO.Compression.ZipArchive(new MemoryStream(xlsx));
+        string Ler(string nome) { using var r = new StreamReader(zip.GetEntry(nome)!.Open()); return r.ReadToEnd(); }
+        var estilos = System.Xml.Linq.XDocument.Parse(Ler("xl/styles.xml"));
+        var ns = estilos.Root!.Name.Namespace;
+        var fmt = estilos.Descendants(ns + "numFmt").Single(e => (string?)e.Attribute("formatCode") == ExportadorExcel.FormatoMoeda);
+        var xfs = estilos.Root.Element(ns + "cellXfs")!.Elements(ns + "xf").ToList();
+        var indice = xfs.FindIndex(x => (string?)x.Attribute("numFmtId") == (string?)fmt.Attribute("numFmtId"));
+        Assert.True(indice > 0);
+        foreach (var folha in new[] { "xl/worksheets/sheet1.xml", "xl/worksheets/sheet2.xml" })
+        {
+            var sh = System.Xml.Linq.XDocument.Parse(Ler(folha));
+            var celulas = sh.Descendants(sh.Root!.Name.Namespace + "c").ToDictionary(c => (string)c.Attribute("r")!, c => (string?)c.Attribute("s"));
+            Assert.Equal(indice.ToString(), celulas["B2"]);                // valores: moeda
+            Assert.Equal(indice.ToString(), celulas["D3"]);
+            Assert.NotEqual(indice.ToString(), celulas["C2"]);             // inteiro e texto: sem o formato
+            Assert.NotEqual(indice.ToString(), celulas["A2"]);
+            Assert.NotEqual(indice.ToString(), celulas["B1"]);             // cabeçalho
+        }
+        var lidas = ExportadorExcel.Ler(xlsx);                              // continua número
+        Assert.Equal(1500.5m, Convert.ToDecimal(lidas[0]["Valor"]));
+        // valor que a tela já mandou formatado também vira número
+        Assert.Equal((1500.5m, -10m, (decimal?)null, (decimal?)null), (ExportadorExcel.LerValor("1.500,50"), ExportadorExcel.LerValor("R$ (10,00)"),
+                                                                       ExportadorExcel.LerValor("12,5%"), ExportadorExcel.LerValor("—")));
+        var comTexto = ExportadorExcel.Ler(ExportadorExcel.Gerar([new TabelaRelatorio("T", [new("Valor", TipoColuna.Valor)], [new LinhaRelatorio(["2.000,00"])])]));
+        Assert.Equal(2000m, Convert.ToDecimal(comTexto[0]["Valor"]));
+    }
+
+    [Fact]
     public void Tabelas_de_apuracao_tem_linhas_compativeis_com_as_colunas()
     {
         var tabela = Simples.TabelaSimples.Carregar(Comum.ParametrosEmbutidos.Json(Comum.ChavesParametro.SimplesNacional));

@@ -308,7 +308,7 @@ Respostas rápidas, sem gerar relatório.
 
 ## Relatórios contábeis
 
-Todos aparecem na tela e têm os botões **PDF**, **Excel (.xlsx)** e **CSV**. Exportar exige a permissão *Exportar relatórios*. Nos PDFs há as opções **Assinatura do sócio/responsável** e **Assinatura do contador**, que incluem o bloco de assinaturas ao final com os dados dos cadastros de sócios e contadores.
+Todos aparecem na tela e têm os botões **PDF**, **Excel (.xlsx)** e **CSV**. Exportar exige a permissão *Exportar relatórios*. No **Excel**, as colunas de valor (deste e de todos os relatórios do sistema) saem formatadas como **moeda, com duas casas decimais** (ex.: R$ 1.500,00), e continuam sendo números: dá para somar, filtrar e montar gráficos. Nos PDFs há as opções **Assinatura do sócio/responsável** e **Assinatura do contador**, que incluem o bloco de assinaturas ao final com os dados dos cadastros de sócios e contadores.
 
 ### Livro Diário
 *Relatórios › Contábeis › Livro Diário*: informe o período e **Gerar**.
