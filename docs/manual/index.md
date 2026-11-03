@@ -24,7 +24,7 @@ Cada função segue o mesmo roteiro: **para que serve**, **onde fica no menu**, 
 ## Dicas gerais de uso
 
 - Cada função abre em uma janela própria; a barra abaixo do menu lista as janelas abertas. Fechar e abrir de novo recomeça do zero.
-- Os cadastros têm sempre a mesma barra: **Incluir, Alterar, Excluir, Salvar e Cancelar**. Excluir sempre pede confirmação.
+- Os cadastros abrem mostrando a lista do que já foi gravado; o formulário abre numa janela pop-up (**Incluir**/**Novo**, **Alterar**/**Abrir** ou duplo clique). Excluir sempre pede confirmação. Veja [Como funcionam as janelas de cadastro](02-cadastros-comuns.md#como-funcionam-as-janelas-de-cadastro).
 - Os relatórios aparecem na tela e podem ser exportados em **PDF, Excel e CSV**.
 - Ctrl+C copia a célula atual de uma grade; Ctrl+V cola em célula editável.
 - Se uma opção do menu não aparece ou está cinza, o seu perfil de acesso não permite essa função (veja [Usuários e perfis](01-primeiros-passos.md#usuarios-perfis-e-empresas-por-usuario)).

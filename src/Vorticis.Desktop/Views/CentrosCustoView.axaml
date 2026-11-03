@@ -1,4 +1,4 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns:fp="using:Vorticis.Desktop.Comum.Views" xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:c="using:Vorticis.Desktop.Comum.Views"
              xmlns:vm="using:Vorticis.Desktop.ViewModels"
@@ -9,7 +9,7 @@
     <c:BarraCadastroView Grid.ColumnSpan="3" Margin="0,0,0,8" />
     <DockPanel Grid.Row="1" IsEnabled="{Binding !EmEdicao}">
       <TextBlock DockPanel.Dock="Top" Classes="titulo" Text="Centros de custo" Margin="0,0,0,8" />
-      <DataGrid ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid fp:FormularioPopup.Lista="True" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
         <DataGrid.Columns>
           <DataGridTextColumn Header="Nº" Binding="{ReflectionBinding Numero}" Width="70" />
           <DataGridTextColumn Header="Código" Binding="{ReflectionBinding Estrutura}" Width="190" />
@@ -20,7 +20,7 @@
         </DataGrid.Columns>
       </DataGrid>
     </DockPanel>
-    <StackPanel Grid.Row="1" Grid.Column="2" Spacing="6">
+    <StackPanel fp:FormularioPopup.Titulo="Centro de custo" Grid.Row="1" Grid.Column="2" Spacing="6">
       <TextBlock Text="Seu perfil permite apenas consultar." Classes="erro" IsVisible="{Binding !PodeEditar}" />
       <TextBlock Text="Máscara do plano" FontWeight="SemiBold" Foreground="#1F3A5F" />
       <TextBlock Text="{Binding ResumoMascara}" FontSize="11" Foreground="Gray" TextWrapping="Wrap" />

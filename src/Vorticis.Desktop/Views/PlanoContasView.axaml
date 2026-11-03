@@ -1,4 +1,4 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns:fp="using:Vorticis.Desktop.Comum.Views" xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:c="using:Vorticis.Desktop.Comum.Views"
              xmlns:vm="using:Vorticis.Desktop.ViewModels"
@@ -28,7 +28,7 @@
     </DockPanel>
 
     <!-- Escolha do modelo de plano: empresa sem plano ou troca pedida pelo usuário -->
-    <Border Grid.Row="2" Grid.ColumnSpan="3" BorderBrush="#D0D5DD" BorderThickness="1" CornerRadius="4" Padding="14"
+    <Border fp:FormularioPopup.Titulo="Conta do plano de contas" Grid.Row="2" Grid.ColumnSpan="3" BorderBrush="#D0D5DD" BorderThickness="1" CornerRadius="4" Padding="14"
             VerticalAlignment="Top" HorizontalAlignment="Left" MaxWidth="780" IsVisible="{Binding MostrarEscolha}">
       <StackPanel Spacing="8">
         <TextBlock Classes="titulo" Text="Escolher o plano de contas" />
@@ -126,7 +126,7 @@
         <TextBlock Text="Contas cadastradas" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,12,0" />
         <TextBox Text="{Binding Filtro}" Watermark="Filtrar por código, reduzido ou descrição" />
       </DockPanel>
-      <DataGrid ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionada}" IsReadOnly="True" AutoGenerateColumns="False"
+      <DataGrid fp:FormularioPopup.Lista="True" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionada}" IsReadOnly="True" AutoGenerateColumns="False"
                 FontFamily="Consolas, Menlo, monospace">
         <DataGrid.Columns>
           <DataGridTextColumn Header="Código" Binding="{ReflectionBinding Codigo}" Width="130" />

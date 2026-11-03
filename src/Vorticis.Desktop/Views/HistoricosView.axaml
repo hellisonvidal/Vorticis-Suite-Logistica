@@ -1,4 +1,4 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns:fp="using:Vorticis.Desktop.Comum.Views" xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:c="using:Vorticis.Desktop.Comum.Views"
              xmlns:vm="using:Vorticis.Desktop.ViewModels"
@@ -13,14 +13,14 @@
         <TextBlock Classes="titulo" Text="Históricos padrão" VerticalAlignment="Center" />
         <TextBox Text="{Binding Filtro}" Watermark="Filtrar por código ou texto" Width="260" />
       </StackPanel>
-      <DataGrid ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid fp:FormularioPopup.Lista="True" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
         <DataGrid.Columns>
           <DataGridTextColumn Header="Código" Binding="{ReflectionBinding Codigo}" Width="80" />
           <DataGridTextColumn Header="Texto fixo" Binding="{ReflectionBinding Descricao}" Width="*" />
         </DataGrid.Columns>
       </DataGrid>
     </DockPanel>
-    <StackPanel Grid.Row="1" Grid.Column="2" Spacing="6">
+    <StackPanel fp:FormularioPopup.Titulo="Histórico padrão" Grid.Row="1" Grid.Column="2" Spacing="6">
       <TextBlock Text="Histórico" FontWeight="SemiBold" Foreground="#1F3A5F" />
       <Grid ColumnDefinitions="90,*" RowDefinitions="Auto,Auto" RowSpacing="6">
         <TextBlock Classes="rotulo" Text="Código" />

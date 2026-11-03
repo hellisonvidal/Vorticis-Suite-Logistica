@@ -1,4 +1,4 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns:fp="using:Vorticis.Desktop.Comum.Views" xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:c="using:Vorticis.Desktop.Comum.Views"
              xmlns:vm="using:Vorticis.Desktop.ViewModels"
@@ -13,7 +13,7 @@
         <TextBlock Classes="titulo" Text="Bens do imobilizado" VerticalAlignment="Center" />
         <TextBox Text="{Binding Filtro}" Watermark="Filtrar: código, descrição ou plaqueta" Width="260" />
       </StackPanel>
-      <DataGrid ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid fp:FormularioPopup.Lista="True" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
         <DataGrid.Columns>
           <DataGridTextColumn Header="Cód." Binding="{ReflectionBinding Codigo}" Width="56" />
           <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="2*" MinWidth="150" />
@@ -28,7 +28,7 @@
     </DockPanel>
     <TextBlock Grid.Row="2" Text="{Binding Resumo}" FontWeight="SemiBold" Margin="0,6,0,0" />
 
-    <ScrollViewer Grid.Row="1" Grid.RowSpan="2" Grid.Column="2">
+    <ScrollViewer fp:FormularioPopup.Titulo="Bem do imobilizado" Grid.Row="1" Grid.RowSpan="2" Grid.Column="2">
       <StackPanel Spacing="6">
         <TextBlock Text="Bem" FontWeight="SemiBold" Foreground="#1F3A5F" />
         <Grid ColumnDefinitions="128,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6" IsEnabled="{Binding EmEdicao}">

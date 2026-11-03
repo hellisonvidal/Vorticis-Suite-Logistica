@@ -1,9 +1,9 @@
-<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<UserControl xmlns:fp="using:Vorticis.Desktop.Comum.Views" xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:vm="using:Vorticis.Frota.Desktop.ViewModels"
              x:Class="Vorticis.Frota.Desktop.Views.DocumentosView" x:DataType="vm:DocumentosViewModel">
   <Grid ColumnDefinitions="*,12,380" RowDefinitions="Auto,*" Margin="8">
     <TextBlock Grid.ColumnSpan="3" Classes="titulo" Text="Documentos e vencimentos" Margin="0,0,0,8" />
-    <DataGrid Grid.Row="1" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+    <DataGrid fp:FormularioPopup.Lista="True" Grid.Row="1" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
       <DataGrid.Columns>
         <DataGridTextColumn Header="Documento" Binding="{ReflectionBinding Tipo}" Width="180" />
         <DataGridTextColumn Header="De" Binding="{ReflectionBinding Dono}" Width="*" />
@@ -13,7 +13,7 @@
         <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="150" />
       </DataGrid.Columns>
     </DataGrid>
-    <StackPanel Grid.Row="1" Grid.Column="2" Spacing="6" IsEnabled="{Binding PodeEditar}">
+    <StackPanel fp:FormularioPopup.Titulo="Documento e vencimento" Grid.Row="1" Grid.Column="2" Spacing="6" IsEnabled="{Binding PodeEditar}">
       <Grid ColumnDefinitions="110,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
         <TextBlock Classes="rotulo" Text="Documento" />
         <ComboBox Grid.Column="1" ItemsSource="{x:Static vm:DocumentosViewModel.Tipos}" SelectedItem="{Binding Tipo}" HorizontalAlignment="Stretch" />

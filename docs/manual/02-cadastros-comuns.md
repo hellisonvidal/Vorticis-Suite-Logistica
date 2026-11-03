@@ -1,6 +1,18 @@
 # Cadastros comuns
 
-Estes cadastros existem em todos os módulos e têm o mesmo código em todos eles. Todos usam a barra **Incluir · Alterar · Excluir · Salvar · Cancelar**, mostram o **Nº** de cada registro e a lista dos cadastrados à direita. As datas, CNPJ, CPF e CEP são formatados enquanto você digita.
+Estes cadastros existem em todos os módulos e têm o mesmo código em todos eles. Todos usam a barra **Incluir · Alterar · Excluir · Salvar · Cancelar** e mostram o **Nº** de cada registro. As datas, CNPJ, CPF e CEP são formatados enquanto você digita.
+
+## Como funcionam as janelas de cadastro
+
+**Para que serve:** ver logo de cara o que já está cadastrado e editar um registro de cada vez, numa janela própria.
+
+**Como funciona (em todos os cadastros: clientes, fornecedores, contas bancárias, formas de pagamento, veículos, motoristas, frotas, rotas, tabelas de frete, planos de manutenção, peças e serviços, produtos, regras fiscais e de contabilização, plano de contas, centros de custo, históricos e imobilizado):**
+
+1. Ao abrir o cadastro pelo menu, a tela mostra a **lista dos registros já gravados**, ocupando a janela toda.
+2. Para cadastrar um novo, clique em **Incluir** (nos cadastros com a barra padrão) ou em **Novo** (na barra sobre a lista). O formulário abre numa **janela pop-up**, por cima da lista.
+3. Para ver ou alterar um registro, dê **duplo clique** nele (ou selecione e tecle **Enter**, ou clique em **Alterar**/**Abrir**). O registro abre no pop-up.
+4. Preencha e clique em **Salvar** (ou **Gravar**). Gravado sem erros, o pop-up fecha e a lista já mostra o registro. Se algo estiver errado, a mensagem aparece no próprio pop-up.
+5. **Cancelar**, **Fechar**, o **X** da janela ou **Esc** fecham o pop-up sem gravar o que não foi salvo.
 
 ## Empresas
 
@@ -118,7 +130,7 @@ Se o seu perfil não permite alterar, a tela só mostra os valores. Se você ape
 ## Contas bancárias
 
 **Para que serve:** cadastrar as contas da empresa nos bancos, para indicar onde cai o dinheiro de cada forma de pagamento e qual conta contábil representa o banco.
-**Onde fica:** *Cadastros › Bancos* no Contábil; *Cadastros › Contas bancárias* no Fiscal e no Gerencial. O formulário fica em cima e a lista embaixo.
+**Onde fica:** *Cadastros › Bancos* no Contábil; *Cadastros › Contas bancárias* no Fiscal e no Gerencial. A lista mostra as contas cadastradas; **Incluir** e **Alterar** abrem o formulário no pop-up.
 
 1. Clique em **Incluir**; o código é sugerido.
 2. Informe a **descrição** (ex.: *Banco do Brasil – movimento*), o **banco** (código de compensação com 3 dígitos: 001, 104, 237, 341...), a **agência** e a **conta** (com o dígito depois do traço, se houver).
@@ -137,7 +149,7 @@ Se o seu perfil não permite alterar, a tela só mostra os valores. Se você ape
 
 As parcelas saem com valores iguais; a última recebe a diferença dos centavos. Os prazos precisam estar em ordem crescente.
 
-A lista embaixo mostra código, descrição, meio, parcelas, intervalo, prazos, conta e situação, todas as colunas ajustadas à largura da janela.
+A lista mostra código, descrição, meio, parcelas, intervalo, prazos, conta e situação, todas as colunas ajustadas à largura da janela.
 
 ## Sócios
 

@@ -1,4 +1,4 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns:fp="using:Vorticis.Desktop.Comum.Views" xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:c="using:Vorticis.Desktop.Comum.Views"
              xmlns:vm="using:Vorticis.Desktop.ViewModels"
@@ -9,7 +9,7 @@
     <c:BarraCadastroView Grid.ColumnSpan="3" Margin="0,0,0,8" />
     <DockPanel Grid.Row="1" IsEnabled="{Binding !EmEdicao}">
       <TextBlock DockPanel.Dock="Top" Classes="titulo" Text="Regras de depreciação (grupos de bens)" Margin="0,0,0,8" />
-      <DataGrid ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid fp:FormularioPopup.Lista="True" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False">
         <DataGrid.Columns>
           <DataGridTextColumn Header="Cód." Binding="{ReflectionBinding Codigo}" Width="56" />
           <DataGridTextColumn Header="Grupo" Binding="{ReflectionBinding Descricao}" Width="*" MinWidth="160" />
@@ -21,7 +21,7 @@
     </DockPanel>
     <TextBlock Grid.Row="2" Grid.ColumnSpan="3" FontSize="11" Foreground="Gray" TextWrapping="Wrap" Margin="0,6,0,0"
                Text="Taxas fiscais: IN RFB 1.700/2017, Anexo III, e RIR/2018 arts. 317 a 330 (bens móveis em 2 ou 3 turnos: depreciação fiscal acelerada em 1,5 ou 2,0 — art. 323). Contabilmente (NBC TG 27 / CPC 27) a vida útil, o valor residual e o método de cada bem são estimados pela empresa; a vida útil fiscal é só a sugestão inicial. A diferença entre as duas é controlada no LALUR." />
-    <StackPanel Grid.Row="1" Grid.Column="2" Spacing="6">
+    <StackPanel fp:FormularioPopup.Titulo="Grupo de depreciação" Grid.Row="1" Grid.Column="2" Spacing="6">
       <TextBlock Text="Grupo" FontWeight="SemiBold" Foreground="#1F3A5F" />
       <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6" IsEnabled="{Binding EmEdicao}">
         <TextBlock Classes="rotulo" Text="Código" />

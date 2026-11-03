@@ -1,4 +1,4 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns:fp="using:Vorticis.Desktop.Comum.Views" xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
              xmlns:v="using:Vorticis.Desktop.Comum.Views"
@@ -19,7 +19,7 @@
   <Grid ColumnDefinitions="*,16,300" RowDefinitions="Auto,*" Margin="8,4,8,0">
     <v:BarraCadastroView Grid.ColumnSpan="3" Margin="0,0,0,8" />
 
-    <ScrollViewer Grid.Row="1">
+    <ScrollViewer fp:FormularioPopup.Titulo="Cadastro" Grid.Row="1">
       <StackPanel Spacing="6" MaxWidth="760" HorizontalAlignment="Left" Margin="0,0,12,8">
         <StackPanel Orientation="Horizontal" Spacing="12">
           <TextBlock Classes="titulo" Text="{Binding TituloFormulario}" />
@@ -90,7 +90,7 @@
     <DockPanel Grid.Row="1" Grid.Column="2" IsEnabled="{Binding !EmEdicao}">
       <TextBlock DockPanel.Dock="Top" Text="{Binding TituloLista}" FontWeight="SemiBold" Margin="0,0,0,6" />
       <TextBox DockPanel.Dock="Top" Text="{Binding Filtro}" Watermark="Filtrar por código, nome ou CPF/CNPJ" Margin="0,0,0,6" />
-      <ListBox ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}">
+      <ListBox fp:FormularioPopup.Lista="True" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}">
         <ListBox.ItemTemplate>
           <DataTemplate x:DataType="vm:ParticipanteLinha">
             <StackPanel>

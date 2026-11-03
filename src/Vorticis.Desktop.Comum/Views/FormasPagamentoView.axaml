@@ -1,4 +1,4 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns:fp="using:Vorticis.Desktop.Comum.Views" xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:c="using:Vorticis.Desktop.Comum.Views"
              xmlns:vm="using:Vorticis.Desktop.Comum.ViewModels"
@@ -8,7 +8,7 @@
   <DockPanel Margin="8">
     <c:BarraCadastroView DockPanel.Dock="Top" Margin="0,0,0,8" />
     <TextBlock DockPanel.Dock="Top" Classes="titulo" Text="Formas de pagamento" Margin="0,0,0,6" />
-    <Border DockPanel.Dock="Top" BorderBrush="#D0D5DD" BorderThickness="1" CornerRadius="4" Padding="8" Margin="0,0,0,8">
+    <Border fp:FormularioPopup.Titulo="Forma de pagamento" DockPanel.Dock="Top" BorderBrush="#D0D5DD" BorderThickness="1" CornerRadius="4" Padding="8" Margin="0,0,0,8">
       <StackPanel Spacing="6">
         <WrapPanel IsEnabled="{Binding EmEdicao}">
           <WrapPanel.Styles><Style Selector="WrapPanel &gt; StackPanel"><Setter Property="Margin" Value="0,0,12,6" /></Style></WrapPanel.Styles>
@@ -36,7 +36,7 @@
         <c:MensagensView />
       </StackPanel>
     </Border>
-    <DataGrid ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False" IsEnabled="{Binding !EmEdicao}">
+    <DataGrid fp:FormularioPopup.Lista="True" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionado}" IsReadOnly="True" AutoGenerateColumns="False" IsEnabled="{Binding !EmEdicao}">
       <DataGrid.Columns>
         <DataGridTextColumn Header="Código" Binding="{ReflectionBinding Codigo}" Width="0.5*" />
         <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="2*" />

@@ -1,9 +1,9 @@
-<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<UserControl xmlns:fp="using:Vorticis.Desktop.Comum.Views" xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:c="using:Vorticis.Desktop.Comum.Views" xmlns:g="using:Vorticis.Fiscal.Desktop.Views" xmlns:vm="using:Vorticis.Fiscal.Desktop.ViewModels"
              x:Class="Vorticis.Fiscal.Desktop.Views.RegrasFiscaisView" x:DataType="vm:RegrasFiscaisViewModel">
   <Grid ColumnDefinitions="*,12,420" RowDefinitions="Auto,*" Margin="8">
     <TextBlock Grid.ColumnSpan="3" Classes="titulo" Text="Regras fiscais" Margin="0,0,0,6" />
-    <DataGrid Grid.Row="1" g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionada}" IsReadOnly="True" AutoGenerateColumns="False">
+    <DataGrid fp:FormularioPopup.Lista="True" Grid.Row="1" g:GradesFiscais.Ajustar="True" ItemsSource="{Binding Lista}" SelectedItem="{Binding Selecionada}" IsReadOnly="True" AutoGenerateColumns="False">
       <DataGrid.Columns>
         <DataGridTextColumn Header="Código" Binding="{ReflectionBinding Codigo}" Width="70" />
         <DataGridTextColumn Header="Descrição" Binding="{ReflectionBinding Descricao}" Width="*" />
@@ -14,7 +14,7 @@
         <DataGridTextColumn Header="Situação" Binding="{ReflectionBinding Situacao}" Width="80" />
       </DataGrid.Columns>
     </DataGrid>
-    <ScrollViewer Grid.Row="1" Grid.Column="2">
+    <ScrollViewer fp:FormularioPopup.Titulo="Regra fiscal" Grid.Row="1" Grid.Column="2">
       <StackPanel Spacing="6">
         <Grid ColumnDefinitions="170,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6" IsEnabled="{Binding PodeManter}">
           <TextBlock Classes="rotulo" Text="Código" />
