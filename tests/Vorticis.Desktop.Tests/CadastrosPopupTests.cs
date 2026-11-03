@@ -99,4 +99,27 @@ public class CadastrosPopupTests(SessaoHeadless headless)
         j2.Close();
         return Task.FromResult(true);
     }, TestContext.Current.CancellationToken)));
+
+    [Fact]
+    public void Lancamento_em_partida_simples_tem_uma_conta_por_linha_a_debito_ou_a_credito()
+    {
+        var vm = new Vorticis.Desktop.ViewModels.LancamentoViewModel(new Contexto());
+        try
+        {
+            vm.PartidaSimples = true;
+            var l = vm.Linhas[0];
+            Assert.True(l.Simples);
+            Assert.True(l.MostrarDebito);
+            Assert.False(l.MostrarCredito);
+            l.Conta = "1.1.01.001";
+            l.IndiceDC = 1;                                                       // passa para crédito: a conta vai junto
+            Assert.Equal(("", "1.1.01.001", false, true), (l.Conta, l.ContaCredito, l.MostrarDebito, l.MostrarCredito));
+            l.Credito = false;
+            Assert.Equal(("1.1.01.001", ""), (l.Conta, l.ContaCredito));
+            vm.PartidasDobradas = true;                                           // dobradas: as duas contas na linha
+            Assert.True(l.MostrarDebito && l.MostrarCredito && !l.Simples);
+            Assert.False(Vorticis.Desktop.ViewModels.LancamentoViewModel.UltimoModoSimples);
+        }
+        finally { Vorticis.Desktop.ViewModels.LancamentoViewModel.UltimoModoSimples = false; }
+    }
 }

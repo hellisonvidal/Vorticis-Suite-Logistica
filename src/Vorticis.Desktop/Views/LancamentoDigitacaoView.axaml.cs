@@ -47,7 +47,8 @@ public partial class LancamentoDigitacaoView : UserControl
     }
 
     /// <summary>Ordem dos campos no Enter; o participante só existe no plano com participantes.</summary>
-    private string[] Campos => _vm?.UsaParticipantes == true ? CamposLinha : CamposLinha[..^1];
+    private string[] Campos => [.. (_vm?.UsaParticipantes == true ? CamposLinha : CamposLinha[..^1]).Where(c => _vm?.LinhaSelecionada is not { } l
+        || (c is "reduzido" or "conta" ? l.MostrarDebito : c is "reduzidocredito" or "contacredito" ? l.MostrarCredito : true))];
 
     /// <summary>Linhas recomeçadas (abrir, Limpar, Salvar): foco no primeiro campo.</summary>
     private void AoMudarLinhas(object? sender, NotifyCollectionChangedEventArgs e)

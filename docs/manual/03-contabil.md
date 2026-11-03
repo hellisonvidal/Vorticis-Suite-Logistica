@@ -86,6 +86,13 @@ A tela mostra os **lançamentos efetuados** do período, com os botões **Novo (
 | ↑ em partida nova e vazia | Cancela a partida |
 | Ctrl+Delete | Exclui a partida |
 
+### Partidas dobradas ou partida simples
+
+No alto da janela do lançamento, em **Tipo de lançamento**, escolha como quer digitar (a escolha vale para os próximos lançamentos):
+
+- **Partidas dobradas:** cada linha tem a **conta a débito** e a **conta a crédito**, com o mesmo valor. É o jeito mais rápido para lançamentos de um débito e um crédito.
+- **Partida simples:** cada linha tem **uma conta só**. Ao lado do valor, escolha **Débito (D)** ou **Crédito (C)**; trocar leva a conta digitada para o outro lado. Use para lançamentos com vários débitos e créditos (ex.: uma folha com vários descontos). As linhas somadas precisam fechar: o rodapé mostra os débitos, os créditos e a diferença.
+
 ### Uma partida ou várias
 - Uma partida com conta débito **e** conta crédito é um lançamento completo.
 - Partidas com **uma conta só** somam um único lançamento que precisa fechar (débitos = créditos). Se faltar a contrapartida, o sistema pergunta e oferece incluir a linha.

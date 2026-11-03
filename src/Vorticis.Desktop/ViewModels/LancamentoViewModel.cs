@@ -35,6 +35,24 @@ public partial class LinhaLancamentoViewModel : ObservableObject
     [ObservableProperty] private string _participante = "";
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(ResumoContas))] private string _nomeParticipante = "";
 
+    /// <summary>
+    /// Modo partida simples (escolhido na tela): a linha tem uma conta só, a débito ou a crédito (<see cref="Credito"/>); no modo partidas dobradas
+    /// a linha tem as duas contas. Trocar entre débito e crédito leva a conta digitada para o outro lado.
+    /// </summary>
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(MostrarDebito), nameof(MostrarCredito))] private bool _simples;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(MostrarDebito), nameof(MostrarCredito), nameof(IndiceDC))] private bool _credito;
+    public bool MostrarDebito => !Simples || !Credito;
+    public bool MostrarCredito => !Simples || Credito;
+    /// <summary>0 = Débito, 1 = Crédito (caixa D/C da partida simples).</summary>
+    public int IndiceDC { get => Credito ? 1 : 0; set => Credito = value == 1; }
+
+    partial void OnCreditoChanged(bool value)
+    {
+        if (!Simples) return;
+        if (value && TemDebito && !TemCredito) { (ContaCredito, ReduzidoCredito) = (Conta, Reduzido); (Conta, Reduzido, NomeConta) = ("", "", ""); }
+        else if (!value && TemCredito && !TemDebito) { (Conta, Reduzido) = (ContaCredito, ReduzidoCredito); (ContaCredito, ReduzidoCredito, NomeContaCredito) = ("", "", ""); }
+    }
+
     /// <summary>Criada pela seta para baixo e ainda não alterada pelo usuário (a seta para cima a cancela).</summary>
     public bool Nova { get; set; }
     public bool Editada { get; private set; }
@@ -104,11 +122,35 @@ public partial class LancamentoViewModel : ModuloViewModel, Comum.ViewModels.IAl
     public LancamentoViewModel(IContexto contexto) : base(contexto)
     {
         Linhas.CollectionChanged += AoMudarLinhas;
+        Linhas.CollectionChanged += (_, e) => { foreach (var l in e.NewItems?.OfType<LinhaLancamentoViewModel>() ?? []) AjustarModo(l); };
         Limpar();
     }
 
     public ObservableCollection<LinhaLancamentoViewModel> Linhas { get; } = [];
     public ObservableCollection<ContaSelecionavel> Contas { get; } = [];
+
+    /// <summary>Última escolha entre partida simples e partidas dobradas (vale para os próximos lançamentos da sessão).</summary>
+    public static bool UltimoModoSimples { get; set; }
+
+    /// <summary>
+    /// Tipo de lançamento escolhido pelo usuário: partidas dobradas (cada linha com a conta a débito e a conta a crédito) ou partida simples
+    /// (cada linha com uma conta só, a débito ou a crédito; as linhas somadas precisam fechar débitos = créditos).
+    /// </summary>
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(PartidasDobradas))] private bool _partidaSimples = UltimoModoSimples;
+    public bool PartidasDobradas { get => !PartidaSimples; set => PartidaSimples = !value; }
+
+    partial void OnPartidaSimplesChanged(bool value)
+    {
+        UltimoModoSimples = value;
+        foreach (var l in Linhas) AjustarModo(l);
+    }
+
+    private void AjustarModo(LinhaLancamentoViewModel l)
+    {
+        l.Simples = PartidaSimples;
+        if (PartidaSimples && l.TemDebito && l.TemCredito) l.Simples = false;   // linha já com as duas contas continua dobrada
+        else if (PartidaSimples) l.Credito = l.TemCredito && !l.TemDebito;
+    }
     public IReadOnlyList<ContaSelecionavel> TodasContas => _todasContas;
 
     [ObservableProperty] private DateTime? _data = DateTime.Today;

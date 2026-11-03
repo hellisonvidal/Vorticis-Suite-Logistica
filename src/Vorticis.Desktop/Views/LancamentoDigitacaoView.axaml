@@ -34,6 +34,11 @@
       <Border Background="#FFF4CE" BorderBrush="#E0B000" BorderThickness="1" CornerRadius="3" Padding="8,1" IsVisible="{Binding EmEdicao}">
         <TextBlock Text="{Binding TextoEdicao}" FontSize="11" Foreground="#5A4500" VerticalAlignment="Center" />
       </Border>
+      <TextBlock Text="Tipo de lançamento:" VerticalAlignment="Center" Margin="12,0,0,0" />
+      <RadioButton GroupName="TipoLancamento" Content="Partidas dobradas" IsChecked="{Binding PartidasDobradas}" IsEnabled="{Binding PodeDigitar}"
+                   ToolTip.Tip="Cada linha tem a conta a débito e a conta a crédito, com o mesmo valor" />
+      <RadioButton GroupName="TipoLancamento" Content="Partida simples" IsChecked="{Binding PartidaSimples}" IsEnabled="{Binding PodeDigitar}"
+                   ToolTip.Tip="Cada linha tem uma conta só, a débito ou a crédito; a soma dos débitos precisa ser igual à dos créditos" />
     </StackPanel>
 
     <Grid Grid.Row="1" RowDefinitions="Auto,Auto,*">
@@ -44,8 +49,8 @@
           <TextBlock Classes="rot" Text="Data" />
           <TextBox Grid.Column="1" Tag="data" Text="{Binding Data}" c:Mascara.Tipo="Data" Width="120" HorizontalAlignment="Left" />
 
-          <TextBlock Classes="rot" Grid.Row="1" Text="Conta a débito (D)" />
-          <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="6">
+          <TextBlock Classes="rot" Grid.Row="1" Text="Conta a débito (D)" IsVisible="{Binding MostrarDebito}" />
+          <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="6" IsVisible="{Binding MostrarDebito}">
             <TextBox Tag="reduzido" Text="{Binding Reduzido}" Width="70" Watermark="Red." ToolTip.Tip="Código reduzido da conta" />
             <AutoCompleteBox Tag="conta" Text="{Binding Conta}" Width="190" Watermark="Código ou nome"
                              ItemsSource="{Binding $parent[UserControl].((vm:LancamentoViewModel)DataContext).TodasContas}"
@@ -58,8 +63,8 @@
           </StackPanel>
           <TextBlock Classes="nome" Grid.Row="1" Grid.Column="2" Text="{Binding NomeConta}" />
 
-          <TextBlock Classes="rot" Grid.Row="2" Text="Conta a crédito (C)" />
-          <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Spacing="6">
+          <TextBlock Classes="rot" Grid.Row="2" Text="Conta a crédito (C)" IsVisible="{Binding MostrarCredito}" />
+          <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Spacing="6" IsVisible="{Binding MostrarCredito}">
             <TextBox Tag="reduzidocredito" Text="{Binding ReduzidoCredito}" Width="70" Watermark="Red." ToolTip.Tip="Código reduzido da conta" />
             <AutoCompleteBox Tag="contacredito" Text="{Binding ContaCredito}" Width="190" Watermark="Código ou nome"
                              ItemsSource="{Binding $parent[UserControl].((vm:LancamentoViewModel)DataContext).TodasContas}"
@@ -73,7 +78,13 @@
           <TextBlock Classes="nome" Grid.Row="2" Grid.Column="2" Text="{Binding NomeContaCredito}" />
 
           <TextBlock Classes="rot" Grid.Row="3" Text="Valor" />
-          <TextBox Grid.Row="3" Grid.Column="1" Tag="valor" Classes="valor" Text="{Binding Valor}" Width="150" HorizontalAlignment="Left" />
+          <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" Spacing="6">
+            <TextBox Tag="valor" Classes="valor" Text="{Binding Valor}" Width="150" HorizontalAlignment="Left" />
+            <ComboBox SelectedIndex="{Binding IndiceDC}" Width="110" IsVisible="{Binding Simples}" ToolTip.Tip="Partida simples: a conta desta linha é a débito ou a crédito">
+              <ComboBoxItem Content="Débito (D)" />
+              <ComboBoxItem Content="Crédito (C)" />
+            </ComboBox>
+          </StackPanel>
 
           <TextBlock Classes="rot" Grid.Row="4" Text="Documento" />
           <TextBox Grid.Row="4" Grid.Column="1" Tag="documento" Text="{Binding Documento}" Width="150" HorizontalAlignment="Left" />
