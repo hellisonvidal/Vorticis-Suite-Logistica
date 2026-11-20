@@ -43,6 +43,10 @@ public static class CertificadosPadrao
         return await AbrirAsync(contexto, c);
     }
 
+    /// <summary>Certificado padrão do papel para transmitir documentos fiscais (CT-e, MDF-e, eSocial) da empresa ativa.</summary>
+    public static Task<Resultado<X509Certificate2>> AbrirParaTransmissaoAsync(IContexto contexto, PapelAssinatura papel = PapelAssinatura.Responsavel)
+        => AbrirParaEsocialAsync(contexto, papel);
+
     public static async Task<Resultado<X509Certificate2>> AbrirAsync(IContexto contexto, CertificadoDigital c)
     {
         if (contexto.App is not { } app || contexto.Sessao is not { } sessao) return Resultado<X509Certificate2>.Falha("Sessão encerrada. Entre novamente.");

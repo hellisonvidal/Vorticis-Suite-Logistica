@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
     <!-- Versão única da suíte (Contábil, Fiscal e Folha são instalados e atualizados juntos) -->
-    <Version>0.4.0</Version>
+    <Version>0.5.0</Version>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <InvariantGlobalization>false</InvariantGlobalization>
     <SatelliteResourceLanguages>pt-BR</SatelliteResourceLanguages>

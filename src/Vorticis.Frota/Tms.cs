@@ -32,7 +32,7 @@ public sealed record Cte(long Id, int Serie, int Numero, DateOnly Emissao, strin
                          string? Produto, int Volumes, decimal PesoKg, decimal VolumeM3, decimal ValorMercadoria, string? ChavesNfe, ComponentesFrete Frete,
                          DateOnly? PrevisaoEntrega, string? Chave, string? Protocolo, string Situacao, DateTime? EntregueEm, string? Recebedor, long? FaturaId,
                          string? Observacao, string? Remetente = null, string? Destinatario = null, string? Tomador = null, string? Placa = null,
-                         string? MotoristaNome = null, int? FaturaNumero = null)
+                         string? MotoristaNome = null, int? FaturaNumero = null, decimal Ibs = 0, decimal Cbs = 0, int TipoEmissao = 1, bool TemXmlAutorizado = false)
 {
     public decimal ValorTotal => Frete.Total;
     public string Trecho => $"{Origem.Municipio}/{Origem.Uf} → {Destino.Municipio}/{Destino.Uf}";
@@ -41,7 +41,8 @@ public sealed record Cte(long Id, int Serie, int Numero, DateOnly Emissao, strin
 
 public sealed record Manifesto(long Id, int Serie, int Numero, DateOnly Emissao, string UfInicio, string UfFim, string? UfsPercurso, long VeiculoId, long MotoristaId,
                                long? ViagemId, string? Chave, string Situacao, DateOnly? EncerradoEm, string? Observacao, IReadOnlyList<long> Ctes,
-                               string? Placa = null, string? MotoristaNome = null, decimal PesoKg = 0, decimal ValorMercadoria = 0, decimal ValorFrete = 0);
+                               string? Placa = null, string? MotoristaNome = null, decimal PesoKg = 0, decimal ValorMercadoria = 0, decimal ValorFrete = 0,
+                               string? Protocolo = null, bool TemXmlAutorizado = false);
 
 public sealed record Ocorrencia(long Id, long CteId, DateTime DataHora, string Tipo, string? Descricao, string? Recebedor, string? Usuario = null);
 

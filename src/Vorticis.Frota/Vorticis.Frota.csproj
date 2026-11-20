@@ -5,6 +5,9 @@
     <EmbeddedResource Include="municipios.csv" LogicalName="Vorticis.Frota.municipios.csv" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="System.Security.Cryptography.Xml" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Vorticis.Domain\Vorticis.Domain.csproj" />
     <ProjectReference Include="..\Vorticis.Application\Vorticis.Application.csproj" />
     <ProjectReference Include="..\Vorticis.Infra\Vorticis.Infra.csproj" />

@@ -95,11 +95,13 @@
       </Grid>
       <StackPanel Orientation="Horizontal" Spacing="6">
         <Button Content="Gravar" Classes="accent" Command="{Binding GravarCommand}" />
+        <Button Content="Transmitir à SEFAZ" Classes="accent" Command="{Binding TransmitirSefazCommand}" />
+        <Button Content="Salvar XML autorizado" Command="{Binding SalvarXmlCommand}" />
         <Button Content="Excluir" Command="{Binding ExcluirCommand}" />
         <Button Content="Imprimir minuta (PDF)" Command="{Binding ImprimirCommand}" />
         <Button Content="Cancelar CT-e" Command="{Binding CancelarCommand}" />
       </StackPanel>
-      <TextBlock Text="Emissão (depois de autorizado no emissor da SEFAZ)" FontWeight="Bold" FontSize="12" Margin="0,6,0,0" />
+      <TextBlock Text="Emissão manual (quando autorizado fora do Vorticis)" FontWeight="Bold" FontSize="12" Margin="0,6,0,0" />
       <Grid ColumnDefinitions="140,*" RowDefinitions="Auto,Auto" RowSpacing="6">
         <TextBlock Classes="rotulo" Text="Chave de acesso" />
         <TextBox Grid.Column="1" Text="{Binding Chave}" Watermark="44 dígitos" />
@@ -110,7 +112,7 @@
         <Button Content="Registrar emissão" Command="{Binding EmitirCommand}" />
       </StackPanel>
       <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
-                 Text="Digite o CT-e, grave e imprima a minuta. Depois de autorizado no emissor da SEFAZ, registre aqui a chave de acesso e o protocolo." />
+                 Text="Digite o CT-e, grave e clique em Transmitir à SEFAZ (usa o certificado padrão em Configurações e aciona SVC-RS/SVC-SP em contingência). Se autorizar fora do Vorticis, registre a chave e o protocolo." />
       <c:MensagensView />
     </StackPanel>
     </ScrollViewer>

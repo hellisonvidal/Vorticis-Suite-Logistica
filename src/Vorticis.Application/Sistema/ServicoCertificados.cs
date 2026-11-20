@@ -142,13 +142,14 @@ public sealed class ServicoCertificados(IRepositorioCertificados repositorio, Ti
     private async Task<string?> NegarAssinaturaAsync(SessaoUsuario usuario, long empresaId, CancellationToken ct)
     {
         if (usuario.Administrador) return null;
-        const string recusa = "Seu perfil não permite usar os certificados digitais para assinar a ECD/ECF ou transmitir o eSocial.";
+        const string recusa = "Seu perfil não permite usar os certificados digitais para assinar a ECD/ECF ou transmitir o eSocial, CT-e ou MDF-e.";
         if (autorizador is null) return recusa;
         if (await autorizador.VerificarAsync(usuario.Id, empresaId, Permissao.SpedEcdGerar, ct) is null) return null;
         if (await autorizador.VerificarAsync(usuario.Id, empresaId, Permissao.SpedEcfGerar, ct) is null) return null;
-        // Quem gera a EFD (Fiscal › Obrigações › SPED) e quem transmite o eSocial (Folha › eSocial) também usa os certificados cadastrados da empresa.
+        // Quem gera a EFD (Fiscal › Obrigações › SPED), transmite o eSocial (Folha › eSocial) ou transmite CT-e/MDF-e (TMS) também usa os certificados cadastrados da empresa.
         if (await autorizador.VerificarAsync(usuario.Id, empresaId, Permissao.FiscalSpedGerar, ct) is null) return null;
-        return await autorizador.VerificarAsync(usuario.Id, empresaId, Permissao.FolhaESocial, ct) is null ? null : recusa;
+        if (await autorizador.VerificarAsync(usuario.Id, empresaId, Permissao.FolhaESocial, ct) is null) return null;
+        return await autorizador.VerificarAsync(usuario.Id, empresaId, Permissao.FrotaTms, ct) is null ? null : recusa;
     }
 
     /// <summary>Certificados da empresa e os gerais (sem empresa), para escolher o de cada signatário da ECD/ECF.</summary>

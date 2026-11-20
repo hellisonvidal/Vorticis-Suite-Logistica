@@ -864,6 +864,21 @@ public sealed class ParametrosFrotaViewModel(IContexto contexto) : ParametrosVie
         [
             .. RegrasLogistica.TiposDiaria.Select(t => new CampoParametro("diaria_" + t, "Valor da diária – " + RegrasFrota.Rotulo(t), TipoCampoParametro.Texto, null)),
         ], [Atalho("Abrir Diárias", FrotaTelas.Diarias)]),
+        new("SEFAZ (CT-e e MDF-e)", "Transmissão direta do CT-e 4.00 (com IBS/CBS EC 132/2023) e MDF-e 3.00 com o certificado A1/A3 da empresa.",
+        [
+            new CampoParametro("sefaz_ambiente", "Ambiente de transmissão", TipoCampoParametro.Escolha,
+                               "Comece em Homologação para testes na SEFAZ; mude para Produção quando for emitir documentos com validade jurídica.",
+                               [new OpcaoParametro("2", "Homologação (testes)"), new OpcaoParametro("1", "Produção")]),
+            new CampoParametro("sefaz_rntrc", "RNTRC da transportadora", TipoCampoParametro.Texto,
+                               "Registro Nacional de Transportadores Rodoviários de Cargas (8 ou 9 dígitos). Exigido na transmissão de CT-e e MDF-e."),
+            new CampoParametro("sefaz_svc", "Contingência automática SVC-RS / SVC-SP", TipoCampoParametro.SimNao,
+                               "Quando a SEFAZ da UF estiver fora do ar, transmite automaticamente pela Sefaz Virtual de Contingência."),
+            new CampoParametro("sefaz_seg_nome", "Seguradora da carga (MDF-e)", TipoCampoParametro.Texto,
+                               "Nome da seguradora do RCTR-C/RCF-DC para preencher automaticamente o grupo de seguro do MDF-e."),
+            new CampoParametro("sefaz_seg_cnpj", "CNPJ da seguradora (MDF-e)", TipoCampoParametro.Texto, null),
+            new CampoParametro("sefaz_apolice", "Número da apólice de seguro", TipoCampoParametro.Texto, null),
+            new CampoParametro("sefaz_averbacao", "Averbação padrão", TipoCampoParametro.Texto, null),
+        ], [Atalho("Abrir Certificados digitais", TelasComuns.Certificados), Atalho("Abrir CT-e", FrotaTelas.Ctes)]),
         new("Contabilização das diárias", "Contas do lançamento gerado quando a diária é paga (Operação › Diárias › Pagar): débito na despesa, crédito na conta a pagar ou no caixa. Informe as duas ou nenhuma.",
         [
             new CampoParametro("conta_despesa", "Conta de despesa das diárias (código)", TipoCampoParametro.Texto,
@@ -884,6 +899,14 @@ public sealed class ParametrosFrotaViewModel(IContexto contexto) : ParametrosVie
         Campo("conta_despesa").Texto = c.ContaDiariaDespesa ?? "";
         Campo("conta_credito").Texto = c.ContaDiariaCredito ?? "";
         foreach (var (tipo, valor) in await app.Frota().ValoresDiariaAsync(empresa)) Campo("diaria_" + tipo).Texto = Formato.Moeda(valor);
+        var s = await app.Frota().ConfiguracaoSefazAsync(empresa);
+        Campo("sefaz_ambiente").DefinirEscolha(s.Ambiente.ToString());
+        Campo("sefaz_rntrc").Texto = s.Rntrc ?? "";
+        Campo("sefaz_svc").Marcado = s.ContingenciaSvcAutomatica;
+        Campo("sefaz_seg_nome").Texto = s.SeguradoraNome ?? "";
+        Campo("sefaz_seg_cnpj").Texto = s.SeguradoraCnpj is { } sc ? Vorticis.Domain.Cadastros.Cnpj.Formatar(sc) : "";
+        Campo("sefaz_apolice").Texto = s.ApoliceSeguro ?? "";
+        Campo("sefaz_averbacao").Texto = s.AverbacaoPadrao ?? "";
     }
 
     protected override async Task GravarValoresAsync(VorticisApp app, long empresa, long usuario)
@@ -897,5 +920,10 @@ public sealed class ParametrosFrotaViewModel(IContexto contexto) : ParametrosVie
         var valores = RegrasLogistica.TiposDiaria.ToDictionary(t => t, t => Formato.LerValor(Campo("diaria_" + t).Texto) ?? 0);
         var rv = await app.Frota().GravarValoresDiariaAsync(empresa, valores, usuario);
         if (!rv.Sucesso) MostrarResultado(rv, "");
+        var amb = Ext.Int(Campo("sefaz_ambiente").ValorEscolha) ?? 2;
+        var rs = await app.Frota().GravarConfiguracaoSefazAsync(empresa,
+            new ConfiguracaoSefazTms(amb, Campo("sefaz_rntrc").Texto, Campo("sefaz_svc").Marcado, Campo("sefaz_seg_nome").Texto,
+                                     Campo("sefaz_seg_cnpj").Texto, Campo("sefaz_apolice").Texto, Campo("sefaz_averbacao").Texto), usuario);
+        if (!rs.Sucesso) foreach (var e in rs.Erros) Erros.Add(e);
     }
 }

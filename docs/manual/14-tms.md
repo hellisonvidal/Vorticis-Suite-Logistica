@@ -6,12 +6,12 @@ O caminho completo é este:
 
 1. **Tabela de frete**: os preços da transportadora.
 2. **Cotação de frete**: o preço para um cliente. Aprovada, ela vira um conhecimento.
-3. **Conhecimento de transporte (CT-e)**: o documento da carga. Depois de autorizado no emissor da SEFAZ, você registra a chave de acesso.
+3. **Conhecimento de transporte (CT-e)**: o documento da carga, transmitido diretamente à SEFAZ com o certificado digital da empresa (ou com chave registrada manualmente).
 4. **Manifesto de carga (MDF-e)**: reúne os CT-e que vão no mesmo caminhão.
 5. **Entregas e ocorrências**: o acompanhamento até a entrega, com quem recebeu.
 6. **Fatura de frete**: junta os CT-e do mesmo cliente e gera a conta a receber.
 
-**Importante:** nesta versão o programa ainda **não transmite** o CT-e nem o MDF-e para a SEFAZ. Você autoriza o documento no emissor que já usa (por exemplo, o emissor gratuito ou o do seu sistema fiscal) e informa no Vorticis a **chave de acesso** e o protocolo. A transmissão direta está prevista (*Emissão › Transmissão de CT-e e MDF-e à SEFAZ*, em breve).
+**Transmissão direta à SEFAZ:** configure o ambiente (**Homologação** para testes ou **Produção**), o **RNTRC** da transportadora e, se desejar, a contingência automática **SVC-RS / SVC-SP** e os dados do seguro em *Cadastros › Parâmetros* (aba Frota, grupo **SEFAZ (CT-e e MDF-e)**) e defina o certificado padrão (A1 ou A3) em *Configurações › Certificados digitais*. Se preferir emitir fora do Vorticis, o registro manual de **chave de acesso** e protocolo continua funcionando.
 
 **Quem pode usar:** quem tem a função **TMS** no perfil de acesso (*Configurações › Usuários*, aba *Perfis de acesso*, grupo Frota) inclui, altera e emite. Quem tem as outras funções da Frota só consulta. Os perfis que já lançavam a operação da frota receberam a função TMS automaticamente.
 
@@ -80,14 +80,15 @@ O **painel** acima da lista soma os CT-e listados (os cancelados ficam fora dos 
 6. Em **Frete**, escolha a **Tabela** e clique em **Calcular pela tabela**. Você pode ajustar qualquer parte (frete-peso, ad valorem, GRIS, pedágio, taxas, alíquota de ICMS); o total da prestação é refeito na hora. A **Previsão de entrega** vem do prazo da tabela.
 7. Clique em **Gravar**. O CT-e fica **Digitado**.
 
-**Como registrar a emissão:**
-1. Autorize o CT-e no emissor da SEFAZ que você usa.
-2. Volte ao Vorticis, selecione o CT-e e preencha a **Chave de acesso** (44 dígitos) e o **Protocolo**.
-3. Clique em **Registrar emissão**. O programa confere o dígito da chave, se ela é de CT-e (modelo 57), se é do CNPJ da transportadora e se a série e o número são os deste CT-e. Depois de emitido, o CT-e não pode mais ser alterado.
+**Como transmitir à SEFAZ ou registrar a emissão manual:**
+1. Depois de gravar o CT-e digitado, clique em **Transmitir à SEFAZ**: o programa inclui automaticamente o **IBS** e a **CBS** conforme o parâmetro legal vigente, gera e assina o XML 4.00 com o certificado A1/A3 da empresa e envia para a SEFAZ da UF.
+2. Se a SEFAZ normal da UF estiver indisponível e a opção de contingência automática estiver marcada nos parâmetros, o programa alterna sozinho para **SVC-RS** ou **SVC-SP** e registra todas as tentativas no histórico.
+3. Com o CT-e autorizado, clique em **Salvar XML autorizado** para exportar o arquivo completo (`-procCTe.xml`).
+4. **Emissão manual:** se autorizou fora do Vorticis, informe a **Chave de acesso** (44 dígitos) e o **Protocolo** e clique em **Registrar emissão**. O programa confere o dígito da chave, se ela é de CT-e (modelo 57), se é do CNPJ da transportadora e se a série e o número conferem. Depois de emitido, o CT-e não pode mais ser alterado.
 
 **Outras ações:**
 - **Imprimir minuta (PDF)**: um resumo do CT-e para acompanhar a carga, com campo de recebimento. Não substitui o DACTE autorizado.
-- **Cancelar CT-e**: para o digitado ou o emitido que ainda não está num manifesto aberto nem numa fatura. Se ele já foi autorizado, cancele também no emissor da SEFAZ.
+- **Cancelar CT-e**: para o digitado ou o emitido que ainda não está num manifesto aberto nem numa fatura. Se ele já foi autorizado, cancele também na SEFAZ.
 - **Excluir**: só o digitado. A cotação usada volta a ficar aprovada.
 
 ### Anexar as NF-e pelo XML (painel das notas)
@@ -122,11 +123,12 @@ Em vez de digitar as chaves, peso e valores, anexe os XML das notas fiscais que 
 
 **Como usar:**
 1. Clique em **Novo manifesto**. Confira a **Série** e a **Emissão** e escolha a **UF de início**, a **UF de fim** e, se passar por outros estados, as **UFs do percurso** (por exemplo, "MG, BA").
-2. Escolha o **Veículo**, o **Motorista** e, se quiser, a **Viagem**. A **Chave do MDF-e** (modelo 58) é opcional: informe depois de autorizar no emissor.
+2. Escolha o **Veículo**, o **Motorista** e, se quiser, a **Viagem**. A **Chave do MDF-e** (modelo 58) é opcional se você for transmitir direto pelo Vorticis.
 3. Em **CT-e do manifesto** aparecem os CT-e emitidos que ainda não estão em outro manifesto aberto. Marque os que vão no veículo.
-4. Clique em **Gravar**. Os CT-e marcados passam a **Em trânsito**. Enquanto o manifesto está aberto, você pode tirar ou pôr CT-e e gravar de novo; os retirados (sem ocorrência registrada) voltam a **Emitido**.
-5. Ao fim da viagem, escolha a data e clique em **Encerrar**.
-6. **Imprimir (PDF)** gera a relação da carga com os totais de peso, valor e frete. **Cancelar** vale só para o manifesto aberto.
+4. Clique em **Gravar**. Os CT-e marcados passam a **Em trânsito**. Enquanto o manifesto não foi autorizado na SEFAZ e está aberto, você pode tirar ou pôr CT-e e gravar de novo; os retirados (sem ocorrência registrada) voltam a **Emitido**.
+5. Para emitir eletronicamente, clique em **Transmitir à SEFAZ**: o MDF-e 3.00 leva o RNTRC, os **CIOT declarados** vinculados aos CT-e, vale-pedágio e seguro configurados nos parâmetros. Use **Salvar XML autorizado** para baixar o `-procMDFe.xml`.
+6. Ao fim da viagem, escolha a data e clique em **Encerrar** (se o MDF-e foi autorizado no Vorticis, o evento de encerramento é transmitido à SEFAZ automaticamente).
+7. **Imprimir (PDF)** gera a relação da carga com os totais de peso, valor e frete. **Cancelar** vale só para o manifesto aberto.
 
 ## Entregas e ocorrências
 

@@ -530,7 +530,11 @@ public partial class CtesViewModel(IContexto contexto) : TmsBase(contexto), View
         Destino.Definir(c.Destino);
         Preencher(c.Frete);
         _ = CarregarNotasAsync(c.Id);
-        SituacaoTexto = RegrasTms.Rotulo(c.Situacao) + (c.Recebedor is { } r ? $" – recebido por {r}" : "") + (c.FaturaNumero is { } f ? $" – fatura nº {f}" : "");
+        SituacaoTexto = RegrasTms.Rotulo(c.Situacao)
+            + (c.TipoEmissao is 7 or 8 ? $" (SVC-{(c.TipoEmissao == 7 ? "RS" : "SP")})" : "")
+            + (c.Ibs + c.Cbs > 0 ? $" · IBS {M(c.Ibs)} · CBS {M(c.Cbs)}" : "")
+            + (c.Recebedor is { } r ? $" – recebido por {r}" : "")
+            + (c.FaturaNumero is { } f ? $" – fatura nº {f}" : "");
     }
 
     private async Task CarregarNotasAsync(long cte)
@@ -692,6 +696,33 @@ public partial class CtesViewModel(IContexto contexto) : TmsBase(contexto), View
         Selecionado = Lista.FirstOrDefault(l => l.C.Id == c.Id);
         Mensagem = $"CT-e {c.Serie}-{c.Numero} emitido. Inclua-o num manifesto (Emissão › Manifestos de carga) e acompanhe a entrega em Operações › Entregas e ocorrências.";
     }, Permissao.FrotaTms);
+
+    [RelayCommand]
+    private Task TransmitirSefazAsync() => ExecutarAsync(async (app, empresa, usuario) =>
+    {
+        if (Selecionado?.C is not { } c) { Erros.Add("Selecione (e grave) o CT-e antes de transmitir."); return; }
+        var rc = await CertificadosPadrao.AbrirParaTransmissaoAsync(Contexto);
+        if (!rc.Sucesso) { MostrarResultado(rc, ""); return; }
+        using var cert = rc.Valor;
+        var r = await app.Frota().TransmitirCteAsync(empresa, c.Id, cert, usuario);
+        if (!r.Sucesso) { MostrarResultado(r, ""); return; }
+        await CarregarAsync();
+        Selecionado = Lista.FirstOrDefault(l => l.C.Id == c.Id);
+        var res = r.Valor;
+        var svcTxt = res.UsouContingenciaSvc ? $" via SVC-{(res.TipoEmissao == 7 ? "RS" : "SP")}" : "";
+        var tribTxt = res.Ibs + res.Cbs > 0 ? $" · IBS {M(res.Ibs)} · CBS {M(res.Cbs)}" : "";
+        Mensagem = $"CT-e {c.Serie}-{c.Numero} autorizado pela SEFAZ{svcTxt} (protocolo {res.Protocolo}){tribTxt}.";
+    }, Permissao.FrotaTms);
+
+    [RelayCommand]
+    private Task SalvarXmlAsync() => ExecutarAsync(async (app, empresa, usuario) =>
+    {
+        if (Selecionado?.C is not { } c) { Erros.Add("Selecione o CT-e."); return; }
+        var r = await app.Frota().ObterXmlAutorizadoAsync(empresa, RegrasTms.ModeloCte, c.Id, usuario);
+        if (!r.Sucesso) { MostrarResultado(r, ""); return; }
+        var caminho = ArquivosGerados.Salvar(r.Valor.NomeArquivo, System.Text.Encoding.UTF8.GetBytes(r.Valor.Xml));
+        Mensagem = $"XML autorizado salvo em: {caminho}";
+    });
 
     [RelayCommand]
     private Task CancelarAsync() => ExecutarAsync(async (app, empresa, usuario) =>
@@ -890,9 +921,44 @@ public partial class ManifestosViewModel(IContexto contexto) : TmsBase(contexto)
     }, Permissao.FrotaTms);
 
     [RelayCommand]
+    private Task TransmitirSefazAsync() => ExecutarAsync(async (app, empresa, usuario) =>
+    {
+        if (Selecionado?.M is not { } m) { Erros.Add("Selecione (e grave) o manifesto antes de transmitir."); return; }
+        var rc = await CertificadosPadrao.AbrirParaTransmissaoAsync(Contexto);
+        if (!rc.Sucesso) { MostrarResultado(rc, ""); return; }
+        using var cert = rc.Valor;
+        var r = await app.Frota().TransmitirMdfeAsync(empresa, m.Id, cert, usuario);
+        if (!r.Sucesso) { MostrarResultado(r, ""); return; }
+        await CarregarAsync();
+        Selecionado = Lista.FirstOrDefault(l => l.M.Id == m.Id);
+        Mensagem = $"MDF-e {m.Serie}-{m.Numero} autorizado pela SEFAZ (protocolo {r.Valor.Protocolo}).";
+    }, Permissao.FrotaTms);
+
+    [RelayCommand]
+    private Task SalvarXmlAsync() => ExecutarAsync(async (app, empresa, usuario) =>
+    {
+        if (Selecionado?.M is not { } m) { Erros.Add("Selecione o manifesto."); return; }
+        var r = await app.Frota().ObterXmlAutorizadoAsync(empresa, RegrasTms.ModeloMdfe, m.Id, usuario);
+        if (!r.Sucesso) { MostrarResultado(r, ""); return; }
+        var caminho = ArquivosGerados.Salvar(r.Valor.NomeArquivo, System.Text.Encoding.UTF8.GetBytes(r.Valor.Xml));
+        Mensagem = $"XML autorizado salvo em: {caminho}";
+    });
+
+    [RelayCommand]
     private Task EncerrarAsync() => ExecutarAsync(async (app, empresa, usuario) =>
     {
         if (Selecionado?.M is not { } m) { Erros.Add("Selecione o manifesto."); return; }
+        if (m.TemXmlAutorizado)
+        {
+            var rc = await CertificadosPadrao.AbrirParaTransmissaoAsync(Contexto);
+            if (!rc.Sucesso) { MostrarResultado(rc, ""); return; }
+            using var cert = rc.Valor;
+            var rs = await app.Frota().EncerrarMdfeSefazAsync(empresa, m.Id, Ext.Dia(Encerramento), cert, usuario);
+            if (!rs.Sucesso) { MostrarResultado(rs, ""); return; }
+            await CarregarAsync();
+            Mensagem = $"Manifesto {m.Serie}-{m.Numero} encerrado na SEFAZ (protocolo {rs.Valor}).";
+            return;
+        }
         var r = await app.Frota().EncerrarManifestoAsync(empresa, m.Id, Ext.Dia(Encerramento), usuario);
         if (!r.Sucesso) { MostrarResultado(r, ""); return; }
         await CarregarAsync();

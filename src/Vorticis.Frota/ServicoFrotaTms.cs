@@ -8,9 +8,8 @@ using P = Vorticis.Domain.Seguranca.Permissao;
 namespace Vorticis.Frota;
 
 /// <summary>
-/// TMS (gestão do transporte): tabelas de frete, cotações, conhecimentos (CT-e), manifestos (MDF-e), ocorrências de entrega e faturas de frete.
-/// Alterações exigem FROTA_TMS; a consulta vale para quem tem qualquer função da Frota. A transmissão à SEFAZ fica para depois: o CT-e e o MDF-e
-/// são registrados com a chave de acesso informada pelo usuário.
+/// TMS (gestão do transporte): tabelas de frete, cotações, conhecimentos (CT-e 4.00 com IBS/CBS e SVC), manifestos (MDF-e 3.00), ocorrências de entrega e faturas de frete.
+/// Alterações e transmissões exigem FROTA_TMS; a consulta vale para quem tem qualquer função da Frota.
 /// </summary>
 public sealed partial class ServicoFrota
 {
@@ -155,7 +154,7 @@ public sealed partial class ServicoFrota
                c.destino_uf, c.destino_ibge, c.destino_municipio, c.tabela_id, c.cotacao_id, c.coleta_id, c.viagem_id, c.veiculo_id, c.motorista_id, c.produto,
                c.volumes, c.peso_kg, c.volume_m3, c.valor_mercadoria, c.chaves_nfe, c.frete_peso, c.ad_valorem, c.gris, c.pedagio, c.taxas, c.aliquota_icms, c.icms,
                c.valor_total, c.previsao_entrega, c.chave, c.protocolo, c.situacao, c.entregue_em, c.recebedor, c.fatura_id, c.observacao,
-               rm.nome, ds.nome, tm.nome, v.placa, m.nome, f.numero
+               rm.nome, ds.nome, tm.nome, v.placa, m.nome, f.numero, c.ibs, c.cbs, c.tipo_emissao, c.xml_autorizado IS NOT NULL
           FROM tms.cte c JOIN core.participante rm ON rm.id = c.remetente_id JOIN core.participante ds ON ds.id = c.destinatario_id
                JOIN core.participante tm ON tm.id = c.tomador_id LEFT JOIN frota.veiculo v ON v.id = c.veiculo_id LEFT JOIN frota.motorista m ON m.id = c.motorista_id
                LEFT JOIN tms.fatura f ON f.id = c.fatura_id
@@ -167,7 +166,8 @@ public sealed partial class ServicoFrota
         r.Id(14), r.Id(15), r.Id(16), r.Id(17), r.Id(18), r.Id(19), r.Texto(20), r.GetInt32(21), r.GetDecimal(22), r.GetDecimal(23), r.GetDecimal(24), r.Texto(25),
         new ComponentesFrete(0, r.GetDecimal(26), r.GetDecimal(27), r.GetDecimal(28), r.GetDecimal(29), r.GetDecimal(30), r.GetDecimal(31), r.GetDecimal(32), r.GetDecimal(33)),
         r.Data(34), r.Texto(35), r.Texto(36), r.GetString(37), r.IsDBNull(38) ? null : r.GetDateTime(38), r.Texto(39), r.Id(40), r.Texto(41),
-        r.GetString(42), r.GetString(43), r.GetString(44), r.Texto(45), r.Texto(46), r.IsDBNull(47) ? null : r.GetInt32(47));
+        r.GetString(42), r.GetString(43), r.GetString(44), r.Texto(45), r.Texto(46), r.IsDBNull(47) ? null : r.GetInt32(47),
+        r.GetDecimal(48), r.GetDecimal(49), r.GetInt16(50), r.GetBoolean(51));
 
     public async Task<List<Cte>> CtesAsync(long empresa, DateOnly inicio, DateOnly fim, string? situacao, long usuario, CancellationToken ct = default)
         => await PodeVerAsync(usuario, empresa, ct) ? await ListarCtesAsync(empresa, inicio, fim, situacao, ct) : [];
@@ -357,14 +357,15 @@ public sealed partial class ServicoFrota
     private Task<List<Manifesto>> ListarManifestosAsync(long empresa, DateOnly inicio, DateOnly fim, long? id, CancellationToken ct) => _db.ListarAsync("""
         SELECT m.id, m.serie, m.numero, m.emissao, m.uf_inicio, m.uf_fim, m.ufs_percurso, m.veiculo_id, m.motorista_id, m.viagem_id, m.chave, m.situacao, m.encerrado_em,
                m.observacao, COALESCE(array_agg(c.id ORDER BY c.numero) FILTER (WHERE c.id IS NOT NULL), '{}'), v.placa, mo.nome,
-               COALESCE(sum(c.peso_kg), 0), COALESCE(sum(c.valor_mercadoria), 0), COALESCE(sum(c.valor_total), 0)
+               COALESCE(sum(c.peso_kg), 0), COALESCE(sum(c.valor_mercadoria), 0), COALESCE(sum(c.valor_total), 0),
+               m.protocolo, m.xml_autorizado IS NOT NULL
           FROM tms.manifesto m JOIN frota.veiculo v ON v.id = m.veiculo_id JOIN frota.motorista mo ON mo.id = m.motorista_id
                LEFT JOIN tms.manifesto_cte mc ON mc.manifesto_id = m.id LEFT JOIN tms.cte c ON c.id = mc.cte_id
          WHERE m.empresa_id = @e AND (@id::bigint IS NOT NULL AND m.id = @id OR @id::bigint IS NULL AND m.emissao BETWEEN @i AND @f)
          GROUP BY m.id, v.placa, mo.nome ORDER BY m.emissao DESC, m.numero DESC
         """, r => new Manifesto(r.GetInt64(0), r.GetInt16(1), r.GetInt32(2), r.GetFieldValue<DateOnly>(3), r.GetString(4), r.GetString(5), r.Texto(6), r.GetInt64(7),
                                 r.GetInt64(8), r.Id(9), r.Texto(10), r.GetString(11), r.Data(12), r.Texto(13), r.GetFieldValue<long[]>(14), r.GetString(15), r.GetString(16),
-                                r.GetDecimal(17), r.GetDecimal(18), r.GetDecimal(19)),
+                                r.GetDecimal(17), r.GetDecimal(18), r.GetDecimal(19), r.Texto(20), r.GetBoolean(21)),
         ct, ("e", empresa), ("i", inicio), ("f", fim), ("id", id));
 
     /// <summary>CT-e emitidos que podem entrar num manifesto: emitidos ou em trânsito e fora de outro manifesto aberto (os do próprio manifesto também).</summary>

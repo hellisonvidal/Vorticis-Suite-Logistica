@@ -41,6 +41,8 @@
       </Border>
       <StackPanel Orientation="Horizontal" Spacing="6">
         <Button Content="Gravar" Classes="accent" Command="{Binding GravarCommand}" />
+        <Button Content="Transmitir à SEFAZ" Classes="accent" Command="{Binding TransmitirSefazCommand}" />
+        <Button Content="Salvar XML autorizado" Command="{Binding SalvarXmlCommand}" />
         <Button Content="Imprimir (PDF)" Command="{Binding ImprimirCommand}" />
         <Button Content="Cancelar" Command="{Binding CancelarCommand}" />
       </StackPanel>
@@ -50,7 +52,7 @@
         <Button Content="Encerrar" Command="{Binding EncerrarCommand}" />
       </StackPanel>
       <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap"
-                 Text="Marque os CT-e que seguem neste manifesto. Ao chegar ao destino, informe a data e encerre o manifesto." />
+                 Text="Marque os CT-e, grave e transmita o MDF-e à SEFAZ (leva os CIOTs declarados). Ao chegar ao destino, informe a data e clique em Encerrar." />
       <c:MensagensView />
     </StackPanel>
     </ScrollViewer>
